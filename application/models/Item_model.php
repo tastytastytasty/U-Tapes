@@ -1,0 +1,148 @@
+<?php
+class Item_model extends CI_Model
+{
+    public function get_item($id_item)
+    {
+        $this->db->select('item.*, kategori.nama_kategori,item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new');
+        $this->db->from('item');
+        $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
+        $this->db->where('item.id_item', $id_item);
+        return $this->db->get()->row();
+    }
+    public function get_termurah($id_item)
+    {
+        return $this->db
+            ->where('id_item', $id_item)
+            ->order_by('harga', 'ASC')
+            ->get('detail_item')
+            ->row();
+    }
+    public function get_warna($id_item)
+    {
+        return $this->db
+            ->select('
+            warna.id_warna,
+            warna.warna,
+            warna.hex
+        ')
+            ->from('detail_item')
+            ->join('warna', 'warna.id_warna = detail_item.id_warna')
+            ->where('detail_item.id_item', $id_item)
+            ->group_by('warna.id_warna')
+            ->get()
+            ->result();
+    }
+    public function get_ukuran($id_item, $id_warna)
+    {
+        return $this->db
+            ->select('ukuran, stok')
+            ->where('id_item', $id_item)
+            ->where('id_warna', $id_warna)
+            ->group_by('ukuran')
+            ->get('detail_item')
+            ->result();
+    }
+
+    public function get_by_option($id_item, $id_warna, $ukuran)
+    {
+        return $this->db
+            ->where('id_item', $id_item)
+            ->where('id_warna', $id_warna)
+            ->where('ukuran', $ukuran)
+            ->get('detail_item')
+            ->row();
+    }
+
+    public function get_items_with_wishlist($id_customer = null, $filter = [], $limit = null, $offset = 0)
+    {
+        $this->db->reset_query();
+        $this->db->select("
+        item.id_item,
+        item.merk,
+        item.nama_sepatu,
+        item.gambar,
+        kategori.nama_kategori,
+        MIN(detail_item.harga) AS harga_termurah,
+        SUM(detail_item.stok) AS total_stok,
+        IF(wishlist.id_item IS NULL, 0, 1) AS in_wishlist,
+        item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new
+    ");
+        $this->db->from('item');
+        $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
+        $this->db->join('detail_item', 'detail_item.id_item = item.id_item');
+        if ($id_customer) {
+            $this->db->join(
+                'wishlist',
+                'wishlist.id_item = item.id_item 
+             AND wishlist.id_customer = ' . $this->db->escape($id_customer),
+                'left'
+            );
+        } else {
+            $this->db->join('wishlist', '1=0', 'left');
+        }
+        if (!empty($filter['keyword'])) {
+            $this->db->group_start();
+            $this->db->like('item.nama_sepatu', $filter['keyword']);
+            $this->db->or_like('item.merk', $filter['keyword']);
+            $this->db->group_end();
+        }
+        if (!empty($filter['sex'])) {
+            $this->db->where('item.jenis_kelamin', $filter['sex']);
+        }
+        if (!empty($filter['kategori'])) {
+            $this->db->where_in('item.id_kategori', $filter['kategori']);
+        }
+        $this->db->group_by('item.id_item');
+        $this->db->order_by('(SUM(detail_item.stok) <= 0)', 'ASC');
+        switch ($filter['sort'] ?? '') {
+            case 'terlama':
+                $this->db->order_by('item.id_item', 'ASC');
+                break;
+            case 'harga_tertinggi':
+                $this->db->order_by('harga_termurah', 'DESC');
+                break;
+            case 'harga_terendah':
+                $this->db->order_by('harga_termurah', 'ASC');
+                break;
+            default:
+                $this->db->order_by('item.id_item', 'DESC');
+        }
+        if ($limit !== null) {
+            $this->db->limit($limit, $offset);
+        }
+        return $this->db->get()->result();
+    }
+    public function count_items_with_filter($filter)
+    {
+        $this->db->select('COUNT(DISTINCT item.id_item) AS total');
+        $this->db->from('item');
+        $this->db->join('detail_item', 'detail_item.id_item = item.id_item');
+
+        if (!empty($filter['keyword'])) {
+            $this->db->group_start();
+            $this->db->like('item.nama_sepatu', $filter['keyword']);
+            $this->db->or_like('item.merk', $filter['keyword']);
+            $this->db->group_end();
+        }
+
+        if (!empty($filter['sex'])) {
+            $this->db->where('item.jenis_kelamin', $filter['sex']);
+        }
+
+        if (!empty($filter['kategori'])) {
+            $this->db->where_in('item.id_kategori', $filter['kategori']);
+        }
+
+        return $this->db->get()->row()->total;
+    }
+    public function total_stok_item($id_item)
+    {
+        return $this->db
+            ->select('SUM(stok) as total')
+            ->where('id_item', $id_item)
+            ->get('detail_item')
+            ->row()
+            ->total ?? 0;
+    }
+
+}
