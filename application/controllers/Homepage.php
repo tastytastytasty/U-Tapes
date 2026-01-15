@@ -1,0 +1,31 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Homepage extends MY_Controller
+{
+
+	/**
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see https://codeigniter.com/userguide3/general/urls.html
+	 */
+	public function index()
+	{
+		$this->load->model(['Item_model', 'Kategori_model']);
+		$id_customer = $this->session->userdata('id_customer');
+		$data['items'] = $this->Item_model->get_items_with_wishlist( $id_customer,null, 8,0);
+		$data['kategori'] = $this->Kategori_model->get_kategori();
+		$data['contents'] = $this->load->view('homepage', $data, TRUE);
+		$this->load->view('navbar', array_merge($this->global_data, $data));
+	}
+}
