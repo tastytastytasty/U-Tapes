@@ -57,11 +57,11 @@ class Login extends MY_Controller
                 ]);
                 redirect('homepage');
             } else {
-                $this->session->set_flashdata('error', 'Password salah');
+                $this->session->set_flashdata('error', 'Email / No.Telp / Password salah');
                 redirect('login');
             }
         } else {
-            $this->session->set_flashdata('error', 'Akun tidak ditemukan');
+            $this->session->set_flashdata('error', 'Email / No.Telp / Password salah');
             redirect('login');
         }
     }

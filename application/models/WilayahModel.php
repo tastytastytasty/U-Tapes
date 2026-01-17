@@ -50,22 +50,44 @@ class WilayahModel extends CI_Model
         $row = $this->db->select('nama')->where('provinsi_id', $id)->get('provinsi')->row();
         return $row ? $row->nama : '';
     }
-
     public function getNamaKabupaten($id)
     {
         $row = $this->db->select('nama')->where('kabupaten_id', $id)->get('kabupaten')->row();
         return $row ? $row->nama : '';
     }
-
     public function getNamaKecamatan($id)
     {
         $row = $this->db->select('nama')->where('kecamatan_id', $id)->get('kecamatan')->row();
         return $row ? $row->nama : '';
     }
-
     public function getNamaKelurahan($id)
     {
         $row = $this->db->select('nama')->where('kelurahan_id', $id)->get('kelurahan')->row();
         return $row ? $row->nama : '';
+    }
+    public function get_provinsi()
+    {
+        return $this->db->get('provinsi')->result();
+    }
+    public function get_kabupaten($provinsi_id)
+    {
+        return $this->db
+            ->where('provinsi_id', $provinsi_id)
+            ->get('kabupaten')
+            ->result();
+    }
+    public function get_kecamatan($kabupaten_id)
+    {
+        return $this->db
+            ->where('kabupaten_id', $kabupaten_id)
+            ->get('kecamatan')
+            ->result();
+    }
+    public function get_kelurahan($kecamatan_id)
+    {
+        return $this->db
+            ->where('kecamatan_id', $kecamatan_id)
+            ->get('kelurahan')
+            ->result();
     }
 }
