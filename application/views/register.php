@@ -25,7 +25,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/') ?>https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- CSS Files -->
     <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .select2-container .select2-selection--single {
             height: 48px;
@@ -75,7 +75,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     data-bs-dismiss="alert">X</button>
                                             </div>
                                         <?php endif; ?>
-
                                         <?php if (validation_errors()): ?>
                                             <div class="alert alert-danger alert-dismissible fade show text-white"
                                                 role="alert">
@@ -84,7 +83,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     data-bs-dismiss="alert">X</button>
                                             </div>
                                         <?php endif; ?>
-
                                         <div class="row">
                                             <!-- KIRI: DATA AKUN -->
                                             <div class="col-md-6">
@@ -158,7 +156,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 </div>
                                                 <div class="mb-3">
                                                     <textarea name="detail" class="form-control form-control-lg"
-                                                        placeholder="Detail Alamat" required style="height: 115px;"></textarea>
+                                                        placeholder="Detail Alamat" required
+                                                        style="height: 115px;"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -213,6 +212,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="<?= base_url('assets/') ?>js/argon-dashboard.min.js?v=2.1.0"></script>
+    <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
     <script>
         $(document).ready(function () {
             $('.select2').select2({ width: '100%' });

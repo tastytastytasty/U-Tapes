@@ -110,8 +110,8 @@ class Register extends MY_Controller
 			'kode_pos' => $this->input->post('kode_pos', true),
 			'detail' => $this->input->post('detail', true),
 			'is_default' => 1,
-			'latitude' => null,
-			'longitude' => null
+			'latitude' => 0,
+			'longitude' => 0
 		];
 		$this->db->trans_start();
 		$this->db->insert('customer', $customer);
