@@ -63,43 +63,51 @@
 <!-- End Breadcrumbs -->
 <section class="product-grids section py-5">
     <div class="container-fluid px-4">
+        <div class="d-lg-none mb-2">
+            <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mobileFilter">
+                ☰ Filter Produk
+            </button>
+        </div>
         <form id="filterForm">
             <div class="row">
                 <div class="col-lg-3 col-12">
-                    <div class="product-sidebar card p-3 mb-2">
-                        <div class="single-widget mb-4">
-                            <label class="mb-2 text-primary">Urut Berdasarkan</label>
-                            <select name="sort" class="form-control auto-submit">
-                                <option value="terbaru">Terbaru</option>
-                                <option value="terlama">Terlama</option>
-                                <option value="harga_tertinggi">Harga Tertinggi</option>
-                                <option value="harga_terendah">Harga Terendah</option>
-                            </select>
-                        </div>
+                    <div class="collapse d-lg-block" id="mobileFilter">
+                        <div class="product-sidebar card p-3 mb-2">
+                            <div class="single-widget mb-4">
+                                <label class="mb-2 text-primary">Urut Berdasarkan</label>
+                                <select name="sort" class="form-control auto-submit">
+                                    <option value="terbaru">Terbaru</option>
+                                    <option value="terlama">Terlama</option>
+                                    <option value="harga_tertinggi">Harga Tertinggi</option>
+                                    <option value="harga_terendah">Harga Terendah</option>
+                                </select>
+                            </div>
 
-                        <div class="single-widget mb-4">
-                            <label class="mb-2 text-primary">Sex</label>
-                            <select name="sex" class="form-control auto-submit">
-                                <option value="">Semua</option>
-                                <option value="Pria">Pria</option>
-                                <option value="Wanita">Wanita</option>
-                                <option value="Anak Laki - laki">Anak Laki-Laki</option>
-                                <option value="Anak Perempuan">Anak Perempuan</option>
-                                <option value="Unisex">Unisex</option>
-                            </select>
-                        </div>
+                            <div class="single-widget mb-4">
+                                <label class="mb-2 text-primary">Sex</label>
+                                <select name="sex" class="form-control auto-submit">
+                                    <option value="">Semua</option>
+                                    <option value="Pria">Pria</option>
+                                    <option value="Wanita">Wanita</option>
+                                    <option value="Anak Laki - laki">Anak Laki-Laki</option>
+                                    <option value="Anak Perempuan">Anak Perempuan</option>
+                                    <option value="Unisex">Unisex</option>
+                                </select>
+                            </div>
 
-                        <div class="single-widget">
-                            <label class="mb-2 text-primary">Kategori</label>
-                            <?php foreach ($kategori as $kat): ?>
-                                <div class="form-check">
-                                    <input class="form-check-input auto-submit" type="checkbox" name="kategori[]"
-                                        id="kategori<?= $kat->id_kategori ?>" value="<?= $kat->id_kategori ?>">
-                                    <label class="form-check-label" for="kategori<?= $kat->id_kategori ?>">
-                                        <?= $kat->nama_kategori ?>
-                                    </label>
-                                </div>
-                            <?php endforeach; ?>
+                            <div class="single-widget">
+                                <label class="mb-2 text-primary">Kategori</label>
+                                <?php foreach ($kategori as $kat): ?>
+                                    <div class="form-check">
+                                        <input class="form-check-input auto-submit" type="checkbox" name="kategori[]"
+                                            id="kategori<?= $kat->id_kategori ?>" value="<?= $kat->id_kategori ?>">
+                                        <label class="form-check-label" for="kategori<?= $kat->id_kategori ?>">
+                                            <?= $kat->nama_kategori ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                 </div>

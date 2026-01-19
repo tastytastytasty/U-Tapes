@@ -1,3 +1,16 @@
+<style>
+    .title {
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 576px) {
+        .title {
+            font-size: 15px;
+            line-height: 1.3;
+        }
+    }
+</style>
 <?php if (empty($items)): ?>
     <div class="col-12 text-center">
         <i class="lni lni-search-alt fs-1 text-primary mb-3"></i>
