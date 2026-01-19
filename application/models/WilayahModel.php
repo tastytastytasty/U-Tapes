@@ -1,7 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class WilayahModel extends CI_Model
 {
+    // SEMUA TABEL ADA DI DATABASE YANG SAMA (e-commerce-shoes)
+    
     public function getProvinces()
     {
         return $this->db

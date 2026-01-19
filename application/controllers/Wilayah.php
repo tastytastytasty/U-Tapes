@@ -1,51 +1,30 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-
 class Wilayah extends CI_Controller
 {
-
-    private function curl($url)
+    public function __construct()
     {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // 🔥 PENTING
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0'); // 🔥 biar gak ditolak
-
-        $res = curl_exec($ch);
-        curl_close($ch);
-        return $res;
+        parent::__construct();
+        $this->load->model('WilayahModel');
     }
 
     public function provinsi()
     {
-        header('Content-Type: application/json');
-        echo $this->curl(
-            'https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json'
-        );
+        echo json_encode($this->WilayahModel->getProvinsi());
     }
 
-    public function kabupaten($id)
+    public function kabupaten($provinsi_id)
     {
-        header('Content-Type: application/json');
-        echo $this->curl(
-            'https://emsifa.github.io/api-wilayah-indonesia/api/regencies/' . $id . '.json'
-        );
+        echo json_encode($this->WilayahModel->getKabupaten($provinsi_id));
     }
 
-    public function kecamatan($id)
+    public function kecamatan($kabupaten_id)
     {
-        header('Content-Type: application/json');
-        echo $this->curl(
-            'https://emsifa.github.io/api-wilayah-indonesia/api/districts/' . $id . '.json'
-        );
+        echo json_encode($this->WilayahModel->getKecamatan($kabupaten_id));
     }
 
-    public function kelurahan($id)
+    public function kelurahan($kecamatan_id)
     {
-        header('Content-Type: application/json');
-        echo $this->curl(
-            'https://emsifa.github.io/api-wilayah-indonesia/api/villages/' . $id . '.json'
-        );
+        echo json_encode($this->WilayahModel->getKelurahan($kecamatan_id));
     }
 }

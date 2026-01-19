@@ -9,178 +9,105 @@ class Alamat extends MY_Controller
         if (!$this->session->userdata('logged_in')) {
             redirect('login');
         }
-        $this->load->library(['email']);
-        $this->load->database();
-        $this->load->library('session');
+
         $this->load->model('AlamatModel');
         $this->load->model('WilayahModel');
+        $this->load->library('session');
     }
 
     public function index()
     {
-        $id_customer = $this->session->userdata('id_customer');
-        if (!$id_customer) {
-            redirect('login');
-        }
+        $id_customer = $this->session->userdata('user')['id_customer'];
 
         $data = [];
-        $data['alamat_list'] = $this->AlamatModel->getAlamatCustomer($id_customer);
-        $data['user'] = [
-            'nama' => $this->session->userdata('nama'),
-            'email' => $this->session->userdata('email'),
-        ];
+        $data['alamat_list'] = $this->AlamatModel->getAlamatWithNames($id_customer);
         $data['contents'] = $this->load->view('alamat', $data, TRUE);
 
-       $this->load->view('navbar',array_merge($this->global_data, $data));
+        $this->load->view('navbar', array_merge($this->global_data, $data));
     }
 
-    // WILAYAH ENDPOINTS
+    /* ========== API WILAYAH ========== */
+
     public function provinsi()
     {
-        header('Content-Type: application/json');
-        $data = $this->WilayahModel->getProvinces();
-        echo json_encode($data);
+        echo json_encode($this->WilayahModel->getProvinces());
     }
 
-    public function kabupaten($province_id = '')
+    public function kabupaten($provinsi_id = '')
     {
-        header('Content-Type: application/json');
-        if (!$province_id) {
-            echo json_encode([]);
-            return;
-        }
-        $data = $this->WilayahModel->getRegencies($province_id);
-        echo json_encode($data);
+        echo json_encode($provinsi_id ? $this->WilayahModel->getRegencies($provinsi_id) : []);
     }
 
-    public function kecamatan($regency_id = '')
+    public function kecamatan($kabupaten_id = '')
     {
-        header('Content-Type: application/json');
-        if (!$regency_id) {
-            echo json_encode([]);
-            return;
-        }
-        $data = $this->WilayahModel->getDistricts($regency_id);
-        echo json_encode($data);
+        echo json_encode($kabupaten_id ? $this->WilayahModel->getDistricts($kabupaten_id) : []);
     }
 
-    public function kelurahan($district_id = '')
+    public function kelurahan($kecamatan_id = '')
     {
-        header('Content-Type: application/json');
-        if (!$district_id) {
-            echo json_encode([]);
-            return;
-        }
-        $data = $this->WilayahModel->getVillages($district_id);
-        echo json_encode($data);
+        echo json_encode($kecamatan_id ? $this->WilayahModel->getVillages($kecamatan_id) : []);
     }
 
-    // CRUD ALAMAT
+    /* ========== CRUD ========== */
+
     public function simpan()
     {
-        header('Content-Type: application/json');
-        $id_customer = $this->session->userdata('id_customer');
-        if (!$id_customer) {
-            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-            return;
-        }
-
-        $provinsi_id = $this->input->post('provinsi_id');
-        $kabupaten_id = $this->input->post('kabupaten_id');
-        $kecamatan_id = $this->input->post('kecamatan_id');
-        $kelurahan_id = $this->input->post('kelurahan_id');
-
-        // Ambil nama dari database wilayah
-        $provinsi = $this->WilayahModel->getNamaProvinsi($provinsi_id);
-        $kabupaten = $this->WilayahModel->getNamaKabupaten($kabupaten_id);
-        $kecamatan = $this->WilayahModel->getNamaKecamatan($kecamatan_id);
-        $kelurahan = $this->WilayahModel->getNamaKelurahan($kelurahan_id);
-
-        if (!$provinsi || !$kabupaten || !$kecamatan || !$kelurahan) {
-            echo json_encode(['success' => false, 'message' => 'Data wilayah tidak valid']);
-            return;
-        }
+        $id_customer = $this->session->userdata('user')['id_customer'];
 
         $data = [
             'id_alamat' => $this->AlamatModel->generateId(),
             'id_customer' => $id_customer,
-            'provinsi' => $provinsi,
-            'kabupaten' => $kabupaten,
-            'kecamatan' => $kecamatan,
-            'kelurahan' => $kelurahan,
-            'detail' => $this->input->post('detail'),
-            'kode_pos' => $this->input->post('kode_pos'),
-            'is_default' => $this->input->post('is_default') ?? 0,
-            'latitude' => 0,
-            'longitude' => 0
-        ];
-
-        $ok = $this->AlamatModel->create($data);
-        echo json_encode(['success' => (bool) $ok, 'message' => $ok ? 'Alamat berhasil ditambahkan' : 'Gagal menambah alamat']);
-    }
-
-    public function update()
-    {
-        header('Content-Type: application/json');
-        $id = $this->input->post('id_alamat');
-        if (!$id) {
-            echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
-            return;
-        }
-
-        $provinsi_id = $this->input->post('provinsi_id');
-        $kabupaten_id = $this->input->post('kabupaten_id');
-        $kecamatan_id = $this->input->post('kecamatan_id');
-        $kelurahan_id = $this->input->post('kelurahan_id');
-
-        // Ambil nama dari database wilayah
-        $provinsi = $this->WilayahModel->getNamaProvinsi($provinsi_id);
-        $kabupaten = $this->WilayahModel->getNamaKabupaten($kabupaten_id);
-        $kecamatan = $this->WilayahModel->getNamaKecamatan($kecamatan_id);
-        $kelurahan = $this->WilayahModel->getNamaKelurahan($kelurahan_id);
-
-        $data = [
-            'provinsi' => $provinsi,
-            'kabupaten' => $kabupaten,
-            'kecamatan' => $kecamatan,
-            'kelurahan' => $kelurahan,
+            'provinsi_id' => $this->input->post('provinsi_id'),
+            'kabupaten_id' => $this->input->post('kabupaten_id'),
+            'kecamatan_id' => $this->input->post('kecamatan_id'),
+            'kelurahan_id' => $this->input->post('kelurahan_id'),
             'detail' => $this->input->post('detail'),
             'kode_pos' => $this->input->post('kode_pos'),
             'is_default' => $this->input->post('is_default') ?? 0
         ];
 
-        $ok = $this->AlamatModel->update($id, $data);
-        echo json_encode(['success' => (bool) $ok, 'message' => $ok ? 'Alamat berhasil diupdate' : 'Gagal mengupdate alamat']);
+        if (!$data['provinsi_id'] || !$data['kabupaten_id'] || !$data['kecamatan_id'] || !$data['kelurahan_id']) {
+            echo json_encode(['success' => false, 'message' => 'Data wilayah belum lengkap']);
+            return;
+        }
+
+        $ok = $this->AlamatModel->create($data);
+        echo json_encode(['success' => $ok, 'message' => $ok ? 'Alamat berhasil ditambahkan' : 'Gagal menyimpan alamat']);
     }
 
-    public function getById($id)
+    public function update()
     {
-        return $this->db->where('id_alamat', $id)
-            ->get('alamat')
-            ->row();
-    }
+        $id = $this->input->post('id_alamat');
 
+        $data = [
+            'provinsi_id' => $this->input->post('provinsi_id'),
+            'kabupaten_id' => $this->input->post('kabupaten_id'),
+            'kecamatan_id' => $this->input->post('kecamatan_id'),
+            'kelurahan_id' => $this->input->post('kelurahan_id'),
+            'detail' => $this->input->post('detail'),
+            'kode_pos' => $this->input->post('kode_pos'),
+            'is_default' => $this->input->post('is_default') ?? 0
+        ];
+
+        if (!$data['provinsi_id'] || !$data['kabupaten_id'] || !$data['kecamatan_id'] || !$data['kelurahan_id']) {
+            echo json_encode(['success' => false, 'message' => 'Data wilayah belum lengkap']);
+            return;
+        }
+
+        $ok = $this->AlamatModel->update($id, $data);
+        echo json_encode(['success' => $ok, 'message' => $ok ? 'Alamat berhasil diupdate' : 'Gagal update alamat']);
+    }
 
     public function get($id = '')
     {
-        header('Content-Type: application/json');
-        if (!$id) {
-            echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
-            return;
-        }
-        $row = $this->AlamatModel->getById($id);
+        $row = $this->AlamatModel->getByIdWithNames($id);
         echo json_encode(['success' => (bool) $row, 'data' => $row]);
     }
 
     public function hapus()
     {
-        header('Content-Type: application/json');
         $id = $this->input->post('id_alamat');
-        if (!$id) {
-            echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
-            return;
-        }
         $ok = $this->AlamatModel->delete($id);
-        echo json_encode(['success' => (bool) $ok, 'message' => $ok ? 'Alamat berhasil dihapus' : 'Gagal menghapus alamat']);
+        echo json_encode(['success' => $ok, 'message' => $ok ? 'Alamat berhasil dihapus' : 'Gagal menghapus alamat']);
     }
 }
