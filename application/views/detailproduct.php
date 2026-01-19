@@ -66,6 +66,25 @@
         border-style: dashed;
         pointer-events: none;
     }
+    .product-main-img {
+        width: 600px;
+        height: 600px;
+        object-fit: cover;
+    }
+
+    @media (max-width: 576px) {
+        .product-main-img {
+            width: 260px;
+            height: 260px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .mobile-title h5 {
+            font-size: 16px;
+            line-height: 1.3;
+        }
+    }
 </style>
 <!-- Start Breadcrumbs -->
 <div class="breadcrumbs">
@@ -95,6 +114,9 @@
             <div class="row align-items-center">
                 <div class="col-lg-4 col-md-12 col-12">
                     <div class="product-images">
+                        <div class="mobile-title d-block d-lg-none text-center mb-2">
+                            <h5 class="fw-bold"><?= $item->nama_sepatu ?></h5>
+                        </div>
                         <main id="gallery">
                             <div class="main-img" style="position: relative;">
                                 <?php if ($item->is_new): ?>
@@ -105,18 +127,18 @@
                                     </span>
                                 <?php endif; ?>
                                 <img src="<?= base_url('assets/images/item/' . $gambar_detail) ?>"
-                                    style="width: 600px; height: 600px; object-fit: cover;" id="current" alt="#">
+                                    class="product-main-img" id="current" alt="#">
                             </div>
                         </main>
                     </div>
                 </div>
                 <div class="col-lg-8 col-md-12 col-12">
                     <div class="product-info">
-                        <h2 class="mb-2"><?= $item->nama_sepatu ?></h2>
+                        <h2 class="mb-2 d-none d-lg-block"><?= $item->nama_sepatu ?></h2>
                         <label><i class="lni lni-tag me-2"></i> <?= $item->nama_kategori ?> | <label
                                 class="text-primary"><?= $item->merk ?></label></label>
                         <hr class="text text-primary">
-                        <h3 id="harga">Rp. <?= number_format($harga, 0, ',', '.') ?></h3>
+                        <h4 id="harga">Rp. <?= number_format($harga, 0, ',', '.') ?></h4>
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group color-option">

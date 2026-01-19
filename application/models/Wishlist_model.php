@@ -5,7 +5,8 @@ class Wishlist_model extends CI_Model
     {
         return $this->db
             ->select('wishlist.id_wishlist, item.id_item, item.nama_sepatu, item.gambar, kategori.nama_kategori,
-            MIN(detail_item.harga) AS harga_termurah,item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new')
+            COALESCE(MIN(CASE WHEN detail_item.stok > 0 THEN detail_item.harga END), MIN(detail_item.harga)) AS harga_termurah,
+            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new')
             ->from('wishlist')
             ->join('item', 'wishlist.id_item = item.id_item')
             ->join('kategori', 'item.id_kategori = kategori.id_kategori')
@@ -38,7 +39,8 @@ class Wishlist_model extends CI_Model
             'id_item' => $id_item
         ])->row();
 
-        if ($cek) return false;
+        if ($cek)
+            return false;
 
         return $this->db->insert('wishlist', [
             'id_wishlist' => $this->generate_id(),

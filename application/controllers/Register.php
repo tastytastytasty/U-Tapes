@@ -9,12 +9,14 @@ class Register extends MY_Controller
 		$this->load->library(['form_validation', 'session']);
 		$this->load->database();
 		if ($this->session->userdata('logged_in')) {
-            redirect('homepage');
-        }
+			redirect('homepage');
+		}
 	}
 
 	public function index()
 	{
+		$this->load->model('WilayahModel');
+		$data['provinsi'] = $this->WilayahModel->get_provinsi();
 		$this->form_validation->set_rules(
 			'email',
 			'Email',
@@ -50,13 +52,14 @@ class Register extends MY_Controller
 			'No Telepon',
 			'required|trim|is_unique[customer.no_telp]'
 		);
-		$this->form_validation->set_rules(
-			'alamat',
-			'Alamat',
-			'required|trim'
-		);
+		$this->form_validation->set_rules('provinsi_id', 'Provinsi', 'required');
+		$this->form_validation->set_rules('kabupaten_id', 'Kabupaten', 'required');
+		$this->form_validation->set_rules('kecamatan_id', 'Kecamatan', 'required');
+		$this->form_validation->set_rules('kelurahan_id', 'Kelurahan', 'required');
+		$this->form_validation->set_rules('kode_pos', 'Kode Pos', 'required|trim');
+		$this->form_validation->set_rules('detail', 'Detail Alamat', 'required|trim');
 		if ($this->form_validation->run() == FALSE) {
-			$this->load->view('register');
+			$this->load->view('register', $data);
 		} else {
 			$this->_register();
 		}
@@ -100,7 +103,15 @@ class Register extends MY_Controller
 		$alamat = [
 			'id_alamat' => $id_alamat,
 			'id_customer' => $id_customer,
-			'alamat' => $this->input->post('alamat', true)
+			'provinsi_id' => $this->input->post('provinsi_id', true),
+			'kabupaten_id' => $this->input->post('kabupaten_id', true),
+			'kecamatan_id' => $this->input->post('kecamatan_id', true),
+			'kelurahan_id' => $this->input->post('kelurahan_id', true),
+			'kode_pos' => $this->input->post('kode_pos', true),
+			'detail' => $this->input->post('detail', true),
+			'is_default' => 1,
+			'latitude' => 0,
+			'longitude' => 0
 		];
 		$this->db->trans_start();
 		$this->db->insert('customer', $customer);

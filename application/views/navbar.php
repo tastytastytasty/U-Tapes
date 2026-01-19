@@ -99,9 +99,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             padding: 15px 0;
         }
     }
+
     html,
     body {
         overflow-x: hidden;
+    }
+
+    .cart-items {
+        position: relative;
+    }
+
+    .cart-items .shopping-item {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 10px;
+        z-index: 9999;
+        min-width: 280px;
     }
 </style>
 
@@ -166,7 +181,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                         <div class="navbar-cart">
                             <div class="cart-items me-2">
-                                <a href="<?= site_url('keranjang') ?>" class="main-btn">
+                                <a href="javascript:void(0)" class="main-btn">
                                     <i class="lni lni-ticket"></i>
                                     <span class="total-items">1</span>
                                 </a>
@@ -196,7 +211,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <div class="cart-items me-2">
                                 <?php if ($this->session->userdata('logged_in')): ?>
-                                    <a href="<?= site_url('wishlist') ?>" class="main-btn btn-wishlist-navbar"
+                                    <a href="javascript:void(0)" class="main-btn btn-wishlist-navbar"
                                         data-href="<?= site_url('wishlist') ?>">
                                         <i class="lni lni-heart"></i>
                                         <span class="total-items total-wishes"><?= $wishlist_count ?></span>
@@ -244,7 +259,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </div>
                                     </div>
                                 <?php else: ?>
-                                    <a href="<?= site_url('wishlist') ?>" class="main-btn btn-wishlist-navbar"
+                                    <a href="javascript:void(0)" class="main-btn btn-wishlist-navbar"
                                         data-need-login="1">
                                         <i class="lni lni-heart"></i>
                                     </a>
@@ -260,7 +275,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <?php endif; ?>
                             </div>
                             <div class="cart-items">
-                                <a href="<?= site_url('keranjang') ?>" class="main-btn">
+                                <a href="javascript:void(0)" class="main-btn">
                                     <i class="lni lni-cart"></i>
                                     <span class="total-items">2</span>
                                 </a>
@@ -268,7 +283,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="shopping-item">
                                     <div class="dropdown-cart-header">
                                         <span>2 Items</span>
-                                        <a href="<?= site_url('keranjang') ?>">View Cart</a>
+                                        <a href="<?= site_url('keranjang') ?>">Selengkapnya</a>
                                     </div>
                                     <ul class="shopping-list">
                                         <li>
