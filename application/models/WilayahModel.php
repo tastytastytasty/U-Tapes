@@ -95,4 +95,4 @@ class WilayahModel extends CI_Model
             ->result();
     }
 }
->>>>>>> a82df0216c3889a1dd897495a94166fc8209b913
+
