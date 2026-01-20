@@ -68,9 +68,7 @@ class WilayahModel extends CI_Model
         $row = $this->db->select('nama')->where('kelurahan_id', $id)->get('kelurahan')->row();
         return $row ? $row->nama : '';
     }
-<<<<<<< HEAD
-}
-=======
+
     public function get_provinsi()
     {
         return $this->db->get('provinsi')->result();
