@@ -26,12 +26,141 @@
             width: 100%;
         }
 
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ======================
+           BREADCRUMBS
+        ====================== */
+        .breadcrumbs {
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 24px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .breadcrumb-nav {
+            list-style: none;
+            display: inline-flex;
+            gap: 8px;
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .breadcrumb-nav li a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+
+        /* ======================
+           LAYOUT
+        ====================== */
+        .profile-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ======================
+           SIDEBAR
+        ====================== */
+        .profile-sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid #e5e5e5;
+            padding: 20px;
+        }
+
+        .profile-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .profile-user img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-user strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .profile-user span {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .profile-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-menu li {
+            margin-bottom: 8px;
+        }
+
+        .profile-menu .menu-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .profile-menu a.active,
+        .profile-menu a:hover {
+            background-color: #eef2ff;
+            color: #0d6efd;
+            font-weight: 500;
+        }
+
+        .profile-menu hr {
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        /* ======================
+           CONTENT
+        ====================== */
+        .profile-content {
+            flex: 1;
+            padding: 40px;
+            background: #f5f6f8;
+        }
+
         /* Container */
         .ps-container {
             width: 100%;
             max-width: 900px;
-            margin: 0 auto;
-            padding: 20px 16px;
         }
 
         /* Title */
@@ -125,6 +254,18 @@
             gap: 8px;
         }
 
+        .ps-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ps-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .ps-invoice {
             color: #64748b;
             font-size: 13px;
@@ -136,6 +277,18 @@
 
         .ps-invoice i {
             color: #94a3b8;
+        }
+
+        .ps-date {
+            color: #94a3b8;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ps-date i {
+            font-size: 11px;
         }
 
         .ps-status {
@@ -360,26 +513,26 @@
             margin-top: 8px;
         }
 
-        /* Badge */
-        .ps-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .badge-qty {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-
         /* Responsive */
+        @media (max-width: 992px) {
+            .profile-wrapper {
+                flex-direction: column;
+            }
+
+            .profile-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .profile-content {
+                padding: 25px;
+            }
+        }
+
         @media (max-width: 768px) {
             .ps-container {
-                padding: 16px;
+                padding: 0;
                 width: 100%;
             }
 
@@ -431,9 +584,9 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .ps-container {
-                padding: 14px;
+        @media (max-width: 576px) {
+            .profile-content {
+                padding: 15px;
             }
 
             .ps-title {
@@ -481,220 +634,281 @@
                 padding: 5px 10px;
             }
 
-            .ps-btn {
-                padding: 10px 16px;
-                font-size: 13px;
+            .ps-header-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
             }
         }
 
         @media (max-width: 414px) {
-            .ps-container {
-                padding: 12px;
-            }
-
-            .ps-card {
-                border-radius: 14px;
-            }
-
-            .ps-item img {
-                width: 58px;
-                height: 58px;
-            }
-        }
-
-        @media (max-width: 375px) {
-            .ps-container {
-                padding: 10px;
-            }
-
-            .ps-title {
-                font-size: 17px;
-            }
-
-            .ps-card {
-                padding: 12px;
-            }
-
-            .ps-tab {
-                padding: 7px 12px;
+            .ps-date {
                 font-size: 11px;
+            }
+
+            .ps-btn {
+                padding: 10px 16px;
+                font-size: 13px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="ps-container">
-        <div class="ps-title"><i class="bi bi-bag-check"></i> Pesanan Saya</div>
-
-        <div class="ps-tabs">
-            <div class="ps-tab active" onclick="showTab('all')">
-                <i class="bi bi-list-ul"></i> Semua
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumbs">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="page-title"></h1>
             </div>
-            <div class="ps-tab" onclick="showTab('process')">
-                <i class="bi bi-clock-history"></i> Diproses
-            </div>
-            <div class="ps-tab" onclick="showTab('send')">
-                <i class="bi bi-truck"></i> Dikirim
-            </div>
-            <div class="ps-tab" onclick="showTab('done')">
-                <i class="bi bi-check-circle"></i> Selesai
+            <div class="col-md-6 text-end">
+                <ul class="breadcrumb-nav">
+                    <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Home</a></li>
+                    <li>Pesanan</li>
+                </ul>
             </div>
         </div>
+    </div>
 
-        <!-- SEMUA -->
-        <div id="all" class="ps-content active">
-            <div class="ps-card">
-                <div class="ps-header">
-                    <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-001</div>
-                    <div class="ps-status status-process">Diproses</div>
+    <div class="profile-wrapper">
+        <!-- SIDEBAR -->
+        <div class="profile-sidebar">
+            <div class="profile-user">
+                <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
+                <div>
+                    <strong><?= htmlspecialchars($user['nama'] ?? 'Guest') ?></strong><br>
+                    <span>Ubah Profil</span>
                 </div>
+            </div>
 
-                <div class="ps-item">
-                    <img src="https://via.placeholder.com/70" alt="Product">
-                    <div class="ps-item-info">
-                        <div class="ps-item-name">Keyboard Mechanical RGB</div>
-                        <div class="ps-item-price">Rp 750.000</div>
-                    </div>
-                </div>
+            <ul class="profile-menu">
+                <li class="menu-title">
+                    <i class="bi bi-person"></i> Akun Saya
+                </li>
+                <li><a href="<?= site_url('profile') ?>">Profil</a></li>
+                <li><a href="<?= site_url('Alamat') ?>">Alamat</a></li>
+                <li><a href="#">Ubah Password</a></li>
 
-                <div class="ps-footer">
-                    <div class="ps-total">Total: <span>Rp 750.000</span></div>
-                    <a class="ps-btn" href="<?= site_url('invoice/view/INV-001') ?>">
-                        <i class="bi bi-eye"></i> Detail
+                <hr>
+
+                <li>
+                    <a href="<?= site_url('pesanan') ?>" class="active">
+                        <i class="bi bi-receipt"></i> Pesanan Saya
                     </a>
-                </div>
-            </div>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="bi bi-bell"></i> Notifikasi
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-            <div class="ps-card">
-                <div class="ps-header">
-                    <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-005</div>
-                    <div class="ps-status status-done">Selesai</div>
-                </div>
+        <!-- CONTENT -->
+        <div class="profile-content">
+            <div class="ps-container">
+                <div class="ps-title"><i class="bi bi-bag-check"></i> Pesanan Saya</div>
 
-                <div class="ps-item">
-                    <img src="https://via.placeholder.com/70" alt="Product">
-                    <div class="ps-item-info">
-                        <div class="ps-item-name">Mouse Gaming Wireless</div>
-                        <div class="ps-item-price">Rp 450.000</div>
+                <div class="ps-tabs">
+                    <div class="ps-tab active" onclick="showTab('all')">
+                        <i class="bi bi-list-ul"></i> Semua
+                    </div>
+                    <div class="ps-tab" onclick="showTab('process')">
+                        <i class="bi bi-clock-history"></i> Diproses
+                    </div>
+                    <div class="ps-tab" onclick="showTab('send')">
+                        <i class="bi bi-truck"></i> Dikirim
+                    </div>
+                    <div class="ps-tab" onclick="showTab('done')">
+                        <i class="bi bi-check-circle"></i> Selesai
                     </div>
                 </div>
 
-                <div class="ps-more-items" id="items-5">
-                    <div class="ps-item">
-                        <img src="https://via.placeholder.com/70" alt="Product">
-                        <div class="ps-item-info">
-                            <div class="ps-item-name">Monitor Gaming 144Hz 27"</div>
-                            <div class="ps-item-price">Rp 4.999.999</div>
+                <!-- SEMUA -->
+                <div id="all" class="ps-content active">
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-001</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 15 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-process">Diproses</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Keyboard Mechanical RGB</div>
+                                <div class="ps-item-price">Rp 750.000</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span>Rp 750.000</span></div>
+                            <a class="ps-btn" href="<?= site_url('invoice/view/INV-001') ?>">
+                                <i class="bi bi-eye"></i> Detail
+                            </a>
                         </div>
                     </div>
 
-                    <div class="ps-item">
-                        <img src="https://via.placeholder.com/70" alt="Product">
-                        <div class="ps-item-info">
-                            <div class="ps-item-name">Kursi Gaming Ergonomic</div>
-                            <div class="ps-item-price">Rp 8.500.000</div>
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-005</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 10 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-done">Selesai</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Mouse Gaming Wireless</div>
+                                <div class="ps-item-price">Rp 450.000</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-more-items" id="items-5">
+                            <div class="ps-item">
+                                <img src="https://via.placeholder.com/70" alt="Product">
+                                <div class="ps-item-info">
+                                    <div class="ps-item-name">Monitor Gaming 144Hz 27"</div>
+                                    <div class="ps-item-price">Rp 4.999.999</div>
+                                </div>
+                            </div>
+
+                            <div class="ps-item">
+                                <img src="https://via.placeholder.com/70" alt="Product">
+                                <div class="ps-item-info">
+                                    <div class="ps-item-name">Kursi Gaming Ergonomic</div>
+                                    <div class="ps-item-price">Rp 8.500.000</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="ps-toggle" onclick="toggleItems('items-5', this)">
+                            <i class="bi bi-chevron-down"></i>
+                            <span>Lihat 2 barang lainnya</span>
+                        </button>
+
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span>Rp 13.949.999</span></div>
+                            <button class="ps-btn"><i class="bi bi-eye"></i> Detail</button>
+                        </div>
+                    </div>
+
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-003</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 12 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-send">Dikirim</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Headset Gaming 7.1 Surround</div>
+                                <div class="ps-item-price">Rp 500.000</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span>Rp 500.000</span></div>
+                            <button class="ps-btn"><i class="bi bi-geo-alt"></i> Lacak Pesanan</button>
                         </div>
                     </div>
                 </div>
 
-                <button class="ps-toggle" onclick="toggleItems('items-5', this)">
-                    <i class="bi bi-chevron-down"></i>
-                    <span>Lihat 2 barang lainnya</span>
-                </button>
+                <!-- DIPROSES -->
+                <div id="process" class="ps-content">
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-002</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 18 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-process">Diproses</div>
+                            </div>
+                        </div>
 
-                <div class="ps-footer">
-                    <div class="ps-total">Total: <span>Rp 13.949.999</span></div>
-                    <button class="ps-btn"><i class="bi bi-eye"></i> Detail</button>
-                </div>
-            </div>
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Mouse Gaming Pro X</div>
+                                <div class="ps-item-price">Rp 350.000</div>
+                            </div>
+                        </div>
 
-            <div class="ps-card">
-                <div class="ps-header">
-                    <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-003</div>
-                    <div class="ps-status status-send">Dikirim</div>
-                </div>
-
-                <div class="ps-item">
-                    <img src="https://via.placeholder.com/70" alt="Product">
-                    <div class="ps-item-info">
-                        <div class="ps-item-name">Headset Gaming 7.1 Surround</div>
-                        <div class="ps-item-price">Rp 500.000</div>
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span>Rp 350.000</span></div>
+                            <button class="ps-btn"><i class="bi bi-eye"></i> Detail</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="ps-footer">
-                    <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                    <button class="ps-btn"><i class="bi bi-geo-alt"></i> Lacak Pesanan</button>
-                </div>
-            </div>
-        </div>
+                <!-- DIKIRIM -->
+                <div id="send" class="ps-content">
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-003</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 12 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-send">Dikirim</div>
+                            </div>
+                        </div>
 
-        <!-- DIPROSES -->
-        <div id="process" class="ps-content">
-            <div class="ps-card">
-                <div class="ps-header">
-                    <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-002</div>
-                    <div class="ps-status status-process">Diproses</div>
-                </div>
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Headset Gaming 7.1 Surround</div>
+                                <div class="ps-item-price">Rp 500.000</div>
+                            </div>
+                        </div>
 
-                <div class="ps-item">
-                    <img src="https://via.placeholder.com/70" alt="Product">
-                    <div class="ps-item-info">
-                        <div class="ps-item-name">Mouse Gaming Pro X</div>
-                        <div class="ps-item-price">Rp 350.000</div>
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span>Rp 500.000</span></div>
+                            <button class="ps-btn"><i class="bi bi-geo-alt"></i> Lacak Pesanan</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="ps-footer">
-                    <div class="ps-total">Total: <span>Rp 350.000</span></div>
-                    <button class="ps-btn"><i class="bi bi-eye"></i> Detail</button>
-                </div>
-            </div>
-        </div>
+                <!-- SELESAI -->
+                <div id="done" class="ps-content">
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-004</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 5 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-done">Selesai</div>
+                            </div>
+                        </div>
 
-        <!-- DIKIRIM -->
-        <div id="send" class="ps-content">
-            <div class="ps-card">
-                <div class="ps-header">
-                    <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-003</div>
-                    <div class="ps-status status-send">Dikirim</div>
-                </div>
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Monitor LED 24 inch Full HD</div>
+                                <div class="ps-item-price">Rp 2.000.000</div>
+                            </div>
+                        </div>
 
-                <div class="ps-item">
-                    <img src="https://via.placeholder.com/70" alt="Product">
-                    <div class="ps-item-info">
-                        <div class="ps-item-name">Headset Gaming 7.1 Surround</div>
-                        <div class="ps-item-price">Rp 500.000</div>
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span>Rp 2.000.000</span></div>
+                            <button class="ps-btn ps-btn-success"><i class="bi bi-cart-plus"></i> Beli Lagi</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="ps-footer">
-                    <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                    <button class="ps-btn"><i class="bi bi-geo-alt"></i> Lacak Pesanan</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- SELESAI -->
-        <div id="done" class="ps-content">
-            <div class="ps-card">
-                <div class="ps-header">
-                    <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-004</div>
-                    <div class="ps-status status-done">Selesai</div>
-                </div>
-
-                <div class="ps-item">
-                    <img src="https://via.placeholder.com/70" alt="Product">
-                    <div class="ps-item-info">
-                        <div class="ps-item-name">Monitor LED 24 inch Full HD</div>
-                        <div class="ps-item-price">Rp 2.000.000</div>
-                    </div>
-                </div>
-
-                <div class="ps-footer">
-                    <div class="ps-total">Total: <span>Rp 2.000.000</span></div>
-                    <button class="ps-btn ps-btn-success"><i class="bi bi-cart-plus"></i> Beli Lagi</button>
                 </div>
             </div>
         </div>
