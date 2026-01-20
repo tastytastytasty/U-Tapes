@@ -10,6 +10,11 @@
             line-height: 1.3;
         }
     }
+    .new-tag,
+	.sale-tag {
+		position: static !important;
+        margin-top: 15px;
+	}
 </style>
 <?php if (empty($items)): ?>
     <div class="col-12 text-center">
@@ -34,9 +39,18 @@
                                 <i class="lni <?= $item->in_wishlist ? 'lni-heart-filled' : 'lni-heart' ?>"></i>
                             </button>
                         </div>
-                        <?php if ($item->is_new): ?>
-                            <span class="new-tag">Baru</span>
-                        <?php endif; ?>
+                        <div class="badge-wrapper badge-desktop">
+                            <?php if ($item->is_new): ?>
+                                <span class="new-tag">Baru</span>
+                            <?php endif; ?>
+                            <?php if ($item->is_sale): ?>
+                                <?php if ($item->persen_promo > 0): ?>
+                                    <span class="sale-tag">-<?= $item->persen_promo ?>%</span>
+                                <?php elseif ($item->harga_promo > 0): ?>
+                                    <span class="sale-tag">-Rp <?= number_format($item->harga_promo, 0, ',', '.') ?></span>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                         <div class="button">
                             <a href="<?= site_url('detailproduct/' . $item->id_item) ?>" class="btn">
                                 Lihat Detail

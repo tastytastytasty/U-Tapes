@@ -183,7 +183,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <div class="cart-items me-2">
                                 <a href="javascript:void(0)" class="main-btn">
                                     <i class="lni lni-ticket"></i>
-                                    <span class="total-items">1</span>
                                 </a>
                                 <!-- Shopping Item -->
                                 <div class="shopping-item">

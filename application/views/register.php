@@ -84,90 +84,44 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             </div>
                                         <?php endif; ?>
                                         <div class="row">
-                                            <!-- KIRI: DATA AKUN -->
                                             <div class="col-md-6">
                                                 <div class="mb-3">
+                                                    <p class="mb-0">Email</p>
                                                     <input type="email" class="form-control form-control-lg"
                                                         name="email" placeholder="Email" required>
                                                 </div>
                                                 <div class="mb-3">
+                                                    <p class="mb-0">Password</p>
                                                     <input type="password" class="form-control form-control-lg"
                                                         name="password" placeholder="Password" required>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <input type="password" class="form-control form-control-lg"
-                                                        name="password2" placeholder="Konfirmasi Password" required>
+                                                <div>
+                                                    <p class="mb-0">Kode OTP</p>
+                                                    <input type="number" class="form-control form-control-lg"
+                                                        name="no_telp" placeholder="Kode OTP" required>
                                                 </div>
+                                                <div class="d-flex justify-content-inline justify-content-between">
+                                                    <p class="text-sm text-center mt-3 text-primary">Kirim kode</p>
+                                                    <p class="text-sm text-center mt-3 text-primary">Kirim ulang</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
                                                 <div class="mb-3">
+                                                    <p class="mb-0">Nama Lengkap</p>
                                                     <input type="text" class="form-control form-control-lg" name="nama"
                                                         placeholder="Nama Lengkap" required>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <select name="jenis_kelamin" class="form-control form-control-lg"
-                                                        required>
-                                                        <option value="">Pilih Jenis Kelamin</option>
-                                                        <option value="Pria">Laki-laki</option>
-                                                        <option value="Wanita">Perempuan</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="date" class="form-control form-control-lg"
-                                                        name="tanggal_lahir" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="text" class="form-control form-control-lg"
-                                                        name="no_telp" placeholder="Nomor Telepon" required>
-                                                </div>
-                                            </div>
-
-                                            <!-- KANAN: ALAMAT -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <select name="provinsi_id" id="provinsi"
-                                                        class="form-control form-control-lg select2" required>
-                                                        <option value="">Pilih Provinsi</option>
-                                                        <?php foreach ($provinsi as $p): ?>
-                                                            <option value="<?= $p->provinsi_id ?>"><?= $p->nama ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <select name="kabupaten_id" id="kabupaten"
-                                                        class="form-control form-control-lg select2" required>
-                                                        <option value="">Pilih Kabupaten</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <select name="kecamatan_id" id="kecamatan"
-                                                        class="form-control form-control-lg select2" required>
-                                                        <option value="">Pilih Kecamatan</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <select name="kelurahan_id" id="kelurahan"
-                                                        class="form-control form-control-lg select2" required>
-                                                        <option value="">Pilih Kelurahan</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="text" name="kode_pos"
-                                                        class="form-control form-control-lg" placeholder="Kode Pos"
-                                                        required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <textarea name="detail" class="form-control form-control-lg"
-                                                        placeholder="Detail Alamat" required
-                                                        style="height: 115px;"></textarea>
+                                                    <p class="mb-0">Konfirmasi Password</p>
+                                                    <input type="password" class="form-control form-control-lg"
+                                                        name="password2" placeholder="Konfirmasi Password" required>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <!-- BUTTON TENGAH -->
                                         <div class="text-center mt-3">
                                             <button type="submit"
                                                 class="btn btn-lg btn-primary px-5 w-100">Register</button>
                                         </div>
-
                                         <p class="text-sm text-center mt-3">
                                             Sudah punya akun?
                                             <a href="<?= site_url('login') ?>" class="text-primary">Klik disini</a>
@@ -213,41 +167,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="<?= base_url('assets/') ?>js/argon-dashboard.min.js?v=2.1.0"></script>
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
-    <script>
-        $(document).ready(function () {
-            $('.select2').select2({ width: '100%' });
-
-            $('#provinsi').on('change', function () {
-                let id = $(this).val();
-                console.log('Provinsi:', id);
-
-                $('#kabupaten').html('<option value="">Loading...</option>');
-                $.get('<?= site_url("wilayah/get_kabupaten/") ?>' + id, function (data) {
-                    $('#kabupaten').html(data).trigger('change.select2');
-                    $('#kecamatan').html('<option value="">Pilih Kecamatan</option>').trigger('change.select2');
-                    $('#kelurahan').html('<option value="">Pilih Kelurahan</option>').trigger('change.select2');
-                });
-            });
-
-            $('#kabupaten').on('change', function () {
-                let id = $(this).val();
-                $('#kecamatan').html('<option value="">Loading...</option>');
-                $.get('<?= site_url("wilayah/get_kecamatan/") ?>' + id, function (data) {
-                    $('#kecamatan').html(data).trigger('change.select2');
-                    $('#kelurahan').html('<option value="">Pilih Kelurahan</option>').trigger('change.select2');
-                });
-            });
-
-            $('#kecamatan').on('change', function () {
-                let id = $(this).val();
-                $('#kelurahan').html('<option value="">Loading...</option>');
-                $.get('<?= site_url("wilayah/get_kelurahan/") ?>' + id, function (data) {
-                    $('#kelurahan').html(data).trigger('change.select2');
-                });
-            });
-        });
-    </script>
-
 </body>
 
 </html>

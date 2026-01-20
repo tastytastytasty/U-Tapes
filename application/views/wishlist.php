@@ -29,6 +29,13 @@
     .product-image:hover .product-actions {
         opacity: 1;
     }
+
+    .new-tag,
+    .sale-tag {
+        position: static !important;
+        margin-top: 15px;
+    }
+</style>
 </style>
 <!-- Start Breadcrumbs -->
 <div class="breadcrumbs">
@@ -82,9 +89,18 @@
                                             <i class="lni lni-heart-filled"></i>
                                         </button>
                                     </div>
-                                    <?php if ($w->is_new): ?>
-                                        <span class="new-tag">Baru</span>
-                                    <?php endif; ?>
+                                    <div class="badge-wrapper badge-desktop">
+                                        <?php if ($w->is_new): ?>
+                                            <span class="new-tag">Baru</span>
+                                        <?php endif; ?>
+                                        <?php if ($w->is_sale): ?>
+                                            <?php if ($w->persen_promo > 0): ?>
+                                                <span class="sale-tag">-<?= $w->persen_promo ?>%</span>
+                                            <?php elseif ($w->harga_promo > 0): ?>
+                                                <span class="sale-tag">-Rp <?= number_format($w->harga_promo, 0, ',', '.') ?></span>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
                                     <div class="button mt-2 text-center"> <a href="<?= site_url('detailproduct/' . $w->id_item) ?>"
                                             class="btn btn-sm btn-primary"> Lihat Detail </a> </div>
                                 </div>
