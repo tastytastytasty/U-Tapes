@@ -177,7 +177,7 @@
 
         .alamat-card-actions .btn {
             padding: 6px 12px;
-            background: #49f846;
+            background: #0d6efd;
             color: #fff;
             border-radius: 6px;
             font-size: 13px;
@@ -624,6 +624,11 @@
                 max-height: 180px;
             }
         }
+
+        .input-kodepos {
+    max-width: 150px;   /* atur sesuai selera */
+}
+
     </style>
 </head>
 
@@ -764,8 +769,9 @@
 
                                     <div class="form-group full">
                                         <label>Kode Pos</label>
-                                        <input type="text" id="kode_pos" placeholder="Kode Pos">
+                                        <input type="text" id="kode_pos" class="input-kodepos" placeholder="Kode Pos">
                                     </div>
+
                                 </div>
                             </form>
                         </div>
@@ -779,321 +785,327 @@
             </div>
         </div>
     </div>
-   <script>
-const BASE_URL = '<?= base_url("index.php/") ?>';
+    <script>
+        const BASE_URL = '<?= base_url("index.php/") ?>';
 
-let selectedProvinsi = null;
-let selectedKabupaten = null;
-let selectedKecamatan = null;
-let selectedKelurahan = null;
+        let selectedProvinsi = null;
+        let selectedKabupaten = null;
+        let selectedKecamatan = null;
+        let selectedKelurahan = null;
 
-/* ================= DROPDOWN CONTROL ================= */
-function toggleDropdown(type) {
-    const list = document.getElementById(type + 'List');
-    const selected = document.getElementById(type + 'Selected');
-    const open = list.style.display === 'block';
+        /* ================= DROPDOWN CONTROL ================= */
+        function toggleDropdown(type) {
+            const list = document.getElementById(type + 'List');
+            const selected = document.getElementById(type + 'Selected');
+            const open = list.style.display === 'block';
 
-    document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
 
-    if (!open) {
-        list.style.display = 'block';
-        selected.classList.add('active');
-    }
-}
-
-function closeAllDropdowns() {
-    document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
-}
-
-document.addEventListener('click', e => {
-    if (!e.target.closest('.dropdown-box')) closeAllDropdowns();
-});
-
-/* ================= FILTER ================= */
-function filterDropdown(input, type) {
-    const val = input.value.toLowerCase();
-    document.querySelectorAll('#' + type + 'Items .dropdown-item').forEach(item => {
-        item.style.display = item.textContent.toLowerCase().includes(val) ? '' : 'none';
-    });
-}
-
-/* ================= MODAL ================= */
-function openModal() {
-    document.getElementById('modalAlamat').classList.add('show');
-    document.body.classList.add('modal-open');
-    resetAll();
-    loadProvinsi();
-}
-
-function closeModal() {
-    document.getElementById('modalAlamat').classList.remove('show');
-    document.body.classList.remove('modal-open');
-}
-
-/* ================= RESET ================= */
-function resetAll() {
-    selectedProvinsi = selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
-    document.getElementById('id_alamat').value = '';
-    setSelectedText('provinsi', 'Pilih Provinsi');
-    setSelectedText('kabupaten', 'Pilih Kabupaten');
-    setSelectedText('kecamatan', 'Pilih Kecamatan');
-    setSelectedText('kelurahan', 'Pilih Kelurahan');
-    clearItems('kabupaten');
-    clearItems('kecamatan');
-    clearItems('kelurahan');
-    document.getElementById('detail').value = '';
-    document.getElementById('kode_pos').value = '';
-}
-
-function setSelectedText(type, text) {
-    document.getElementById(type + 'Selected').innerText = text;
-}
-
-function clearItems(type) {
-    document.getElementById(type + 'Items').innerHTML = '';
-}
-
-/* ================= FETCH DATA ================= */
-function loadProvinsi() {
-    fetch(BASE_URL + 'alamat/provinsi')
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById('provinsiItems');
-            container.innerHTML = '';
-            data.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'dropdown-item';
-                div.innerText = item.name;
-                div.onclick = () => {
-                    selectedProvinsi = item.id;
-                    setSelectedText('provinsi', item.name);
-                    closeAllDropdowns();
-
-                    selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
-                    setSelectedText('kabupaten', 'Pilih Kabupaten');
-                    setSelectedText('kecamatan', 'Pilih Kecamatan');
-                    setSelectedText('kelurahan', 'Pilih Kelurahan');
-                    clearItems('kabupaten');
-                    clearItems('kecamatan');
-                    clearItems('kelurahan');
-
-                    loadKabupaten(item.id);
-                };
-                container.appendChild(div);
-            });
-        });
-}
-
-function loadKabupaten(provinsiId) {
-    fetch(BASE_URL + 'alamat/kabupaten/' + provinsiId)
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById('kabupatenItems');
-            container.innerHTML = '';
-            data.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'dropdown-item';
-                div.innerText = item.name;
-                div.onclick = () => {
-                    selectedKabupaten = item.id;
-                    setSelectedText('kabupaten', item.name);
-                    closeAllDropdowns();
-
-                    selectedKecamatan = selectedKelurahan = null;
-                    setSelectedText('kecamatan', 'Pilih Kecamatan');
-                    setSelectedText('kelurahan', 'Pilih Kelurahan');
-                    clearItems('kecamatan');
-                    clearItems('kelurahan');
-
-                    loadKecamatan(item.id);
-                };
-                container.appendChild(div);
-            });
-        });
-}
-
-function loadKecamatan(kabupatenId) {
-    fetch(BASE_URL + 'alamat/kecamatan/' + kabupatenId)
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById('kecamatanItems');
-            container.innerHTML = '';
-            data.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'dropdown-item';
-                div.innerText = item.name;
-                div.onclick = () => {
-                    selectedKecamatan = item.id;
-                    setSelectedText('kecamatan', item.name);
-                    closeAllDropdowns();
-
-                    selectedKelurahan = null;
-                    setSelectedText('kelurahan', 'Pilih Kelurahan');
-                    clearItems('kelurahan');
-
-                    loadKelurahan(item.id);
-                };
-                container.appendChild(div);
-            });
-        });
-}
-
-function loadKelurahan(kecamatanId) {
-    return fetch(BASE_URL + 'alamat/kelurahan/' + kecamatanId)
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById('kelurahanItems');
-            container.innerHTML = '';
-            data.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'dropdown-item';
-                div.innerText = item.name;
-                div.onclick = () => {
-                    selectedKelurahan = item.id;
-                    setSelectedText('kelurahan', item.name);
-                    closeAllDropdowns();
-                };
-                container.appendChild(div);
-            });
-            return data; // ⬅️ penting
-        });
-}
-
-
-function resetKabupaten() {
-    $('#kabupaten').empty().append('<option value="">Pilih Kabupaten</option>').trigger('change');
-}
-
-function resetKecamatan() {
-    $('#kecamatan').empty().append('<option value="">Pilih Kecamatan</option>').trigger('change');
-}
-
-function resetKelurahan() {
-    $('#kelurahan').empty().append('<option value="">Pilih Kelurahan</option>').trigger('change');
-}
-
-function confirmChange(type) {
-    if (type === 'provinsi') {
-        resetKabupaten();
-        resetKecamatan();
-        resetKelurahan();
-    }
-    if (type === 'kabupaten') {
-        resetKecamatan();
-        resetKelurahan();
-    }
-    if (type === 'kecamatan') {
-        resetKelurahan();
-    }
-}
-
-
-/* ================= CRUD ================= */
-function simpanAlamat() {
-    if (!selectedProvinsi || !selectedKabupaten || !selectedKecamatan || !selectedKelurahan) {
-        alert('Lengkapi alamat wilayah!');
-        return;
-    }
-
-    const detail = document.getElementById('detail').value.trim();
-    const kode_pos = document.getElementById('kode_pos').value.trim();
-    if (!detail || !kode_pos) {
-        alert('Detail alamat dan kode pos wajib diisi!');
-        return;
-    }
-
-    const id = document.getElementById('id_alamat').value;
-    const data = {
-        provinsi_id: selectedProvinsi,
-        kabupaten_id: selectedKabupaten,
-        kecamatan_id: selectedKecamatan,
-        kelurahan_id: selectedKelurahan,
-        detail: detail,
-        kode_pos: kode_pos
-    };
-    if (id) data.id_alamat = id;
-
-    const url = id ? BASE_URL + 'alamat/update' : BASE_URL + 'alamat/simpan';
-
-    fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data)
-    })
-    .then(res => res.json())
-    .then(res => {
-        if (res.success) {
-            alert(res.message);
-            location.reload();
-        } else {
-            alert(res.message || 'Gagal menyimpan');
+            if (!open) {
+                list.style.display = 'block';
+                selected.classList.add('active');
+            }
         }
-    })
-    .catch(() => alert('Gagal menyimpan alamat'));
-}
 
-function deleteAlamat(id) {
-    if (!confirm('Yakin ingin menghapus alamat ini?')) return;
-
-    fetch(BASE_URL + 'alamat/hapus', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ id_alamat: id })
-    })
-    .then(res => res.json())
-    .then(res => {
-        if (res.success) {
-            alert(res.message);
-            location.reload();
-        } else {
-            alert(res.message || 'Gagal menghapus');
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
         }
-    })
-    .catch(() => alert('Gagal menghapus alamat'));
-}
 
-function openEditModal(id) {
-    fetch(BASE_URL + 'alamat/get/' + id)
-        .then(res => res.json())
-        .then(res => {
-            if (!res.success) {
-                alert('Gagal memuat data');
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.dropdown-box')) closeAllDropdowns();
+        });
+
+        /* ================= FILTER ================= */
+        function filterDropdown(input, type) {
+            const val = input.value.toLowerCase();
+            document.querySelectorAll('#' + type + 'Items .dropdown-item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(val) ? '' : 'none';
+            });
+        }
+
+        /* ================= MODAL ================= */
+        function openModal() {
+            document.getElementById('modalAlamat').classList.add('show');
+            document.body.classList.add('modal-open');
+            resetAll();
+            loadProvinsi();
+        }
+
+        function closeModal() {
+            document.getElementById('modalAlamat').classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
+
+        /* ================= RESET ================= */
+        function resetAll() {
+            selectedProvinsi = selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
+            document.getElementById('id_alamat').value = '';
+            setSelectedText('provinsi', 'Pilih Provinsi');
+            setSelectedText('kabupaten', 'Pilih Kabupaten');
+            setSelectedText('kecamatan', 'Pilih Kecamatan');
+            setSelectedText('kelurahan', 'Pilih Kelurahan');
+            clearItems('kabupaten');
+            clearItems('kecamatan');
+            clearItems('kelurahan');
+            document.getElementById('detail').value = '';
+            document.getElementById('kode_pos').value = '';
+        }
+
+        function setSelectedText(type, text) {
+            document.getElementById(type + 'Selected').innerText = text;
+        }
+
+        function clearItems(type) {
+            document.getElementById(type + 'Items').innerHTML = '';
+        }
+
+        /* ================= FETCH DATA ================= */
+        function loadProvinsi() {
+            fetch(BASE_URL + 'alamat/provinsi')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('provinsiItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedProvinsi = item.id;
+                            setSelectedText('provinsi', item.name);
+                            closeAllDropdowns();
+
+                            selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
+                            setSelectedText('kabupaten', 'Pilih Kabupaten');
+                            setSelectedText('kecamatan', 'Pilih Kecamatan');
+                            setSelectedText('kelurahan', 'Pilih Kelurahan');
+                            clearItems('kabupaten');
+                            clearItems('kecamatan');
+                            clearItems('kelurahan');
+
+                            loadKabupaten(item.id);
+                        };
+                        container.appendChild(div);
+                    });
+                });
+        }
+
+        function loadKabupaten(provinsiId) {
+            fetch(BASE_URL + 'alamat/kabupaten/' + provinsiId)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('kabupatenItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedKabupaten = item.id;
+                            setSelectedText('kabupaten', item.name);
+                            closeAllDropdowns();
+
+                            selectedKecamatan = selectedKelurahan = null;
+                            setSelectedText('kecamatan', 'Pilih Kecamatan');
+                            setSelectedText('kelurahan', 'Pilih Kelurahan');
+                            clearItems('kecamatan');
+                            clearItems('kelurahan');
+
+                            loadKecamatan(item.id);
+                        };
+                        container.appendChild(div);
+                    });
+                });
+        }
+
+        function loadKecamatan(kabupatenId) {
+            fetch(BASE_URL + 'alamat/kecamatan/' + kabupatenId)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('kecamatanItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedKecamatan = item.id;
+                            setSelectedText('kecamatan', item.name);
+                            closeAllDropdowns();
+
+                            selectedKelurahan = null;
+                            setSelectedText('kelurahan', 'Pilih Kelurahan');
+                            clearItems('kelurahan');
+
+                            loadKelurahan(item.id);
+                        };
+                        container.appendChild(div);
+                    });
+                });
+        }
+
+        function loadKelurahan(kecamatanId) {
+            return fetch(BASE_URL + 'alamat/kelurahan/' + kecamatanId)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('kelurahanItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedKelurahan = item.id;
+                            setSelectedText('kelurahan', item.name);
+                            closeAllDropdowns();
+                        };
+                        container.appendChild(div);
+                    });
+                    return data; // ⬅️ penting
+                });
+        }
+
+
+        function resetKabupaten() {
+            $('#kabupaten').empty().append('<option value="">Pilih Kabupaten</option>').trigger('change');
+        }
+
+        function resetKecamatan() {
+            $('#kecamatan').empty().append('<option value="">Pilih Kecamatan</option>').trigger('change');
+        }
+
+        function resetKelurahan() {
+            $('#kelurahan').empty().append('<option value="">Pilih Kelurahan</option>').trigger('change');
+        }
+
+        function confirmChange(type) {
+            if (type === 'provinsi') {
+                resetKabupaten();
+                resetKecamatan();
+                resetKelurahan();
+            }
+            if (type === 'kabupaten') {
+                resetKecamatan();
+                resetKelurahan();
+            }
+            if (type === 'kecamatan') {
+                resetKelurahan();
+            }
+        }
+
+
+        /* ================= CRUD ================= */
+        function simpanAlamat() {
+            if (!selectedProvinsi || !selectedKabupaten || !selectedKecamatan || !selectedKelurahan) {
+                alert('Lengkapi alamat wilayah!');
                 return;
             }
 
-            const d = res.data;
-            openModal();
+            const detail = document.getElementById('detail').value.trim();
+            const kode_pos = document.getElementById('kode_pos').value.trim();
+            if (!detail || !kode_pos) {
+                alert('Detail alamat dan kode pos wajib diisi!');
+                return;
+            }
 
-            document.getElementById('id_alamat').value = d.id_alamat;
-            document.getElementById('detail').value = d.detail;
-            document.getElementById('kode_pos').value = d.kode_pos;
+            const id = document.getElementById('id_alamat').value;
+            const data = {
+                provinsi_id: selectedProvinsi,
+                kabupaten_id: selectedKabupaten,
+                kecamatan_id: selectedKecamatan,
+                kelurahan_id: selectedKelurahan,
+                detail: detail,
+                kode_pos: kode_pos
+            };
+            if (id) data.id_alamat = id;
 
-            selectedProvinsi = d.provinsi_id;
-            selectedKabupaten = d.kabupaten_id;
-            selectedKecamatan = d.kecamatan_id;
-            selectedKelurahan = d.kelurahan_id;
+            const url = id ? BASE_URL + 'alamat/update' : BASE_URL + 'alamat/simpan';
 
-            loadProvinsi();
-            setTimeout(() => {
-                setSelectedText('provinsi', d.nama_provinsi);
-                loadKabupaten(d.provinsi_id);
-                setTimeout(() => {
-                    setSelectedText('kabupaten', d.nama_kabupaten);
-                    loadKecamatan(d.kabupaten_id);
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams(data)
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        alert(res.message);
+                        location.reload();
+                    } else {
+                        alert(res.message || 'Gagal menyimpan');
+                    }
+                })
+                .catch(() => alert('Gagal menyimpan alamat'));
+        }
+
+        function deleteAlamat(id) {
+            if (!confirm('Yakin ingin menghapus alamat ini?')) return;
+
+            fetch(BASE_URL + 'alamat/hapus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        id_alamat: id
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        alert(res.message);
+                        location.reload();
+                    } else {
+                        alert(res.message || 'Gagal menghapus');
+                    }
+                })
+                .catch(() => alert('Gagal menghapus alamat'));
+        }
+
+        function openEditModal(id) {
+            fetch(BASE_URL + 'alamat/get/' + id)
+                .then(res => res.json())
+                .then(res => {
+                    if (!res.success) {
+                        alert('Gagal memuat data');
+                        return;
+                    }
+
+                    const d = res.data;
+                    openModal();
+
+                    document.getElementById('id_alamat').value = d.id_alamat;
+                    document.getElementById('detail').value = d.detail;
+                    document.getElementById('kode_pos').value = d.kode_pos;
+
+                    selectedProvinsi = d.provinsi_id;
+                    selectedKabupaten = d.kabupaten_id;
+                    selectedKecamatan = d.kecamatan_id;
+                    selectedKelurahan = d.kelurahan_id;
+
+                    loadProvinsi();
                     setTimeout(() => {
-                        setSelectedText('kecamatan', d.nama_kecamatan);
-                        loadKelurahan(d.kecamatan_id);
+                        setSelectedText('provinsi', d.nama_provinsi);
+                        loadKabupaten(d.provinsi_id);
                         setTimeout(() => {
-                            setSelectedText('kelurahan', d.nama_kelurahan);
+                            setSelectedText('kabupaten', d.nama_kabupaten);
+                            loadKecamatan(d.kabupaten_id);
+                            setTimeout(() => {
+                                setSelectedText('kecamatan', d.nama_kecamatan);
+                                loadKelurahan(d.kecamatan_id);
+                                setTimeout(() => {
+                                    setSelectedText('kelurahan', d.nama_kelurahan);
+                                }, 200);
+                            }, 200);
                         }, 200);
                     }, 200);
-                }, 200);
-            }, 200);
-        });
-}
-</script>
+                });
+        }
+    </script>
 
 </body>
 
