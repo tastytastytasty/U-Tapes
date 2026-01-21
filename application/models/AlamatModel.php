@@ -23,6 +23,11 @@ class AlamatModel extends CI_Model
             ->result();
     }
 
+    public function getById($id)
+    {
+        return $this->db->where('id_alamat', $id)->get('alamat')->row();
+    }
+
     public function getByIdWithNames($id)
     {
         return $this->db
@@ -62,5 +67,23 @@ class AlamatModel extends CI_Model
         if (!$last) return 'ALM001';
         $num = intval(substr($last->id_alamat, 3)) + 1;
         return 'ALM' . str_pad($num, 3, '0', STR_PAD_LEFT);
+    }
+
+    // Method baru untuk unset semua default
+    public function unsetAllDefault($id_customer)
+    {
+        return $this->db
+            ->where('id_customer', $id_customer)
+            ->update('alamat', ['is_default' => 0]);
+    }
+
+    // Method untuk get alamat default
+    public function getDefaultAddress($id_customer)
+    {
+        return $this->db
+            ->where('id_customer', $id_customer)
+            ->where('is_default', 1)
+            ->get('alamat')
+            ->row();
     }
 }
