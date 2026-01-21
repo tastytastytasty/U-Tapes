@@ -721,6 +721,193 @@
         .modal-danger .modal-content h3::before {
             content: "🗑️ ";
         }
+        /* ================= MODAL KONFIRMASI ================= */
+.modal-confirm .modal-content {
+    text-align: center;
+    padding-top: 30px;
+}
+
+.modal-confirm .modal-content h3 {
+    background: none;
+    border: none;
+    padding: 15px 24px;
+    font-size: 20px;
+    color: #333;
+}
+
+.modal-confirm .modal-body {
+    padding: 10px 30px 20px;
+}
+
+.modal-confirm .modal-body p {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* ================= ICON ANIMATION ================= */
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    position: relative;
+    animation: iconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes iconBounce {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotate(-22.5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #28a745;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #28a745;
+    animation: fillGreen 0.4s ease-in-out 0.4s forwards, scaleCheckmark 0.3s ease-in-out 0.9s both;
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #28a745;
+    fill: none;
+    animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke: #28a745;
+    stroke-width: 3;
+    animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes strokeCircle {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes strokeCheck {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fillGreen {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px #28a745;
+    }
+}
+
+@keyframes scaleCheckmark {
+    0%, 100% {
+        transform: none;
+    }
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+/* ================= BUTTON SUCCESS ================= */
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-success::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-success:hover::before {
+    left: 100%;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #1abc9c 100%);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    transform: translateY(-2px);
+}
+
+/* ================= MODAL ENTRANCE ANIMATION ================= */
+.modal-confirm.show .modal-content {
+    animation: modalConfirmEnter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalConfirmEnter {
+    0% {
+        opacity: 0;
+        transform: scale(0.7) translateY(-20px);
+    }
+    50% {
+        transform: scale(1.05) translateY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ================= PULSE EFFECT ON TITLE ================= */
+.modal-confirm.show h3 {
+    animation: titlePulse 0.6s ease-in-out 0.3s;
+}
+
+@keyframes titlePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* ================= FADE IN TEXT ================= */
+.modal-confirm.show .modal-body p {
+    animation: fadeInUp 0.5s ease-out 0.4s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= BUTTONS ANIMATION ================= */
+.modal-confirm.show .modal-actions {
+    animation: fadeInUp 0.5s ease-out 0.5s both;
+}
     </style>
 </head>
 
@@ -964,8 +1151,27 @@
             </div>
         </div>
     </div>
+    <!-- ================= MODAL KONFIRMASI SET DEFAULT ================= -->
+<div class="modal modal-confirm" id="modalConfirm">
+    <div class="modal-content" style="max-width:460px">
+        <div class="modal-icon">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <h3 id="confirmTitle">Jadikan Alamat Utama?</h3>
+        <div class="modal-body">
+            <p id="confirmMessage"></p>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+            <button class="btn btn-success" onclick="confirmSetDefault()">Ya, Jadikan Utama</button>
+        </div>
+    </div>
+</div>
 
-    <script>
+   <script>
     const BASE_URL = '<?= base_url("index.php/") ?>';
 
     let selectedProvinsi = null,
@@ -973,6 +1179,8 @@
         selectedKecamatan = null,
         selectedKelurahan = null;
     let hapusId = null;
+    let tempDefaultId = null;
+    let tempDefaultNama = null;
 
     /* ================= DROPDOWN CONTROL ================= */
     function toggleDropdown(type) {
@@ -1075,6 +1283,9 @@
                     };
                     container.appendChild(div);
                 });
+            })
+            .catch(error => {
+                console.error('Error loading provinsi:', error);
             });
     }
 
@@ -1103,6 +1314,9 @@
                     };
                     container.appendChild(div);
                 });
+            })
+            .catch(error => {
+                console.error('Error loading kabupaten:', error);
             });
     }
 
@@ -1129,6 +1343,9 @@
                     };
                     container.appendChild(div);
                 });
+            })
+            .catch(error => {
+                console.error('Error loading kecamatan:', error);
             });
     }
 
@@ -1150,6 +1367,9 @@
                     container.appendChild(div);
                 });
                 return data;
+            })
+            .catch(error => {
+                console.error('Error loading kelurahan:', error);
             });
     }
 
@@ -1224,30 +1444,86 @@
             });
     }
 
+    /* ================= SET DEFAULT WITH ANIMATION ================= */
     function setDefault(id, nama) {
-        if (!confirm(`Jadikan "${nama}" sebagai alamat utama?`)) return;
+        tempDefaultId = id;
+        tempDefaultNama = nama;
+        
+        document.getElementById('confirmMessage').innerHTML = 
+            `Alamat <strong>"${nama}"</strong> akan dijadikan alamat utama Anda.<br>Alamat utama sebelumnya akan otomatis dinonaktifkan.`;
+        
+        document.getElementById('modalConfirm').classList.add('show');
+        document.body.classList.add('modal-open');
+    }
+
+    function closeConfirm() {
+        document.getElementById('modalConfirm').classList.remove('show');
+        document.body.classList.remove('modal-open');
+        tempDefaultId = null;
+        tempDefaultNama = null;
+    }
+
+    function confirmSetDefault() {
+        if (!tempDefaultId) {
+            alert('Terjadi kesalahan, silakan coba lagi');
+            return;
+        }
+
+        // Disable button saat processing
+        const btnConfirm = document.querySelector('#modalConfirm .btn-success');
+        const originalText = btnConfirm.innerHTML;
+        btnConfirm.innerHTML = '⏳ Memproses...';
+        btnConfirm.disabled = true;
 
         fetch(BASE_URL + 'alamat/set_default', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: new URLSearchParams({ id_alamat: id })
+                body: new URLSearchParams({ id_alamat: tempDefaultId })
             })
             .then(r => r.json())
             .then(r => {
                 if (r.success) {
-                    location.reload();
+                    // Tampilkan animasi success
+                    showSuccessAnimation();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 } else {
-                    alert(r.message || 'Gagal mengubah alamat utama');
+                    btnConfirm.innerHTML = originalText;
+                    btnConfirm.disabled = false;
+                    closeConfirm();
+                    openAlert(r.message || 'Gagal mengubah alamat utama');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat mengubah alamat utama');
+                btnConfirm.innerHTML = originalText;
+                btnConfirm.disabled = false;
+                closeConfirm();
+                openAlert('Terjadi kesalahan saat mengubah alamat utama');
             });
     }
 
+    function showSuccessAnimation() {
+        // Ubah icon dan text
+        const modalContent = document.querySelector('#modalConfirm .modal-content');
+        modalContent.innerHTML = `
+            <div class="modal-icon">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <h3 style="color: #28a745; margin-top: 10px;">Berhasil!</h3>
+            <div class="modal-body">
+                <p>Alamat utama berhasil diubah.</p>
+            </div>
+        `;
+    }
+
+    /* ================= EDIT ALAMAT ================= */
     function openEditModal(id) {
         if (!id) {
             alert('ID alamat tidak valid');
@@ -1327,6 +1603,7 @@
             });
     }
 
+    /* ================= DELETE ALAMAT ================= */
     function deleteAlamat(id, nama) {
         hapusId = id;
         document.getElementById('hapusNama').innerText = nama;
@@ -1340,6 +1617,11 @@
     }
 
     function confirmHapus() {
+        const btnHapus = document.querySelector('#modalHapus .btn-danger');
+        const originalText = btnHapus.innerHTML;
+        btnHapus.innerHTML = '⏳ Menghapus...';
+        btnHapus.disabled = true;
+
         fetch(BASE_URL + 'alamat/hapus', {
                 method: 'POST',
                 headers: {
@@ -1352,11 +1634,17 @@
                 if (r.success) {
                     location.reload();
                 } else {
+                    btnHapus.innerHTML = originalText;
+                    btnHapus.disabled = false;
+                    closeHapus();
                     alert(r.message || 'Gagal menghapus alamat');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                btnHapus.innerHTML = originalText;
+                btnHapus.disabled = false;
+                closeHapus();
                 alert('Terjadi kesalahan saat menghapus data');
             });
     }
