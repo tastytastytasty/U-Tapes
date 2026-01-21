@@ -627,7 +627,6 @@
 
         .input-kodepos {
             max-width: 150px;
-            /* atur sesuai selera */
         }
 
         /* TAMBAHAN KHUSUS MODAL ALERT */
@@ -721,193 +720,214 @@
         .modal-danger .modal-content h3::before {
             content: "🗑️ ";
         }
+
         /* ================= MODAL KONFIRMASI ================= */
-.modal-confirm .modal-content {
-    text-align: center;
-    padding-top: 30px;
-}
+        .modal-confirm .modal-content {
+            text-align: center;
+            padding-top: 30px;
+        }
 
-.modal-confirm .modal-content h3 {
-    background: none;
-    border: none;
-    padding: 15px 24px;
-    font-size: 20px;
-    color: #333;
-}
+        .modal-confirm .modal-content h3 {
+            background: none;
+            border: none;
+            padding: 15px 24px;
+            font-size: 20px;
+            color: #333;
+        }
 
-.modal-confirm .modal-body {
-    padding: 10px 30px 20px;
-}
+        .modal-confirm .modal-body {
+            padding: 10px 30px 20px;
+        }
 
-.modal-confirm .modal-body p {
-    font-size: 15px;
-    color: #666;
-    line-height: 1.6;
-}
+        .modal-confirm .modal-body p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
 
-/* ================= ICON ANIMATION ================= */
-.modal-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 20px;
-    position: relative;
-    animation: iconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+        /* ================= ICON ANIMATION ================= */
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-@keyframes iconBounce {
-    0% {
-        transform: scale(0) rotate(-45deg);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.1) rotate(-22.5deg);
-    }
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-    }
-}
+        /* PIN ICON */
+        .pin-icon {
+            width: 56px;
+            height: 56px;
+            animation: pinBounce 0.6s ease;
+        }
 
-.checkmark {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: block;
-    stroke-width: 2;
-    stroke: #28a745;
-    stroke-miterlimit: 10;
-    box-shadow: inset 0px 0px 0px #28a745;
-    animation: fillGreen 0.4s ease-in-out 0.4s forwards, scaleCheckmark 0.3s ease-in-out 0.9s both;
-}
+        @keyframes pinBounce {
+            0% {
+                transform: translateY(-30px) scale(0.7);
+                opacity: 0;
+            }
 
-.checkmark-circle {
-    stroke-dasharray: 166;
-    stroke-dashoffset: 166;
-    stroke-width: 2;
-    stroke-miterlimit: 10;
-    stroke: #28a745;
-    fill: none;
-    animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-}
+            60% {
+                transform: translateY(8px) scale(1.1);
+            }
 
-.checkmark-check {
-    transform-origin: 50% 50%;
-    stroke-dasharray: 48;
-    stroke-dashoffset: 48;
-    stroke: #28a745;
-    stroke-width: 3;
-    animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-}
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
 
-@keyframes strokeCircle {
-    100% {
-        stroke-dashoffset: 0;
-    }
-}
+        /* CHECKMARK */
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #28a745;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #28a745;
+            position: relative;
+        }
 
-@keyframes strokeCheck {
-    100% {
-        stroke-dashoffset: 0;
-    }
-}
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #28a745;
+            fill: #fff;
+        }
 
-@keyframes fillGreen {
-    100% {
-        box-shadow: inset 0px 0px 0px 30px #28a745;
-    }
-}
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke: #fff;
+            stroke-width: 3;
+            position: relative;
+            z-index: 2;
+        }
 
-@keyframes scaleCheckmark {
-    0%, 100% {
-        transform: none;
-    }
-    50% {
-        transform: scale3d(1.1, 1.1, 1);
-    }
-}
+        .modal-confirm.show .checkmark-circle {
+            animation: strokeCircle 0.6s ease forwards;
+        }
 
-/* ================= BUTTON SUCCESS ================= */
-.btn-success {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-}
+        .modal-confirm.show .checkmark-check {
+            animation: strokeCheck 0.4s ease 0.6s forwards;
+        }
 
-.btn-success::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s;
-}
+        .modal-confirm.show .checkmark {
+            animation: fillGreen 0.4s ease 1s forwards;
+        }
 
-.btn-success:hover::before {
-    left: 100%;
-}
+        @keyframes strokeCircle {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
 
-.btn-success:hover {
-    background: linear-gradient(135deg, #218838 0%, #1abc9c 100%);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-    transform: translateY(-2px);
-}
+        @keyframes strokeCheck {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
 
-/* ================= MODAL ENTRANCE ANIMATION ================= */
-.modal-confirm.show .modal-content {
-    animation: modalConfirmEnter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+        @keyframes fillGreen {
+            100% {
+                box-shadow: inset 0px 0px 0px 40px #28a745;
+            }
+        }
 
-@keyframes modalConfirmEnter {
-    0% {
-        opacity: 0;
-        transform: scale(0.7) translateY(-20px);
-    }
-    50% {
-        transform: scale(1.05) translateY(0);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
+        /* ================= BUTTON SUCCESS ================= */
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
 
-/* ================= PULSE EFFECT ON TITLE ================= */
-.modal-confirm.show h3 {
-    animation: titlePulse 0.6s ease-in-out 0.3s;
-}
+        .btn-success::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
 
-@keyframes titlePulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
+        .btn-success:hover::before {
+            left: 100%;
+        }
 
-/* ================= FADE IN TEXT ================= */
-.modal-confirm.show .modal-body p {
-    animation: fadeInUp 0.5s ease-out 0.4s both;
-}
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1abc9c 100%);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            transform: translateY(-2px);
+        }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        /* ================= MODAL ENTRANCE ANIMATION ================= */
+        .modal-confirm.show .modal-content {
+            animation: modalConfirmEnter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-/* ================= BUTTONS ANIMATION ================= */
-.modal-confirm.show .modal-actions {
-    animation: fadeInUp 0.5s ease-out 0.5s both;
-}
+        @keyframes modalConfirmEnter {
+            0% {
+                opacity: 0;
+                transform: scale(0.7) translateY(-20px);
+            }
+
+            50% {
+                transform: scale(1.05) translateY(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* ================= PULSE EFFECT ON TITLE ================= */
+        .modal-confirm.show h3 {
+            animation: titlePulse 0.6s ease-in-out 0.3s;
+        }
+
+        @keyframes titlePulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* ================= FADE IN TEXT ================= */
+        .modal-confirm.show .modal-body p {
+            animation: fadeInUp 0.5s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= BUTTONS ANIMATION ================= */
+        .modal-confirm.show .modal-actions {
+            animation: fadeInUp 0.5s ease-out 0.5s both;
+        }
     </style>
 </head>
 
@@ -975,13 +995,10 @@
                                         </span>
                                     <?php endif; ?>
 
-                                    <!-- NAMA ALAMAT -->
                                     <h5 class="alamat-title">
                                         <?= htmlspecialchars($a->nama_alamat ?: '-') ?>
                                     </h5>
 
-
-                                    <!-- LOKASI -->
                                     <p style="margin: 4px 0; font-size: 14px;">
                                         <?= htmlspecialchars($a->nama_kelurahan ?: 'Belum dipilih') ?>,
                                         <?= htmlspecialchars($a->nama_kecamatan ?: 'Belum dipilih') ?>
@@ -997,7 +1014,7 @@
                                         Kode Pos: <?= htmlspecialchars($a->kode_pos) ?>
                                     </p>
                                     <?php if (!$a->is_default): ?>
-                                        <button class="btn" style="background: #28a745;"
+                                        <button class="btn" style="background: #28a745;color:whitesmoke"
                                             onclick="setDefault('<?= $a->id_alamat ?>', '<?= htmlspecialchars($a->nama_alamat) ?>')">
                                             Jadikan Utama
                                         </button>
@@ -1013,7 +1030,6 @@
                                             Hapus
                                         </button>
                                     </div>
-
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -1021,25 +1037,18 @@
                 </div>
             </div>
 
-
-            <!-- ================= MODAL TAMBAH / EDIT ================= -->
+            <!-- MODAL TAMBAH/EDIT -->
             <div class="modal" id="modalAlamat">
                 <div class="modal-content">
                     <h3 id="modalTitle">Tambah Alamat</h3>
-
                     <div class="modal-body">
                         <form id="formAlamat">
                             <input type="hidden" id="id_alamat">
-
                             <div class="form-grid">
-
-                                <!-- ✅ NAMA ALAMAT (JUDUL) -->
                                 <div class="form-group full">
                                     <label class="required">Nama Alamat</label>
                                     <input type="text" id="nama_alamat" placeholder="Contoh: Rumah 1, Kantor, Kos">
                                 </div>
-
-                                <!-- PROVINSI -->
                                 <div class="form-group">
                                     <label class="required">Provinsi</label>
                                     <div class="dropdown-box">
@@ -1052,8 +1061,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- KABUPATEN -->
                                 <div class="form-group">
                                     <label class="required">Kabupaten</label>
                                     <div class="dropdown-box">
@@ -1066,8 +1073,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- KECAMATAN -->
                                 <div class="form-group">
                                     <label class="required">Kecamatan</label>
                                     <div class="dropdown-box">
@@ -1080,8 +1085,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- KELURAHAN -->
                                 <div class="form-group">
                                     <label class="required">Kelurahan</label>
                                     <div class="dropdown-box">
@@ -1094,12 +1097,10 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="form-group full">
                                     <label class="required">Detail Alamat</label>
                                     <input type="text" id="detail">
                                 </div>
-
                                 <div class="form-group full">
                                     <label class="required">Kode Pos</label>
                                     <input type="text" id="kode_pos" class="input-kodepos">
@@ -1113,321 +1114,265 @@
                             </div>
                         </form>
                     </div>
-
                     <div class="modal-actions">
                         <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
-                        <button type="button" class="btn btn-primary" onclick="simpanAlamat()">
-                            Simpan Alamat
-                        </button>
+                        <button type="button" class="btn btn-primary" onclick="simpanAlamat()">Simpan Alamat</button>
+                    </div>
+                </div>
+            </div>
 
+            <!-- MODAL HAPUS -->
+            <div class="modal modal-danger" id="modalHapus">
+                <div class="modal-content" style="max-width:420px">
+                    <h3>Hapus Alamat</h3>
+                    <div class="modal-body">
+                        <p>Yakin ingin menghapus alamat <b id="hapusNama"></b>?</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="closeHapus()">Batal</button>
+                        <button class="btn btn-danger" onclick="confirmHapus()">Hapus</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL ALERT -->
+            <div class="modal modal-alert" id="modalAlert">
+                <div class="modal-content" style="max-width:420px">
+                    <h3>Data Belum Lengkap</h3>
+                    <div class="modal-body">
+                        <p id="alertMessage"></p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="closeAlert()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL KONFIRMASI SET DEFAULT -->
+            <div class="modal modal-confirm" id="modalConfirm">
+                <div class="modal-content" style="max-width:460px">
+                    <div class="modal-icon" id="confirmIcon">
+                        <svg class="pin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                            <path fill="#0d6efd" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+                        </svg>
+                    </div>
+                    <h3 id="confirmTitle">Jadikan Alamat Utama?</h3>
+                    <div class="modal-body">
+                        <p id="confirmMessage"></p>
+                    </div>
+                    <div class="modal-actions" id="confirmActions">
+                        <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+                        <button class="btn btn-success" id="btnConfirmSet" onclick="confirmSetDefault()">Ya, Jadikan Utama</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    <!-- ================= MODAL HAPUS ================= -->
-    <div class="modal modal-danger" id="modalHapus">
-        <div class="modal-content" style="max-width:420px">
-            <h3>Hapus Alamat</h3>
-            <div class="modal-body">
-                <p>Yakin ingin menghapus alamat <b id="hapusNama"></b>?</p>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeHapus()">Batal</button>
-                <button class="btn btn-danger" onclick="confirmHapus()">Hapus</button>
-            </div>
-        </div>
-    </div>
-    <!-- ================= MODAL PERINGATAN ================= -->
-    <div class="modal modal-alert" id="modalAlert">
-        <div class="modal-content" style="max-width:420px">
-            <h3>Data Belum Lengkap</h3>
-            <div class="modal-body">
-                <p id="alertMessage"></p>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="closeAlert()">OK</button>
-            </div>
-        </div>
-    </div>
-    <!-- ================= MODAL KONFIRMASI SET DEFAULT ================= -->
-<div class="modal modal-confirm" id="modalConfirm">
-    <div class="modal-content" style="max-width:460px">
-        <div class="modal-icon">
-            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-            </svg>
-        </div>
-        <h3 id="confirmTitle">Jadikan Alamat Utama?</h3>
-        <div class="modal-body">
-            <p id="confirmMessage"></p>
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
-            <button class="btn btn-success" onclick="confirmSetDefault()">Ya, Jadikan Utama</button>
-        </div>
-    </div>
-</div>
 
-   <script>
-    const BASE_URL = '<?= base_url("index.php/") ?>';
+    <script>
+        const BASE_URL = '<?= base_url("index.php/") ?>';
+        let selectedProvinsi = null, selectedKabupaten = null, selectedKecamatan = null, selectedKelurahan = null;
+        let hapusId = null, tempDefaultId = null, tempDefaultNama = null;
 
-    let selectedProvinsi = null,
-        selectedKabupaten = null,
-        selectedKecamatan = null,
-        selectedKelurahan = null;
-    let hapusId = null;
-    let tempDefaultId = null;
-    let tempDefaultNama = null;
-
-    /* ================= DROPDOWN CONTROL ================= */
-    function toggleDropdown(type) {
-        const list = document.getElementById(type + 'List');
-        const selected = document.getElementById(type + 'Selected');
-        const open = list.style.display === 'block';
-
-        document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
-
-        if (!open) {
-            list.style.display = 'block';
-            selected.classList.add('active');
+        function toggleDropdown(type) {
+            const list = document.getElementById(type + 'List');
+            const selected = document.getElementById(type + 'Selected');
+            const open = list.style.display === 'block';
+            document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
+            if (!open) {
+                list.style.display = 'block';
+                selected.classList.add('active');
+            }
         }
-    }
 
-    function closeAllDropdowns() {
-        document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
-    }
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-list').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dropdown-selected').forEach(el => el.classList.remove('active'));
+        }
 
-    document.addEventListener('click', e => {
-        if (!e.target.closest('.dropdown-box')) closeAllDropdowns();
-    });
-
-    /* ================= FILTER ================= */
-    function filterDropdown(input, type) {
-        const val = input.value.toLowerCase();
-        document.querySelectorAll('#' + type + 'Items .dropdown-item').forEach(item => {
-            item.style.display = item.textContent.toLowerCase().includes(val) ? '' : 'none';
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.dropdown-box')) closeAllDropdowns();
         });
-    }
 
-    /* ================= MODAL ================= */
-    function openModal() {
-        document.getElementById('modalAlamat').classList.add('show');
-        document.body.classList.add('modal-open');
-        document.getElementById('modalTitle').innerText = 'Tambah Alamat';
-        resetAll();
-        loadProvinsi();
-    }
-
-    function closeModal() {
-        document.getElementById('modalAlamat').classList.remove('show');
-        document.body.classList.remove('modal-open');
-    }
-
-    /* ================= RESET ================= */
-    function resetAll() {
-        selectedProvinsi = selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
-        document.getElementById('id_alamat').value = '';
-        document.getElementById('nama_alamat').value = '';
-        document.getElementById('detail').value = '';
-        document.getElementById('kode_pos').value = '';
-        document.getElementById('is_default').checked = false;
-        
-        setSelectedText('provinsi', 'Pilih Provinsi');
-        setSelectedText('kabupaten', 'Pilih Kabupaten');
-        setSelectedText('kecamatan', 'Pilih Kecamatan');
-        setSelectedText('kelurahan', 'Pilih Kelurahan');
-        
-        clearItems('kabupaten');
-        clearItems('kecamatan');
-        clearItems('kelurahan');
-    }
-
-    function setSelectedText(type, text) {
-        document.getElementById(type + 'Selected').innerText = text;
-    }
-
-    function clearItems(type) {
-        document.getElementById(type + 'Items').innerHTML = '';
-    }
-
-    /* ================= FETCH DATA ================= */
-    function loadProvinsi() {
-        fetch(BASE_URL + 'alamat/provinsi')
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('provinsiItems');
-                container.innerHTML = '';
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.innerText = item.name;
-                    div.onclick = () => {
-                        selectedProvinsi = item.id;
-                        setSelectedText('provinsi', item.name);
-                        closeAllDropdowns();
-
-                        selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
-                        setSelectedText('kabupaten', 'Pilih Kabupaten');
-                        setSelectedText('kecamatan', 'Pilih Kecamatan');
-                        setSelectedText('kelurahan', 'Pilih Kelurahan');
-                        clearItems('kabupaten');
-                        clearItems('kecamatan');
-                        clearItems('kelurahan');
-
-                        loadKabupaten(item.id);
-                    };
-                    container.appendChild(div);
-                });
-            })
-            .catch(error => {
-                console.error('Error loading provinsi:', error);
+        function filterDropdown(input, type) {
+            const val = input.value.toLowerCase();
+            document.querySelectorAll('#' + type + 'Items .dropdown-item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(val) ? '' : 'none';
             });
-    }
-
-    function loadKabupaten(provinsiId) {
-        fetch(BASE_URL + 'alamat/kabupaten/' + provinsiId)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('kabupatenItems');
-                container.innerHTML = '';
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.innerText = item.name;
-                    div.onclick = () => {
-                        selectedKabupaten = item.id;
-                        setSelectedText('kabupaten', item.name);
-                        closeAllDropdowns();
-
-                        selectedKecamatan = selectedKelurahan = null;
-                        setSelectedText('kecamatan', 'Pilih Kecamatan');
-                        setSelectedText('kelurahan', 'Pilih Kelurahan');
-                        clearItems('kecamatan');
-                        clearItems('kelurahan');
-
-                        loadKecamatan(item.id);
-                    };
-                    container.appendChild(div);
-                });
-            })
-            .catch(error => {
-                console.error('Error loading kabupaten:', error);
-            });
-    }
-
-    function loadKecamatan(kabupatenId) {
-        fetch(BASE_URL + 'alamat/kecamatan/' + kabupatenId)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('kecamatanItems');
-                container.innerHTML = '';
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.innerText = item.name;
-                    div.onclick = () => {
-                        selectedKecamatan = item.id;
-                        setSelectedText('kecamatan', item.name);
-                        closeAllDropdowns();
-
-                        selectedKelurahan = null;
-                        setSelectedText('kelurahan', 'Pilih Kelurahan');
-                        clearItems('kelurahan');
-
-                        loadKelurahan(item.id);
-                    };
-                    container.appendChild(div);
-                });
-            })
-            .catch(error => {
-                console.error('Error loading kecamatan:', error);
-            });
-    }
-
-    function loadKelurahan(kecamatanId) {
-        return fetch(BASE_URL + 'alamat/kelurahan/' + kecamatanId)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('kelurahanItems');
-                container.innerHTML = '';
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.innerText = item.name;
-                    div.onclick = () => {
-                        selectedKelurahan = item.id;
-                        setSelectedText('kelurahan', item.name);
-                        closeAllDropdowns();
-                    };
-                    container.appendChild(div);
-                });
-                return data;
-            })
-            .catch(error => {
-                console.error('Error loading kelurahan:', error);
-            });
-    }
-
-    /* ================= CRUD ================= */
-    function simpanAlamat() {
-        const nama = document.getElementById('nama_alamat').value.trim();
-        const detail = document.getElementById('detail').value.trim();
-        const kode = document.getElementById('kode_pos').value.trim();
-        const isDefault = document.getElementById('is_default').checked ? 1 : 0;
-
-        if (!nama) {
-            openAlert('Nama alamat wajib diisi (contoh: Rumah, Kantor).');
-            return;
-        }
-        if (!selectedProvinsi) {
-            openAlert('Silakan pilih provinsi.');
-            return;
-        }
-        if (!selectedKabupaten) {
-            openAlert('Silakan pilih kabupaten / kota.');
-            return;
-        }
-        if (!selectedKecamatan) {
-            openAlert('Silakan pilih kecamatan.');
-            return;
-        }
-        if (!selectedKelurahan) {
-            openAlert('Silakan pilih kelurahan.');
-            return;
-        }
-        if (!detail) {
-            openAlert('Detail alamat wajib diisi.');
-            return;
-        }
-        if (!kode) {
-            openAlert('Kode pos wajib diisi.');
-            return;
         }
 
-        const data = {
-            id_alamat: document.getElementById('id_alamat').value,
-            nama_alamat: nama,
-            provinsi_id: selectedProvinsi,
-            kabupaten_id: selectedKabupaten,
-            kecamatan_id: selectedKecamatan,
-            kelurahan_id: selectedKelurahan,
-            detail: detail,
-            kode_pos: kode,
-            is_default: isDefault
-        };
+        function openModal() {
+            document.getElementById('modalAlamat').classList.add('show');
+            document.body.classList.add('modal-open');
+            document.getElementById('modalTitle').innerText = 'Tambah Alamat';
+            resetAll();
+            loadProvinsi();
+        }
 
-        const url = data.id_alamat ? BASE_URL + 'alamat/update' : BASE_URL + 'alamat/simpan';
+        function closeModal() {
+            document.getElementById('modalAlamat').classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
 
-        fetch(url, {
+        function resetAll() {
+            selectedProvinsi = selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
+            document.getElementById('id_alamat').value = '';
+            document.getElementById('nama_alamat').value = '';
+            document.getElementById('detail').value = '';
+            document.getElementById('kode_pos').value = '';
+            document.getElementById('is_default').checked = false;
+            setSelectedText('provinsi', 'Pilih Provinsi');
+            setSelectedText('kabupaten', 'Pilih Kabupaten');
+            setSelectedText('kecamatan', 'Pilih Kecamatan');
+            setSelectedText('kelurahan', 'Pilih Kelurahan');
+            clearItems('kabupaten');
+            clearItems('kecamatan');
+            clearItems('kelurahan');
+        }
+
+        function setSelectedText(type, text) {
+            document.getElementById(type + 'Selected').innerText = text;
+        }
+
+        function clearItems(type) {
+            document.getElementById(type + 'Items').innerHTML = '';
+        }
+
+        function loadProvinsi() {
+            fetch(BASE_URL + 'alamat/provinsi')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('provinsiItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedProvinsi = item.id;
+                            setSelectedText('provinsi', item.name);
+                            closeAllDropdowns();
+                            selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
+                            setSelectedText('kabupaten', 'Pilih Kabupaten');
+                            setSelectedText('kecamatan', 'Pilih Kecamatan');
+                            setSelectedText('kelurahan', 'Pilih Kelurahan');
+                            clearItems('kabupaten');
+                            clearItems('kecamatan');
+                            clearItems('kelurahan');
+                            loadKabupaten(item.id);
+                        };
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => console.error('Error loading provinsi:', error));
+        }
+
+        function loadKabupaten(provinsiId) {
+            fetch(BASE_URL + 'alamat/kabupaten/' + provinsiId)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('kabupatenItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedKabupaten = item.id;
+                            setSelectedText('kabupaten', item.name);
+                            closeAllDropdowns();
+                            selectedKecamatan = selectedKelurahan = null;
+                            setSelectedText('kecamatan', 'Pilih Kecamatan');
+                            setSelectedText('kelurahan', 'Pilih Kelurahan');
+                            clearItems('kecamatan');
+                            clearItems('kelurahan');
+                            loadKecamatan(item.id);
+                        };
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => console.error('Error loading kabupaten:', error));
+        }
+
+        function loadKecamatan(kabupatenId) {
+            fetch(BASE_URL + 'alamat/kecamatan/' + kabupatenId)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('kecamatanItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedKecamatan = item.id;
+                            setSelectedText('kecamatan', item.name);
+                            closeAllDropdowns();
+                            selectedKelurahan = null;
+                            setSelectedText('kelurahan', 'Pilih Kelurahan');
+                            clearItems('kelurahan');
+                            loadKelurahan(item.id);
+                        };
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => console.error('Error loading kecamatan:', error));
+        }
+
+        function loadKelurahan(kecamatanId) {
+            return fetch(BASE_URL + 'alamat/kelurahan/' + kecamatanId)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('kelurahanItems');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.innerText = item.name;
+                        div.onclick = () => {
+                            selectedKelurahan = item.id;
+                            setSelectedText('kelurahan', item.name);
+                            closeAllDropdowns();
+                        };
+                        container.appendChild(div);
+                    });
+                    return data;
+                })
+                .catch(error => console.error('Error loading kelurahan:', error));
+        }
+
+        function simpanAlamat() {
+            const nama = document.getElementById('nama_alamat').value.trim();
+            const detail = document.getElementById('detail').value.trim();
+            const kode = document.getElementById('kode_pos').value.trim();
+            const isDefault = document.getElementById('is_default').checked ? 1 : 0;
+
+            if (!nama) { openAlert('Nama alamat wajib diisi (contoh: Rumah, Kantor).'); return; }
+            if (!selectedProvinsi) { openAlert('Silakan pilih provinsi.'); return; }
+            if (!selectedKabupaten) { openAlert('Silakan pilih kabupaten / kota.'); return; }
+            if (!selectedKecamatan) { openAlert('Silakan pilih kecamatan.'); return; }
+            if (!selectedKelurahan) { openAlert('Silakan pilih kelurahan.'); return; }
+            if (!detail) { openAlert('Detail alamat wajib diisi.'); return; }
+            if (!kode) { openAlert('Kode pos wajib diisi.'); return; }
+
+            const data = {
+                id_alamat: document.getElementById('id_alamat').value,
+                nama_alamat: nama,
+                provinsi_id: selectedProvinsi,
+                kabupaten_id: selectedKabupaten,
+                kecamatan_id: selectedKecamatan,
+                kelurahan_id: selectedKelurahan,
+                detail: detail,
+                kode_pos: kode,
+                is_default: isDefault
+            };
+
+            const url = data.id_alamat ? BASE_URL + 'alamat/update' : BASE_URL + 'alamat/simpan';
+
+            fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams(data)
             })
             .then(r => r.json())
@@ -1442,105 +1387,90 @@
                 console.error('Error:', error);
                 openAlert('Terjadi kesalahan saat menyimpan data');
             });
-    }
-
-    /* ================= SET DEFAULT WITH ANIMATION ================= */
-    function setDefault(id, nama) {
-        tempDefaultId = id;
-        tempDefaultNama = nama;
-        
-        document.getElementById('confirmMessage').innerHTML = 
-            `Alamat <strong>"${nama}"</strong> akan dijadikan alamat utama Anda.<br>Alamat utama sebelumnya akan otomatis dinonaktifkan.`;
-        
-        document.getElementById('modalConfirm').classList.add('show');
-        document.body.classList.add('modal-open');
-    }
-
-    function closeConfirm() {
-        document.getElementById('modalConfirm').classList.remove('show');
-        document.body.classList.remove('modal-open');
-        tempDefaultId = null;
-        tempDefaultNama = null;
-    }
-
-    function confirmSetDefault() {
-        if (!tempDefaultId) {
-            alert('Terjadi kesalahan, silakan coba lagi');
-            return;
         }
 
-        // Disable button saat processing
-        const btnConfirm = document.querySelector('#modalConfirm .btn-success');
-        const originalText = btnConfirm.innerHTML;
-        btnConfirm.innerHTML = '⏳ Memproses...';
-        btnConfirm.disabled = true;
+        function setDefault(id, nama) {
+            tempDefaultId = id;
+            tempDefaultNama = nama;
 
-        fetch(BASE_URL + 'alamat/set_default', {
+            document.getElementById('confirmIcon').innerHTML = `
+                <svg class="pin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    <path fill="#0d6efd" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+                </svg>
+            `;
+
+            document.getElementById('confirmTitle').innerText = 'Jadikan Alamat Utama?';
+            document.getElementById('confirmMessage').innerHTML = `Alamat <strong>"${nama}"</strong> akan dijadikan alamat utama Anda.<br>Alamat utama sebelumnya akan otomatis dinonaktifkan.`;
+            document.getElementById('confirmActions').innerHTML = `
+                <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+                <button class="btn btn-success" id="btnConfirmSet" onclick="confirmSetDefault()">Ya, Jadikan Utama</button>
+            `;
+
+            document.getElementById('modalConfirm').classList.add('show');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeConfirm() {
+            document.getElementById('modalConfirm').classList.remove('show');
+            document.body.classList.remove('modal-open');
+            tempDefaultId = null;
+            tempDefaultNama = null;
+        }
+
+        function confirmSetDefault() {
+            if (!tempDefaultId) return;
+
+            const btnConfirm = document.getElementById('btnConfirmSet');
+            btnConfirm.innerText = '⏳ Memproses...';
+            btnConfirm.disabled = true;
+
+            fetch(BASE_URL + 'alamat/set_default', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ id_alamat: tempDefaultId })
             })
             .then(r => r.json())
             .then(r => {
                 if (r.success) {
-                    // Tampilkan animasi success
                     showSuccessAnimation();
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
+                    setTimeout(() => location.reload(), 1500);
                 } else {
-                    btnConfirm.innerHTML = originalText;
+                    btnConfirm.innerText = 'Ya, Jadikan Utama';
                     btnConfirm.disabled = false;
                     closeConfirm();
                     openAlert(r.message || 'Gagal mengubah alamat utama');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                btnConfirm.innerHTML = originalText;
+            .catch(err => {
+                btnConfirm.innerText = 'Ya, Jadikan Utama';
                 btnConfirm.disabled = false;
                 closeConfirm();
-                openAlert('Terjadi kesalahan saat mengubah alamat utama');
+                openAlert('Terjadi kesalahan jaringan');
             });
-    }
+        }
 
-    function showSuccessAnimation() {
-        // Ubah icon dan text
-        const modalContent = document.querySelector('#modalConfirm .modal-content');
-        modalContent.innerHTML = `
-            <div class="modal-icon">
+        function showSuccessAnimation() {
+            document.getElementById('confirmTitle').innerText = 'Berhasil!';
+            document.getElementById('confirmMessage').innerText = 'Alamat utama berhasil diubah.';
+            document.getElementById('confirmIcon').innerHTML = `
                 <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                     <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
                     <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                 </svg>
-            </div>
-            <h3 style="color: #28a745; margin-top: 10px;">Berhasil!</h3>
-            <div class="modal-body">
-                <p>Alamat utama berhasil diubah.</p>
-            </div>
-        `;
-    }
-
-    /* ================= EDIT ALAMAT ================= */
-    function openEditModal(id) {
-        if (!id) {
-            alert('ID alamat tidak valid');
-            return;
+            `;
+            document.getElementById('confirmActions').innerHTML = '';
         }
 
-        fetch(BASE_URL + 'alamat/get_by_id', {
+        function openEditModal(id) {
+            if (!id) { alert('ID alamat tidak valid'); return; }
+
+            fetch(BASE_URL + 'alamat/get_by_id', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ id_alamat: id })
             })
             .then(res => {
-                if (!res.ok) {
-                    throw new Error('HTTP error! status: ' + res.status);
-                }
+                if (!res.ok) throw new Error('HTTP error! status: ' + res.status);
                 return res.json();
             })
             .then(res => {
@@ -1550,43 +1480,35 @@
                 }
 
                 const d = res.data;
-
-                // Buka modal
                 document.getElementById('modalAlamat').classList.add('show');
                 document.body.classList.add('modal-open');
                 document.getElementById('modalTitle').innerText = 'Edit Alamat';
 
-                // Set data form
                 document.getElementById('id_alamat').value = d.id_alamat || '';
                 document.getElementById('nama_alamat').value = d.nama_alamat || '';
                 document.getElementById('detail').value = d.detail || '';
                 document.getElementById('kode_pos').value = d.kode_pos || '';
                 document.getElementById('is_default').checked = d.is_default == 1;
 
-                // Set selected values
                 selectedProvinsi = d.provinsi_id;
                 selectedKabupaten = d.kabupaten_id;
                 selectedKecamatan = d.kecamatan_id;
                 selectedKelurahan = d.kelurahan_id;
 
-                // Load data wilayah bertahap
                 loadProvinsi();
 
                 setTimeout(() => {
                     if (d.nama_provinsi) setSelectedText('provinsi', d.nama_provinsi);
                     if (d.provinsi_id) {
                         loadKabupaten(d.provinsi_id);
-
                         setTimeout(() => {
                             if (d.nama_kabupaten) setSelectedText('kabupaten', d.nama_kabupaten);
                             if (d.kabupaten_id) {
                                 loadKecamatan(d.kabupaten_id);
-
                                 setTimeout(() => {
                                     if (d.nama_kecamatan) setSelectedText('kecamatan', d.nama_kecamatan);
                                     if (d.kecamatan_id) {
                                         loadKelurahan(d.kecamatan_id);
-
                                         setTimeout(() => {
                                             if (d.nama_kelurahan) setSelectedText('kelurahan', d.nama_kelurahan);
                                         }, 250);
@@ -1601,32 +1523,29 @@
                 console.error('Error:', error);
                 alert('Terjadi kesalahan saat memuat data: ' + error.message);
             });
-    }
+        }
 
-    /* ================= DELETE ALAMAT ================= */
-    function deleteAlamat(id, nama) {
-        hapusId = id;
-        document.getElementById('hapusNama').innerText = nama;
-        document.getElementById('modalHapus').classList.add('show');
-        document.body.classList.add('modal-open');
-    }
+        function deleteAlamat(id, nama) {
+            hapusId = id;
+            document.getElementById('hapusNama').innerText = nama;
+            document.getElementById('modalHapus').classList.add('show');
+            document.body.classList.add('modal-open');
+        }
 
-    function closeHapus() {
-        document.getElementById('modalHapus').classList.remove('show');
-        document.body.classList.remove('modal-open');
-    }
+        function closeHapus() {
+            document.getElementById('modalHapus').classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
 
-    function confirmHapus() {
-        const btnHapus = document.querySelector('#modalHapus .btn-danger');
-        const originalText = btnHapus.innerHTML;
-        btnHapus.innerHTML = '⏳ Menghapus...';
-        btnHapus.disabled = true;
+        function confirmHapus() {
+            const btnHapus = document.querySelector('#modalHapus .btn-danger');
+            const originalText = btnHapus.innerHTML;
+            btnHapus.innerHTML = '⏳ Menghapus...';
+            btnHapus.disabled = true;
 
-        fetch(BASE_URL + 'alamat/hapus', {
+            fetch(BASE_URL + 'alamat/hapus', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ id_alamat: hapusId })
             })
             .then(r => r.json())
@@ -1647,20 +1566,18 @@
                 closeHapus();
                 alert('Terjadi kesalahan saat menghapus data');
             });
-    }
+        }
 
-    /* ================= ALERT ================= */
-    function openAlert(msg) {
-        document.getElementById('alertMessage').innerText = msg;
-        document.getElementById('modalAlert').classList.add('show');
-        document.body.classList.add('modal-open');
-    }
+        function openAlert(msg) {
+            document.getElementById('alertMessage').innerText = msg;
+            document.getElementById('modalAlert').classList.add('show');
+            document.body.classList.add('modal-open');
+        }
 
-    function closeAlert() {
-        document.getElementById('modalAlert').classList.remove('show');
-        document.body.classList.remove('modal-open');
-    }
-</script>
+        function closeAlert() {
+            document.getElementById('modalAlert').classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
+    </script>
 </body>
-
 </html>
