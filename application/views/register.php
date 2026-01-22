@@ -26,31 +26,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- CSS Files -->
     <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        .select2-container .select2-selection--single {
-            height: 48px;
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            font-size: 1rem;
-            background-color: #fff;
-        }
-
-        .select2-selection__rendered {
-            line-height: 30px !important;
-            padding-left: 0 !important;
-        }
-
-        .select2-selection__arrow {
-            height: 46px !important;
-        }
-
-        .select2-container--focus .select2-selection--single,
-        .select2-container--open .select2-selection--single {
-            border-color: #0d6efd !important;
-            box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .25);
-        }
-    </style>
 </head>
 
 <body class="">
@@ -58,7 +33,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <section>
             <div class="page-header min-vh-100">
                 <div class="container ms-0">
-                    <div class="row">
+                    <div class="row  w-100">
                         <div class="col-xl-8 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
                             <div class="card card-plain">
                                 <div class="card-header pb-0 text-start">
@@ -88,33 +63,45 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <div class="mb-3">
                                                     <p class="mb-0">Email</p>
                                                     <input type="email" class="form-control form-control-lg"
-                                                        name="email" placeholder="Email" required>
+                                                        name="email" placeholder="Email" required
+                                                        value="<?= set_value('email') ?>">
                                                 </div>
                                                 <div class="mb-3">
                                                     <p class="mb-0">Password</p>
                                                     <input type="password" class="form-control form-control-lg"
-                                                        name="password" placeholder="Password" required>
+                                                        name="password" min="8" placeholder="Password" required
+                                                        value="<?= set_value('password') ?>">
                                                 </div>
                                                 <div>
                                                     <p class="mb-0">Kode OTP</p>
-                                                    <input type="number" class="form-control form-control-lg"
-                                                        name="no_telp" placeholder="Kode OTP" required>
+                                                    <input type="number" class="form-control form-control-lg" name="otp"
+                                                        placeholder="Kode OTP" required value="<?= set_value('otp') ?>">
                                                 </div>
-                                                <div class="d-flex justify-content-inline justify-content-between">
-                                                    <p class="text-sm text-center mt-3 text-primary">Kirim kode</p>
-                                                    <p class="text-sm text-center mt-3 text-primary">Kirim ulang</p>
+                                                <div class="d-flex justify-content-between mt-3">
+                                                    <button type="button" id="btn-send-otp"
+                                                        class="btn btn-sm btn-none text-primary px-0"
+                                                        style="box-shadow: none;">
+                                                        Kirim Kode
+                                                    </button>
+                                                    <button type="button" id="btn-resend-otp"
+                                                        class="btn btn-sm btn-none text-primary px-0"
+                                                        style="box-shadow: none;">
+                                                        Kirim Ulang
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <p class="mb-0">Nama Lengkap</p>
                                                     <input type="text" class="form-control form-control-lg" name="nama"
-                                                        placeholder="Nama Lengkap" required>
+                                                        placeholder="Nama Lengkap" required
+                                                        value="<?= set_value('nama') ?>">
                                                 </div>
                                                 <div class="mb-3">
                                                     <p class="mb-0">Konfirmasi Password</p>
                                                     <input type="password" class="form-control form-control-lg"
-                                                        name="password2" placeholder="Konfirmasi Password" required>
+                                                        name="password2" placeholder="Konfirmasi Password" required
+                                                        value="<?= set_value('password2') ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -167,6 +154,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="<?= base_url('assets/') ?>js/argon-dashboard.min.js?v=2.1.0"></script>
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
+    <script>
+        $('#btn-send-otp').on('click', function () {
+            let email = $('input[name="email"]').val();
+            if (!email) {
+                alert('Isi email dulu sebelum kirim OTP!');
+                return;
+            }
+            $.ajax({
+                url: "<?= site_url('register/send_otp') ?>",
+                method: "POST",
+                data: { email: email },
+                dataType: "json",
+                success: function (res) {
+                    alert(res.message);
+                    console.log(res);
+                },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert('Server error saat kirim OTP');
+                }
+            });
+        });
+        $('#btn-resend-otp').on('click', function () {
+            let email = $('input[name="email"]').val();
+
+            if (!email) {
+                alert('Isi email dulu sebelum kirim OTP!');
+                return;
+            }
+            $.post("<?= site_url('register/send_otp') ?>", { email: email, resend: 1 }, function (res) {
+                alert(res);
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -61,6 +61,8 @@ $route['Login'] = 'login';
 $route['Pesanan'] = 'pesanan';
 $route['Register'] = 'register';
 $route['alamat'] = 'Alamat';
+$route['login'] = 'login/index';
+$route['login/auth'] = 'login/auth';
 
 
 

@@ -25,8 +25,51 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+<style>
+  .ajax-alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    min-width: 300px;
+    max-width: 90%;
+    background: #dc3545;
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+    opacity: 0;
+    transition: all .4s ease;
+  }
+
+  .ajax-alert.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .ajax-alert button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
 
 <body class="">
+  <div id="ajax-alert" class="ajax-alert hidden">
+    <span id="ajax-alert-text"></span>
+    <button onclick="closeAlert()">✕</button>
+  </div>
   <main class="main-content  mt-0">
     <section>
       <div class="page-header min-vh-100">
@@ -39,39 +82,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                   <p class="mb-0 text-center">Silahkan Login Terlebih Dahulu</p>
                 </div>
                 <div class="card-body">
-                  <form action="<?= site_url('login') ?>" method="post">
+                  <form id="loginForm" action="<?= site_url('login/auth') ?>" method="post">
                     <?php if ($this->session->flashdata('error')): ?>
-                      <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                        <?= $this->session->flashdata('error'); ?>
-                        <button type="button" class="btn-close btn-close-light" data-bs-dismiss="alert">X</button>
-                      </div>
+                      <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                          showAlert("<?= addslashes($this->session->flashdata('error')) ?>");
+                        });
+                      </script>
                     <?php endif; ?>
-                    <?php if (validation_errors()): ?>
-                      <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                        <?= validation_errors(); ?>
-                        <button type="button" class="btn-close btn-close-light" data-bs-dismiss="alert">X</button>
-                      </div>
-                    <?php endif; ?>
+
                     <div class="mb-3">
+                      <p class="mb-0">Email / No Telp</p>
                       <input type="text" class="form-control form-control-lg" name="identity"
-                        value="<?= set_value('identity') ?>" placeholder="Email / No Telp" autocomplete="off" required>
+                        placeholder="Email / No Telp" autocomplete="off" value="<?= set_value('identity') ?>">
                     </div>
+
                     <div class="mb-3">
+                      <p class="mb-0">Password</p>
                       <input type="password" class="form-control form-control-lg" name="password" placeholder="Password"
-                        autocomplete="off" required min="8">
+                        autocomplete="off" value="<?= set_value('password') ?>">
                     </div>
+
                     <p class="text-sm text-end">
                       <a href="#" class="text-primary">Lupa Password?</a>
                     </p>
+
                     <div class="text-center">
                       <button type="submit" class="btn btn-lg btn-primary w-100">
                         Login
                       </button>
                     </div>
+
                     <p class="text-sm text-end mt-2">
                       Belum punya akun?
                       <a href="<?= site_url('register') ?>" class="text-primary">Klik disini</a>
                     </p>
+
                     <p class="text-sm text-end mt-2">
                       Masuk sebagai
                       <a href="<?= site_url('homepage') ?>" class="text-primary">Tamu</a>
@@ -114,6 +160,60 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="<?= base_url('assets/') ?>js/argon-dashboard.min.js?v=2.1.0"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#loginForm').on('submit', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+          url: "<?= site_url('login/auth') ?>",
+          type: "POST",
+          data: $(this).serialize(),
+          dataType: "json",
+          success: function (res) {
+            console.log(res);
+            if (res.status) {
+              showAlert("Login berhasil!", "success");
+              setTimeout(() => {
+                window.location.href = "<?= site_url('homepage') ?>";
+              }, 1000);
+            } else {
+              showAlert(res.message || "Data tidak terkirim ke server");
+            }
+          },
+          error: function (xhr) {
+            console.log(xhr.responseText);
+            showAlert("Terjadi kesalahan server");
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    let alertTimer;
+
+    function showAlert(message, type = 'error') {
+      const alertBox = document.getElementById('ajax-alert');
+      const alertText = document.getElementById('ajax-alert-text');
+
+      alertText.innerText = message;
+
+      alertBox.style.background = type === 'success' ? '#198754' : '#dc3545';
+
+      alertBox.classList.remove('hidden');
+      setTimeout(() => alertBox.classList.add('show'), 10);
+
+      clearTimeout(alertTimer);
+      alertTimer = setTimeout(closeAlert, 3000);
+    }
+
+    function closeAlert() {
+      const alertBox = document.getElementById('ajax-alert');
+      alertBox.classList.remove('show');
+      setTimeout(() => alertBox.classList.add('hidden'), 300);
+    }
+  </script>
 </body>
 
 </html>

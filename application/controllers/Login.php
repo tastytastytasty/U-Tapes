@@ -7,6 +7,7 @@ class Login extends MY_Controller
     {
         parent::__construct();
         $this->load->library(['form_validation', 'session']);
+        $this->load->helper('form');
         $this->load->database();
         $method = $this->router->fetch_method();
         if ($method !== 'logout' && $this->session->userdata('logged_in')) {
@@ -15,56 +16,85 @@ class Login extends MY_Controller
     }
     public function index()
     {
+        $this->load->view('login');
+    }
+
+    public function auth()
+    {
+        header('Content-Type: application/json');
+
+        $post = $this->input->post(NULL, true);
+
+        // 🔹 Jika data POST kosong
+        if (!$post) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Data belum diisi. Silakan masukkan email/no telp dan password.'
+            ]);
+            return;
+        }
+
+        $this->load->library('form_validation');
+
+        // 🔹 Custom message per rule
         $this->form_validation->set_rules(
             'identity',
-            'Email atau No Telepon',
-            'required|trim'
+            'Email / No Telepon',
+            'required|trim',
+            ['required' => 'Email atau No. Telepon wajib diisi.']
         );
+
         $this->form_validation->set_rules(
             'password',
             'Password',
-            'required|trim|min_length[8]'
+            'required|trim|min_length[8]',
+            [
+                'required' => 'Password wajib diisi.',
+                'min_length' => 'Password minimal harus 8 karakter.'
+            ]
         );
+
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('login');
-        } else {
-            $this->_login();
+            echo json_encode([
+                'status' => false,
+                'message' => strip_tags(validation_errors())
+            ]);
+            return;
         }
-    }
-    private function _login()
-    {
-        $identity = $this->input->post('identity', true);
-        $password = $this->input->post('password', true);
+
+        $identity = $post['identity'];
+        $password = $post['password'];
+
         $this->db->where('email', $identity);
         $this->db->or_where('no_telp', $identity);
         $customer = $this->db->get('customer')->row_array();
-        if ($customer) {
-            if (password_verify($password, $customer['password'])) {
-
-                $this->session->sess_regenerate(true);
-                $this->session->set_userdata([
-                    'logged_in' => true,
-                    'id_customer' => $customer['id_customer'],
-                    'user' => [
-                        'id_customer' => $customer['id_customer'],
-                        'nama' => $customer['nama'],
-                        'email' => $customer['email'],
-                        'no_telp' => $customer['no_telp'],
-                        'avatar' => $customer['avatar'],
-                        'jenis_kelamin' => $customer['jenis_kelamin'],
-                        'tanggal_lahir' => $customer['tanggal_lahir'],
-                    ]
-                ]);
-                redirect('homepage');
-            } else {
-                $this->session->set_flashdata('error', 'Email / No.Telp / Password salah');
-                redirect('login');
-            }
-        } else {
-            $this->session->set_flashdata('error', 'Email / No.Telp / Password salah');
-            redirect('login');
+        if (!$customer) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Akun dengan email atau no. telepon tersebut tidak ditemukan.'
+            ]);
+            return;
         }
+        if (!password_verify($password, $customer['password'])) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Password yang Anda masukkan salah.'
+            ]);
+            return;
+        }
+        $this->session->sess_regenerate(true);
+        $this->session->set_userdata([
+            'logged_in' => true,
+            'user' => $customer,
+            'id_customer' => $customer['id_customer']
+        ]);
+
+        echo json_encode([
+            'status' => true,
+            'message' => 'Login berhasil. Selamat datang!'
+        ]);
     }
+
     public function logout()
     {
         $this->session->sess_destroy();

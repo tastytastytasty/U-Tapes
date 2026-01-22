@@ -15,8 +15,6 @@ class Register extends MY_Controller
 
 	public function index()
 	{
-		$this->load->model('WilayahModel');
-		$data['provinsi'] = $this->WilayahModel->get_provinsi();
 		$this->form_validation->set_rules(
 			'email',
 			'Email',
@@ -37,29 +35,8 @@ class Register extends MY_Controller
 			'Nama',
 			'required|trim'
 		);
-		$this->form_validation->set_rules(
-			'jenis_kelamin',
-			'Jenis Kelamin',
-			'required'
-		);
-		$this->form_validation->set_rules(
-			'tanggal_lahir',
-			'Tanggal Lahir',
-			'required'
-		);
-		$this->form_validation->set_rules(
-			'no_telp',
-			'No Telepon',
-			'required|trim|is_unique[customer.no_telp]'
-		);
-		$this->form_validation->set_rules('provinsi_id', 'Provinsi', 'required');
-		$this->form_validation->set_rules('kabupaten_id', 'Kabupaten', 'required');
-		$this->form_validation->set_rules('kecamatan_id', 'Kecamatan', 'required');
-		$this->form_validation->set_rules('kelurahan_id', 'Kelurahan', 'required');
-		$this->form_validation->set_rules('kode_pos', 'Kode Pos', 'required|trim');
-		$this->form_validation->set_rules('detail', 'Detail Alamat', 'required|trim');
 		if ($this->form_validation->run() == FALSE) {
-			$this->load->view('register', $data);
+			$this->load->view('register');
 		} else {
 			$this->_register();
 		}
@@ -75,18 +52,6 @@ class Register extends MY_Controller
 			->row_array();
 		$number = $last ? (int) substr($last['id_customer'], 3) + 1 : 1;
 		$id_customer = 'CST' . str_pad($number, 3, '0', STR_PAD_LEFT);
-		$lastAlamat = $this->db
-			->select('id_alamat')
-			->order_by('id_alamat', 'DESC')
-			->limit(1)
-			->get('alamat')
-			->row_array();
-
-		$alamatNumber = $lastAlamat
-			? (int) substr($lastAlamat['id_alamat'], 3) + 1
-			: 1;
-
-		$id_alamat = 'ALM' . str_pad($alamatNumber, 3, '0', STR_PAD_LEFT);
 		$customer = [
 			'id_customer' => $id_customer,
 			'email' => $this->input->post('email', true),
@@ -95,27 +60,32 @@ class Register extends MY_Controller
 				PASSWORD_DEFAULT
 			),
 			'nama' => $this->input->post('nama', true),
-			'jenis_kelamin' => $this->input->post('jenis_kelamin', true),
-			'tanggal_lahir' => $this->input->post('tanggal_lahir', true),
-			'no_telp' => $this->input->post('no_telp', true),
+			'no_telp' => null,
 			'avatar' => null
 		];
-		$alamat = [
-			'id_alamat' => $id_alamat,
-			'id_customer' => $id_customer,
-			'provinsi_id' => $this->input->post('provinsi_id', true),
-			'kabupaten_id' => $this->input->post('kabupaten_id', true),
-			'kecamatan_id' => $this->input->post('kecamatan_id', true),
-			'kelurahan_id' => $this->input->post('kelurahan_id', true),
-			'kode_pos' => $this->input->post('kode_pos', true),
-			'detail' => $this->input->post('detail', true),
-			'is_default' => 1,
-			'latitude' => 0,
-			'longitude' => 0
-		];
+		$otp = rand(100000, 999999);
+		$email = $this->input->post('email', true);
+		$this->session->set_userdata([
+			'otp_code' => $otp,
+			'otp_email' => $email,
+			'otp_attempt' => 1,
+			'otp_time' => time()
+		]);
+		if ($this->input->post('otp') != $this->session->userdata('otp_code')) {
+			$this->session->set_flashdata('error', 'Kode OTP salah');
+			redirect('register');
+		}
+		$attempt = $this->session->userdata('otp_attempt') ?? 0;
+		if ($attempt >= 3) {
+			$lastTime = $this->session->userdata('otp_time');
+			if (time() - $lastTime < 180) {
+				$this->session->set_flashdata('error', 'Tunggu 3 menit sebelum kirim ulang');
+				redirect('register');
+			}
+		}
+
 		$this->db->trans_start();
 		$this->db->insert('customer', $customer);
-		$this->db->insert('alamat', $alamat);
 		$this->db->trans_complete();
 		if ($this->db->trans_status() === FALSE) {
 			$this->session->set_flashdata('error', 'Registrasi gagal');
@@ -125,4 +95,41 @@ class Register extends MY_Controller
 			redirect('login');
 		}
 	}
+	public function send_otp()
+	{
+		header('Content-Type: application/json');
+
+		$email = $this->input->post('email');
+		if (!$email) {
+			echo json_encode(['status' => false, 'message' => 'Email wajib diisi']);
+			return;
+		}
+
+		$otp = rand(100000, 999999);
+
+		$this->load->library('email');
+
+		$this->email->from('UTapsInformation@gmail.com', 'U-Tapes Store');
+		$this->email->to($email);
+		$this->email->subject('Kode OTP');
+		$this->email->message("Kode OTP kamu: $otp");
+
+		if (!$this->email->send()) {
+			echo json_encode([
+				'status' => false,
+				'message' => 'Gagal kirim OTP',
+				'debug' => $this->email->print_debugger()
+			]);
+			return;
+		}
+
+		$this->session->set_userdata([
+			'otp_code' => $otp,
+			'otp_email' => $email,
+			'otp_time' => time()
+		]);
+
+		echo json_encode(['status' => true, 'message' => 'OTP terkirim ke email']);
+	}
+
 }
