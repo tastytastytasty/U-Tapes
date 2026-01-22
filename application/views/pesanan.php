@@ -748,7 +748,7 @@
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 750.000</span></div>
                             <a class="ps-btn" href="<?= site_url('invoice/view/INV-001') ?>">
-                                <i class="bi bi-eye"></i> Detail
+                                <i class="bi bi-eye"></i> Invoice
                             </a>
                         </div>
                     </div>
@@ -797,7 +797,7 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 13.949.999</span></div>
-                            <button class="ps-btn"><i class="bi bi-eye"></i> Detail</button>
+                            <button class="ps-btn"><i class="bi bi-eye"></i> Invoice</button>
                         </div>
                     </div>
 
@@ -822,7 +822,7 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                            <button class="ps-btn"><i class="bi bi-geo-alt"></i> Lacak Pesanan</button>
+                            <button class="ps-btn"><i class="bi bi-geo-alt"></i>Invoice</button>
                         </div>
                     </div>
                 </div>
@@ -850,7 +850,7 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 350.000</span></div>
-                            <button class="ps-btn"><i class="bi bi-eye"></i> Detail</button>
+                            <button class="ps-btn"><i class="bi bi-eye"></i> Invoice</button>
                         </div>
                     </div>
                 </div>
@@ -878,7 +878,7 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                            <button class="ps-btn"><i class="bi bi-geo-alt"></i> Lacak Pesanan</button>
+                            <button class="ps-btn"><i class="bi bi-geo-alt"></i>Invoice</button>
                         </div>
                     </div>
                 </div>
