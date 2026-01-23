@@ -256,8 +256,8 @@
 
         .ps-header-left {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            gap: 12px;
         }
 
         .ps-header-right {
@@ -634,10 +634,8 @@
                 padding: 5px 10px;
             }
 
-            .ps-header-right {
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 6px;
+            .ps-header-left {
+                flex-wrap: wrap;
             }
         }
 
