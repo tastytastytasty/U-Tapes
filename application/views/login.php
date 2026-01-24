@@ -24,52 +24,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <!-- CSS Files -->
   <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
+  <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 </head>
-<style>
-  .ajax-alert {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    min-width: 300px;
-    max-width: 90%;
-    background: #dc3545;
-    color: #fff;
-    padding: 14px 20px;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    z-index: 9999;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
-    opacity: 0;
-    transition: all .4s ease;
-  }
-
-  .ajax-alert.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .ajax-alert button {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-  }
-
-  .hidden {
-    display: none;
-  }
-</style>
 
 <body class="">
-  <div id="ajax-alert" class="ajax-alert hidden">
-    <span id="ajax-alert-text"></span>
-    <button onclick="closeAlert()">✕</button>
-  </div>
   <main class="main-content  mt-0">
     <section>
       <div class="page-header min-vh-100">
@@ -174,7 +133,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           success: function (res) {
             console.log(res);
             if (res.status) {
-              showAlert("Login berhasil!", "success");
+              showAlert(res.message, "success");
               setTimeout(() => {
                 window.location.href = "<?= site_url('homepage') ?>";
               }, 1000);
@@ -191,29 +150,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     });
   </script>
   <script>
-    let alertTimer;
-
     function showAlert(message, type = 'error') {
-      const alertBox = document.getElementById('ajax-alert');
-      const alertText = document.getElementById('ajax-alert-text');
-
-      alertText.innerText = message;
-
-      alertBox.style.background = type === 'success' ? '#198754' : '#dc3545';
-
-      alertBox.classList.remove('hidden');
-      setTimeout(() => alertBox.classList.add('show'), 10);
-
-      clearTimeout(alertTimer);
-      alertTimer = setTimeout(closeAlert, 3000);
-    }
-
-    function closeAlert() {
-      const alertBox = document.getElementById('ajax-alert');
-      alertBox.classList.remove('show');
-      setTimeout(() => alertBox.classList.add('hidden'), 300);
+      Swal.fire({
+        toast: true,
+        position: 'top',
+        icon: type,
+        title: message,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
     }
   </script>
+
 </body>
 
 </html>

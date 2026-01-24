@@ -32,9 +32,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <main class="main-content  mt-0">
         <section>
             <div class="page-header min-vh-100">
-                <div class="container ms-0">
-                    <div class="row  w-100">
-                        <div class="col-xl-8 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
                             <div class="card card-plain">
                                 <div class="card-header pb-0 text-start">
                                     <h4 class="font-weight-bolder text-center">Register</h4>
@@ -58,58 +58,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     data-bs-dismiss="alert">X</button>
                                             </div>
                                         <?php endif; ?>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <p class="mb-0">Email</p>
-                                                    <input type="email" class="form-control form-control-lg"
-                                                        name="email" placeholder="Email" required
-                                                        value="<?= set_value('email') ?>">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <p class="mb-0">Password</p>
-                                                    <input type="password" class="form-control form-control-lg"
-                                                        name="password" min="8" placeholder="Password" required
-                                                        value="<?= set_value('password') ?>">
-                                                </div>
-                                                <div>
-                                                    <p class="mb-0">Kode OTP</p>
-                                                    <input type="number" class="form-control form-control-lg" name="otp"
-                                                        placeholder="Kode OTP" required value="<?= set_value('otp') ?>">
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-3">
-                                                    <button type="button" id="btn-send-otp"
-                                                        class="btn btn-sm btn-none text-primary px-0"
-                                                        style="box-shadow: none;">
-                                                        Kirim Kode
-                                                    </button>
-                                                    <button type="button" id="btn-resend-otp"
-                                                        class="btn btn-sm btn-none text-primary px-0"
-                                                        style="box-shadow: none;">
-                                                        Kirim Ulang
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <p class="mb-0">Nama Lengkap</p>
-                                                    <input type="text" class="form-control form-control-lg" name="nama"
-                                                        placeholder="Nama Lengkap" required
-                                                        value="<?= set_value('nama') ?>">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <p class="mb-0">Konfirmasi Password</p>
-                                                    <input type="password" class="form-control form-control-lg"
-                                                        name="password2" placeholder="Konfirmasi Password" required
-                                                        value="<?= set_value('password2') ?>">
-                                                </div>
-                                            </div>
+                                        <div class="mb-3">
+                                            <p class="mb-0">Email</p>
+                                            <input type="email" class="form-control form-control-lg" name="email"
+                                                placeholder="Email" required value="<?= set_value('email') ?>">
                                         </div>
-                                        <div class="text-center mt-3">
+                                        <div class="mb-3">
+                                            <p class="mb-0">Nama Lengkap</p>
+                                            <input type="text" class="form-control form-control-lg" name="nama"
+                                                placeholder="Nama Lengkap" required value="<?= set_value('nama') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="mb-0">Password</p>
+                                            <input type="password" class="form-control form-control-lg" name="password"
+                                                min="8" placeholder="Password" required
+                                                value="<?= set_value('password') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="mb-0">Konfirmasi Password</p>
+                                            <input type="password" class="form-control form-control-lg" name="password2"
+                                                placeholder="Konfirmasi Password" required
+                                                value="<?= set_value('password2') ?>">
+                                            <input type="hidden" name="otp">
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" id="btn-send-otp"
+                                                class="btn btn-none text-primary p-0"
+                                                style="box-shadow: none; font-weight: normal">
+                                                Kirim Kode OTP
+                                            </button>
+                                        </div>
+                                        <div class="text-center">
                                             <button type="submit"
                                                 class="btn btn-lg btn-primary px-5 w-100">Register</button>
                                         </div>
-                                        <p class="text-sm text-center mt-3">
+                                        <p class="text-sm text-end">
                                             Sudah punya akun?
                                             <a href="<?= site_url('login') ?>" class="text-primary">Klik disini</a>
                                         </p>
@@ -133,6 +116,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </section>
     </main>
+    <div class="modal fade" id="otpModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verifikasi OTP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Masukkan kode OTP yang dikirim ke email</p>
+                    <input type="text" id="otpInput" class="form-control text-center mb-3" maxlength="6"
+                        placeholder="123456">
+
+                    <div class="small text-muted mb-2">
+                        OTP kadaluarsa dalam <span id="otp-timer">05:00</span>
+                    </div>
+
+                    <button id="btn-verify-otp" class="btn btn-primary w-100 mb-2">Verifikasi</button>
+                    <button id="btn-resend-otp" class="btn btn-link p-0">Kirim Ulang</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--   Core JS Files   -->
     <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/') ?>js/core/popper.min.js"></script>
@@ -155,37 +160,59 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/') ?>js/argon-dashboard.min.js?v=2.1.0"></script>
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
     <script>
+        let otpTimerInterval;
+        let otpSeconds = 300;
+
+        function startOtpTimer() {
+            otpSeconds = 300;
+            clearInterval(otpTimerInterval);
+
+            otpTimerInterval = setInterval(() => {
+                otpSeconds--;
+                let min = Math.floor(otpSeconds / 60);
+                let sec = otpSeconds % 60;
+                document.getElementById('otp-timer').innerText =
+                    `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+
+                if (otpSeconds <= 0) {
+                    clearInterval(otpTimerInterval);
+                    document.getElementById('otp-timer').innerText = "Kadaluarsa";
+                }
+            }, 1000);
+        }
+
         $('#btn-send-otp').on('click', function () {
             let email = $('input[name="email"]').val();
             if (!email) {
-                alert('Isi email dulu sebelum kirim OTP!');
+                Swal.fire("Error", "Isi email dulu sebelum kirim OTP", "error");
                 return;
             }
-            $.ajax({
-                url: "<?= site_url('register/send_otp') ?>",
-                method: "POST",
-                data: { email: email },
-                dataType: "json",
-                success: function (res) {
-                    alert(res.message);
-                    console.log(res);
-                },
-                error: function (xhr) {
-                    console.error(xhr.responseText);
-                    alert('Server error saat kirim OTP');
-                }
-            });
-        });
-        $('#btn-resend-otp').on('click', function () {
-            let email = $('input[name="email"]').val();
 
-            if (!email) {
-                alert('Isi email dulu sebelum kirim OTP!');
+            $.post("<?= site_url('register/send_otp') ?>", { email }, function (res) {
+                if (res.status) {
+                    $('#otpModal').modal('show');
+                    startOtpTimer();
+                    Swal.fire("Sukses", "OTP dikirim ke email", "success");
+                } else {
+                    Swal.fire("Gagal", res.message, "error");
+                }
+            }, 'json');
+        });
+
+        $('#btn-resend-otp').on('click', function () {
+            $('#btn-send-otp').click();
+        });
+
+        $('#btn-verify-otp').on('click', function () {
+            let otp = $('#otpInput').val();
+            if (!otp) {
+                Swal.fire("Error", "Masukkan kode OTP", "error");
                 return;
             }
-            $.post("<?= site_url('register/send_otp') ?>", { email: email, resend: 1 }, function (res) {
-                alert(res);
-            });
+
+            $('input[name="otp"]').val(otp);
+            $('#otpModal').modal('hide');
+            Swal.fire("Siap", "OTP siap diverifikasi saat submit", "success");
         });
     </script>
 </body>

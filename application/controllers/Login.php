@@ -25,7 +25,6 @@ class Login extends MY_Controller
 
         $post = $this->input->post(NULL, true);
 
-        // 🔹 Jika data POST kosong
         if (!$post) {
             echo json_encode([
                 'status' => false,
@@ -36,7 +35,6 @@ class Login extends MY_Controller
 
         $this->load->library('form_validation');
 
-        // 🔹 Custom message per rule
         $this->form_validation->set_rules(
             'identity',
             'Email / No Telepon',
@@ -55,6 +53,15 @@ class Login extends MY_Controller
         );
 
         if ($this->form_validation->run() == FALSE) {
+            if($this->form_validation->error_array()){
+                $errors = $this->form_validation->error_array();
+                $first_error = reset($errors);
+                echo json_encode([
+                    'status' => false,
+                    'message' => $first_error
+                ]);
+                return;
+            }
             echo json_encode([
                 'status' => false,
                 'message' => strip_tags(validation_errors())
@@ -78,7 +85,7 @@ class Login extends MY_Controller
         if (!password_verify($password, $customer['password'])) {
             echo json_encode([
                 'status' => false,
-                'message' => 'Password yang Anda masukkan salah.'
+                'message' => 'Akun dengan email atau no. telepon tersebut tidak ditemukan.'
             ]);
             return;
         }
@@ -91,7 +98,7 @@ class Login extends MY_Controller
 
         echo json_encode([
             'status' => true,
-            'message' => 'Login berhasil. Selamat datang!'
+            'message' => 'Login berhasil. Selamat datang '. $customer['nama']
         ]);
     }
 
