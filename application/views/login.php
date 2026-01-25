@@ -157,6 +157,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         icon: type,
         title: message,
         showConfirmButton: false,
+        showCloseButton: true,
         timer: 3000,
         timerProgressBar: true,
         didOpen: (toast) => {

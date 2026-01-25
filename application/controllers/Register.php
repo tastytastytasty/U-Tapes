@@ -78,12 +78,12 @@ class Register extends MY_Controller
 
 	public function send_otp()
 	{
-		header('Content-Type: application/json');
+		$this->output->set_content_type('application/json');
 
-		$email = $this->input->post('email');
+		$email = $this->input->post('email', true);
 		if (!$email) {
 			echo json_encode(['status' => false, 'message' => 'Email wajib diisi']);
-			return;
+			exit;
 		}
 
 		$otp = rand(100000, 999999);
@@ -94,21 +94,43 @@ class Register extends MY_Controller
 			'percobaan' => 0,
 			'ngirim_ulang' => 0,
 			'kunci_sampai' => null,
-			'dipake' => 0
+			'dipake' => 0,
+			'created_at' => date('Y-m-d H:i:s')
 		]);
 
+		if (!$this->db->affected_rows()) {
+			echo json_encode(['status' => false, 'message' => 'Gagal simpan OTP']);
+			exit;
+		}
 		$this->load->library('email');
 		$this->email->from('UTapsInformation@gmail.com', 'U-Tapes Store');
 		$this->email->to($email);
 		$this->email->subject('Kode OTP');
-		$this->email->message("Kode OTP kamu: $otp");
+		$this->email->message("
+									Halo customer yang terhormat,
+
+									Terima kasih sudah mendaftar di U-Tapes Store.
+
+									Berikut adalah Kode OTP kamu untuk proses verifikasi akun kamu:
+
+									🔐 KODE OTP: $otp
+
+									Kode ini berlaku selama 5 menit.
+									Jangan bagikan kode ini kepada siapa pun demi keamanan akun kamu.
+
+									Jika kamu tidak merasa melakukan permintaan ini, silakan abaikan email ini.
+
+									Salam,
+									U-Tapes Store
+									Belanja Mudah, Langkah Maksimal.
+									");
 
 		if (!$this->email->send()) {
-			echo json_encode(['status' => false, 'message' => 'Gagal kirim OTP']);
-			return;
+			echo json_encode(['status' => false, 'message' => 'Gagal kirim OTP ke email']);
+			exit;
 		}
 
 		echo json_encode(['status' => true, 'message' => 'OTP terkirim ke email']);
+		exit;
 	}
-
 }

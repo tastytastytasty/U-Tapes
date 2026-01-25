@@ -25,7 +25,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/') ?>https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- CSS Files -->
     <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
+    <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 </head>
 
 <body class="">
@@ -42,43 +44,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div>
                                 <div class="card-body">
                                     <form action="<?= site_url('register') ?>" method="post">
-                                        <?php if ($this->session->flashdata('error')): ?>
-                                            <div class="alert alert-danger alert-dismissible fade show text-white"
-                                                role="alert">
-                                                <?= $this->session->flashdata('error'); ?>
-                                                <button type="button" class="btn-close btn-close-light"
-                                                    data-bs-dismiss="alert">X</button>
-                                            </div>
-                                        <?php endif; ?>
-                                        <?php if (validation_errors()): ?>
-                                            <div class="alert alert-danger alert-dismissible fade show text-white"
-                                                role="alert">
-                                                <?= validation_errors(); ?>
-                                                <button type="button" class="btn-close btn-close-light"
-                                                    data-bs-dismiss="alert">X</button>
-                                            </div>
-                                        <?php endif; ?>
                                         <div class="mb-3">
                                             <p class="mb-0">Email</p>
                                             <input type="email" class="form-control form-control-lg" name="email"
-                                                placeholder="Email" required value="<?= set_value('email') ?>">
+                                                id="emailInput" placeholder="Email" value="<?= set_value('email') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Nama Lengkap</p>
                                             <input type="text" class="form-control form-control-lg" name="nama"
-                                                placeholder="Nama Lengkap" required value="<?= set_value('nama') ?>">
+                                                placeholder="Nama Lengkap" value="<?= set_value('nama') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Password</p>
                                             <input type="password" class="form-control form-control-lg" name="password"
-                                                min="8" placeholder="Password" required
-                                                value="<?= set_value('password') ?>">
+                                                min="8" placeholder="Password" value="<?= set_value('password') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Konfirmasi Password</p>
                                             <input type="password" class="form-control form-control-lg" name="password2"
-                                                placeholder="Konfirmasi Password" required
-                                                value="<?= set_value('password2') ?>">
+                                                placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>">
                                             <input type="hidden" name="otp">
                                         </div>
                                         <div class="d-flex justify-content-end">
@@ -162,11 +146,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script>
         let otpTimerInterval;
         let otpSeconds = 300;
-
         function startOtpTimer() {
             otpSeconds = 300;
             clearInterval(otpTimerInterval);
-
             otpTimerInterval = setInterval(() => {
                 otpSeconds--;
                 let min = Math.floor(otpSeconds / 60);
@@ -180,40 +162,71 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 }
             }, 1000);
         }
-
         $('#btn-send-otp').on('click', function () {
-            let email = $('input[name="email"]').val();
+            let email = $('#emailInput').val().trim();
             if (!email) {
-                Swal.fire("Error", "Isi email dulu sebelum kirim OTP", "error");
+                showAlert("Email wajib diisi", "warning");
                 return;
             }
-
-            $.post("<?= site_url('register/send_otp') ?>", { email }, function (res) {
-                if (res.status) {
-                    $('#otpModal').modal('show');
-                    startOtpTimer();
-                    Swal.fire("Sukses", "OTP dikirim ke email", "success");
-                } else {
-                    Swal.fire("Gagal", res.message, "error");
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                showAlert("Format email tidak valid", "error");
+                return;
+            }
+            $.ajax({
+                url: "<?= site_url('register/send_otp') ?>",
+                type: "POST",
+                data: { email: email },
+                dataType: "json",
+                success: function (res) {
+                    if (res.status) {
+                        const modal = new bootstrap.Modal(document.getElementById('otpModal'));
+                        modal.show();
+                        startOtpTimer();
+                        showAlert("OTP dikirim ke email", "success");
+                    } else {
+                        showAlert(res.message, "error");
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                    showAlert("Gagal menghubungi server", "error");
                 }
-            }, 'json');
+            });
         });
-
         $('#btn-resend-otp').on('click', function () {
             $('#btn-send-otp').click();
         });
-
         $('#btn-verify-otp').on('click', function () {
-            let otp = $('#otpInput').val();
+            let otp = $('#otpInput').val().trim();
             if (!otp) {
-                Swal.fire("Error", "Masukkan kode OTP", "error");
+                showAlert("Masukkan kode OTP", "error");
                 return;
             }
-
             $('input[name="otp"]').val(otp);
-            $('#otpModal').modal('hide');
-            Swal.fire("Siap", "OTP siap diverifikasi saat submit", "success");
+            const modal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
+            modal.hide();
+
+            showAlert("OTP akan diverifikasi saat submit", "success");
         });
+    </script>
+    <script>
+        function showAlert(message, type = 'error') {
+            Swal.fire({
+                toast: true,
+                position: 'top',
+                icon: type,
+                title: message,
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        }
     </script>
 </body>
 
