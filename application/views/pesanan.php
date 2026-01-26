@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <title>Pesanan Saya</title>
     <style>
         * {
@@ -31,9 +30,7 @@
             color: inherit;
         }
 
-        /* ======================
-           BREADCRUMBS
-        ====================== */
+        /* Breadcrumbs */
         .breadcrumbs {
             background: #fff;
             border-bottom: 1px solid #e5e5e5;
@@ -61,17 +58,13 @@
             text-decoration: none;
         }
 
-        /* ======================
-           LAYOUT
-        ====================== */
+        /* Layout */
         .profile-wrapper {
             display: flex;
             min-height: 100vh;
         }
 
-        /* ======================
-           SIDEBAR
-        ====================== */
+        /* Sidebar */
         .profile-sidebar {
             width: 260px;
             background: #ffffff;
@@ -148,22 +141,18 @@
             border-top: 1px solid #e5e5e5;
         }
 
-        /* ======================
-           CONTENT
-        ====================== */
+        /* Content */
         .profile-content {
             flex: 1;
             padding: 40px;
             background: #f5f6f8;
         }
 
-        /* Container */
         .ps-container {
             width: 100%;
             max-width: 900px;
         }
 
-        /* Title */
         .ps-title {
             font-size: 24px;
             font-weight: 700;
@@ -313,6 +302,11 @@
             color: #16a34a;
         }
 
+        .status-cancelled {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
         /* Item */
         .ps-item {
             display: flex;
@@ -378,7 +372,6 @@
             from {
                 opacity: 0;
             }
-
             to {
                 opacity: 1;
             }
@@ -472,6 +465,11 @@
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
+        .ps-btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
         /* Content */
         .ps-content {
             display: none;
@@ -488,7 +486,6 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -638,17 +635,6 @@
                 flex-wrap: wrap;
             }
         }
-
-        @media (max-width: 414px) {
-            .ps-date {
-                font-size: 11px;
-            }
-
-            .ps-btn {
-                padding: 10px 16px;
-                font-size: 13px;
-            }
-        }
     </style>
 </head>
 
@@ -661,7 +647,7 @@
             </div>
             <div class="col-md-6 text-end">
                 <ul class="breadcrumb-nav">
-                    <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Home</a></li>
+                    <li><a href="#"><i class="lni lni-home"></i> Home</a></li>
                     <li>Pesanan</li>
                 </ul>
             </div>
@@ -672,9 +658,9 @@
         <!-- SIDEBAR -->
         <div class="profile-sidebar">
             <div class="profile-user">
-                <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
+                <img src="https://via.placeholder.com/48" alt="user">
                 <div>
-                    <strong><?= htmlspecialchars($user['nama'] ?? 'Guest') ?></strong><br>
+                    <strong>John Doe</strong><br>
                     <span>Ubah Profil</span>
                 </div>
             </div>
@@ -683,14 +669,14 @@
                 <li class="menu-title">
                     <i class="bi bi-person"></i> Akun Saya
                 </li>
-                <li><a href="<?= site_url('profile') ?>">Profil</a></li>
-                <li><a href="<?= site_url('Alamat') ?>">Alamat</a></li>
+                <li><a href="#">Profil</a></li>
+                <li><a href="#">Alamat</a></li>
                 <li><a href="#">Ubah Password</a></li>
 
                 <hr>
 
                 <li>
-                    <a href="<?= site_url('pesanan') ?>" class="active">
+                    <a href="#" class="active">
                         <i class="bi bi-receipt"></i> Pesanan Saya
                     </a>
                 </li>
@@ -719,6 +705,9 @@
                     </div>
                     <div class="ps-tab" onclick="showTab('done')">
                         <i class="bi bi-check-circle"></i> Selesai
+                    </div>
+                    <div class="ps-tab" onclick="showTab('cancelled')">
+                        <i class="bi bi-x-circle"></i> Dibatalkan
                     </div>
                 </div>
 
@@ -754,73 +743,27 @@
                     <div class="ps-card">
                         <div class="ps-header">
                             <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-005</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 10 Jan 2026</div>
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-006</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 8 Jan 2026</div>
                             </div>
                             <div class="ps-header-right">
-                                <div class="ps-status status-done">Selesai</div>
+                                <div class="ps-status status-cancelled">Dibatalkan</div>
                             </div>
                         </div>
 
                         <div class="ps-item">
                             <img src="https://via.placeholder.com/70" alt="Product">
                             <div class="ps-item-info">
-                                <div class="ps-item-name">Mouse Gaming Wireless</div>
-                                <div class="ps-item-price">Rp 450.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-more-items" id="items-5">
-                            <div class="ps-item">
-                                <img src="https://via.placeholder.com/70" alt="Product">
-                                <div class="ps-item-info">
-                                    <div class="ps-item-name">Monitor Gaming 144Hz 27"</div>
-                                    <div class="ps-item-price">Rp 4.999.999</div>
-                                </div>
-                            </div>
-
-                            <div class="ps-item">
-                                <img src="https://via.placeholder.com/70" alt="Product">
-                                <div class="ps-item-info">
-                                    <div class="ps-item-name">Kursi Gaming Ergonomic</div>
-                                    <div class="ps-item-price">Rp 8.500.000</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="ps-toggle" onclick="toggleItems('items-5', this)">
-                            <i class="bi bi-chevron-down"></i>
-                            <span>Lihat 2 barang lainnya</span>
-                        </button>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 13.949.999</span></div>
-                            <button class="ps-btn"><i class="bi bi-eye"></i> Invoice</button>
-                        </div>
-                    </div>
-
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-003</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 12 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-send">Dikirim</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Headset Gaming 7.1 Surround</div>
-                                <div class="ps-item-price">Rp 500.000</div>
+                                <div class="ps-item-name">Laptop Gaming RTX 4060</div>
+                                <div class="ps-item-price">Rp 15.000.000</div>
                             </div>
                         </div>
 
                         <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                            <button class="ps-btn"><i class="bi bi-geo-alt"></i>Invoice</button>
+                            <div class="ps-total">Total: <span>Rp 15.000.000</span></div>
+                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-006') ?>">
+                                <i class="bi bi-cart-plus"></i> Beli Lagi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -848,7 +791,9 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 350.000</span></div>
-                            <button class="ps-btn"><i class="bi bi-eye"></i> Invoice</button>
+                            <a class="ps-btn" href="<?= site_url('invoice/view/INV-002') ?>">
+                                <i class="bi bi-eye"></i> Invoice
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -876,7 +821,9 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                            <button class="ps-btn"><i class="bi bi-geo-alt"></i>Invoice</button>
+                            <a class="ps-btn" href="<?= site_url('invoice/view/INV-003') ?>">
+                                <i class="bi bi-geo-alt"></i> Invoice
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -904,7 +851,66 @@
 
                         <div class="ps-footer">
                             <div class="ps-total">Total: <span>Rp 2.000.000</span></div>
-                            <button class="ps-btn ps-btn-success"><i class="bi bi-cart-plus"></i> Beli Lagi</button>
+                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-004') ?>">
+                                <i class="bi bi-cart-plus"></i> Beli Lagi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DIBATALKAN -->
+                <div id="cancelled" class="ps-content">
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-006</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 8 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-cancelled">Dibatalkan</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Laptop Gaming RTX 4060</div>
+                                <div class="ps-item-price">Rp 15.000.000</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span style="text-decoration: line-through; color: #94a3b8;">Rp 15.000.000</span></div>
+                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-006') ?>">
+                                <i class="bi bi-cart-plus"></i> Beli Lagi
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ps-card">
+                        <div class="ps-header">
+                            <div class="ps-header-left">
+                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-007</div>
+                                <div class="ps-date"><i class="bi bi-calendar3"></i> 3 Jan 2026</div>
+                            </div>
+                            <div class="ps-header-right">
+                                <div class="ps-status status-cancelled">Dibatalkan</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-item">
+                            <img src="https://via.placeholder.com/70" alt="Product">
+                            <div class="ps-item-info">
+                                <div class="ps-item-name">Smartphone Android Flagship</div>
+                                <div class="ps-item-price">Rp 8.500.000</div>
+                            </div>
+                        </div>
+
+                        <div class="ps-footer">
+                            <div class="ps-total">Total: <span style="text-decoration: line-through; color: #94a3b8;">Rp 8.500.000</span></div>
+                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-007') ?>">
+                                <i class="bi bi-cart-plus"></i> Beli Lagi
+                            </a>
                         </div>
                     </div>
                 </div>
