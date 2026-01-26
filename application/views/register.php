@@ -44,26 +44,44 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div>
                                 <div class="card-body">
                                     <form action="<?= site_url('register') ?>" method="post">
+                                        <?php if ($this->session->flashdata('error')): ?>
+                                            <script>
+                                                document.addEventListener("DOMContentLoaded", () => {
+                                                    showAlert("<?= addslashes($this->session->flashdata('error')) ?>", "error");
+                                                });
+                                            </script>
+                                        <?php endif; ?>
+                                        <?php if ($this->session->flashdata('success')): ?>
+                                            <script>
+                                                document.addEventListener("DOMContentLoaded", () => {
+                                                    showAlert("<?= addslashes($this->session->flashdata('success')) ?>", "success");
+                                                });
+                                            </script>
+                                        <?php endif; ?>
                                         <div class="mb-3">
                                             <p class="mb-0">Email</p>
-                                            <input type="email" class="form-control form-control-lg" name="email"
-                                                id="emailInput" placeholder="Email" value="<?= set_value('email') ?>">
+                                            <input type="text" class="form-control form-control-lg" name="email"
+                                                id="emailInput" placeholder="Email" value="<?= set_value('email') ?>"
+                                                autocomplete="off">
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Nama Lengkap</p>
                                             <input type="text" class="form-control form-control-lg" name="nama"
-                                                placeholder="Nama Lengkap" value="<?= set_value('nama') ?>">
+                                                placeholder="Nama Lengkap" value="<?= set_value('nama') ?>"
+                                                autocomplete="off">
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Password</p>
                                             <input type="password" class="form-control form-control-lg" name="password"
-                                                min="8" placeholder="Password" value="<?= set_value('password') ?>">
+                                                min="8" placeholder="Password" value="<?= set_value('password') ?>"
+                                                autocomplete="off">
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Konfirmasi Password</p>
                                             <input type="password" class="form-control form-control-lg" name="password2"
-                                                placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>">
-                                            <input type="hidden" name="otp">
+                                                placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>"
+                                                autocomplete="off">
+                                            <input type="hidden" name="otp" id="otpHidden">
                                         </div>
                                         <div class="d-flex justify-content-end">
                                             <button type="button" id="btn-send-otp"
@@ -100,7 +118,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </section>
     </main>
-    <div class="modal fade" id="otpModal" tabindex="-1">
+    <div class="modal fade" id="otpModal" tabindex="-1" data-bs-backdrop="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -110,7 +128,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="modal-body text-center">
                     <p>Masukkan kode OTP yang dikirim ke email</p>
                     <input type="text" id="otpInput" class="form-control text-center mb-3" maxlength="6"
-                        placeholder="123456">
+                        placeholder="Kode OTP" autocomplete="off">
 
                     <div class="small text-muted mb-2">
                         OTP kadaluarsa dalam <span id="otp-timer">05:00</span>
@@ -144,70 +162,58 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/') ?>js/argon-dashboard.min.js?v=2.1.0"></script>
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
     <script>
-        let otpTimerInterval;
-        let otpSeconds = 300;
+        let otpTimerInterval, otpSeconds = 300;
         function startOtpTimer() {
-            otpSeconds = 300;
-            clearInterval(otpTimerInterval);
+            otpSeconds = 300; clearInterval(otpTimerInterval);
             otpTimerInterval = setInterval(() => {
                 otpSeconds--;
-                let min = Math.floor(otpSeconds / 60);
-                let sec = otpSeconds % 60;
-                document.getElementById('otp-timer').innerText =
-                    `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-
-                if (otpSeconds <= 0) {
-                    clearInterval(otpTimerInterval);
-                    document.getElementById('otp-timer').innerText = "Kadaluarsa";
-                }
+                let m = Math.floor(otpSeconds / 60), s = otpSeconds % 60;
+                $('#otp-timer').text(`${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
+                if (otpSeconds <= 0) { clearInterval(otpTimerInterval); $('#otp-timer').text('Kadaluarsa'); }
             }, 1000);
         }
+        $('form').on('submit', function (e) {
+            if (!otpVerified) {
+                e.preventDefault();
+                showAlert("Silakan verifikasi OTP terlebih dahulu", "error");
+                return false;
+            }
+        });
         $('#btn-send-otp').on('click', function () {
             let email = $('#emailInput').val().trim();
-            if (!email) {
-                showAlert("Email wajib diisi", "warning");
-                return;
-            }
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                showAlert("Format email tidak valid", "error");
-                return;
-            }
+            if (!email) return showAlert('Email wajib diisi', 'warning');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAlert('Format email tidak valid', 'error');
             $.ajax({
                 url: "<?= site_url('register/send_otp') ?>",
-                type: "POST",
-                data: { email: email },
-                dataType: "json",
-                success: function (res) {
+                type: "POST", data: { email }, dataType: "json",
+                success: res => {
                     if (res.status) {
-                        const modal = new bootstrap.Modal(document.getElementById('otpModal'));
-                        modal.show();
+                        new bootstrap.Modal(document.getElementById('otpModal')).show();
                         startOtpTimer();
-                        showAlert("OTP dikirim ke email", "success");
-                    } else {
-                        showAlert(res.message, "error");
-                    }
+                        showAlert(res.message, 'success');
+                    } else showAlert(res.message, 'error');
                 },
-                error: function (xhr) {
+                error: xhr => {
                     console.log(xhr.responseText);
-                    showAlert("Gagal menghubungi server", "error");
+                    showAlert('Gagal menghubungi server', 'error');
                 }
             });
         });
-        $('#btn-resend-otp').on('click', function () {
-            $('#btn-send-otp').click();
-        });
+        $('#btn-resend-otp').on('click', () => $('#btn-send-otp').click());
+        let otpVerified = false;
         $('#btn-verify-otp').on('click', function () {
             let otp = $('#otpInput').val().trim();
-            if (!otp) {
-                showAlert("Masukkan kode OTP", "error");
-                return;
-            }
-            $('input[name="otp"]').val(otp);
-            const modal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
-            modal.hide();
+            let email = $('#emailInput').val().trim();
+            if (!otp) return showAlert('Masukkan kode OTP', 'error');
 
-            showAlert("OTP akan diverifikasi saat submit", "success");
+            $.post("<?= site_url('register/verify_otp') ?>", { email, otp }, res => {
+                if (res.status) {
+                    otpVerified = true;
+                    $('#otpHidden').val(otp);
+                    showAlert(res.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('otpModal')).hide();
+                } else showAlert(res.message, 'error');
+            }, 'json').fail(() => showAlert('Gagal menghubungi server', 'error'));
         });
     </script>
     <script>
