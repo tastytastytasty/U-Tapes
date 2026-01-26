@@ -372,6 +372,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -486,6 +487,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -656,11 +658,14 @@
 
     <div class="profile-wrapper">
         <!-- SIDEBAR -->
-        <div class="profile-sidebar">
+        <div class="col-lg-3 col-md-4 profile-sidebar">
             <div class="profile-user">
-                <img src="https://via.placeholder.com/48" alt="user">
+                <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
                 <div>
-                    <strong>John Doe</strong><br>
+                    <strong><strong><?= $logged_in && !empty($user['nama'])
+                                        ? htmlspecialchars($user['nama'])
+                                        : 'Guest' ?>
+                        </strong></strong><br>
                     <span>Ubah Profil</span>
                 </div>
             </div>
@@ -669,21 +674,17 @@
                 <li class="menu-title">
                     <i class="bi bi-person"></i> Akun Saya
                 </li>
-                <li><a href="#">Profil</a></li>
-                <li><a href="#">Alamat</a></li>
+                <li><a href="#" class="active">Profil</a></li>
+                <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
                 <li><a href="#">Ubah Password</a></li>
 
                 <hr>
 
-                <li>
-                    <a href="#" class="active">
-                        <i class="bi bi-receipt"></i> Pesanan Saya
-                    </a>
+                <li class="menu-link">
+                    <a href="<?= site_url('pesanan') ?>"><i class="bi bi-receipt"></i> Pesanan Saya</a>
                 </li>
-                <li>
-                    <a href="#">
-                        <i class="bi bi-bell"></i> Notifikasi
-                    </a>
+                <li class="menu-link">
+                    <a href="#"><i class="bi bi-bell"></i> Notifikasi</a>
                 </li>
             </ul>
         </div>
