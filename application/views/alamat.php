@@ -1009,6 +1009,10 @@
                                         <?= htmlspecialchars($a->nama_alamat ?: '-') ?>
                                     </h5>
 
+                                    <p style="margin: 4px 0; font-size: 14px; font-weight: 600;">
+                                        <?= htmlspecialchars($a->nama_penerima ?: '-') ?> | <?= htmlspecialchars($a->nomor_telp_penerima ?: '-') ?>
+                                    </p>
+
                                     <p style="margin: 4px 0; font-size: 14px;">
                                         <?= htmlspecialchars($a->nama_kelurahan ?: 'Belum dipilih') ?>,
                                         <?= htmlspecialchars($a->nama_kecamatan ?: 'Belum dipilih') ?>
@@ -1060,6 +1064,14 @@
                                 <input type="text" id="nama_alamat" placeholder="Contoh: Rumah 1, Kantor, Kos">
                             </div>
                             <div class="form-group">
+                                <label class="required">Nama Penerima</label>
+                                <input type="text" id="nama_penerima" placeholder="Nama lengkap penerima">
+                            </div>
+                            <div class="form-group">
+                                <label class="required">Nomor Telepon</label>
+                                <input type="text" id="nomor_telp_penerima" placeholder="08xxxxxxxxxx">
+                            </div>
+                            <div class="form-group">
                                 <label class="required">Provinsi</label>
                                 <div class="dropdown-box">
                                     <div class="dropdown-selected" id="provinsiSelected" onclick="toggleDropdown('provinsi')">
@@ -1109,11 +1121,11 @@
                             </div>
                             <div class="form-group full">
                                 <label class="required">Detail Alamat</label>
-                                <input type="text" id="detail">
+                                <input type="text" id="detail" placeholder="Nama jalan, no. rumah, patokan, dll">
                             </div>
                             <div class="form-group full">
                                 <label class="required">Kode Pos</label>
-                                <input type="text" id="kode_pos" class="input-kodepos">
+                                <input type="text" id="kode_pos" class="input-kodepos" placeholder="12345">
                             </div>
                             <div class="form-group full">
                                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
@@ -1229,6 +1241,8 @@
         selectedProvinsi = selectedKabupaten = selectedKecamatan = selectedKelurahan = null;
         document.getElementById('id_alamat').value = '';
         document.getElementById('nama_alamat').value = '';
+        document.getElementById('nama_penerima').value = '';
+        document.getElementById('nomor_telp_penerima').value = '';
         document.getElementById('detail').value = '';
         document.getElementById('kode_pos').value = '';
         document.getElementById('is_default').checked = false;
@@ -1354,11 +1368,15 @@
 
     function simpanAlamat() {
         const nama = document.getElementById('nama_alamat').value.trim();
+        const namaPenerima = document.getElementById('nama_penerima').value.trim();
+        const nomorTelp = document.getElementById('nomor_telp_penerima').value.trim();
         const detail = document.getElementById('detail').value.trim();
         const kode = document.getElementById('kode_pos').value.trim();
         const isDefault = document.getElementById('is_default').checked ? 1 : 0;
 
         if (!nama) { openAlert('Nama alamat wajib diisi (contoh: Rumah, Kantor).'); return; }
+        if (!namaPenerima) { openAlert('Nama penerima wajib diisi.'); return; }
+        if (!nomorTelp) { openAlert('Nomor telepon penerima wajib diisi.'); return; }
         if (!selectedProvinsi) { openAlert('Silakan pilih provinsi.'); return; }
         if (!selectedKabupaten) { openAlert('Silakan pilih kabupaten / kota.'); return; }
         if (!selectedKecamatan) { openAlert('Silakan pilih kecamatan.'); return; }
@@ -1369,6 +1387,8 @@
         const data = {
             id_alamat: document.getElementById('id_alamat').value,
             nama_alamat: nama,
+            nama_penerima: namaPenerima,
+            nomor_telp_penerima: nomorTelp,
             provinsi_id: selectedProvinsi,
             kabupaten_id: selectedKabupaten,
             kecamatan_id: selectedKecamatan,
@@ -1496,6 +1516,8 @@
 
             document.getElementById('id_alamat').value = d.id_alamat || '';
             document.getElementById('nama_alamat').value = d.nama_alamat || '';
+            document.getElementById('nama_penerima').value = d.nama_penerima || '';
+            document.getElementById('nomor_telp_penerima').value = d.nomor_telp_penerima || '';
             document.getElementById('detail').value = d.detail || '';
             document.getElementById('kode_pos').value = d.kode_pos || '';
             document.getElementById('is_default').checked = d.is_default == 1;
@@ -1589,3 +1611,5 @@
         document.body.classList.remove('modal-open');
     }
 </script>
+</body>
+</html>

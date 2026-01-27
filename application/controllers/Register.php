@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Register extends MY_Controller
 {
@@ -153,7 +153,7 @@ class Register extends MY_Controller
 
 									🔐 KODE OTP: $otp
 
-									Kode ini berlaku selama 5 menit.
+									Kod e ini berlaku selama 5 menit.
 									Jangan bagikan kode ini kepada siapa pun demi keamanan akun kamu.
 
 									Jika kamu tidak merasa melakukan permintaan ini, silakan abaikan email ini.
@@ -224,5 +224,4 @@ class Register extends MY_Controller
 
 		echo json_encode(['status' => true, 'message' => 'OTP berhasil diverifikasi']);
 	}
-
 }
