@@ -29,6 +29,58 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
     <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 </head>
+<style>
+    .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.2);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preloader-inner {
+        width: 50px;
+        height: 50px;
+    }
+
+    .preloader-icon span {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #0d6efd;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .preloader-icon span:last-child {
+        animation-delay: -0.5s;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+    }
+</style>
+<div class="preloader d-none" id="otpPreloader">
+    <div class="preloader-inner">
+        <div class="preloader-icon">
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</div>
 
 <body class="">
     <main class="main-content  mt-0">
@@ -123,7 +175,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Verifikasi OTP</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close text-primary" data-bs-dismiss="modal">X</button>
                 </div>
                 <div class="modal-body text-center">
                     <p>Masukkan kode OTP yang dikirim ke email</p>
@@ -181,24 +233,43 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         });
         $('#btn-send-otp').on('click', function () {
             let email = $('#emailInput').val().trim();
-            if (!email) return showAlert('Email wajib diisi', 'warning');
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAlert('Format email tidak valid', 'error');
+            if (!email) {
+                showAlert("Email wajib diisi", "warning");
+                return;
+            }
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                showAlert("Format email tidak valid", "error");
+                return;
+            }
+
+            $('#otpPreloader').removeClass('d-none');
+
             $.ajax({
                 url: "<?= site_url('register/send_otp') ?>",
-                type: "POST", data: { email }, dataType: "json",
-                success: res => {
+                type: "POST",
+                data: { email: email },
+                dataType: "json",
+                success: function (res) {
+                    $('#otpPreloader').addClass('d-none');
+
                     if (res.status) {
-                        new bootstrap.Modal(document.getElementById('otpModal')).show();
+                        const modal = new bootstrap.Modal(document.getElementById('otpModal'));
+                        modal.show();
                         startOtpTimer();
-                        showAlert(res.message, 'success');
-                    } else showAlert(res.message, 'error');
+                        showAlert("OTP dikirim ke email", "success");
+                    } else {
+                        showAlert(res.message, "error");
+                    }
                 },
-                error: xhr => {
-                    console.log(xhr.responseText);
-                    showAlert('Gagal menghubungi server', 'error');
+                error: function () {
+                    $('#otpPreloader').addClass('d-none');
+                    showAlert("Gagal menghubungi server", "error");
                 }
             });
         });
+
         $('#btn-resend-otp').on('click', () => $('#btn-send-otp').click());
         let otpVerified = false;
         $('#btn-verify-otp').on('click', function () {
