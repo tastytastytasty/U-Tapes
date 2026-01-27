@@ -121,7 +121,7 @@ class Register extends MY_Controller
 			return;
 		}
 
-		if ($lastOtp && $lastOtp['ngirim_ulang'] >= 3) {
+		if ($lastOtp && $lastOtp['ngirim_ulang'] >= 3 && strtotime($lastOtp['kadaluarsa']) > time()) {
 			$kunci = date('Y-m-d H:i:s', time() + 300);
 			$this->db->where('id', $lastOtp['id'])->update('register_otp', ['kunci_sampai' => $kunci]);
 			echo json_encode(['status' => false, 'message' => "Kamu sudah kirim OTP 3 kali. Tunggu 5 menit."]);
@@ -142,25 +142,26 @@ class Register extends MY_Controller
 		]);
 
 		$this->load->library('email');
-		$this->email->from('UTapsInformation@gmail.com', 'U-Tapes Store');
+		$this->email->from('UTapsInformation@gmail.com', 'U-Taps Store');
 		$this->email->to($email);
-		$this->email->subject('Kode OTP Verifikasi U-Tapes');
-		$this->email->message("Halo pelanggan yang terhormat,
+		$this->email->subject('Kode OTP Verifikasi U-Taps');
+		$this->email->message("
+Halo pelanggan yang terhormat,
 
-									Terima kasih sudah mendaftar di U-Tapes Store.
+Terima kasih sudah mendaftar di U-Taps Store.
 
-									Berikut adalah Kode OTP kamu untuk proses verifikasi akun kamu:
+Berikut adalah Kode OTP kamu untuk proses verifikasi akun kamu:
 
-									🔐 KODE OTP: $otp
+🔐 KODE OTP: $otp
 
-									Kode ini berlaku selama 5 menit.
-									Jangan bagikan kode ini kepada siapa pun demi keamanan akun kamu.
+Kode ini berlaku selama 5 menit.
+Jangan bagikan kode ini kepada siapa pun demi keamanan akun kamu.
 
-									Jika kamu tidak merasa melakukan permintaan ini, silakan abaikan email ini.
+Jika kamu tidak merasa melakukan permintaan ini, silakan abaikan email ini.
 
-									Salam,
-									U-Tapes Store
-									Belanja Mudah, Langkah Maksimal.
+Salam,
+U-Tapes Store
+Belanja Mudah, Langkah Maksimal.
 									");
 
 		if (!$this->email->send()) {
