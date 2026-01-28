@@ -84,10 +84,24 @@ class Alamat extends MY_Controller
         }
 
         $nama_alamat = $this->input->post('nama_alamat');
+        $nama_penerima = $this->input->post('nama_penerima');
+        $nomor_telp_penerima = $this->input->post('nomor_telp_penerima');
 
         // Validasi nama alamat
         if (!$nama_alamat || trim($nama_alamat) == '') {
             echo json_encode(['success' => false, 'message' => 'Nama alamat harus diisi']);
+            return;
+        }
+
+        // Validasi nama penerima
+        if (!$nama_penerima || trim($nama_penerima) == '') {
+            echo json_encode(['success' => false, 'message' => 'Nama penerima harus diisi']);
+            return;
+        }
+
+        // Validasi nomor telepon penerima
+        if (!$nomor_telp_penerima || trim($nomor_telp_penerima) == '') {
+            echo json_encode(['success' => false, 'message' => 'Nomor telepon penerima harus diisi']);
             return;
         }
 
@@ -102,6 +116,8 @@ class Alamat extends MY_Controller
             'id_alamat' => $this->AlamatModel->generateId(),
             'id_customer' => $id_customer,
             'nama_alamat' => trim($nama_alamat),
+            'nama_penerima' => trim($nama_penerima),
+            'nomor_telp_penerima' => trim($nomor_telp_penerima),
             'provinsi_id' => $this->input->post('provinsi_id'),
             'kabupaten_id' => $this->input->post('kabupaten_id'),
             'kecamatan_id' => $this->input->post('kecamatan_id'),
@@ -124,10 +140,24 @@ class Alamat extends MY_Controller
     {
         $id = $this->input->post('id_alamat');
         $nama_alamat = $this->input->post('nama_alamat');
+        $nama_penerima = $this->input->post('nama_penerima');
+        $nomor_telp_penerima = $this->input->post('nomor_telp_penerima');
 
         // Validasi nama alamat
         if (!$nama_alamat || trim($nama_alamat) == '') {
             echo json_encode(['success' => false, 'message' => 'Nama alamat harus diisi']);
+            return;
+        }
+
+        // Validasi nama penerima
+        if (!$nama_penerima || trim($nama_penerima) == '') {
+            echo json_encode(['success' => false, 'message' => 'Nama penerima harus diisi']);
+            return;
+        }
+
+        // Validasi nomor telepon penerima
+        if (!$nomor_telp_penerima || trim($nomor_telp_penerima) == '') {
+            echo json_encode(['success' => false, 'message' => 'Nomor telepon penerima harus diisi']);
             return;
         }
 
@@ -147,6 +177,8 @@ class Alamat extends MY_Controller
 
         $data = [
             'nama_alamat' => trim($nama_alamat),
+            'nama_penerima' => trim($nama_penerima),
+            'nomor_telp_penerima' => trim($nomor_telp_penerima),
             'provinsi_id' => $this->input->post('provinsi_id'),
             'kabupaten_id' => $this->input->post('kabupaten_id'),
             'kecamatan_id' => $this->input->post('kecamatan_id'),
