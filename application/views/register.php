@@ -95,7 +95,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <p class="mb-0 text-center">Silahkan Buat Akunmu Terlebih Dahulu</p>
                                 </div>
                                 <div class="card-body">
-                                    <form action="<?= site_url('register') ?>" method="post">
+                                    <form id="registerForm">
                                         <?php if ($this->session->flashdata('error')): ?>
                                             <script>
                                                 document.addEventListener("DOMContentLoaded", () => {
@@ -135,16 +135,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 autocomplete="off">
                                             <input type="hidden" name="otp" id="otpHidden">
                                         </div>
-                                        <div class="d-flex justify-content-end">
+                                        <!-- <div class="d-flex justify-content-end">
                                             <button type="button" id="btn-send-otp"
                                                 class="btn btn-none text-primary p-0"
                                                 style="box-shadow: none; font-weight: normal">
                                                 Kirim Kode OTP
                                             </button>
-                                        </div>
+                                        </div> -->
                                         <div class="text-center">
-                                            <button type="submit"
-                                                class="btn btn-lg btn-primary px-5 w-100">Register</button>
+                                            <button type="button" id="btn-register"
+                                                class="btn btn-lg btn-primary w-100">
+                                                Register
+                                            </button>
                                         </div>
                                         <p class="text-sm text-end">
                                             Sudah punya akun?
@@ -224,52 +226,46 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 if (otpSeconds <= 0) { clearInterval(otpTimerInterval); $('#otp-timer').text('Kadaluarsa'); }
             }, 1000);
         }
-        $('form').on('submit', function (e) {
-            if (!otpVerified) {
-                e.preventDefault();
-                showAlert("Silakan verifikasi OTP terlebih dahulu", "error");
-                return false;
-            }
+        $(document).on('submit', '#registerForm', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         });
-        $('#btn-send-otp').on('click', function () {
-            let email = $('#emailInput').val().trim();
-            if (!email) {
-                showAlert("Email wajib diisi", "warning");
-                return;
-            }
 
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                showAlert("Format email tidak valid", "error");
-                return;
-            }
+        $('#btn-register').on('click', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
 
-            $('#otpPreloader').removeClass('d-none');
+            let data = {
+                email: $('#emailInput').val().trim(),
+                nama: $('input[name="nama"]').val().trim(),
+                password: $('input[name="password"]').val(),
+                password2: $('input[name="password2"]').val()
+            };
 
-            $.ajax({
-                url: "<?= site_url('register/send_otp') ?>",
-                type: "POST",
-                data: { email: email },
-                dataType: "json",
-                success: function (res) {
-                    $('#otpPreloader').addClass('d-none');
+            $.post("<?= site_url('register/validate_register') ?>", data, function (res) {
 
-                    if (res.status) {
+                if (!res.status) {
+                    showAlert(res.message, "error");
+                    return;
+                }
+
+                $('#otpPreloader').removeClass('d-none');
+
+                $.post("<?= site_url('register/send_otp') ?>", { email: data.email }, function (res2) {
+                    if (res2.status) {
                         const modal = new bootstrap.Modal(document.getElementById('otpModal'));
                         modal.show();
                         startOtpTimer();
                         showAlert("OTP dikirim ke email", "success");
                     } else {
-                        showAlert(res.message, "error");
+                        showAlert(res2.message, "error");
                     }
-                },
-                error: function () {
                     $('#otpPreloader').addClass('d-none');
-                    showAlert("Gagal menghubungi server", "error");
-                }
-            });
-        });
+                }, 'json');
 
+            }, 'json');
+        });
         $('#btn-resend-otp').on('click', () => $('#btn-send-otp').click());
         let otpVerified = false;
         $('#btn-verify-otp').on('click', function () {

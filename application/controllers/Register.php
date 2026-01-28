@@ -15,70 +15,17 @@ class Register extends MY_Controller
 
 	public function index()
 	{
-		$this->form_validation->set_rules(
-			'email',
-			'Email',
-			'required|trim|valid_email|is_unique[customer.email]',
-			[
-				'required' => 'Email wajib diisi.',
-				'valid_email' => 'Format email tidak valid.',
-				'is_unique' => 'Email sudah terdaftar.'
-			]
-		);
-
-		$this->form_validation->set_rules(
-			'nama',
-			'Nama',
-			'required|trim',
-			[
-				'required' => 'Nama wajib diisi.'
-			]
-		);
-
-		$this->form_validation->set_rules(
-			'password',
-			'Password',
-			'required|trim|min_length[8]',
-			[
-				'required' => 'Password wajib diisi.',
-				'min_length' => 'Password minimal 8 karakter.'
-			]
-		);
-
-		$this->form_validation->set_rules(
-			'password2',
-			'Konfirmasi Password',
-			'required|matches[password]',
-			[
-				'required' => 'Konfirmasi password wajib diisi.',
-				'matches' => 'Konfirmasi password harus sama dengan password.'
-			]
-		);
-
-		if ($this->form_validation->run() === FALSE) {
-			$errors = $this->form_validation->error_array();
-
-			if (!empty($errors)) {
-				$first_error = reset($errors);
-				$this->session->set_flashdata('error', $first_error);
-			} else {
-				$this->session->set_flashdata('error', strip_tags(validation_errors()));
-			}
-
-			$this->load->view('register');
-			return;
-		} else {
-			$this->_register();
-		}
+		$this->load->view('register');
 	}
-
 	private function _register()
 	{
 		if (!$this->session->userdata('otp_verified')) {
-			$this->session->set_flashdata('error', 'Silakan verifikasi kode OTP terlebih dahulu.');
-			redirect('register');
+			echo json_encode([
+				'status' => false,
+				'message' => 'Silakan verifikasi OTP terlebih dahulu.'
+			]);
+			return;
 		}
-
 		$email = $this->input->post('email', true);
 
 		$last = $this->db->select('id_customer')->order_by('id_customer', 'DESC')->limit(1)->get('customer')->row_array();
@@ -100,7 +47,38 @@ class Register extends MY_Controller
 		$this->session->set_flashdata('success', 'Registrasi berhasil');
 		redirect('login');
 	}
+	public function validate_register()
+	{
+		header('Content-Type: application/json');
 
+		$this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[customer.email]', [
+			'required' => 'Email wajib diisi.',
+			'valid_email' => 'Format email tidak valid.',
+			'is_unique' => 'Email sudah terdaftar.'
+		]);
+		$this->form_validation->set_rules('nama', 'Nama', 'required|trim', [
+			'required' => 'Nama wajib diisi.'
+		]);
+		$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]', [
+			'required' => 'Password wajib diisi.',
+			'min_length' => 'Password minimal 8 karakter.'
+		]);
+		$this->form_validation->set_rules('password2', 'Konfirmasi Password', 'required|matches[password]', [
+			'required' => 'Konfirmasi password wajib diisi.',
+			'matches' => 'Konfirmasi password harus sama dengan password.'
+		]);
+
+		if ($this->form_validation->run() === FALSE) {
+			$errors = $this->form_validation->error_array();
+			echo json_encode([
+				'status' => false,
+				'message' => reset($errors)
+			]);
+			return;
+		}
+
+		echo json_encode(['status' => true]);
+	}
 	public function send_otp()
 	{
 		header('Content-Type: application/json');
@@ -165,11 +143,15 @@ Belanja Mudah, Langkah Maksimal.
 									");
 
 		if (!$this->email->send()) {
-			echo json_encode(['status' => false, 'message' => 'Gagal kirim OTP ke email']);
-			return;
+			// echo json_encode(['status' => false, 'message' => 'Gagal kirim OTP ke email']);
+			// return;
+			echo json_encode([
+				'status' => false,
+				'message' => $this->email->print_debugger()
+			]);return;
 		}
 
-		echo json_encode(['status' => true, 'message' => 'OTP berhasil dikirim ke email']);
+		echo json_encode(['status' => true, 'message' => 'OTP berhasil dikirim ke email']);return;
 	}
 
 	public function verify_otp()

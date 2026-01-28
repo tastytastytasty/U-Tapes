@@ -45,10 +45,9 @@ class Login extends MY_Controller
         $this->form_validation->set_rules(
             'password',
             'Password',
-            'required|trim|min_length[8]',
+            'required|trim',
             [
-                'required' => 'Password wajib diisi.',
-                'min_length' => 'Password minimal harus 8 karakter.'
+                'required' => 'Password wajib diisi.'
             ]
         );
 
