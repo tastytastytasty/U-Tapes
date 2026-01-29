@@ -124,24 +124,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Password</p>
-                                            <input type="password" class="form-control form-control-lg" name="password"
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
                                                 min="8" placeholder="Password" value="<?= set_value('password') ?>"
                                                 autocomplete="off">
+                                                <button class="btn btn-primary m-0" type="button" id="togglePassword">
+                                                    <p class="mb-0 text-light" id="toggleText">Lihat</p>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <p class="mb-0">Konfirmasi Password</p>
-                                            <input type="password" class="form-control form-control-lg" name="password2"
-                                                placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>"
-                                                autocomplete="off">
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-lg" name="password2" id="passwordInput2"
+                                                    placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>"
+                                                    autocomplete="off">
+                                                    <button class="btn btn-primary m-0" type="button" id="togglePassword2">
+                                                    <p class="mb-0 text-light" id="toggleText2">Lihat</p>
+                                                </button>
+                                            </div>
                                             <input type="hidden" name="otp" id="otpHidden">
                                         </div>
-                                        <!-- <div class="d-flex justify-content-end">
-                                            <button type="button" id="btn-send-otp"
-                                                class="btn btn-none text-primary p-0"
-                                                style="box-shadow: none; font-weight: normal">
-                                                Kirim Kode OTP
-                                            </button>
-                                        </div> -->
                                         <div class="text-center">
                                             <button type="button" id="btn-register"
                                                 class="btn btn-lg btn-primary w-100">
@@ -266,20 +269,72 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
             }, 'json');
         });
-        $('#btn-resend-otp').on('click', () => $('#btn-send-otp').click());
+        let resendCountdown = 0;
+        let resendTimer = null;
+
+        function startResendCooldown(seconds) {
+            resendCountdown = seconds;
+            $('#btn-resend-otp').prop('disabled', true);
+            
+            resendTimer = setInterval(function() {
+                if (resendCountdown > 0) {
+                    $('#btn-resend-otp').text(`Kirim Ulang (${resendCountdown}s)`);
+                    resendCountdown--;
+                } else {
+                    clearInterval(resendTimer);
+                    $('#btn-resend-otp').text('Kirim Ulang').prop('disabled', false);
+                }
+            }, 1000);
+        }
+        function clearOtpInput() {
+            $('#otpInput').val('');
+        }
+       $('#btn-resend-otp').on('click', function() {
+            if (resendCountdown > 0) {
+                showAlert(`Tunggu ${resendCountdown} detik untuk kirim ulang`, 'error');
+                return;
+            }
+            
+            $('#btn-send-otp').click();
+            clearOtpInput();
+            startResendCooldown(60);
+        });
+        $('#otpModal').on('hidden.bs.modal', function () {
+            clearOtpInput();
+            clearInterval(resendTimer);
+            $('#btn-resend-otp').text('Kirim Ulang').prop('disabled', false);
+            resendCountdown = 0;
+        });
+        $('#otpModal').on('shown.bs.modal', function () {
+            startResendCooldown(60);
+        });
         let otpVerified = false;
         $('#btn-verify-otp').on('click', function () {
             let otp = $('#otpInput').val().trim();
             let email = $('#emailInput').val().trim();
+            let nama = $('input[name="nama"]').val().trim();
+            let password = $('input[name="password"]').val();
+            let password2 = $('input[name="password2"]').val();
             if (!otp) return showAlert('Masukkan kode OTP', 'error');
-
-            $.post("<?= site_url('register/verify_otp') ?>", { email, otp }, res => {
+            
+            $.post("<?= site_url('register/verify_otp') ?>", { 
+                email: email, 
+                otp: otp,
+                nama: nama,
+                password: password,
+                password2: password2
+            }, res => {
                 if (res.status) {
-                    otpVerified = true;
-                    $('#otpHidden').val(otp);
                     showAlert(res.message, 'success');
                     bootstrap.Modal.getInstance(document.getElementById('otpModal')).hide();
-                } else showAlert(res.message, 'error');
+                    
+                    setTimeout(function() {
+                        window.location.href = "<?= site_url('login') ?>";
+                    }, 1500);
+                    
+                } else {
+                    showAlert(res.message, 'error');
+                }
             }, 'json').fail(() => showAlert('Gagal menghubungi server', 'error'));
         });
     </script>
@@ -300,6 +355,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 }
             });
         }
+    </script>
+    <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const input = document.getElementById('passwordInput');
+        const text = document.getElementById('toggleText');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            text.textContent = 'Tutup';
+        } else {
+            input.type = 'password';
+            text.textContent = 'Lihat';
+        }
+    });
+    document.getElementById('togglePassword2').addEventListener('click', function () {
+        const input = document.getElementById('passwordInput2');
+        const text = document.getElementById('toggleText2');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            text.textContent = 'Tutup';
+        } else {
+            input.type = 'password';
+            text.textContent = 'Lihat';
+        }
+    });
     </script>
 </body>
 

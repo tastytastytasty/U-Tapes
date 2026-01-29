@@ -58,8 +58,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="mb-3">
                       <p class="mb-0">Password</p>
-                      <input type="password" class="form-control form-control-lg" name="password" placeholder="Password"
-                        autocomplete="off" value="<?= set_value('password') ?>">
+                      <div class="input-group">
+                        <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
+                          placeholder="Password" autocomplete="off" value="<?= set_value('password') ?>">
+                        <button class="btn btn-primary m-0" type="button" id="togglePassword">
+                          <p class="mb-0 text-light" id="toggleText">Lihat</p>
+                        </button>
+                      </div>
                     </div>
 
                     <p class="text-sm text-end">
@@ -166,6 +171,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         }
       });
     }
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const input = document.getElementById('passwordInput');
+      const text = document.getElementById('toggleText');
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        text.textContent = 'Tutup';
+      } else {
+        input.type = 'password';
+        text.textContent = 'Lihat';
+      }
+    });
   </script>
 
 </body>

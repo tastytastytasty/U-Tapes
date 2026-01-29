@@ -17,36 +17,36 @@ class Register extends MY_Controller
 	{
 		$this->load->view('register');
 	}
-	private function _register()
-	{
-		if (!$this->session->userdata('otp_verified')) {
-			echo json_encode([
-				'status' => false,
-				'message' => 'Silakan verifikasi OTP terlebih dahulu.'
-			]);
-			return;
-		}
-		$email = $this->input->post('email', true);
+	// private function _register()
+	// {
+	// 	if (!$this->session->userdata('otp_verified')) {
+	// 		echo json_encode([
+	// 			'status' => false,
+	// 			'message' => 'Silakan verifikasi OTP terlebih dahulu.'
+	// 		]);
+	// 		return;
+	// 	}
+	// 	$email = $this->input->post('email', true);
 
-		$last = $this->db->select('id_customer')->order_by('id_customer', 'DESC')->limit(1)->get('customer')->row_array();
-		$number = $last ? (int) substr($last['id_customer'], 3) + 1 : 1;
-		$id_customer = 'CST' . str_pad($number, 3, '0', STR_PAD_LEFT);
+	// 	$last = $this->db->select('id_customer')->order_by('id_customer', 'DESC')->limit(1)->get('customer')->row_array();
+	// 	$number = $last ? (int) substr($last['id_customer'], 3) + 1 : 1;
+	// 	$id_customer = 'CST' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
-		$customer = [
-			'id_customer' => $id_customer,
-			'email' => $email,
-			'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-			'nama' => $this->input->post('nama', true),
-			'no_telp' => null,
-			'avatar' => null
-		];
+	// 	$customer = [
+	// 		'id_customer' => $id_customer,
+	// 		'email' => $email,
+	// 		'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+	// 		'nama' => $this->input->post('nama', true),
+	// 		'no_telp' => null,
+	// 		'avatar' => null
+	// 	];
 
-		$this->db->insert('customer', $customer);
+	// 	$this->db->insert('customer', $customer);
 
-		$this->session->unset_userdata('otp_verified');
-		$this->session->set_flashdata('success', 'Registrasi berhasil');
-		redirect('login');
-	}
+	// 	$this->session->unset_userdata('otp_verified');
+	// 	$this->session->set_flashdata('success', 'Registrasi berhasil');
+	// 	redirect('login');
+	// }
 	public function validate_register()
 	{
 		header('Content-Type: application/json');
@@ -120,7 +120,7 @@ class Register extends MY_Controller
 		]);
 
 		$this->load->library('email');
-		$this->email->from('UTapsInformation@gmail.com', 'U-Taps Store');
+		$this->email->from('utapsinformationn@gmail.com', 'U-Taps Store');
 		$this->email->to($email);
 		$this->email->subject('Kode OTP Verifikasi U-Taps');
 		$this->email->message("
@@ -143,23 +143,21 @@ Belanja Mudah, Langkah Maksimal.
 									");
 
 		if (!$this->email->send()) {
-			// echo json_encode(['status' => false, 'message' => 'Gagal kirim OTP ke email']);
-			// return;
-			echo json_encode([
-				'status' => false,
-				'message' => $this->email->print_debugger()
-			]);return;
+			echo json_encode(['status' => false, 'message' => 'Gagal kirim OTP ke email']);
+			return;
 		}
 
-		echo json_encode(['status' => true, 'message' => 'OTP berhasil dikirim ke email']);return;
+		echo json_encode(['status' => true, 'message' => 'OTP berhasil dikirim ke email']);
+		return;
 	}
 
 	public function verify_otp()
 	{
 		header('Content-Type: application/json');
-
 		$email = $this->input->post('email', true);
 		$otp = $this->input->post('otp', true);
+		$nama = $this->input->post('nama', true);
+		$password = $this->input->post('password', true);
 
 		if (!$email || !$otp) {
 			echo json_encode(['status' => false, 'message' => 'Email & OTP wajib diisi']);
@@ -167,6 +165,7 @@ Belanja Mudah, Langkah Maksimal.
 		}
 
 		$row = $this->db->where('email', $email)->where('dipake', 0)->order_by('id', 'DESC')->get('register_otp')->row_array();
+
 		if (!$row) {
 			echo json_encode(['status' => false, 'message' => 'OTP tidak ditemukan']);
 			return;
@@ -190,7 +189,6 @@ Belanja Mudah, Langkah Maksimal.
 			} elseif ($percobaan > 6) {
 				$kunci = date('Y-m-d H:i:s', time() + 1200);
 			}
-
 			$this->db->where('id', $row['id'])->update('register_otp', ['percobaan' => $percobaan, 'kunci_sampai' => $kunci]);
 			echo json_encode(['status' => false, 'message' => 'Kode OTP salah']);
 			return;
@@ -201,10 +199,26 @@ Belanja Mudah, Langkah Maksimal.
 			return;
 		}
 
+		// Generate ID Customer
+		$last = $this->db->select('id_customer')->order_by('id_customer', 'DESC')->limit(1)->get('customer')->row_array();
+		$number = $last ? (int) substr($last['id_customer'], 3) + 1 : 1;
+		$id_customer = 'CST' . str_pad($number, 3, '0', STR_PAD_LEFT);
+
+		// Insert data customer
+		$customer = [
+			'id_customer' => $id_customer,
+			'email' => $email,
+			'password' => password_hash($password, PASSWORD_DEFAULT),
+			'nama' => $nama,
+			'no_telp' => null,
+			'avatar' => null
+		];
+
+		$this->db->insert('customer', $customer);
+
+		// Update OTP sudah dipake
 		$this->db->where('id', $row['id'])->update('register_otp', ['dipake' => 1]);
 
-		$this->session->set_userdata('otp_verified', true);
-
-		echo json_encode(['status' => true, 'message' => 'OTP berhasil diverifikasi']);
+		echo json_encode(['status' => true, 'message' => 'Registrasi berhasil! Silakan login']);
 	}
 }

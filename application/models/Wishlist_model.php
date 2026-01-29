@@ -4,8 +4,8 @@ class Wishlist_model extends CI_Model
     public function get_by_customer($id_customer)
     {
         return $this->db
-            ->select('wishlist.id_wishlist, item.id_item, item.nama_sepatu, item.gambar, kategori.nama_kategori,promo.persen_promo,
-            promo.harga_promo,COALESCE(MIN(CASE WHEN detail_item.stok > 0 THEN detail_item.harga END),
+            ->select('wishlist.id_wishlist, item.id_item, item.nama_sepatu, item.gambar, kategori.nama_kategori,MAX(promo.persen_promo) AS persen_promo,
+            MAX(promo.harga_promo) AS harga_promo,COALESCE(MIN(CASE WHEN detail_item.stok > 0 THEN detail_item.harga END),
             MIN(detail_item.harga)) AS harga_termurah, item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
             AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale')
