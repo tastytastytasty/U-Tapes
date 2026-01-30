@@ -145,7 +145,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             </div>
                                             <input type="hidden" name="otp" id="otpHidden">
                                         </div>
-                                        <div class="text-center">
+                                        <div class="text-center mt-4">
                                             <button type="button" id="btn-register"
                                                 class="btn btn-lg btn-primary w-100">
                                                 Register
@@ -234,48 +234,77 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             e.stopImmediatePropagation();
             return false;
         });
+        let registerCooldown = 0;
+        let registerTimer = null;
+        let otpAlreadySent = false; // Tambahan: flag sudah kirim OTP
+
+        function startRegisterCooldown(seconds) {
+            registerCooldown = seconds;
+            otpAlreadySent = true; // Tandai OTP sudah dikirim
+            
+            registerTimer = setInterval(function() {
+                if (registerCooldown > 0) {
+                    $('#btn-register').text('Register');
+                    registerCooldown--;
+                } else {
+                    clearInterval(registerTimer);
+                    otpAlreadySent = false; // Reset flag setelah cooldown selesai
+                }
+            }, 1000);
+        }
 
         $('#btn-register').on('click', function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
-
+            
+            // Jika masih dalam cooldown, tampilkan modal + alert tanpa kirim OTP baru
+            if (registerCooldown > 0) {
+                showAlert(`Tunggu ${registerCooldown} detik untuk kirim OTP lagi`, 'error');
+                const modal = new bootstrap.Modal(document.getElementById('otpModal'));
+                modal.show();
+                return;
+            }
+            
             let data = {
                 email: $('#emailInput').val().trim(),
                 nama: $('input[name="nama"]').val().trim(),
                 password: $('input[name="password"]').val(),
                 password2: $('input[name="password2"]').val()
             };
-
+            
             $.post("<?= site_url('register/validate_register') ?>", data, function (res) {
 
                 if (!res.status) {
                     showAlert(res.message, "error");
                     return;
                 }
-
+                
                 $('#otpPreloader').removeClass('d-none');
-
+                
                 $.post("<?= site_url('register/send_otp') ?>", { email: data.email }, function (res2) {
+                    $('#otpPreloader').addClass('d-none');
+                    
                     if (res2.status) {
                         const modal = new bootstrap.Modal(document.getElementById('otpModal'));
                         modal.show();
                         startOtpTimer();
                         showAlert("OTP dikirim ke email", "success");
+                        startRegisterCooldown(60);
                     } else {
                         showAlert(res2.message, "error");
                     }
+                }, 'json').fail(function() {
                     $('#otpPreloader').addClass('d-none');
-                }, 'json');
-
+                    showAlert('Gagal menghubungi server', 'error');
+                });
             }, 'json');
         });
         let resendCountdown = 0;
         let resendTimer = null;
-
         function startResendCooldown(seconds) {
+            console.log('Start cooldown:', seconds);
             resendCountdown = seconds;
             $('#btn-resend-otp').prop('disabled', true);
-            
             resendTimer = setInterval(function() {
                 if (resendCountdown > 0) {
                     $('#btn-resend-otp').text(`Kirim Ulang (${resendCountdown}s)`);
@@ -289,22 +318,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         function clearOtpInput() {
             $('#otpInput').val('');
         }
-       $('#btn-resend-otp').on('click', function() {
+        $('#btn-resend-otp').on('click', function() {
+            console.log('Resend button clicked, countdown:', resendCountdown);
+            
             if (resendCountdown > 0) {
                 showAlert(`Tunggu ${resendCountdown} detik untuk kirim ulang`, 'error');
                 return;
             }
             
-            $('#btn-send-otp').click();
-            clearOtpInput();
-            startResendCooldown(60);
+            $('#otpPreloader').removeClass('d-none');
+            let email = $('#emailInput').val().trim();
+            console.log('Sending OTP to:', email);
+            $.post("<?= site_url('register/send_otp') ?>", { email: email }, function(res) {
+                console.log('Response:', res);
+                $('#otpPreloader').addClass('d-none');
+                if (res.status) {
+                    showAlert(res.message, 'success');
+                    clearOtpInput();
+                    startResendCooldown(60);
+                } else {
+                    showAlert(res.message, 'error');
+                }
+            }, 'json').fail(function() {
+                $('#otpPreloader').addClass('d-none');
+                showAlert('Gagal menghubungi server', 'error');
+            });
         });
-        $('#otpModal').on('hidden.bs.modal', function () {
-            clearOtpInput();
-            clearInterval(resendTimer);
-            $('#btn-resend-otp').text('Kirim Ulang').prop('disabled', false);
-            resendCountdown = 0;
-        });
+
         $('#otpModal').on('shown.bs.modal', function () {
             startResendCooldown(60);
         });

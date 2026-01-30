@@ -84,6 +84,7 @@ class Register extends MY_Controller
 		header('Content-Type: application/json');
 
 		$email = $this->input->post('email', true);
+		$row = $this->db->where('email', $email)->where('dipake', 0)->order_by('id', 'DESC')->get('register_otp')->row_array();
 		if (!$email) {
 			echo json_encode(['status' => false, 'message' => 'Email wajib diisi']);
 			return;
@@ -102,7 +103,10 @@ class Register extends MY_Controller
 		if ($lastOtp && $lastOtp['ngirim_ulang'] >= 3 && strtotime($lastOtp['kadaluarsa']) > time()) {
 			$kunci = date('Y-m-d H:i:s', time() + 300);
 			$this->db->where('id', $lastOtp['id'])->update('register_otp', ['kunci_sampai' => $kunci]);
-			echo json_encode(['status' => false, 'message' => "Kamu sudah kirim OTP 3 kali. Tunggu 5 menit."]);
+			$sisa = strtotime($row['kunci_sampai']) - time();
+			$m = floor($sisa / 60);
+			$s = $sisa % 60;
+			echo json_encode(['status' => false, 'message' => "Kamu sudah kirim OTP 3 kali. Coba lagi {$m} menit {$s} detik."]);
 			return;
 		}
 
@@ -199,12 +203,10 @@ Belanja Mudah, Langkah Maksimal.
 			return;
 		}
 
-		// Generate ID Customer
 		$last = $this->db->select('id_customer')->order_by('id_customer', 'DESC')->limit(1)->get('customer')->row_array();
 		$number = $last ? (int) substr($last['id_customer'], 3) + 1 : 1;
 		$id_customer = 'CST' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
-		// Insert data customer
 		$customer = [
 			'id_customer' => $id_customer,
 			'email' => $email,
@@ -216,7 +218,6 @@ Belanja Mudah, Langkah Maksimal.
 
 		$this->db->insert('customer', $customer);
 
-		// Update OTP sudah dipake
 		$this->db->where('id', $row['id'])->update('register_otp', ['dipake' => 1]);
 
 		echo json_encode(['status' => true, 'message' => 'Registrasi berhasil! Silakan login']);
