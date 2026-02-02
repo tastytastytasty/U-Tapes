@@ -13,16 +13,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </title>
     <!--     Fonts and icons     -->
     <link href="<?= base_url('assets/css/select2.min.css') ?>" rel="stylesheet" />
-    <link href="<?= base_url('assets/') ?>https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
         rel="stylesheet" />
     <!-- Nucleo Icons -->
     <link
-        href="<?= base_url('assets/') ?>https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css"
+        href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css"
         rel="stylesheet" />
-    <link href="<?= base_url('assets/') ?>https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css"
+    <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css"
         rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="<?= base_url('assets/') ?>https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- CSS Files -->
     <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -71,6 +72,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             transform: scale(0.3);
             opacity: 0;
         }
+    }
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear,
+    input[type="password"]::-webkit-credentials-auto-fill-button {
+        display: none;
     }
 </style>
 <div class="preloader d-none" id="otpPreloader">
@@ -128,9 +134,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
                                                 min="8" placeholder="Password" value="<?= set_value('password') ?>"
                                                 autocomplete="off">
-                                                <button class="btn btn-primary m-0" type="button" id="togglePassword">
-                                                    <p class="mb-0 text-light" id="toggleText">Lihat</p>
-                                                </button>
+                                                <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword">
+                                                    <i class="fa fa-eye" id="eyeIcon"></i>
+                                                </button>   
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -139,11 +145,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <input type="password" class="form-control form-control-lg" name="password2" id="passwordInput2"
                                                     placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>"
                                                     autocomplete="off">
-                                                    <button class="btn btn-primary m-0" type="button" id="togglePassword2">
-                                                    <p class="mb-0 text-light" id="toggleText2">Lihat</p>
+                                                <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword2">
+                                                    <i class="fa fa-eye" id="eyeIcon2"></i>
                                                 </button>
                                             </div>
                                             <input type="hidden" name="otp" id="otpHidden">
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-center" style="width: 100%;">
+                                                <?php echo $widget;?>
+                                            </div>
+                                            <?php echo $script;?>
                                         </div>
                                         <div class="text-center mt-4">
                                             <button type="button" id="btn-register"
@@ -188,11 +200,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         placeholder="Kode OTP" autocomplete="off">
 
                     <div class="small text-muted mb-2">
-                        OTP kadaluarsa dalam <span id="otp-timer">05:00</span>
+                        <span id="otp-timer">OTP kadaluarsa dalam 05:00</span>
                     </div>
 
                     <button id="btn-verify-otp" class="btn btn-primary w-100 mb-2">Verifikasi</button>
-                    <button id="btn-resend-otp" class="btn btn-link p-0">Kirim Ulang</button>
+                    <!-- <button id="btn-resend-otp" class="btn btn-link p-0">Kirim Ulang</button> -->
                 </div>
             </div>
         </div>
@@ -225,9 +237,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             otpTimerInterval = setInterval(() => {
                 otpSeconds--;
                 let m = Math.floor(otpSeconds / 60), s = otpSeconds % 60;
-                $('#otp-timer').text(`${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
-                if (otpSeconds <= 0) { clearInterval(otpTimerInterval); $('#otp-timer').text('Kadaluarsa'); }
-            }, 1000);
+                $('#otp-timer').text(`OTP kadaluarsa dalam ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
+                    if (otpSeconds <= 0) { 
+                        clearInterval(otpTimerInterval); 
+                        $('#otp-timer').text('OTP sudah kadaluarsa'); 
+                    }
+                }, 1000);
         }
         $(document).on('submit', '#registerForm', function (e) {
             e.preventDefault();
@@ -236,19 +251,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         });
         let registerCooldown = 0;
         let registerTimer = null;
-        let otpAlreadySent = false; // Tambahan: flag sudah kirim OTP
+        let otpAlreadySent = false;
 
         function startRegisterCooldown(seconds) {
             registerCooldown = seconds;
-            otpAlreadySent = true; // Tandai OTP sudah dikirim
+            otpAlreadySent = true;
             
             registerTimer = setInterval(function() {
                 if (registerCooldown > 0) {
-                    $('#btn-register').text('Register');
+                    $('#btn-register').text(`Kirim Ulang OTP (${registerCooldown}s)`);
                     registerCooldown--;
                 } else {
                     clearInterval(registerTimer);
-                    otpAlreadySent = false; // Reset flag setelah cooldown selesai
+                    otpAlreadySent = false;
+                    $('#btn-register').text('Register').prop('disabled', false);
                 }
             }, 1000);
         }
@@ -256,8 +272,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $('#btn-register').on('click', function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
-            
-            // Jika masih dalam cooldown, tampilkan modal + alert tanpa kirim OTP baru
             if (registerCooldown > 0) {
                 showAlert(`Tunggu ${registerCooldown} detik untuk kirim OTP lagi`, 'error');
                 const modal = new bootstrap.Modal(document.getElementById('otpModal'));
@@ -278,10 +292,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     showAlert(res.message, "error");
                     return;
                 }
-                
+                let recaptchaResponse = grecaptcha.getResponse();
                 $('#otpPreloader').removeClass('d-none');
                 
-                $.post("<?= site_url('register/send_otp') ?>", { email: data.email }, function (res2) {
+                $.post("<?= site_url('register/send_otp') ?>", { 
+                    email: data.email,
+                    'g-recaptcha-response': recaptchaResponse
+                }, function (res2) {
                     $('#otpPreloader').addClass('d-none');
                     
                     if (res2.status) {
@@ -292,6 +309,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         startRegisterCooldown(60);
                     } else {
                         showAlert(res2.message, "error");
+                        grecaptcha.reset();
                     }
                 }, 'json').fail(function() {
                     $('#otpPreloader').addClass('d-none');
@@ -328,8 +346,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             
             $('#otpPreloader').removeClass('d-none');
             let email = $('#emailInput').val().trim();
+            let recaptchaResponse = grecaptcha.getResponse();
             console.log('Sending OTP to:', email);
-            $.post("<?= site_url('register/send_otp') ?>", { email: email }, function(res) {
+            $.post("<?= site_url('register/send_otp') ?>", {
+                email: email, 'g-recaptcha-response': recaptchaResponse
+            }, function(res) {
                 console.log('Response:', res);
                 $('#otpPreloader').addClass('d-none');
                 if (res.status) {
@@ -399,26 +420,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script>
     document.getElementById('togglePassword').addEventListener('click', function () {
         const input = document.getElementById('passwordInput');
-        const text = document.getElementById('toggleText');
+        const icon = document.getElementById('eyeIcon');
 
         if (input.type === 'password') {
             input.type = 'text';
-            text.textContent = 'Tutup';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
         } else {
             input.type = 'password';
-            text.textContent = 'Lihat';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
         }
     });
     document.getElementById('togglePassword2').addEventListener('click', function () {
         const input = document.getElementById('passwordInput2');
-        const text = document.getElementById('toggleText2');
+        const icon = document.getElementById('eyeIcon2');
 
         if (input.type === 'password') {
             input.type = 'text';
-            text.textContent = 'Tutup';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
         } else {
             input.type = 'password';
-            text.textContent = 'Lihat';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
         }
     });
     </script>

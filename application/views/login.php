@@ -12,21 +12,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     U-tapes
   </title>
   <!--     Fonts and icons     -->
-  <link href="<?= base_url('assets/') ?>https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
-  <link href="<?= base_url('assets/') ?>https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css"
-    rel="stylesheet" />
-  <link href="<?= base_url('assets/') ?>https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css"
-    rel="stylesheet" />
+  <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- CSS Files -->
   <link id="pagestyle" href="<?= base_url('assets/') ?>css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
   <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 </head>
+<style>
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear,
+  input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none;
+  }
+</style>
 
 <body class="">
   <main class="main-content  mt-0">
@@ -61,12 +66,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                       <div class="input-group">
                         <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
                           placeholder="Password" autocomplete="off" value="<?= set_value('password') ?>">
-                        <button class="btn btn-primary m-0" type="button" id="togglePassword">
-                          <p class="mb-0 text-light" id="toggleText">Lihat</p>
+                        <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword">
+                          <i class="fa fa-eye" id="eyeIcon"></i>
                         </button>
                       </div>
                     </div>
-
+                    <div class="mb-3">
+                      <div class="d-flex justify-content-center" style="width: 100%;">
+                        <?php echo $widget; ?>
+                      </div>
+                      <?php echo $script; ?>
+                    </div>
                     <p class="text-sm text-end">
                       <a href="#" class="text-primary">Lupa Password?</a>
                     </p>
@@ -129,11 +139,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     $(document).ready(function () {
       $('#loginForm').on('submit', function (e) {
         e.preventDefault();
-
+        let recaptchaResponse = grecaptcha.getResponse();
+        let formData = $(this).serialize();
+        formData += '&g-recaptcha-response=' + recaptchaResponse;
         $.ajax({
           url: "<?= site_url('login/auth') ?>",
           type: "POST",
-          data: $(this).serialize(),
+          data: formData,
           dataType: "json",
           success: function (res) {
             console.log(res);
@@ -143,12 +155,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 window.location.href = "<?= site_url('homepage') ?>";
               }, 1000);
             } else {
-              showAlert(res.message || "Data tidak terkirim ke server");
+              showAlert(res.message, "error");
+              grecaptcha.reset();
             }
           },
           error: function (xhr) {
             console.log(xhr.responseText);
-            showAlert("Terjadi kesalahan server");
+            showAlert("Terjadi kesalahan server", "error");
+            grecaptcha.reset();
           }
         });
       });
@@ -173,14 +187,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     }
     document.getElementById('togglePassword').addEventListener('click', function () {
       const input = document.getElementById('passwordInput');
-      const text = document.getElementById('toggleText');
-
+      const icon = document.getElementById('eyeIcon');
       if (input.type === 'password') {
         input.type = 'text';
-        text.textContent = 'Tutup';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
       } else {
         input.type = 'password';
-        text.textContent = 'Lihat';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
       }
     });
   </script>

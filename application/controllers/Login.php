@@ -6,7 +6,7 @@ class Login extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->library(['form_validation', 'session']);
+        $this->load->library(['form_validation', 'session', 'recaptcha']);
         $this->load->helper('form');
         $this->load->database();
         $method = $this->router->fetch_method();
@@ -16,13 +16,24 @@ class Login extends MY_Controller
     }
     public function index()
     {
-        $this->load->view('login');
+        $recaptcha = $this->input->post('g-recaptcha-response');
+        if (!empty($recaptcha)) {
+            $response = $this->recaptcha->verifyResponse($recaptcha);
+            if (isset($response['success']) and $response['success'] === true) {
+                echo "Kamu berhasil!";
+            }
+        }
+
+        $data = array(
+            'widget' => $this->recaptcha->getWidget(),
+            'script' => $this->recaptcha->getScriptTag(),
+        );
+		$this->load->view('login', $data);
     }
 
     public function auth()
     {
         header('Content-Type: application/json');
-
         $post = $this->input->post(NULL, true);
 
         if (!$post) {
@@ -88,6 +99,17 @@ class Login extends MY_Controller
             ]);
             return;
         }
+        $recaptcha = $this->input->post('g-recaptcha-response');
+		if (empty($recaptcha)) {
+			echo json_encode(['status' => false, 'message' => 'Harap centang "Saya bukan robot"']);
+			return;
+		}
+
+		$response = $this->recaptcha->verifyResponse($recaptcha);
+		if (!isset($response['success']) || $response['success'] !== true) {
+			echo json_encode(['status' => false, 'message' => 'Verifikasi reCAPTCHA gagal. Silakan coba lagi']);
+			return;
+		}
         $this->session->sess_regenerate(true);
         $this->session->set_userdata([
             'logged_in' => true,
