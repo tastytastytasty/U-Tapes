@@ -63,6 +63,8 @@ $route['Register'] = 'register';
 $route['alamat'] = 'Alamat';
 $route['login'] = 'login/index';
 $route['login/auth'] = 'login/auth';
+$route['checkout/proses_pembayaran'] = 'checkout/proses_pembayaran';
+
 
 
 
