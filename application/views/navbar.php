@@ -76,11 +76,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         text-transform: uppercase;
     }
 
+    body.modal-open {
+        padding-right: 0 !important;
+    }
+
+    body.modal-open .navbar-area {
+        padding-right: 0 !important;
+    }
+
     .navbar-area {
         background: #fff;
         border-bottom: 1px solid #eee;
         top: 0;
         z-index: 1000;
+        padding-right: 0 !important;
     }
 
     .navbar-nav .nav-link {
@@ -258,8 +267,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </div>
                                     </div>
                                 <?php else: ?>
-                                    <a href="javascript:void(0)" class="main-btn btn-wishlist-navbar"
-                                        data-need-login="1">
+                                    <a href="javascript:void(0)" class="main-btn btn-wishlist-navbar" data-need-login="1">
                                         <i class="lni lni-heart"></i>
                                     </a>
                                     <div class="shopping-item text-center p-3">

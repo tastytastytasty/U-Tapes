@@ -9,7 +9,6 @@ class Ajax extends MY_Controller
         $this->load->model('Item_model');
     }
 
-    // ambil ukuran
     public function get_ukuran()
     {
         $id_item = $this->input->post('id_item');

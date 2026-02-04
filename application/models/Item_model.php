@@ -35,7 +35,7 @@ class Item_model extends CI_Model
     public function get_ukuran($id_item, $id_warna)
     {
         return $this->db
-            ->select('ukuran, stok')
+            ->select('ukuran, SUM(stok) as stok')
             ->where('id_item', $id_item)
             ->where('id_warna', $id_warna)
             ->group_by('ukuran')

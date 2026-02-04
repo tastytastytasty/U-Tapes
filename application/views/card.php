@@ -1,7 +1,8 @@
 <div class="row">
     <?php foreach ($items as $item): ?>
         <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <div class="single-product d-flex flex-column h-100">
+            <div class="single-product d-flex flex-column h-100 product-card"
+                data-url="<?= site_url('detailproduct/' . $item->id_item) ?>">
                 <div class="product-image position-relative">
                     <img src="<?= base_url('assets/images/item/' . $item->gambar) ?>" alt="<?= $item->nama_sepatu ?>">
                     <div class="product-actions position-absolute top-0 end-0 m-2 d-flex gap-1
@@ -24,9 +25,6 @@
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>
-                    <div class="button">
-                        <a href="<?= site_url('detailproduct/' . $item->id_item) ?>" class="btn">Lihat Detail</a>
-                    </div>
                 </div>
                 <div class="badge-wrapper badge-mobile mt-1">
                     <?php if ($item->is_new): ?>
@@ -48,7 +46,7 @@
                             <?= $item->nama_sepatu ?>
                         </a>
                     </h4>
-                    <div class="price d-flex justify-content-between">
+                    <div class="price d-flex justify-content-start align-items-end">
                         <?php
                         $harga_asli = $item->harga_termurah;
                         $harga_diskon = $harga_asli;
@@ -78,20 +76,23 @@
                             <span class="text-danger">Habis</span>
                         <?php endif; ?>
                     </div>
-                    <?php if ($item->total_stok > 0): ?>
-                        <a href="<?= site_url('detailproduct/' . $item->id_item) ?>"
-                            class="btn btn-sm btn-primary w-100 mt-auto">
-                            <i class="lni lni-wallet me-1"></i><span class="fw-bold"> Checkout</span>
-                        </a>
-                    <?php else: ?>
-                        <button class="btn-sm btn-secondary w-100 mt-auto" style="border-bottom: none; border-right: none;"
-                            disabled>
-                            <i class="lni lni-wallet me-1"></i><span class="fw-bold"> Checkout</span>
-                        </button>
-                    <?php endif; ?>
                 </div>
             </div>
             <!-- End Single Product -->
         </div>
     <?php endforeach; ?>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (e.target.closest('.btn-wishlist')) return;
+
+                const url = this.dataset.url;
+                if (url) {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+</script>

@@ -4,6 +4,11 @@
 		border-radius: 6px;
 	}
 
+	.product-actions {
+		transition: opacity 0.3s ease, transform 0.2s ease;
+		z-index: 10;
+	}
+
 	.product-actions .action-btn {
 		width: 34px;
 		height: 34px;
@@ -17,13 +22,8 @@
 		font-size: 16px;
 	}
 
-	.product-actions .action-btn:hover {
+	.product-actions button:hover {
 		transform: scale(1.1);
-	}
-
-	.product-actions {
-		transition: opacity 0.3s ease, transform 0.2s ease;
-		z-index: 10;
 	}
 
 	.product-actions.in-wishlist {
@@ -38,23 +38,15 @@
 		opacity: 1;
 	}
 
-	.product-actions button:hover {
-		transform: scale(1.1);
-	}
-
 	.new-tag,
 	.sale-tag {
 		position: static !important;
-	}
-
-	.new-tag {
 		background: #0d6efd;
 		color: #fff;
 	}
 
 	.sale-tag {
 		background: #dc3545;
-		color: #fff;
 	}
 
 	.badge-wrapper span {
@@ -75,13 +67,81 @@
 	}
 
 	@media (max-width: 576px) {
+
+		.single-product {
+			padding: 4px;
+			border-radius: 8px;
+		}
+		.single-product .product-info {
+			padding: 6px;
+		}
+		.single-product .product-info .price {
+			margin-top: 10px;
+		}
+		.product-image img {
+			height: 120px;
+			object-fit: cover;
+		}
+
+		.product-actions {
+			position: absolute !important;
+			top: 6px;
+			right: 6px;
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+
+		.product-image:hover .product-actions {
+			opacity: 0;
+		}
+
+		.product-image:hover .product-actions.not-in-wishlist {
+			opacity: 1;
+		}
+
 		.badge-desktop {
 			display: none;
 		}
 
 		.badge-mobile {
-			display: block;
-			text-align: left;
+			display: block !important;
+			margin-top: 4px;
+			margin-left: 4px;
+		}
+
+		.badge-wrapper span {
+			font-size: 11px;
+			padding: 2px 5px;
+			border-radius: 6px;
+		}
+
+		.product-actions .btn {
+			padding: 2px 4px;
+			font-size: 10px;
+		}
+
+		.product-actions i {
+			font-size: 12px;
+		}
+
+		.product-info .category {
+			font-size: 10px;
+		}
+
+		.product-info .title,
+		.product-info .title a {
+			font-size: 12px;
+			line-height: 1.1;
+			margin: 2px 0;
+		}
+
+		.price span {
+			font-size: 11px;
+		}
+
+		.discount-price,
+		.text-danger {
+			font-size: 10px;
 		}
 	}
 </style>
@@ -232,52 +292,3 @@
 	</div>
 </section>
 <!-- End Banner Area -->
-
-<!-- Start Shipping Info -->
-<section class="shipping-info">
-	<div class="container-fluid px-4">
-		<ul>
-			<!-- Free Shipping -->
-			<li>
-				<div class="media-icon">
-					<i class="lni lni-delivery"></i>
-				</div>
-				<div class="media-body">
-					<h5>Free Shipping</h5>
-					<span>On order over $99</span>
-				</div>
-			</li>
-			<!-- Money Return -->
-			<li>
-				<div class="media-icon">
-					<i class="lni lni-support"></i>
-				</div>
-				<div class="media-body">
-					<h5>24/7 Support.</h5>
-					<span>Live Chat Or Call.</span>
-				</div>
-			</li>
-			<!-- Support 24/7 -->
-			<li>
-				<div class="media-icon">
-					<i class="lni lni-credit-cards"></i>
-				</div>
-				<div class="media-body">
-					<h5>Online Payment.</h5>
-					<span>Secure Payment Services.</span>
-				</div>
-			</li>
-			<!-- Safe Payment -->
-			<li>
-				<div class="media-icon">
-					<i class="lni lni-reload"></i>
-				</div>
-				<div class="media-body">
-					<h5>Easy Return.</h5>
-					<span>Hassle Free Shopping.</span>
-				</div>
-			</li>
-		</ul>
-	</div>
-</section>
-<!-- End Shipping Info -->

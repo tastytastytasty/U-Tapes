@@ -187,7 +187,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </section>
     </main>
-    <div class="modal fade" id="otpModal" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal fade" id="otpModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -204,7 +204,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
 
                     <button id="btn-verify-otp" class="btn btn-primary w-100 mb-2">Verifikasi</button>
-                    <!-- <button id="btn-resend-otp" class="btn btn-link p-0">Kirim Ulang</button> -->
                 </div>
             </div>
         </div>

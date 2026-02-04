@@ -76,7 +76,7 @@ class Register extends MY_Controller
 			return;
 		}
 		$email = $this->input->post('email', true);
-		$row = $this->db->where('email', $email)->where('dipake', 0)->order_by('id', 'DESC')->get('register_otp')->row_array();
+		$row = $this->db->where('email', $email)->where('dipakai', 0)->order_by('id', 'DESC')->get('register_otp')->row_array();
 		if (!$email) {
 			echo json_encode(['status' => false, 'message' => 'Email wajib diisi']);
 			return;
@@ -92,7 +92,7 @@ class Register extends MY_Controller
 			return;
 		}
 
-		if ($lastOtp && $lastOtp['ngirim_ulang'] >= 3 && strtotime($lastOtp['kadaluarsa']) > time()) {
+		if ($lastOtp && $lastOtp['kirim_ulang'] >= 3 && strtotime($lastOtp['kadaluarsa']) > time()) {
 			$kunci = date('Y-m-d H:i:s', time() + 300);
 			$this->db->where('id', $lastOtp['id'])->update('register_otp', ['kunci_sampai' => $kunci]);
 			$sisa = 300;
@@ -103,15 +103,24 @@ class Register extends MY_Controller
 		}
 
 		$otp = rand(100000, 999999);
+		$kirim_ulang = 1;
+        $reset_interval = 300;
+
+        if ($lastOtp) {
+            $selisih_waktu = time() - strtotime($lastOtp['created_at']);
+            if ($selisih_waktu < $reset_interval) {
+                $kirim_ulang = $lastOtp['kirim_ulang'] + 1;
+            }
+        }
 
 		$this->db->insert('register_otp', [
 			'email' => $email,
 			'otp_kode' => $otp,
 			'kadaluarsa' => date('Y-m-d H:i:s', time() + 300),
 			'percobaan' => 0,
-			'ngirim_ulang' => $lastOtp ? $lastOtp['ngirim_ulang'] + 1 : 1,
+			'kirim_ulang' => $kirim_ulang,
 			'kunci_sampai' => null,
-			'dipake' => 0,
+			'dipakai' => 0,
 			'created_at' => date('Y-m-d H:i:s')
 		]);
 
@@ -160,7 +169,7 @@ Belanja Mudah, Langkah Maksimal.
 			return;
 		}
 
-		$row = $this->db->where('email', $email)->where('dipake', 0)->order_by('id', 'DESC')->get('register_otp')->row_array();
+		$row = $this->db->where('email', $email)->where('dipakai', 0)->order_by('id', 'DESC')->get('register_otp')->row_array();
 
 		if (!$row) {
 			echo json_encode(['status' => false, 'message' => 'OTP tidak ditemukan']);
@@ -210,7 +219,7 @@ Belanja Mudah, Langkah Maksimal.
 
 		$this->db->insert('customer', $customer);
 
-		$this->db->where('id', $row['id'])->update('register_otp', ['dipake' => 1]);
+		$this->db->where('id', $row['id'])->update('register_otp', ['dipakai' => 1]);
 
 		echo json_encode(['status' => true, 'message' => 'Registrasi berhasil! Silakan login']);
 	}

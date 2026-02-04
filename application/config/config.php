@@ -25,6 +25,7 @@ date_default_timezone_set('Asia/Jakarta');
 |
 */
 $config['base_url'] = 'http://e-commerce-shoes.test/';
+// $config['base_url'] = 'http://192.168.1.101/e-commerce-shoes/';
 
 /*
 |--------------------------------------------------------------------------
