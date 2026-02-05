@@ -65,53 +65,44 @@
 	.badge-mobile {
 		display: none;
 	}
+	.color-radio input {
+        display: none;
+    }
+
+    .color-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 2px solid #000000;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .color-radio input:checked+.color-circle {
+        border: 3px solid #0d6efd;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, .3);
+    }
 
 	@media (max-width: 576px) {
+		.container-fluid {
+			padding-left: 20px !important;
+			padding-right: 20px !important;
+		}
+
+		.col-6 {
+			padding: 6px !important;
+			margin: 0 !important;
+		}
 
 		.single-product {
-			padding: 4px;
-			border-radius: 8px;
+			padding: 4px !important;
+			border-radius: 6px;
 		}
-		.single-product .product-info {
-			padding: 6px;
-		}
-		.single-product .product-info .price {
-			margin-top: 10px;
-		}
+
 		.product-image img {
-			height: 120px;
+			width: 100%;
+			height: 170px;
 			object-fit: cover;
-		}
-
-		.product-actions {
-			position: absolute !important;
-			top: 6px;
-			right: 6px;
-			opacity: 0;
-			transition: opacity 0.2s ease;
-		}
-
-		.product-image:hover .product-actions {
-			opacity: 0;
-		}
-
-		.product-image:hover .product-actions.not-in-wishlist {
-			opacity: 1;
-		}
-
-		.badge-desktop {
-			display: none;
-		}
-
-		.badge-mobile {
-			display: block !important;
-			margin-top: 4px;
-			margin-left: 4px;
-		}
-
-		.badge-wrapper span {
-			font-size: 11px;
-			padding: 2px 5px;
 			border-radius: 6px;
 		}
 
@@ -124,22 +115,45 @@
 			font-size: 12px;
 		}
 
-		.product-info .category {
-			font-size: 10px;
+		.new-tag,
+		.sale-tag {
+			margin-top: 0px !important;
+			font-size: 9px !important;
+			padding: 2px 4px !important;
+			border-radius: 4px !important;
 		}
 
-		.product-info .title,
+		.product-info {
+			padding: 4px !important;
+		}
+
+		.product-info .category {
+			font-size: 10px;
+			line-height: 1.1;
+		}
+
+		.product-info .title {
+			font-size: 12px;
+			line-height: 1.2;
+			margin: 2px 0;
+		}
+
 		.product-info .title a {
 			font-size: 12px;
-			line-height: 1.1;
-			margin: 2px 0;
+		}
+
+		.price {
+			margin-bottom: auto;
 		}
 
 		.price span {
 			font-size: 11px;
 		}
 
-		.discount-price,
+		.discount-price {
+			font-size: 10px;
+		}
+
 		.text-danger {
 			font-size: 10px;
 		}
@@ -233,7 +247,7 @@
 		<div class="row align-items-center mb-3">
 			<div class="col-12">
 				<div class="section-title mb-0">
-					<h2 class="mb-0">Produk Terkini</h2>
+					<h2 class="mb-0">Produk</h2>
 				</div>
 			</div>
 			<div class="text-end">

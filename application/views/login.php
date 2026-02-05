@@ -280,88 +280,70 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   </script>
   <script>
     $(document).ready(function () {
-      let resetResendCountdown = 0;
-      let resetResendTimer = null;
+      let forgotPasswordCooldown = 0;
+      let forgotPasswordTimer = null;
       let resetOtpSeconds = 300;
       let resetOtpTimerInterval = null;
-      function startResetResendCooldown(seconds) {
-        resetResendCountdown = seconds;
-        $('#btn-forgot-password').prop('disabled', true);
-
-        resetResendTimer = setInterval(function () {
-          if (resetResendCountdown > 0) {
-            $('#forgot-password-text').text(`Kirim Ulang (${resetResendCountdown}s)`);
-            resetResendCountdown--;
+      function startForgotPasswordCooldown(seconds) {
+        forgotPasswordCooldown = seconds;
+        forgotPasswordTimer = setInterval(function () {
+          if (forgotPasswordCooldown > 0) {
+            $('#forgot-password-text').text(`Kirim Ulang OTP (${forgotPasswordCooldown}s)`);
+            forgotPasswordCooldown--;
           } else {
-            clearInterval(resetResendTimer);
-            $('#forgot-password-text').text('Kirim Ulang');
-            $('#btn-forgot-password').prop('disabled', false);
+            clearInterval(forgotPasswordTimer);
+            $('#forgot-password-text').text('Lupa Password?');
           }
         }, 1000);
       }
-      function startResetResendCooldown(seconds) {
-        resetResendCountdown = seconds;
-        $('#btn-forgot-password').prop('disabled', true);
-
-        resetResendTimer = setInterval(function () {
-          if (resetResendCountdown > 0) {
-            $('#forgot-password-text').text(`Kirim Ulang (${resetResendCountdown}s)`);
-            resetResendCountdown--;
-          } else {
-            clearInterval(resetResendTimer);
-            $('#forgot-password-text').text('Kirim Ulang');
-            $('#btn-forgot-password').prop('disabled', false);
+      function startResetOtpTimer() {
+        resetOtpSeconds = 300;
+        clearInterval(resetOtpTimerInterval);
+        resetOtpTimerInterval = setInterval(() => {
+          resetOtpSeconds--;
+          let m = Math.floor(resetOtpSeconds / 60), s = resetOtpSeconds % 60;
+          $('#reset-otp-timer').text(`OTP kadaluarsa dalam ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
+          if (resetOtpSeconds <= 0) {
+            clearInterval(resetOtpTimerInterval);
+            $('#reset-otp-timer').text('OTP sudah kadaluarsa');
           }
         }, 1000);
       }
       function clearResetOtpInput() {
         $('#resetOtpInput').val('');
       }
-      let isResetMode = false;
       $('#btn-forgot-password').on('click', function () {
-        if (resetResendCountdown > 0) {
-          showAlert(`Tunggu ${resetResendCountdown} detik untuk kirim ulang`, 'error');
+        if (forgotPasswordCooldown > 0) {
+          showAlert(`Tunggu ${forgotPasswordCooldown} detik untuk kirim OTP lagi`, 'error');
+          const otpModal = new bootstrap.Modal(document.getElementById('resetOtpModal'));
+          otpModal.show();
           return;
         }
-
         let identity = $('input[name="identity"]').val().trim();
         let recaptchaResponse = grecaptcha.getResponse();
-
         if (!identity) {
           showAlert('Email atau No. Telepon wajib diisi', 'error');
           return;
         }
-
         $('#resetPreloader').removeClass('d-none');
-
         $.post("<?= site_url('login/forgot_password_send_otp') ?>", {
           identity: identity,
           'g-recaptcha-response': recaptchaResponse
         }, function (res) {
           $('#resetPreloader').addClass('d-none');
-
           if (res.status) {
             showAlert(res.message, 'success');
-
-            if (!isResetMode) {
-              const otpModal = new bootstrap.Modal(document.getElementById('resetOtpModal'));
-              otpModal.show();
-              isResetMode = true;
-            }
-
-            if (isResetMode) {
-              clearResetOtpInput();
-            }
-
+            const otpModal = new bootstrap.Modal(document.getElementById('resetOtpModal'));
+            otpModal.show();
             startResetOtpTimer();
-            startResetResendCooldown(60);
+            startForgotPasswordCooldown(60);
           } else {
             showAlert(res.message, 'error');
             grecaptcha.reset();
           }
         }, 'json').fail(function () {
           $('#resetPreloader').addClass('d-none');
-          showAlert('Gagal menghubungi server 1', 'error');
+          showAlert('Gagal menghubungi server', 'error');
         });
       });
       $('#btn-verify-reset-otp').on('click', function () {
@@ -372,7 +354,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           showAlert('Masukkan kode reset', 'error');
           return;
         }
+
         $('#resetPreloader').removeClass('d-none');
+
         $.post("<?= site_url('login/forgot_password_verify_otp') ?>", {
           identity: identity,
           otp: otp
@@ -391,31 +375,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           }
         }, 'json').fail(function () {
           $('#resetPreloader').addClass('d-none');
-          showAlert('Gagal menghubungi server 2', 'error');
+          showAlert('Gagal menghubungi server', 'error');
         });
       });
-
       $('#btn-reset-password').on('click', function () {
         let password = $('#newPassword').val();
         let password2 = $('#newPassword2').val();
-
         if (!password || !password2) {
           showAlert('Password wajib diisi', 'error');
           return;
         }
-
         if (password !== password2) {
           showAlert('Konfirmasi password tidak sama', 'error');
           return;
         }
-
         if (password.length < 8) {
           showAlert('Password minimal 8 karakter', 'error');
           return;
         }
-
         $('#resetPreloader').removeClass('d-none');
-
         $.post("<?= site_url('login/reset_password') ?>", {
           password: password,
           password2: password2
@@ -423,7 +401,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           $('#resetPreloader').addClass('d-none');
           if (res.status) {
             showAlert(res.message, 'success');
-
             bootstrap.Modal.getInstance(document.getElementById('newPasswordModal')).hide();
             setTimeout(function () {
               window.location.href = "<?= site_url('login') ?>";
@@ -433,13 +410,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           }
         }, 'json').fail(function () {
           $('#resetPreloader').addClass('d-none');
-          showAlert('Gagal menghubungi server 3', 'error');
+          showAlert('Gagal menghubungi server', 'error');
         });
       });
       $('#toggleNewPassword').on('click', function () {
         const input = $('#newPassword');
         const icon = $('#eyeIconNew');
-
         if (input.attr('type') === 'password') {
           input.attr('type', 'text');
           icon.removeClass('fa-eye').addClass('fa-eye-slash');
@@ -448,11 +424,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           icon.removeClass('fa-eye-slash').addClass('fa-eye');
         }
       });
-
       $('#toggleNewPassword2').on('click', function () {
         const input = $('#newPassword2');
         const icon = $('#eyeIconNew2');
-
         if (input.attr('type') === 'password') {
           input.attr('type', 'text');
           icon.removeClass('fa-eye').addClass('fa-eye-slash');
@@ -464,24 +438,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       $('#resetOtpModal').on('hidden.bs.modal', function () {
         clearResetOtpInput();
         clearInterval(resetOtpTimerInterval);
-        clearInterval(resetResendTimer);
-        $('#forgot-password-text').text('Lupa Password?');
-        $('#btn-forgot-password').prop('disabled', false);
-        isResetMode = false;
-        resetResendCountdown = 0;
       });
 
       $('#newPasswordModal').on('hidden.bs.modal', function () {
+        clearInterval(forgotPasswordTimer);
         $('#forgot-password-text').text('Lupa Password?');
         $('#btn-forgot-password').prop('disabled', false);
-        isResetMode = false;
-        resetResendCountdown = 0;
-      });
-      $('#newPasswordModal').on('hidden.bs.modal', function () {
-        $('#forgot-password-text').text('Lupa Password?');
-        $('#btn-forgot-password').prop('disabled', false);
-        isResetMode = false;
-        resetResendCountdown = 0;
+        forgotPasswordCooldown = 0;
       });
     });
   </script>
