@@ -1,14 +1,15 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Checkout extends MY_Controller {
+class Checkout extends MY_Controller
+{
 
     public function __construct()
     {
         parent::__construct();
         $this->load->model('AlamatModel');
         $this->load->library('session');
-        
+
         // Pastikan user sudah login
         if (!$this->session->userdata('id_customer')) {
             redirect('login');
@@ -22,7 +23,7 @@ class Checkout extends MY_Controller {
         // Ambil alamat yang dipilih untuk checkout (dari session)
         // Kalau belum pilih, pakai alamat default
         $id_alamat_checkout = $this->session->userdata('id_alamat_checkout');
-        
+
         if ($id_alamat_checkout) {
             $alamat_checkout = $this->AlamatModel->getByIdWithNames($id_alamat_checkout);
         } else {
@@ -32,15 +33,13 @@ class Checkout extends MY_Controller {
         // Ambil semua alamat untuk modal
         $alamat_list = $this->AlamatModel->getAlamatWithNames($id_customer);
 
-        // Jika tidak ada alamat sama sekali, redirect ke halaman tambah alamat
-        if (empty($alamat_list)) {
-            $this->session->set_flashdata('warning', 'Silakan tambahkan alamat pengiriman terlebih dahulu');
-            redirect('profile/alamat');
-        }
+        // PERUBAHAN: Set flag jika tidak ada alamat (tidak redirect lagi)
+        $has_no_address = empty($alamat_list);
 
         $data = [
             'alamat_checkout' => $alamat_checkout,
-            'alamat_list' => $alamat_list
+            'alamat_list' => $alamat_list,
+            'has_no_address' => $has_no_address  // TAMBAHAN: Flag untuk trigger modal
         ];
 
         $data['contents'] = $this->load->view('checkout', $data, TRUE);
@@ -78,10 +77,10 @@ class Checkout extends MY_Controller {
 
         // TIDAK UBAH DATABASE, hanya simpan di session
         $this->session->set_userdata('id_alamat_checkout', $id_alamat);
-        
+
         // Ambil data alamat lengkap untuk dikirim ke frontend
         $alamat_baru = $this->AlamatModel->getByIdWithNames($id_alamat);
-        
+
         header('Content-Type: application/json');
         echo json_encode([
             'status' => 'ok',
@@ -96,7 +95,7 @@ class Checkout extends MY_Controller {
     public function process()
     {
         $id_customer = $this->session->userdata('id_customer');
-        
+
         // Ambil alamat yang dipilih
         $id_alamat_checkout = $this->session->userdata('id_alamat_checkout');
         if (!$id_alamat_checkout) {
@@ -117,10 +116,10 @@ class Checkout extends MY_Controller {
         // Ambil data dari POST
         $catatan = $this->input->post('catatan');
         $total = $this->input->post('total');
-        
+
         // Proses checkout (sesuaikan dengan logic Anda)
         // Contoh: simpan order, kurangi stok, dll
-        
+
         // Hapus session alamat checkout setelah berhasil order
         $this->session->unset_userdata('id_alamat_checkout');
 

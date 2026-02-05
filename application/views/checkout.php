@@ -1784,26 +1784,521 @@
       }
     }
 
-    /* Responsive */
-    @media (max-width: 992px) {
-      .checkout-wrapper {
-        grid-template-columns: 1fr;
-      }
+    /* ============================================ */
+/* RESPONSIVE STYLES - TAMBAHKAN DI AKHIR CSS  */
+/* ============================================ */
+
+/* Tablet and below (992px) */
+@media (max-width: 992px) {
+  .checkout-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    margin: 1.5rem auto 2rem;
+  }
+
+  .box {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .box h3 {
+    font-size: 1.125rem;
+  }
+
+  .summary-total-row .value {
+    font-size: 1.5rem;
+  }
+
+  .payment-amount {
+    font-size: 1.875rem;
+  }
+
+  .success-content h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .checkout-wrapper {
+    padding: 0 0.75rem;
+    margin: 1rem auto 1.5rem;
+  }
+
+  .box {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .box-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .btn-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Product items responsive */
+  .product-item {
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .product-img-wrapper {
+    width: 80px;
+    padding-bottom: 80px;
+  }
+
+  .product-name {
+    font-size: 0.9375rem;
+  }
+
+  .product-variant {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .product-price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .product-prices {
+    align-items: flex-start;
+  }
+
+  /* Form grid responsive */
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Address card responsive */
+  .address-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .address-info {
+    width: 100%;
+  }
+
+  .btn-use-address {
+    width: 100%;
+  }
+
+  /* Modal responsive */
+  .modal-content {
+    margin: 1rem;
+    padding: 1.5rem;
+    max-height: calc(100vh - 2rem);
+  }
+
+  .modal-close {
+    right: 1rem;
+    top: 1rem;
+  }
+
+  /* Payment modal responsive */
+  .payment-modal-content {
+    max-width: 100%;
+  }
+
+  .payment-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .payment-amount {
+    font-size: 1.75rem;
+  }
+
+  .payment-option {
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .payment-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .payment-details {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .payment-name {
+    font-size: 0.9375rem;
+  }
+
+  .payment-desc {
+    font-size: 0.8125rem;
+  }
+
+  /* Offcanvas responsive */
+  .offcanvas {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .offcanvas-header {
+    padding: 1.5rem;
+  }
+
+  .offcanvas-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .offcanvas-body {
+    padding: 1.5rem;
+  }
+
+  /* Voucher card responsive */
+  .voucher-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .voucher-left {
+    width: 100%;
+  }
+
+  .btn-use-voucher {
+    width: 100%;
+  }
+
+  /* Promo input responsive */
+  .promo-input-group {
+    flex-direction: column;
+  }
+
+  .promo-input {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .btn-apply-promo {
+    width: 100%;
+  }
+
+  .promo-applied {
+    flex-wrap: wrap;
+  }
+
+  /* Summary responsive */
+  .summary-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .summary-header-title {
+    font-size: 0.875rem;
+  }
+
+  .summary-header-value {
+    font-size: 0.9375rem;
+  }
+
+  .summary-body-content {
+    padding: 0.875rem 1rem;
+  }
+
+  .summary-total-row .label {
+    font-size: 1rem;
+  }
+
+  .summary-total-row .value {
+    font-size: 1.5rem;
+  }
+
+  /* Success modal responsive */
+  .success-icon {
+    width: 100px;
+    height: 100px;
+    font-size: 3rem;
+  }
+
+  .success-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .success-content p {
+    font-size: 0.9375rem;
+  }
+
+  .order-details {
+    padding: 1.5rem;
+  }
+
+  .order-detail-row {
+    flex-wrap: wrap;
+  }
+
+  .order-id {
+    font-size: 1rem;
+    padding: 0.625rem 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Modal actions responsive */
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+
+  /* Button responsive */
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-checkout {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .summary-row.total-before {
+    margin: 0 -1.25rem;
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* Small mobile (480px and below) */
+@media (max-width: 480px) {
+  .box {
+    padding: 1rem;
+  }
+
+  .box h3 {
+    font-size: 1rem;
+  }
+
+  .product-item {
+    grid-template-columns: 70px 1fr;
+    gap: 0.875rem;
+    padding: 0.875rem;
+  }
+
+  .product-img-wrapper {
+    width: 70px;
+    padding-bottom: 70px;
+  }
+
+  .product-name {
+    font-size: 0.875rem;
+  }
+
+  .product-variant {
+    font-size: 0.8125rem;
+  }
+
+  .product-price {
+    font-size: 1rem;
+  }
+
+  .product-price-original {
+    font-size: 0.8125rem;
+  }
+
+  .voucher-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.125rem;
+  }
+
+  .voucher-title {
+    font-size: 0.9375rem;
+  }
+
+  .voucher-desc {
+    font-size: 0.8125rem;
+  }
+
+  .payment-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .payment-amount {
+    font-size: 1.5rem;
+  }
+
+  .summary-total-row .value {
+    font-size: 1.375rem;
+  }
+
+  .offcanvas-header h3 {
+    font-size: 1.125rem;
+  }
+
+  .modal-content {
+    padding: 1.25rem;
+  }
+
+  #modalAlamat h3 {
+    font-size: 1.125rem;
+  }
+
+  .address-recipient {
+    font-size: 0.8125rem;
+  }
+
+  .address-detail {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Extra small devices (360px and below) */
+@media (max-width: 360px) {
+  .checkout-wrapper {
+    padding: 0 0.5rem;
+  }
+
+  .box {
+    padding: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .product-item {
+    grid-template-columns: 60px 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .product-img-wrapper {
+    width: 60px;
+    padding-bottom: 60px;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .summary-header-title,
+  .summary-header-value {
+    font-size: 0.8125rem;
+  }
+
+  .product-qty-display {
+    padding: 0.375rem 0.625rem;
+  }
+
+  .product-qty-display .qty-label {
+    font-size: 0.75rem;
+  }
+
+  .product-qty-display .qty-value {
+    font-size: 0.875rem;
+  }
+}
+
+/* Landscape orientation fixes */
+@media (max-height: 600px) and (orientation: landscape) {
+  .modal-content {
+    margin: 0.5rem;
+    max-height: calc(100vh - 1rem);
+  }
+
+  .offcanvas-body {
+    padding: 1rem;
+  }
+
+  .payment-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .payment-amount {
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+  }
+
+  .order-details {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* High DPI / Retina displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .product-img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Fix untuk Bootstrap conflict */
+.checkout-wrapper * {
+  box-sizing: border-box;
+}
+
+/* Override Bootstrap container if exists */
+.checkout-wrapper.container,
+.checkout-wrapper.container-fluid {
+  max-width: 1200px !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+  .checkout-wrapper.container,
+  .checkout-wrapper.container-fluid {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
+
+/* Ensure modals are above Bootstrap elements */
+.modal {
+  z-index: 10000 !important;
+}
+
+.offcanvas {
+  z-index: 9999 !important;
+}
+
+.offcanvas-overlay {
+  z-index: 9998 !important;
+}
+
+    .alert-warning a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    @media (max-width: 768px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+    .alert-warning a:hover {
+      color: var(--primary-dark);
+    }
 
-      .address-card {
-        flex-direction: column;
-        gap: 1rem;
-      }
+    .btn-checkout:disabled {
+      background: linear-gradient(135deg, var(--muted) 0%, #94a3b8 100%);
+      cursor: not-allowed;
+      opacity: 0.6;
+      transform: none;
+      box-shadow: none;
+    }
 
-      .btn-use-address {
-        width: 100%;
-      }
+    .btn-checkout:disabled:hover {
+      transform: none;
+      box-shadow: none;
     }
   </style>
 </head>
@@ -1835,7 +2330,10 @@
             </div>
           <?php else: ?>
             <div class="alert alert-warning">
-              ⚠️ Belum ada alamat pengiriman. Silakan pilih alamat.
+              ⚠️ Belum ada alamat pengiriman.
+              <a href="javascript:void(0)" onclick="openModalTambahAlamat()" style="color: var(--primary); font-weight: 700; text-decoration: underline;">
+                Klik di sini untuk menambah alamat
+              </a>
             </div>
           <?php endif; ?>
         </div>
@@ -1990,7 +2488,7 @@
           </div>
         </div>
 
-        <button class="btn-checkout" id="btn-checkout">
+        <button class="btn-checkout" id="btn-checkout" <?php if (!$alamat_checkout): ?>disabled<?php endif; ?>>
           <span>💳</span>
           <span>Bayar Sekarang</span>
         </button>
@@ -2172,7 +2670,7 @@
 
               <div class="form-group">
                 <label class="required">Nomor Telepon</label>
-                <input type="tel" id="nomor_telp_penerima" placeholder="08xxxxxxxxxx">
+                <input type="tel" id="nomor_telp_penerima" placeholder="Tambahkan Nomor Telepon">
               </div>
 
               <div class="form-group">
@@ -2381,6 +2879,7 @@
         </div>
       </div>
     </div>
+    </div>
 
     <script>
       // State - DUMMY PRICING
@@ -2416,46 +2915,46 @@
 
       // Update Display
       function updatePriceDisplay() {
-  // Hitung subtotal produk
-  const subtotalProduk = state.subtotal - state.voucherDiscount;
-  const subtotalOngkir = state.shipping - state.shippingDiscount;
-  
-  // Update Subtotal Produk Section
-  document.getElementById('subtotal-produk-display').textContent = formatRupiah(subtotalProduk);
-  document.getElementById('total-before-detail').textContent = formatRupiah(state.totalBefore);
-  document.getElementById('product-discount-detail').textContent = '- ' + formatRupiah(state.productDiscount);
-  
-  // Voucher Produk (conditional)
-  const voucherProductRow = document.getElementById('voucher-product-row');
-  if (state.voucherDiscount > 0) {
-    voucherProductRow.style.display = 'flex';
-    document.getElementById('voucher-product-detail').textContent = '- ' + formatRupiah(state.voucherDiscount);
-  } else {
-    voucherProductRow.style.display = 'none';
-  }
-  
-  // Update Subtotal Ongkir Section
-  document.getElementById('subtotal-ongkir-display').textContent = formatRupiah(subtotalOngkir);
-  document.getElementById('shipping-cost-detail').textContent = formatRupiah(state.shipping);
-  
-  // Diskon Ongkir (conditional)
-  const shippingDiscountRow = document.getElementById('shipping-discount-row');
-  if (state.shippingDiscount > 0) {
-    shippingDiscountRow.style.display = 'flex';
-    document.getElementById('shipping-discount-detail').textContent = '- ' + formatRupiah(state.shippingDiscount);
-  } else {
-    shippingDiscountRow.style.display = 'none';
-  }
-  
-  // Update Total Akhir
-  document.getElementById('total-final').textContent = formatRupiah(calculateTotal());
+        // Hitung subtotal produk
+        const subtotalProduk = state.subtotal - state.voucherDiscount;
+        const subtotalOngkir = state.shipping - state.shippingDiscount;
 
-  // Update payment modal amount (jika ada)
-  const paymentAmount = document.getElementById('payment-amount-display');
-  if (paymentAmount) {
-    paymentAmount.textContent = formatRupiah(calculateTotal());
-  }
-}
+        // Update Subtotal Produk Section
+        document.getElementById('subtotal-produk-display').textContent = formatRupiah(subtotalProduk);
+        document.getElementById('total-before-detail').textContent = formatRupiah(state.totalBefore);
+        document.getElementById('product-discount-detail').textContent = '- ' + formatRupiah(state.productDiscount);
+
+        // Voucher Produk (conditional)
+        const voucherProductRow = document.getElementById('voucher-product-row');
+        if (state.voucherDiscount > 0) {
+          voucherProductRow.style.display = 'flex';
+          document.getElementById('voucher-product-detail').textContent = '- ' + formatRupiah(state.voucherDiscount);
+        } else {
+          voucherProductRow.style.display = 'none';
+        }
+
+        // Update Subtotal Ongkir Section
+        document.getElementById('subtotal-ongkir-display').textContent = formatRupiah(subtotalOngkir);
+        document.getElementById('shipping-cost-detail').textContent = formatRupiah(state.shipping);
+
+        // Diskon Ongkir (conditional)
+        const shippingDiscountRow = document.getElementById('shipping-discount-row');
+        if (state.shippingDiscount > 0) {
+          shippingDiscountRow.style.display = 'flex';
+          document.getElementById('shipping-discount-detail').textContent = '- ' + formatRupiah(state.shippingDiscount);
+        } else {
+          shippingDiscountRow.style.display = 'none';
+        }
+
+        // Update Total Akhir
+        document.getElementById('total-final').textContent = formatRupiah(calculateTotal());
+
+        // Update payment modal amount (jika ada)
+        const paymentAmount = document.getElementById('payment-amount-display');
+        if (paymentAmount) {
+          paymentAmount.textContent = formatRupiah(calculateTotal());
+        }
+      }
       // Apply Promo
       function applyPromo(code) {
         code = code.toUpperCase().trim();
@@ -2499,25 +2998,25 @@
 
       // Core Apply Discount
       function applyDiscount(code, type, value, description) {
-  let discountAmount = 0;
+        let discountAmount = 0;
 
-  if (type === 'percentage') {
-    discountAmount = Math.floor(state.subtotal * (value / 100));
-    state.voucherDiscount = discountAmount;
-    state.shippingDiscount = 0;
-  } else if (type === 'fixed') {
-    discountAmount = value;
-    state.voucherDiscount = discountAmount;
-    state.shippingDiscount = 0;
-  } else if (type === 'shipping') {
-    state.shippingDiscount = state.shipping;  // GRATIS ONGKIR
-    state.voucherDiscount = 0;
-  }
+        if (type === 'percentage') {
+          discountAmount = Math.floor(state.subtotal * (value / 100));
+          state.voucherDiscount = discountAmount;
+          state.shippingDiscount = 0;
+        } else if (type === 'fixed') {
+          discountAmount = value;
+          state.voucherDiscount = discountAmount;
+          state.shippingDiscount = 0;
+        } else if (type === 'shipping') {
+          state.shippingDiscount = state.shipping; // GRATIS ONGKIR
+          state.voucherDiscount = 0;
+        }
 
-  state.promoCode = code;
+        state.promoCode = code;
 
-  const promoContainer = document.getElementById('promo-container');
-  promoContainer.innerHTML = `
+        const promoContainer = document.getElementById('promo-container');
+        promoContainer.innerHTML = `
     <div class="promo-applied">
       <div class="promo-applied-info">
         <div class="promo-icon">🎉</div>
@@ -2530,10 +3029,10 @@
     </div>
   `;
 
-  updatePriceDisplay();
-  showNotification('✅ Voucher berhasil diterapkan!', 'success');
-  closeOffcanvas();
-}
+        updatePriceDisplay();
+        showNotification('✅ Voucher berhasil diterapkan!', 'success');
+        closeOffcanvas();
+      }
 
       // Remove Promo - FIXED
       function removePromo() {
@@ -2735,7 +3234,7 @@
             if (result.success) {
               // Simpan ID transaksi yang baru dibuat
               const idTransaksi = result.id_transaksi || result.data?.id_transaksi;
-              
+
               closePaymentModal();
               showPaymentSuccess(idTransaksi);
               showNotification('✅ Pembayaran berhasil!', 'success');
@@ -2925,6 +3424,7 @@
               if (data.alamat) {
                 updateAddressDisplay(data.alamat);
                 updateModalAddressList(id_alamat);
+                updateCheckoutButtonState(); // TAMBAHAN: Update button state
               }
 
               setTimeout(() => {
@@ -3033,20 +3533,28 @@
       function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.textContent = message;
+
+        const colors = {
+          'success': '#10b981',
+          'error': '#ef4444',
+          'info': '#6366f1',
+          'warning': '#f59e0b' // TAMBAHAN
+        };
+
         notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1.25rem 1.75rem;
-    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#6366f1'};
-    color: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    z-index: 10001;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    max-width: 350px;
-  `;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1.25rem 1.75rem;
+        background: ${colors[type] || colors.info};
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        z-index: 10001;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        max-width: 350px;
+    `;
 
         document.body.appendChild(notification);
 
@@ -3375,6 +3883,43 @@
             list.classList.remove('active');
           });
         }
+      });
+
+      <?php if (isset($has_no_address) && $has_no_address): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Tampilkan notifikasi
+          showNotification('📍 Silakan tambahkan alamat pengiriman terlebih dahulu', 'warning');
+
+          // Auto-open modal tambah alamat setelah delay singkat
+          setTimeout(() => {
+            openModalTambahAlamat();
+          }, 800);
+        });
+      <?php endif; ?>
+      // ========== UPDATE CHECKOUT BUTTON STATE ==========
+      function updateCheckoutButtonState() {
+        const btnCheckout = document.getElementById('btn-checkout');
+        const addressDisplay = document.getElementById('address-display-main');
+
+        // Cek apakah ada alamat (cek dari content, bukan dari alert warning)
+        const hasAddress = !addressDisplay.querySelector('.alert-warning');
+
+        if (btnCheckout) {
+          if (hasAddress) {
+            btnCheckout.disabled = false;
+            btnCheckout.style.cursor = 'pointer';
+          } else {
+            btnCheckout.disabled = true;
+            btnCheckout.style.cursor = 'not-allowed';
+          }
+        }
+      }
+
+      // Panggil saat halaman load
+      document.addEventListener('DOMContentLoaded', function() {
+        updateCheckoutButtonState();
+
+        // ... kode lainnya tetap sama
       });
     </script>
 
