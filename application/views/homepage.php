@@ -65,23 +65,24 @@
 	.badge-mobile {
 		display: none;
 	}
+
 	.color-radio input {
-        display: none;
-    }
+		display: none;
+	}
 
-    .color-circle {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 2px solid #000000;
-        cursor: pointer;
-        display: inline-block;
-    }
+	.color-circle {
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		border: 3px solid #000000;
+		cursor: pointer;
+		display: inline-block;
+	}
 
-    .color-radio input:checked+.color-circle {
-        border: 3px solid #0d6efd;
-        box-shadow: 0 0 0 2px rgba(13, 110, 253, .3);
-    }
+	.color-radio input:checked+.color-circle {
+		border: 3px solid #0d6efd;
+		box-shadow: 0 0 0 2px rgba(13, 110, 253, .3);
+	}
 
 	@media (max-width: 576px) {
 		.container-fluid {

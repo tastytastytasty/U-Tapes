@@ -66,6 +66,7 @@
         border-style: dashed;
         pointer-events: none;
     }
+
     .product-main-img {
         width: 600px;
         height: 600px;
@@ -123,11 +124,25 @@
                                     <span style="position: absolute;top: 10px;left: 10px;
                                         z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
                                         color: #fff;background: #0d6efd;
-                                        border-radius: 4px;">Baru
+                                        border-radius: 4px; position: static !important;">Baru
                                     </span>
                                 <?php endif; ?>
+                                <?php if ($item->is_sale): ?>
+                                    <?php if ($item->persen_promo > 0): ?>
+                                        <span style="position: absolute;top: 10px;left: 10px;
+                                        z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
+                                        color: #fff;background: #dc3545;
+                                        border-radius: 4px; position: static !important;">-<?= $item->persen_promo ?>%</span>
+                                    <?php elseif ($item->harga_promo > 0): ?>
+                                        <span style="position: absolute;top: 10px;left: 10px;
+                                        z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
+                                        color: #fff;background: #dc3545;
+                                        border-radius: 4px; position: static !important;">-Rp
+                                            <?= number_format($item->harga_promo, 0, ',', '.') ?></span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                                 <img src="<?= base_url('assets/images/item/' . $gambar_detail) ?>"
-                                    class="product-main-img" id="current" alt="#">
+                                    class="product-main-img" id="current" alt="#" style="object-fit: contain;">
                             </div>
                         </main>
                     </div>
@@ -138,7 +153,32 @@
                         <label><i class="lni lni-tag me-2"></i> <?= $item->nama_kategori ?> | <label
                                 class="text-primary"><?= $item->merk ?></label></label>
                         <hr class="text text-primary">
-                        <h4 id="harga">Rp. <?= number_format($harga, 0, ',', '.') ?></h4>
+                        <?php
+                        $harga_asli = $item->harga_termurah;
+                        $harga_diskon = $harga_asli;
+                        if ($item->is_sale) {
+                            if ($item->persen_promo > 0) {
+                                $harga_diskon = $harga_asli - ($harga_asli * $item->persen_promo / 100);
+                            } elseif ($item->harga_promo > 0) {
+                                $harga_diskon = $harga_asli - $item->harga_promo;
+                            }
+                        }
+                        ?>
+                        <div class="price d-flex flex-column">
+                            <?php if ($item->is_sale && $harga_diskon < $harga_asli): ?>
+                                <h4>
+                                    Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+                                </h4>
+                                <span class="discount-price text-muted text-decoration-line-through fs-5 mt-2"
+                                    style="margin-left: 0 !important;">
+                                    Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                                </span>
+                            <?php else: ?>
+                                <h4>
+                                    Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                                </h4>
+                            <?php endif; ?>
+                        </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group color-option">

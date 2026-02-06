@@ -187,7 +187,7 @@
     <div class="row">
         <?php foreach ($items as $item): ?>
             <div class="col-6 col-md-4 col-lg-3 mb-4">
-                <div class="single-product d-flex flex-column h-100">
+                <div class="single-product d-flex flex-column h-100 mt-0">
                     <div class="product-image position-relative">
                         <a href="<?= site_url('detailproduct/' . $item->id_item) ?>">
                             <?php if ($item->total_stok <= 0): ?>
@@ -280,12 +280,14 @@
                             ?>
                             <div class="price d-flex flex-column">
                                 <?php if ($item->is_sale && $harga_diskon < $harga_asli): ?>
-                                    <span>
-                                        Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
-                                    </span>
-                                    <span class="discount-price text-muted text-decoration-line-through">
-                                        Rp <?= number_format($harga_asli, 0, ',', '.') ?>
-                                    </span>
+                                    <div class="d-flex-md gap-1">
+                                        <span>
+                                            Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+                                        </span>
+                                        <span class="discount-price text-muted text-decoration-line-through">
+                                            Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                                        </span>
+                                    </div>
                                 <?php else: ?>
                                     <span>
                                         Rp <?= number_format($harga_asli, 0, ',', '.') ?>

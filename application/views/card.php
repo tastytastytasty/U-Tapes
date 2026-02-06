@@ -1,7 +1,7 @@
 <div class="row">
     <?php foreach ($items as $item): ?>
         <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <div class="single-product d-flex flex-column h-100">
+            <div class="single-product d-flex flex-column h-100 mt-0">
                 <div class="product-image position-relative">
                     <a href="<?= site_url('detailproduct/' . $item->id_item) ?>">
                         <?php if ($item->total_stok <= 0): ?>
@@ -50,35 +50,17 @@
                             <?= $item->nama_sepatu ?>
                         </a>
                     </h4>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-primary">Warna</span>
-                        <button class="btn btn-sm btn-light" data-bs-toggle="collapse"
-                            data-bs-target="#collapseWarna<?= $item->id_item ?>" aria-expanded="false"
-                            aria-controls="collapseWarna<?= $item->id_item ?>">
-                            <i class="lni lni-chevron-down text-primary"></i>
-                        </button>
-                    </div>
-                    <div class="collapse" id="collapseWarna<?= $item->id_item ?>">
-                        <div class="row g-2">
+                    <div class="color-wrapper d-flex gap-2 flex-wrap mt-2">
+                        <?php if (!empty($item->warna)): ?>
                             <?php foreach ($item->warna as $w): ?>
-                                <div class="col-12">
-                                    <div class="card d-flex justify-content-center align-items-center"
-                                        style="width:100%; height:48px; border-radius:10px; cursor:pointer;">
-                                        <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
-                                            <input type="radio" name="warna<?= $item->id_item ?>" value="<?= $w->id_warna ?>"
-                                                <?= isset($default_warna) && $w->id_warna == $default_warna ? 'checked' : '' ?>
-                                                style="display:none;">
-                                            <span class="color-circle me-2"
-                                                style="width:26px;height:26px;border-radius:50%;background-color:<?= $w->hex ?>;">
-                                            </span>
-                                            <span style="font-size:13px;font-weight:500;" class="text-dark">
-                                                <?= $w->warna ?>
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
+                                    <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
+                                        <input type="radio" name="warna" value="<?= $w->id_warna ?>" <?= isset($default_warna) && $w->id_warna == $default_warna ? 'checked' : '' ?> style="display:none;">
+                                        <span class="color-circle mb-1 me-2"
+                                            style="width:30px;height:30px;border-radius:50%;background-color:<?= $w->hex ?>;">
+                                        </span>
+                                    </label>
                             <?php endforeach; ?>
-                        </div>
+                        <?php endif; ?>
                     </div>
                     <div class="price d-flex justify-content-start mt-0">
                         <?php
@@ -94,12 +76,14 @@
                         ?>
                         <div class="price d-flex flex-column">
                             <?php if ($item->is_sale && $harga_diskon < $harga_asli): ?>
-                                <span>
-                                    Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
-                                </span>
-                                <span class="discount-price text-muted text-decoration-line-through">
-                                    Rp <?= number_format($harga_asli, 0, ',', '.') ?>
-                                </span>
+                                <div class="d-flex-md gap-1">
+                                    <span>
+                                        Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+                                    </span>
+                                    <span class="discount-price text-muted text-decoration-line-through">
+                                        Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                                    </span>
+                                </div>
                             <?php else: ?>
                                 <span>
                                     Rp <?= number_format($harga_asli, 0, ',', '.') ?>
