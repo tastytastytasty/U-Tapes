@@ -23,7 +23,11 @@ class Homepage extends MY_Controller
 	{
 		$this->load->model(['Item_model', 'Kategori_model']);
 		$id_customer = $this->session->userdata('id_customer');
-		$data['items'] = $this->Item_model->get_items_with_wishlist( $id_customer,null, 8,0);
+		$items = $this->Item_model->get_items_with_wishlist($id_customer, null, 8, 0);
+		foreach ($items as &$item) {
+			$item->warna = $this->Item_model->get_warna($item->id_item);
+		}
+		$data['items'] = $items;
 		$data['kategori'] = $this->Kategori_model->get_kategori();
 		$data['contents'] = $this->load->view('homepage', $data, TRUE);
 		$this->load->view('navbar', array_merge($this->global_data, $data));

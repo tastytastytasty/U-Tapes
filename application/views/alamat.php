@@ -964,7 +964,10 @@
                 <div class="profile-user">
                     <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
                     <div>
-                        <strong><?= htmlspecialchars($this->session->userdata('nama') ?? 'User') ?></strong><br>
+                        <strong><strong><?= $logged_in && !empty($user['nama'])
+                            ? htmlspecialchars($user['nama'])
+                            : 'Guest' ?>
+                            </strong></strong><br>
                         <span>Ubah Profil</span>
                     </div>
                 </div>

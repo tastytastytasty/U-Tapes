@@ -85,7 +85,7 @@
                             </div>
 
                             <div class="single-widget mb-4">
-                                <label class="mb-2 text-primary">Sex</label>
+                                <label class="mb-2 text-primary">Gender</label>
                                 <select name="sex" class="form-control auto-submit">
                                     <option value="">Semua</option>
                                     <option value="Pria">Pria</option>

@@ -1,5 +1,11 @@
+<style>
+    @media (max-width: 576px) {
+        .pagination {
+            margin-top: 30px !important;
+        }
+    }
+</style>
 <div class="pagination d-flex justify-content-end mt-4 gap-1">
-
     <?php if ($start > 1): ?>
         <a href="javascript:void(0)" class="btn btn-sm btn-outline-primary page-link" data-page="<?= $start - 1 ?>">
             &laquo;

@@ -9,35 +9,37 @@ class Alamat extends MY_Controller
         if (!$this->session->userdata('logged_in')) {
             redirect('login');
         }
-
+        $this->load->library(['email']);
         $this->load->model('AlamatModel');
         $this->load->model('WilayahModel');
         $this->load->library('session');
     }
 
-    public function index()
-    {
-        // Cek session user
-        $user = $this->session->userdata('user');
+   public function index()
+{
+    // Cek session user
+    $user = $this->session->userdata('user');
 
-        // Jika session berbeda, coba ambil langsung
-        if (!$user || !isset($user['id_customer'])) {
-            $id_customer = $this->session->userdata('id_customer');
-        } else {
-            $id_customer = $user['id_customer'];
-        }
-
-        // Jika masih tidak ada, redirect ke login
-        if (!$id_customer) {
-            redirect('login');
-        }
-
-        $data = [];
-        $data['alamat_list'] = $this->AlamatModel->getAlamatWithNames($id_customer);
-        $data['contents'] = $this->load->view('alamat', $data, TRUE);
-
-        $this->load->view('navbar', array_merge($this->global_data, $data));
+    // Jika session berbeda, coba ambil langsung
+    if (!$user || !isset($user['id_customer'])) {
+        $id_customer = $this->session->userdata('id_customer');
+    } else {
+        $id_customer = $user['id_customer'];
     }
+
+    // Jika masih tidak ada, redirect ke login
+    if (!$id_customer) {
+        redirect('login');
+    }
+
+    $data = [];
+    $data['alamat_list'] = $this->AlamatModel->getAlamatWithNames($id_customer);
+    
+    // PERBAIKAN: Pass global_data ke view 'alamat'
+    $data['contents'] = $this->load->view('alamat', array_merge($this->global_data, $data), TRUE);
+
+    $this->load->view('navbar', array_merge($this->global_data, $data));
+}
 
     /* ========== API WILAYAH ========== */
 

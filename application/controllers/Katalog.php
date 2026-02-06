@@ -23,6 +23,9 @@ class Katalog extends MY_Controller
 			$limit,
 			$offset
 		);
+		foreach ($items as &$item) {
+			$item->warna = $this->Item_model->get_warna($item->id_item);
+		}
 		$total = $this->Item_model->count_items_with_filter(
 			$filter
 		);
