@@ -1,6 +1,22 @@
 <style>
-	.product-image img {
+	.product-image {
+		position: relative;
 		width: 100%;
+		height: 0;
+		padding-bottom: 100%;
+		overflow: hidden;
+		border-radius: 6px;
+		background: #f8f9fa;
+	}
+
+	.product-image img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
 		border-radius: 6px;
 	}
 
@@ -65,6 +81,22 @@
 	.badge-mobile {
 		display: none;
 	}
+
+	.stok-overlay {
+		position: absolute;
+		inset: 0;
+		background: rgba(255, 255, 255, 0.6);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 32px;
+		font-weight: 800;
+		color: red;
+		letter-spacing: 3px;
+		z-index: 10;
+		text-transform: uppercase;
+	}
+
 
 	.color-radio input {
 		display: none;

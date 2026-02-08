@@ -632,10 +632,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 $('.qty-plus, .qty-minus').prop('disabled', true);
             }
             $(document).on('change', 'input[name="warna"]', function () {
-                const id_warna = $(this).val();
+                const warna = $(this).val();
                 $.post(
                     '<?= site_url("ajax/get_gambar_warna") ?>',
-                    { id_item, id_warna },
+                    { id_item, warna },
                     function (res) {
                         const data = JSON.parse(res);
                         if (data.gambar) {
@@ -649,7 +649,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 );
                 $.post(
                     '<?= site_url("ajax/get_ukuran") ?>',
-                    { id_item, id_warna },
+                    { id_item, warna },
                     function (res) {
                         $('#ukuran-wrapper').html(res);
                         $('#ukuran').val('');
@@ -676,16 +676,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 $('.size-box').removeClass('active');
                 $(this).addClass('active');
                 const ukuran = $(this).data('ukuran');
-                const id_warna = $('input[name="warna"]:checked').val();
+                const warna = $('input[name="warna"]:checked').val();
                 $('#ukuran').val(ukuran);
                 $.post(
                     '<?= site_url("ajax/get_detail") ?>',
-                    { id_item, id_warna, ukuran },
+                    { id_item, warna, ukuran },
                     function (res) {
                         const data = JSON.parse(res);
-                        $('#harga').text(
-                            'Rp ' + new Intl.NumberFormat('id-ID').format(data.harga)
-                        );
+                        if (data.harga_diskon && data.harga_diskon < data.harga_asli) {
+                            $('.price').html(`
+                                <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_diskon)}</h4>
+                                <span class="discount-price text-muted text-decoration-line-through fs-5 mt-2" style="margin-left: 0 !important;">
+                                    Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}
+                                </span>
+                            `);
+                        } else {
+                            $('.price').html(`
+                                <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli || data.harga)}</h4>
+                            `);
+                        }
                         currentStok = parseInt(data.stok);
                         if (currentStok <= 0) {
                             $('#qty').val(0).prop('disabled', true);

@@ -10,11 +10,11 @@ class Item_model extends CI_Model
                             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
                             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
                                 AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale,
-                            COALESCE(MIN(CASE WHEN detail_item.stok > 0 THEN detail_item.harga END), MIN(detail_item.harga)) AS harga_termurah');
+                            COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah');
         $this->db->from('item');
         $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
-        $this->db->join('detail_item', 'detail_item.id_item = item.id_item');
-        $this->db->join('promo_detail', 'promo_detail.id_item_detail = detail_item.id_item_detail', 'left');
+        $this->db->join('item_detail', 'item_detail.id_item = item.id_item');
+        $this->db->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left');
         $this->db->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left');
         $this->db->where('item.id_item', $id_item);
         return $this->db->get()->row();
@@ -24,42 +24,37 @@ class Item_model extends CI_Model
         return $this->db
             ->where('id_item', $id_item)
             ->order_by('harga', 'ASC')
-            ->get('detail_item')
+            ->get('item_detail')
             ->row();
     }
     public function get_warna($id_item)
     {
         return $this->db
-            ->select('
-            warna.id_warna,
-            warna.warna,
-            warna.hex
-        ')
-            ->from('detail_item')
-            ->join('warna', 'warna.id_warna = detail_item.id_warna')
-            ->where('detail_item.id_item', $id_item)
-            ->group_by('warna.id_warna')
-            ->get()
-            ->result();
+    ->distinct()
+    ->select('warna, kode_hex')
+    ->from('item_detail')
+    ->where('id_item', $id_item)
+    ->get()
+    ->result();
     }
-    public function get_ukuran($id_item, $id_warna)
+    public function get_ukuran($id_item, $warna)
     {
         return $this->db
             ->select('ukuran, SUM(stok) as stok')
             ->where('id_item', $id_item)
-            ->where('id_warna', $id_warna)
+            ->where('warna', $warna)
             ->group_by('ukuran')
-            ->get('detail_item')
+            ->get('item_detail')
             ->result();
     }
 
-    public function get_by_option($id_item, $id_warna, $ukuran)
+    public function get_by_option($id_item, $warna, $ukuran)
     {
         return $this->db
             ->where('id_item', $id_item)
-            ->where('id_warna', $id_warna)
+            ->where('warna', $warna)
             ->where('ukuran', $ukuran)
-            ->get('detail_item')
+            ->get('item_detail')
             ->row();
     }
 
@@ -69,13 +64,13 @@ class Item_model extends CI_Model
         $this->db->select("
         item.id_item,
         item.merk,
-        item.nama_sepatu,
-        item.gambar,
+        item.nama_item,
+        item.gambar_item,
         kategori.nama_kategori,
         MAX(promo.persen_promo) AS persen_promo,
         MAX(promo.harga_promo) AS harga_promo,
-        COALESCE(MIN(CASE WHEN detail_item.stok > 0 THEN detail_item.harga END), MIN(detail_item.harga)) AS harga_termurah,
-        SUM(detail_item.stok) AS total_stok,
+        COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah,
+        SUM(item_detail.stok) AS total_stok,
         MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
         item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
         MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
@@ -83,8 +78,8 @@ class Item_model extends CI_Model
         ");
         $this->db->from('item');
         $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
-        $this->db->join('detail_item', 'detail_item.id_item = item.id_item');
-        $this->db->join('promo_detail', 'promo_detail.id_item_detail = detail_item.id_item_detail', 'left');
+        $this->db->join('item_detail', 'item_detail.id_item = item.id_item');
+        $this->db->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left');
         $this->db->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left');
         if ($id_customer) {
             $this->db->join(
@@ -98,7 +93,7 @@ class Item_model extends CI_Model
         }
         if (!empty($filter['keyword'])) {
             $this->db->group_start();
-            $this->db->like('item.nama_sepatu', $filter['keyword']);
+            $this->db->like('item.nama_item', $filter['keyword']);
             $this->db->or_like('item.merk', $filter['keyword']);
             $this->db->group_end();
         }
@@ -109,7 +104,7 @@ class Item_model extends CI_Model
             $this->db->where_in('item.id_kategori', $filter['kategori']);
         }
         $this->db->group_by('item.id_item');
-        $this->db->order_by('(SUM(detail_item.stok) <= 0)', 'ASC');
+        $this->db->order_by('(SUM(item_detail.stok) <= 0)', 'ASC');
         switch ($filter['sort'] ?? '') {
             case 'terlama':
                 $this->db->order_by('item.id_item', 'ASC');
@@ -132,11 +127,11 @@ class Item_model extends CI_Model
     {
         $this->db->select('COUNT(DISTINCT item.id_item) AS total');
         $this->db->from('item');
-        $this->db->join('detail_item', 'detail_item.id_item = item.id_item');
+        $this->db->join('item_detail', 'item_detail.id_item = item.id_item');
 
         if (!empty($filter['keyword'])) {
             $this->db->group_start();
-            $this->db->like('item.nama_sepatu', $filter['keyword']);
+            $this->db->like('item.nama_item', $filter['keyword']);
             $this->db->or_like('item.merk', $filter['keyword']);
             $this->db->group_end();
         }
@@ -156,9 +151,13 @@ class Item_model extends CI_Model
         return $this->db
             ->select('SUM(stok) as total')
             ->where('id_item', $id_item)
-            ->get('detail_item')
+            ->get('item_detail')
             ->row()
             ->total ?? 0;
+    }
+    public function get_kategori()
+    {
+        return $this->db->get('kategori')->result();
     }
 
 }

@@ -12,8 +12,8 @@ class Ajax extends MY_Controller
     public function get_ukuran()
     {
         $id_item = $this->input->post('id_item');
-        $id_warna = $this->input->post('id_warna');
-        $ukuran = $this->Item_model->get_ukuran($id_item, $id_warna);
+        $warna = $this->input->post('warna');
+        $ukuran = $this->Item_model->get_ukuran($id_item, $warna);
         if (!$ukuran) {
             echo '<div class="size-box disabled">Tidak tersedia</div>';
             return;
@@ -28,9 +28,9 @@ class Ajax extends MY_Controller
     public function get_detail()
     {
         $id_item = $this->input->post('id_item');
-        $id_warna = $this->input->post('id_warna');
+        $warna = $this->input->post('warna');
         $ukuran = $this->input->post('ukuran');
-        $detail = $this->Item_model->get_by_option($id_item, $id_warna, $ukuran);
+        $detail = $this->Item_model->get_by_option($id_item, $warna, $ukuran);
         if (!$detail) {
             echo json_encode([
                 'harga' => 0,
@@ -46,14 +46,14 @@ class Ajax extends MY_Controller
     public function get_gambar_warna()
     {
         $id_item = $this->input->post('id_item');
-        $id_warna = $this->input->post('id_warna');
+        $warna = $this->input->post('warna');
 
         $gambar = $this->db
             ->where('id_item', $id_item)
-            ->where('id_warna', $id_warna)
+            ->where('warna', $warna)
             ->order_by('harga', 'ASC')
             ->limit(1)
-            ->get('detail_item')
+            ->get('item_detail')
             ->row();
 
         echo json_encode([

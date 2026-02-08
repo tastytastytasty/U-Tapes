@@ -100,7 +100,7 @@
                 <ul class="breadcrumb-nav">
                     <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Homepage</a></li>
                     <li><a href="<?= site_url('katalog') ?>">Katalog Produk</a></li>
-                    <li><?= $item->nama_sepatu ?></li>
+                    <li><?= $item->nama_item ?></li>
                 </ul>
             </div>
         </div>
@@ -116,7 +116,7 @@
                 <div class="col-lg-4 col-md-12 col-12">
                     <div class="product-images">
                         <div class="mobile-title d-block d-lg-none text-center mb-2">
-                            <h5 class="fw-bold"><?= $item->nama_sepatu ?></h5>
+                            <h5 class="fw-bold"><?= $item->nama_item ?></h5>
                         </div>
                         <main id="gallery">
                             <div class="main-img" style="position: relative;">
@@ -149,7 +149,7 @@
                 </div>
                 <div class="col-lg-8 col-md-12 col-12">
                     <div class="product-info">
-                        <h2 class="mb-2 d-none d-lg-block"><?= $item->nama_sepatu ?></h2>
+                        <h2 class="mb-2 d-none d-lg-block"><?= $item->nama_item ?></h2>
                         <label><i class="lni lni-tag me-2"></i> <?= $item->nama_kategori ?> | <label
                                 class="text-primary"><?= $item->merk ?></label></label>
                         <hr class="text text-primary">
@@ -186,14 +186,14 @@
                                     <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
                                         <?php foreach ($warna as $w): ?>
                                             <div class="card d-flex justify-content-center align-items-center"
-                                                style="width:120px; height:60px; border-radius:12px; cursor:pointer;">
+                                                style="width:140px; height:60px; border-radius:12px; cursor:pointer;">
                                                 <label class="color-radio d-flex align-items-center m-0"
                                                     style="cursor:pointer;">
-                                                    <input type="radio" name="warna" value="<?= $w->id_warna ?>"
-                                                        <?= $w->id_warna == $default_warna ? 'checked' : '' ?>
+                                                    <input type="radio" name="warna" value="<?= $w->warna ?>"
+                                                        <?= $w->warna == $default_warna ? 'checked' : '' ?>
                                                         style="display:none;">
                                                     <span class="color-circle mb-1 me-2" style="width:30;height:30;border-radius:50%;
-                                                        background-color:<?= $w->hex ?>;">
+                                                        background-color:<?= $w->kode_hex ?>;">
                                                     </span>
                                                     <span style="font-size:13px;font-weight:500;" class="text-dark">
                                                         <?= $w->warna ?>

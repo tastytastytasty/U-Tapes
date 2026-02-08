@@ -5,7 +5,7 @@ class Katalog extends MY_Controller
 {
 	private function _getKatalogData($page)
 	{
-		$this->load->model(['Item_model', 'Kategori_model']);
+		$this->load->model(['Item_model']);
 
 		$limit = 12;
 		$offset = ($page - 1) * $limit;
@@ -38,7 +38,7 @@ class Katalog extends MY_Controller
 
 		return [
 			'items' => $items,
-			'kategori' => $this->Kategori_model->get_kategori(),
+			'kategori' => $this->Item_model->get_kategori(),
 			'page' => $page,
 			'limit' => $limit,
 			'total' => $total,

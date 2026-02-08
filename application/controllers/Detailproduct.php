@@ -36,7 +36,7 @@ class Detailproduct extends MY_Controller
 		$data = [
 			'item' => $item,
 			'warna' => $warna,
-			'default_warna' => $termurah->id_warna,
+			'default_warna' => $termurah->warna,
 			'default_ukuran' => $termurah->ukuran,
 			'gambar_detail' => $termurah->gambar,
 			'harga' => $termurah->harga,

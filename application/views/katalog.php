@@ -90,8 +90,6 @@
                                     <option value="">Semua</option>
                                     <option value="Pria">Pria</option>
                                     <option value="Wanita">Wanita</option>
-                                    <option value="Anak Laki - laki">Anak Laki-Laki</option>
-                                    <option value="Anak Perempuan">Anak Perempuan</option>
                                     <option value="Unisex">Unisex</option>
                                 </select>
                             </div>

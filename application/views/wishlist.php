@@ -81,7 +81,7 @@
                         <div class="col-lg-2 col-md-6 col-6 mb-4 wishlist-item" id="wishlist-<?= $w->id_wishlist ?>">
                             <div class="single-product card p-3 mb-3 h-100">
                                 <div class="product-image position-relative"> <img
-                                        src="<?= base_url('assets/images/item/' . $w->gambar) ?>" alt="<?= $w->nama_sepatu ?>"
+                                        src="<?= base_url('assets/images/item/' . $w->gambar_item) ?>" alt="<?= $w->nama_item ?>"
                                         class="img-fluid">
                                     <div class="product-actions position-absolute top-0 end-0 m-2 d-flex gap-1">
                                         <button class="btn btn-sm btn-danger btn-wishlist" data-page="wishlist"
@@ -107,7 +107,7 @@
                                 <div class="product-info mt-2 text-center"> <span class="category text-muted">
                                         <?= $w->nama_kategori ?> </span>
                                     <h4 class="title my-2"> <a href="<?= site_url('detailproduct/' . $w->id_item) ?>"
-                                            class="text-dark text-decoration-none"> <?= $w->nama_sepatu ?> </a> </h4>
+                                            class="text-dark text-decoration-none"> <?= $w->nama_item ?> </a> </h4>
                                     <div class="price"> <span class="fw-bold text-primary"> Rp.
                                             <?= number_format($w->harga_termurah, 0, ',', '.') ?> </span> </div>
                                 </div>
