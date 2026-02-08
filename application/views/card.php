@@ -5,7 +5,7 @@
                 <div class="product-image position-relative">
                     <a href="<?= site_url('detailproduct/' . $item->id_item) ?>">
                         <?php if ($item->total_stok <= 0): ?>
-                                <div class="stok-overlay">HABIS</div>
+                            <div class="stok-overlay">HABIS</div>
                         <?php endif; ?>
                         <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>"
                             alt="<?= $item->nama_item ?>">
@@ -52,35 +52,20 @@
                                 <?= $item->nama_item ?>
                             </a>
                         </h4>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-secondary">Warna</span>
-                            <button type="button" class="btn btn-sm btn-light" data-bs-toggle="collapse"
-                                data-bs-target="#collapseWarna<?= $item->id_item ?>" aria-expanded="false"
-                                aria-controls="collapseWarna<?= $item->id_item ?>">
-                                <i class="lni lni-chevron-down text-secondary"></i>
-                            </button>
-                        </div>
-                        <div class="collapse" id="collapseWarna<?= $item->id_item ?>">
-                            <div class="row g-2">
-                                <?php foreach ($item->warna as $w): ?>
-                                    <div class="col-12">
-                                        <div class="card d-flex justify-content-center align-items-center"
-                                            style="width:100%; height:48px; border-radius:10px; cursor:pointer;">
-                                            <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
-                                                <input type="radio" name="warna<?= $item->id_item ?>" value="<?= $w->warna ?>"
-                                                    <?= isset($default_warna) && $w->warna == $default_warna ? 'checked' : '' ?>
-                                                    style="display:none;">
-                                                <span class="color-circle me-2"
-                                                    style="width:26px;height:26px;border-radius:50%;background-color:<?= $w->kode_hex ?>;">
-                                                </span>
-                                                <span style="font-size:13px;font-weight:500;" class="text-dark">
-                                                    <?= $w->warna ?>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                        <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
+                            <?php if (!empty($item->warna)): ?>
+                                <?php foreach ($item->warna as $index => $w): ?>
+                                    <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
+                                        <input type="radio" name="warna_<?= $item->id_item ?>" value="<?= $w->warna ?>"
+                                            style="display:none;">
+                                        <span class="color-circle mb-1 me-2"
+                                            style="width:30px;height:30px;border-radius:50%;background-color:<?= $w->kode_hex ?>;">
+                                        </span>
+                                    </label>
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                <p class="text-muted small">Warna tidak tersedia</p>
+                            <?php endif; ?>
                         </div>
                         <div class="price d-flex justify-content-start mt-0">
                             <?php
@@ -118,35 +103,20 @@
                                 <?= $item->nama_item ?>
                             </a>
                         </h4>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-primary">Warna</span>
-                            <button type="button" class="btn btn-sm btn-light" data-bs-toggle="collapse"
-                                data-bs-target="#collapseWarna<?= $item->id_item ?>" aria-expanded="false"
-                                aria-controls="collapseWarna<?= $item->id_item ?>">
-                                <i class="lni lni-chevron-down text-primary"></i>
-                            </button>
-                        </div>
-                        <div class="collapse" id="collapseWarna<?= $item->id_item ?>">
-                            <div class="row g-2">
-                                <?php foreach ($item->warna as $w): ?>
-                                    <div class="col-12">
-                                        <div class="card d-flex justify-content-center align-items-center"
-                                            style="width:100%; height:48px; border-radius:10px; cursor:pointer;">
-                                            <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
-                                                <input type="radio" name="warna<?= $item->id_item ?>" value="<?= $w->warna ?>"
-                                                    <?= isset($default_warna) && $w->warna == $default_warna ? 'checked' : '' ?>
-                                                    style="display:none;">
-                                                <span class="color-circle me-2"
-                                                    style="width:26px;height:26px;border-radius:50%;background-color:<?= $w->kode_hex ?>;">
-                                                </span>
-                                                <span style="font-size:13px;font-weight:500;" class="text-dark">
-                                                    <?= $w->warna ?>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                        <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
+                            <?php if (!empty($item->warna)): ?>
+                                <?php foreach ($item->warna as $index => $w): ?>
+                                    <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
+                                        <input type="radio" name="warna_<?= $item->id_item ?>" value="<?= $w->warna ?>"
+                                            style="display:none;">
+                                        <span class="color-circle mb-1 me-2"
+                                            style="width:30px;height:30px;border-radius:50%;background-color:<?= $w->kode_hex ?>;">
+                                        </span>
+                                    </label>
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                <p class="text-muted small">Warna tidak tersedia</p>
+                            <?php endif; ?>
                         </div>
                         <div class="price d-flex justify-content-start mt-0">
                             <?php
