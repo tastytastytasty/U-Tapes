@@ -1,13 +1,13 @@
 <div class="row">
     <?php foreach ($items as $item): ?>
         <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <div class="single-product d-flex flex-column h-100 mt-0">
+            <div class="single-product product-card d-flex flex-column h-100 mt-0">
                 <div class="product-image position-relative">
                     <a href="<?= site_url('detailproduct/' . $item->id_item) ?>">
                         <?php if ($item->total_stok <= 0): ?>
                             <div class="stok-overlay">HABIS</div>
                         <?php endif; ?>
-                        <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>"
+                        <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" class="img-fluid product-img"
                             alt="<?= $item->nama_item ?>">
                         <div class="product-actions position-absolute top-0 end-0 m-2 d-flex gap-1
                                 <?= $item->in_wishlist ? 'in-wishlist' : 'not-in-wishlist' ?>">
@@ -54,12 +54,12 @@
                         </h4>
                         <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
                             <?php if (!empty($item->warna)): ?>
-                                <?php foreach ($item->warna as $index => $w): ?>
+                                <?php foreach ($item->warna as $w): ?>
                                     <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
                                         <input type="radio" name="warna_<?= $item->id_item ?>" value="<?= $w->warna ?>"
-                                            style="display:none;">
-                                        <span class="color-circle mb-1 me-2"
-                                            style="width:30px;height:30px;border-radius:50%;background-color:<?= $w->kode_hex ?>;">
+                                            data-image="<?= base_url('assets/images/item/' . $w->gambar) ?>" style="display:none;">
+                                        <span class="color-circle mb-1 me-2" style="width:30px;height:30px;border-radius:50%;
+                                                background-color:<?= $w->kode_hex ?>;">
                                         </span>
                                     </label>
                                 <?php endforeach ?>
@@ -105,12 +105,12 @@
                         </h4>
                         <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
                             <?php if (!empty($item->warna)): ?>
-                                <?php foreach ($item->warna as $index => $w): ?>
+                                <?php foreach ($item->warna as $w): ?>
                                     <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
                                         <input type="radio" name="warna_<?= $item->id_item ?>" value="<?= $w->warna ?>"
-                                            style="display:none;">
-                                        <span class="color-circle mb-1 me-2"
-                                            style="width:30px;height:30px;border-radius:50%;background-color:<?= $w->kode_hex ?>;">
+                                            data-image="<?= base_url('assets/images/item/' . $w->gambar) ?>" style="display:none;">
+                                        <span class="color-circle mb-1 me-2" style="width:30px;height:30px;border-radius:50%;
+                                                background-color:<?= $w->kode_hex ?>;">
                                         </span>
                                     </label>
                                 <?php endforeach ?>
@@ -154,3 +154,20 @@
         </div>
     <?php endforeach; ?>
 </div>
+<script>
+    document.addEventListener('change', function (e) {
+        if (!e.target.matches('input[type="radio"][name^="warna_"]')) return;
+
+        const radio = e.target;
+        const card = radio.closest('.product-card');
+        if (!card) return;
+
+        const img = card.querySelector('.product-img');
+        if (!img) return;
+
+        const newImg = radio.dataset.image;
+        if (!newImg) return;
+
+        img.src = newImg;
+    });
+</script>
