@@ -17,8 +17,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href="<?= base_url('assets/css/tiny-slider.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/glightbox.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/main.css') ?>">
-  <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
-  <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
+    <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
+    <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 
 </head>
 <style>
@@ -283,104 +283,124 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <div class="cart-items">
-                                <a href="javascript:void(0)" class="main-btn">
-                                    <i class="lni lni-cart"></i>
-                                    <span class="total-items">2</span>
-                                </a>
-                                <!-- Shopping Item -->
-                                <div class="shopping-item">
-                                    <div class="dropdown-cart-header">
-                                        <span>2 Items</span>
-                                        <a href="<?= site_url('keranjang') ?>">Selengkapnya</a>
-                                    </div>
-                                    <ul class="shopping-list">
-                                        <li>
-                                            <a href="javascript:void(0)" class="remove" title="Remove this item"><i
-                                                    class="lni lni-close"></i></a>
-                                            <div class="cart-img-head">
-                                                <a class="cart-img" href="<?= site_url('detailproduct') ?>"><img
-                                                        src="<?= base_url('assets/images/header/cart-items/item1.jpg') ?>"
-                                                        alt="#"></a>
-                                            </div>
-                                            <div class="content">
-                                                <h4><a href="<?= site_url('detailproduct') ?>">
-                                                        Apple Watch Series 6</a></h4>
-                                                <p class="quantity">1x - <span class="amount">$99.00</span></p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" class="remove" title="Remove this item"><i
-                                                    class="lni lni-close"></i></a>
-                                            <div class="cart-img-head">
-                                                <a class="cart-img" href="<?= site_url('detailproduct') ?>"><img
-                                                        src="<?= base_url('assets/images/header/cart-items/item2.jpg') ?>"
-                                                        alt="#"></a>
-                                            </div>
-                                            <div class="content">
-                                                <h4><a href="<?= site_url('detailproduct') ?>">Wi-Fi Smart
-                                                        Camera</a></h4>
-                                                <p class="quantity">1x - <span class="amount">$35.00</span></p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <div class="bottom">
-                                        <div class="total">
-                                            <span>Total</span>
-                                            <span class="total-amount">$134.00</span>
+                            <div class="cart-items me-2">
+                                <?php if ($this->session->userdata('logged_in')): ?>
+                                    <a href="javascript:void(0)" class="main-btn btn-cart-navbar"
+                                        data-href="<?= site_url('keranjang') ?>">
+                                        <i class="lni lni-cart"></i>
+                                        <span class="total-items total-cart"><?= $cart_count ?></span>
+                                    </a>
+                                    <div class="shopping-item">
+                                        <div class="dropdown-cart-header">
+                                            <span id="cart-count"><?= $cart_count ?> Item</span>
+                                            <a href="<?= site_url('keranjang') ?>">Lihat Semua</a>
                                         </div>
-                                        <div class="button">
-                                            <a href="<?= site_url('checkout') ?>" class="btn animate">Checkout</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Shopping Item -->
-                            </div>
-                        </div>
-                        <div class="user d-flex align-items-center gap-2">
-                            <?php if ($this->session->userdata('logged_in')): ?>
-                                <?php
-                                $user = $this->session->userdata('user');
-                                $nama = $user['nama'] ?? 'User';
-                                $avatar = $user['avatar'] ?? null;
-                                $inisial = strtoupper(substr($nama, 0, 1));
-
-                                $avatarFile = FCPATH . 'assets/images/avatar/' . $avatar;
-                                ?>
-                                <div class="mega-category-menu user-menu">
-                                    <div class="user-trigger d-flex align-items-center gap-2">
-
-                                        <?php if (!empty($avatar) && file_exists($avatarFile)): ?>
-                                            <img src="<?= base_url('assets/images/avatar/' . $avatar) ?>" alt="Profile"
-                                                class="profile-img">
-                                        <?php else: ?>
-                                            <div class="avatar-circle">
-                                                <?= $inisial ?>
+                                        <ul class="shopping-list" id="cart-list">
+                                            <?php if (!empty($cart_items)): ?>
+                                                <?php foreach ($cart_items as $c): ?>
+                                                    <li id="nav-cart-<?= $c->id_cart ?>">
+                                                        <a href="javascript:void(0)" class="remove btn-remove-cart"
+                                                            data-cart="<?= $c->id_cart ?>">
+                                                            <i class="lni lni-close"></i>
+                                                        </a>
+                                                        <div class="cart-img-head">
+                                                            <a class="cart-img"
+                                                                href="<?= site_url('detailproduct/' . $c->id_item) ?>">
+                                                                <img src="<?= base_url('assets/images/item/' . $c->gambar_item) ?>">
+                                                            </a>
+                                                        </div>
+                                                        <div class="content">
+                                                            <h4>
+                                                                <a href="<?= site_url('detailproduct/' . $c->id_item) ?>">
+                                                                    <?= $c->nama_item ?>
+                                                                </a>
+                                                            </h4>
+                                                            <p class="quantity">
+                                                                <span class="amount">
+                                                                    Rp <?= number_format($c->harga_termurah, 0, ',', '.') ?>
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                <?php endforeach ?>
+                                            </ul>
+                                            <div class="bottom">
+                                                <div class="total">
+                                                    <span>Total</span>
+                                                    <span class="total-amount">Rp <?= number_format($cart_total, 0, ',', '.') ?></span>
+                                                </div>
+                                                <div class="button">
+                                                    <a href="<?= site_url('checkout') ?>" class="btn animate">Checkout</a>
+                                                </div>
                                             </div>
                                         <?php endif; ?>
-
-                                        <span class="cat-button">
-                                            <?= html_escape($nama) ?>
-                                        </span>
+                                        <div id="cart-empty" class="dropdown-cart-header"
+                                            style="<?= $cart_count > 0 ? 'display:none' : '' ?>">
+                                            <span>Keranjang belanja kosong</span>
+                                        </div>
                                     </div>
-
-                                    <ul class="sub-category">
-                                        <li><a href="<?= site_url('profile') ?>">Profile</a></li>
-                                        <li><a href="<?= site_url('login/logout') ?>">Logout</a></li>
-                                    </ul>
                                 </div>
-
                             <?php else: ?>
-                                <div class="button ms-2">
-                                    <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary animate">
-                                        Login
+                                <a href="javascript:void(0)" class="main-btn btn-cart-navbar" data-need-login="1">
+                                    <i class="lni lni-cart"></i>
+                                </a>
+                                <div class="shopping-item text-center p-3">
+                                    <p class="mb-3 text-muted">
+                                        <i class="lni lni-lock me-1"></i>
+                                        Login dulu untuk melihat keranjang belanja
+                                    </p>
+                                    <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
+                                        Login Sekarang
                                     </a>
                                 </div>
                             <?php endif; ?>
+                            <!-- End Shopping Item -->
                         </div>
                     </div>
-                </nav>
+                    <div class="user d-flex align-items-center gap-2">
+                        <?php if ($this->session->userdata('logged_in')): ?>
+                            <?php
+                            $user = $this->session->userdata('user');
+                            $nama = $user['nama'] ?? 'User';
+                            $avatar = $user['avatar'] ?? null;
+                            $inisial = strtoupper(substr($nama, 0, 1));
+
+                            $avatarFile = FCPATH . 'assets/images/avatar/' . $avatar;
+                            ?>
+                            <div class="mega-category-menu user-menu">
+                                <div class="user-trigger d-flex align-items-center gap-2">
+
+                                    <?php if (!empty($avatar) && file_exists($avatarFile)): ?>
+                                        <img src="<?= base_url('assets/images/avatar/' . $avatar) ?>" alt="Profile"
+                                            class="profile-img">
+                                    <?php else: ?>
+                                        <div class="avatar-circle">
+                                            <?= $inisial ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <span class="cat-button">
+                                        <?= html_escape($nama) ?>
+                                    </span>
+                                </div>
+
+                                <ul class="sub-category">
+                                    <li><a href="<?= site_url('profile') ?>">Profile</a></li>
+                                    <li><a href="<?= site_url('login/logout') ?>">Logout</a></li>
+                                </ul>
+                            </div>
+
+                        <?php else: ?>
+                            <div class="button ms-2">
+                                <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary animate">
+                                    Login
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
             </div>
+            </nav>
+        </div>
         </div>
     </header>
 

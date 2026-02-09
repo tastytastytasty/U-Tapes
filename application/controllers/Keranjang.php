@@ -1,18 +1,27 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Keranjang extends CI_Controller
+class Keranjang extends MY_Controller
 {
+    public function index()
+    {
+        $this->load->model('Keranjang_model');
+        $id_customer = $this->session->userdata('id_customer');
+        $data['cart'] = $this->Keranjang_model->get_by_customer($id_customer);
+
+        $data['contents'] = $this->load->view('keranjang', $data, TRUE);
+        $this->load->view('navbar', array_merge($this->global_data, $data));
+    }
     public function add()
     {
-		
+
         $this->load->model('Keranjang_model');
 
         $id_customer = $this->session->userdata('id_customer');
         $id_item = $this->input->post('id_item');
         $warna = $this->input->post('warna');
         $ukuran = $this->input->post('ukuran');
-        $qty = (int)$this->input->post('qty');
+        $qty = (int) $this->input->post('qty');
 
         if (!$id_customer) {
             echo json_encode(['status' => 'error', 'message' => 'Silakan login dulu']);
