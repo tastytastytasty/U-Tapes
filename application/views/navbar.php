@@ -17,6 +17,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href="<?= base_url('assets/css/tiny-slider.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/glightbox.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/main.css') ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
+  <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 
 </head>
 <style>
@@ -241,14 +243,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         <div class="cart-img-head">
                                                             <a class="cart-img"
                                                                 href="<?= site_url('detailproduct/' . $w->id_item) ?>">
-                                                                <img src="<?= base_url('assets/images/item/' . $w->gambar) ?>">
+                                                                <img src="<?= base_url('assets/images/item/' . $w->gambar_item) ?>">
                                                             </a>
                                                         </div>
 
                                                         <div class="content">
                                                             <h4>
                                                                 <a href="<?= site_url('detailproduct/' . $w->id_item) ?>">
-                                                                    <?= $w->nama_sepatu ?>
+                                                                    <?= $w->nama_item ?>
                                                                 </a>
                                                             </h4>
                                                             <p class="quantity">

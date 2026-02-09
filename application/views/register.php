@@ -375,27 +375,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             let nama = $('input[name="nama"]').val().trim();
             let password = $('input[name="password"]').val();
             let password2 = $('input[name="password2"]').val();
+            
             if (!otp) return showAlert('Masukkan kode OTP', 'error');
             
-            $.post("<?= site_url('register/verify_otp') ?>", { 
-                email: email, 
-                otp: otp,
-                nama: nama,
-                password: password,
-                password2: password2
-            }, res => {
-                if (res.status) {
-                    showAlert(res.message, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('otpModal')).hide();
-                    
-                    setTimeout(function() {
-                        window.location.href = "<?= site_url('login') ?>";
-                    }, 1500);
-                    
-                } else {
-                    showAlert(res.message, 'error');
+            $.ajax({
+                url: "<?= site_url('register/verify_otp') ?>",
+                type: 'POST',
+                data: { 
+                    email: email, 
+                    otp: otp,
+                    nama: nama,
+                    password: password,
+                    password2: password2
+                },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.status) {
+                        showAlert(res.message, 'success');
+                        bootstrap.Modal.getInstance(document.getElementById('otpModal')).hide();
+                        
+                        setTimeout(function() {
+                            window.location.href = "<?= site_url('login') ?>";
+                        }, 1500);
+                    } else {
+                        showAlert(res.message, 'error');
+                    }
                 }
-            }, 'json').fail(() => showAlert('Gagal menghubungi server', 'error'));
+            },'json').fail(function() {
+                $('#otpPreloader').addClass('d-none');
+                showAlert('Gagal menghubungi server', 'error');
+            });
         });
     </script>
     <script>

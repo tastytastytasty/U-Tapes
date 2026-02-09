@@ -129,7 +129,8 @@
                                 <?php endif; ?>
                                 <?php if ($item->is_sale): ?>
                                     <?php if ($item->persen_promo > 0): ?>
-                                        <span style="position: absolute;top: 10px;left: 10px;
+                                        <span
+                                            style="position: absolute;top: 10px;left: 10px;
                                         z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
                                         color: #fff;background: #dc3545;
                                         border-radius: 4px; position: static !important;">-<?= $item->persen_promo ?>%</span>
@@ -237,7 +238,9 @@
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="wish-button">
-                                        <button class="btn"><i class="lni lni-cart"></i> Add to Cart</button>
+                                        <button id="btn-add-cart" type="button" class="btn">
+                                            <i class="lni lni-cart"></i> Add to Cart
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-12">
@@ -264,6 +267,7 @@
         </div>
     </div>
 </section>
+<script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script>
     $('.btn-wishlist-detail').on('click', function () {
         let btn = $(this);
@@ -292,6 +296,53 @@
             }
         });
     });
+</script>
+<script>
+    $(document).on('click', '#btn-add-cart', function () {
+        let warna = $('input[name="warna"]:checked').val();
+        let ukuran = $('#ukuran').val();
+        let qty = parseInt($('#qty').val());
+
+        console.log({ warna, ukuran, qty });
+
+        $.ajax({
+            url: "<?= site_url('keranjang/add') ?>",
+            type: "POST",
+            data: {
+                id_item: "<?= $item->id_item ?>",
+                warna: warna,
+                ukuran: ukuran,
+                qty: qty
+            },
+            dataType: "json",
+            success: function (res) {
+                if (res.status === 'ok') {
+                    showAlert('Berhasil masuk keranjang!', 'success');
+                } else {
+                    showAlert(res.message, 'error');
+                }
+            },
+            error: function () {
+                showAlert('Terjadi kesalahan server', 'error');
+            }
+        });
+    });
+    function showAlert(message, type = 'error') {
+        Swal.fire({
+            toast: true,
+            position: 'top',
+            icon: type,
+            title: message,
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+    }
 </script>
 
 <!-- End Item Details -->

@@ -7,6 +7,7 @@ class Wishlist extends MY_Controller
 	{
 		parent::__construct();
 		$this->load->model('Wishlist_model');
+		$this->load->model('Item_model');
 	}
 	public function index()
 	{
@@ -17,6 +18,9 @@ class Wishlist extends MY_Controller
 			? $this->Wishlist_model->get_by_customer($id_customer)
 			: [];
 
+		foreach ($data['wishlist'] as &$w) {
+			$w->warna = $this->Item_model->get_warna($w->id_item);
+		}
 		$data['contents'] = $this->load->view('wishlist', $data, true);
 		$this->load->view('navbar', array_merge($this->global_data, $data));
 	}
