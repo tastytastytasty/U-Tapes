@@ -23,29 +23,56 @@ class Detailproduct extends MY_Controller
 	{
 		$this->load->model('Item_model');
 		$this->load->model('Wishlist_model');
+
 		$id_customer = $this->session->userdata('id_customer');
+		$warna_selected = $this->input->get('warna');
+
 		$item = $this->Item_model->get_item($id_item);
 		$termurah = $this->Item_model->get_termurah($id_item);
-		$warna = $this->Item_model->get_warna($id_item);
+		$warna_list = $this->Item_model->get_warna($id_item);
 		$total_stok = $this->Item_model->total_stok_item($id_item);
+
 		$in_wishlist = false;
 		if ($id_customer) {
-			$in_wishlist = $this->Wishlist_model
-				->is_exist($id_customer, $id_item);
+			$in_wishlist = $this->Wishlist_model->is_exist($id_customer, $id_item);
 		}
+		if ($warna_selected) {
+			$detail = $this->Item_model->get_detail_by_warna($id_item, $warna_selected);
+			if ($detail) {
+				$gambar_detail = $detail->gambar;
+				$default_warna = $detail->warna;
+				$default_ukuran = $detail->ukuran;
+				$harga = $detail->harga;
+				$stok = $detail->stok;
+			} else {
+				$gambar_detail = $termurah->gambar;
+				$default_warna = $termurah->warna;
+				$default_ukuran = $termurah->ukuran;
+				$harga = $termurah->harga;
+				$stok = $termurah->stok;
+			}
+		} else {
+			$gambar_detail = $termurah->gambar;
+			$default_warna = $termurah->warna;
+			$default_ukuran = $termurah->ukuran;
+			$harga = $termurah->harga;
+			$stok = $termurah->stok;
+		}
+
 		$data = [
 			'item' => $item,
-			'warna' => $warna,
-			'default_warna' => $termurah->warna,
-			'default_ukuran' => $termurah->ukuran,
-			'gambar_detail' => $termurah->gambar,
-			'harga' => $termurah->harga,
-			'stok' => $termurah->stok,
-			'total_stok' => (int)$total_stok,
+			'warna' => $warna_list,
+			'default_warna' => $default_warna,
+			'default_ukuran' => $default_ukuran,
+			'gambar_detail' => $gambar_detail,
+			'harga' => $harga,
+			'stok' => $stok,
+			'total_stok' => (int) $total_stok,
 			'in_wishlist' => $in_wishlist
 		];
+
 		$data['contents'] = $this->load->view('detailproduct', $data, TRUE);
-		$this->load->view('navbar',array_merge($this->global_data, $data));
+		$this->load->view('navbar', array_merge($this->global_data, $data));
 	}
 
 }

@@ -1,9 +1,9 @@
 <div class="row">
     <?php foreach ($items as $item): ?>
         <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <div class="single-product product-card d-flex flex-column h-100 mt-0">
+            <div class="single-product product-card d-flex flex-column h-100 mt-0" data-selected-color="">
                 <div class="product-image position-relative">
-                    <a href="<?= site_url('detailproduct/' . $item->id_item) ?>">
+                    <a href="<?= site_url('detailproduct/' . $item->id_item) ?>" class="detail-link">
                         <?php if ($item->total_stok <= 0): ?>
                             <div class="stok-overlay">HABIS</div>
                         <?php endif; ?>
@@ -155,19 +155,19 @@
     <?php endforeach; ?>
 </div>
 <script>
-    document.addEventListener('change', function (e) {
-        if (!e.target.matches('input[type="radio"][name^="warna_"]')) return;
-
-        const radio = e.target;
-        const card = radio.closest('.product-card');
-        if (!card) return;
-
-        const img = card.querySelector('.product-img');
-        if (!img) return;
-
-        const newImg = radio.dataset.image;
-        if (!newImg) return;
-
-        img.src = newImg;
-    });
+document.addEventListener('change', function (e) {
+    if (!e.target.matches('input[type="radio"][name^="warna_"]')) return;
+    const radio = e.target;
+    const card  = radio.closest('.product-card');
+    if (!card) return;
+    const img = card.querySelector('.product-img');
+    const link = card.querySelector('.detail-link');
+    if (!img || !link) return;
+    const newImg   = radio.dataset.image;
+    const warnaVal = radio.value;
+    if (newImg) img.src = newImg;
+    card.dataset.selectedColor = warnaVal;
+    const baseUrl = link.getAttribute('href').split('?')[0];
+    link.setAttribute('href', baseUrl + '?warna=' + encodeURIComponent(warnaVal));
+});
 </script>

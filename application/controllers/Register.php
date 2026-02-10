@@ -205,8 +205,8 @@ Belanja Mudah, Langkah Maksimal.
 		}
 
 		$last = $this->db->select('id_customer')->order_by('id_customer', 'DESC')->limit(1)->get('customer')->row_array();
-		$number = $last ? (int) substr($last['id_customer'], 3) + 1 : 1;
-		$id_customer = 'CST' . str_pad($number, 3, '0', STR_PAD_LEFT);
+		$number = $last ? (int) substr($last['id_customer'], 4) + 1 : 1;
+		$id_customer = 'CUST' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
 		$customer = [
 			'id_customer' => $id_customer,

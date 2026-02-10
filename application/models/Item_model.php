@@ -30,12 +30,21 @@ class Item_model extends CI_Model
     public function get_warna($id_item)
     {
         return $this->db
-            ->select('warna, kode_hex,MIN(CASE WHEN stok > 0 THEN gambar END) AS gambar')
+            ->select('warna, kode_hex,MIN(gambar) AS gambar')
             ->from('item_detail')
             ->where('id_item', $id_item)
             ->group_by('warna, kode_hex')
             ->get()
             ->result();
+    }
+    public function get_detail_by_warna($id_item, $warna)
+    {
+        return $this->db
+            ->where('id_item', $id_item)
+            ->where('warna', $warna)
+            ->order_by('harga', 'ASC')
+            ->get('item_detail')
+            ->row();
     }
     public function get_ukuran($id_item, $warna)
     {
