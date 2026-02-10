@@ -3885,17 +3885,7 @@
         }
       });
 
-      <?php if (isset($has_no_address) && $has_no_address): ?>
-        document.addEventListener('DOMContentLoaded', function() {
-          // Tampilkan notifikasi
-          showNotification('📍 Silakan tambahkan alamat pengiriman terlebih dahulu', 'warning');
 
-          // Auto-open modal tambah alamat setelah delay singkat
-          setTimeout(() => {
-            openModalTambahAlamat();
-          }, 800);
-        });
-      <?php endif; ?>
       // ========== UPDATE CHECKOUT BUTTON STATE ==========
       function updateCheckoutButtonState() {
         const btnCheckout = document.getElementById('btn-checkout');

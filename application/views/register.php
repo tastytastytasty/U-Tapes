@@ -312,7 +312,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     }
                 }, 'json').fail(function() {
                     $('#otpPreloader').addClass('d-none');
-                    showAlert('Gagal menghubungi server', 'error');
+                    showAlert('Gagal menghubungi server 1', 'error');
                 });
             }, 'json');
         });
@@ -361,7 +361,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 }
             }, 'json').fail(function() {
                 $('#otpPreloader').addClass('d-none');
-                showAlert('Gagal menghubungi server', 'error');
+                showAlert('Gagal menghubungi server 2', 'error');
             });
         });
 
@@ -395,7 +395,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 } else {
                     showAlert(res.message, 'error');
                 }
-            }, 'json').fail(() => showAlert('Gagal menghubungi server', 'error'));
+            }, 'json').fail(() => showAlert('Gagal menghubungi server 3', 'error'));
         });
     </script>
     <script>

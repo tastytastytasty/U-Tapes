@@ -27,7 +27,6 @@ class Transaksi extends CI_Controller {
             $total = $this->input->post('total');
             $metode_pembayaran = $this->input->post('metode_pembayaran');
             $bayar = $this->input->post('bayar');
-            $kembali = $this->input->post('kembali');
             $ongkir = $this->input->post('ongkir');
 
             // Validasi data
@@ -52,19 +51,23 @@ class Transaksi extends CI_Controller {
             // Generate ID Transaksi
             $id_transaksi = $this->generate_id_transaksi();
 
+            // Generate No Nota (Invoice)
+            $no_nota = $this->generate_no_nota();
+
             // Ambil ID Customer dari session
             $id_customer = $this->session->userdata('id_customer');
 
             // Prepare data untuk insert
             $data_transaksi = [
                 'id_transaksi' => $id_transaksi,
+                'no_nota' => $no_nota,
                 'tanggal' => date('Y-m-d'),
                 'id_customer' => $id_customer,
                 'total' => intval($total),
                 'metode_pembayaran' => $metode_pembayaran,
                 'bayar' => intval($bayar),
-                'kembali' => intval($kembali),
-                'ongkir' => intval($ongkir)
+                'ongkir' => intval($ongkir),
+                'status_transaksi' => 'dikemas' // Default status: dikemas
             ];
 
             // Insert ke database
@@ -75,6 +78,7 @@ class Transaksi extends CI_Controller {
                     'success' => true,
                     'message' => 'Transaksi berhasil disimpan',
                     'id_transaksi' => $id_transaksi,
+                    'no_nota' => $no_nota,
                     'data' => $data_transaksi
                 ]);
             } else {
@@ -124,6 +128,91 @@ class Transaksi extends CI_Controller {
     }
 
     /**
+     * Generate No Nota (Invoice)
+     * Format: INV/YYYY/MM/XXXX
+     */
+    private function generate_no_nota() {
+        $prefix = 'INV/' . date('Y') . '/' . date('m') . '/';
+        
+        // Cek nota terakhir bulan ini
+        $last_nota = $this->db
+            ->select('no_nota')
+            ->from('transaksi')
+            ->like('no_nota', $prefix, 'after')
+            ->order_by('no_nota', 'DESC')
+            ->limit(1)
+            ->get()
+            ->row();
+
+        if ($last_nota) {
+            // Ambil nomor urut terakhir
+            $last_number = intval(substr($last_nota->no_nota, -4));
+            $new_number = $last_number + 1;
+        } else {
+            $new_number = 1;
+        }
+
+        // Format dengan leading zeros (4 digit)
+        $no_nota = $prefix . str_pad($new_number, 4, '0', STR_PAD_LEFT);
+
+        return $no_nota;
+    }
+
+    /**
+     * Update status transaksi
+     */
+    public function update_status() {
+        header('Content-Type: application/json');
+
+        try {
+            $id_transaksi = $this->input->post('id_transaksi');
+            $status = $this->input->post('status');
+
+            // Validasi
+            if (empty($id_transaksi) || empty($status)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Data tidak lengkap'
+                ]);
+                return;
+            }
+
+            // Validasi status
+            $valid_status = ['dikemas', 'dikirim', 'diterima', 'dibatalkan'];
+            if (!in_array($status, $valid_status)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Status tidak valid'
+                ]);
+                return;
+            }
+
+            // Update status
+            $update = $this->Transaksi_model->update($id_transaksi, [
+                'status_transaksi' => $status
+            ]);
+
+            if ($update) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Status berhasil diupdate'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Gagal update status'
+                ]);
+            }
+
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Get detail transaksi (opsional)
      */
     public function detail($id_transaksi) {
@@ -134,5 +223,15 @@ class Transaksi extends CI_Controller {
         }
 
         $this->load->view('transaksi/detail', $data);
+    }
+
+    /**
+     * Get riwayat transaksi customer
+     */
+    public function riwayat() {
+        $id_customer = $this->session->userdata('id_customer');
+        $data['transaksi_list'] = $this->Transaksi_model->get_by_customer($id_customer);
+        
+        $this->load->view('transaksi/riwayat', $data);
     }
 }

@@ -320,14 +320,6 @@
                         </div>
 
                         <div class="mb-3 row">
-                            <label class="col-sm-3 col-form-label">Nomor Telepon</label>
-                            <div class="col-sm-9 pt-2">
-                                <?= isset($user['no_telp']) ? htmlspecialchars($user['no_telp']) : 'nomor telephone belum terdaftar' ?>
-                                <a href="#">Ubah</a>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label">Jenis Kelamin</label>
                             <div class="col-sm-9 pt-2">
                                 <?php

@@ -105,4 +105,47 @@ class Transaksi_model extends CI_Model {
             ->get($this->table)
             ->result();
     }
+
+    /**
+     * Get transaksi by status
+     */
+    public function get_by_status($status, $limit = 10, $offset = 0) {
+        return $this->db
+            ->where('status_transaksi', $status)
+            ->order_by('tanggal', 'DESC')
+            ->limit($limit, $offset)
+            ->get($this->table)
+            ->result();
+    }
+
+    /**
+     * Get statistik transaksi by status
+     */
+    public function get_stats_by_status() {
+        return $this->db
+            ->select('status_transaksi, COUNT(*) as jumlah')
+            ->group_by('status_transaksi')
+            ->get($this->table)
+            ->result();
+    }
+
+    /**
+     * Get transaksi by no_nota
+     */
+    public function get_by_no_nota($no_nota) {
+        return $this->db
+            ->where('no_nota', $no_nota)
+            ->get($this->table)
+            ->row();
+    }
+
+    /**
+     * Count transaksi by customer and status
+     */
+    public function count_by_customer_status($id_customer, $status) {
+        return $this->db
+            ->where('id_customer', $id_customer)
+            ->where('status_transaksi', $status)
+            ->count_all_results($this->table);
+    }
 }
