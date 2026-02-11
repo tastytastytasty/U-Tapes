@@ -73,6 +73,21 @@
         object-fit: cover;
     }
 
+    .color-out {
+        position: relative;
+    }
+
+    .color-out::after {
+        content: "";
+        position: absolute;
+        top: 45%;
+        left: -5px;
+        width: 110%;
+        height: 3px;
+        background: #ff0019;
+        pointer-events: none;
+    }
+
     @media (max-width: 576px) {
         .product-main-img {
             width: 260px;
@@ -188,17 +203,28 @@
                                         <?php foreach ($warna as $w): ?>
                                             <div class="card d-flex justify-content-center align-items-center"
                                                 style="width:140px; height:60px; border-radius:12px; cursor:pointer;">
-                                                <label class="color-radio d-flex align-items-center m-0"
+
+                                                <label
+                                                    class="color-radio d-flex align-items-center m-0 <?= ($w->total_stok <= 0 ? 'color-out' : '') ?>"
                                                     style="cursor:pointer;">
+
                                                     <input type="radio" name="warna" value="<?= $w->warna ?>"
                                                         <?= $w->warna == $default_warna ? 'checked' : '' ?>
                                                         style="display:none;">
-                                                    <span class="color-circle mb-1 me-2" style="width:30;height:30;border-radius:50%;
-                                                        background-color:<?= $w->kode_hex ?>;">
+
+                                                    <span class="color-circle mb-1 me-2" style="
+                                                        width:30px;
+                                                        height:30px;
+                                                        border-radius:50%;
+                                                        background-color:<?= $w->kode_hex ?>;
+                                                    ">
                                                     </span>
-                                                    <span style="font-size:13px;font-weight:500;" class="text-dark">
+
+                                                    <span style="font-size:13px;font-weight:500;"
+                                                        class="<?= ($w->total_stok <= 0 ? 'text-muted text-decoration-line-through' : 'text-dark') ?>">
                                                         <?= $w->warna ?>
                                                     </span>
+
                                                 </label>
                                             </div>
                                         <?php endforeach ?>
@@ -239,7 +265,7 @@
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="wish-button">
                                         <button id="btn-add-cart" type="button" class="btn">
-                                            <i class="lni lni-cart"></i> Add to Cart
+                                            <i class="lni lni-cart"></i> Keranjang
                                         </button>
                                     </div>
                                 </div>
@@ -248,7 +274,7 @@
                                         <button class="btn btn-wishlist" data-id="<?= $item->id_item ?>"
                                             data-login="<?= $this->session->userdata('id_customer') ? '1' : '0' ?>">
                                             <i class="lni <?= $in_wishlist ? 'lni-heart-filled' : 'lni-heart' ?>"></i>
-                                            To Wishlist
+                                            Wishlist
                                         </button>
                                     </div>
                                 </div>

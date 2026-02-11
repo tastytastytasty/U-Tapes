@@ -87,34 +87,49 @@
 		inset: 0;
 		background: rgba(255, 255, 255, 0.6);
 		display: flex;
+		text-align: center;
 		align-items: center;
 		justify-content: center;
-		font-size: 32px;
-		font-weight: 800;
+		font-size: 40px;
+		font-weight: 700;
 		color: red;
 		letter-spacing: 3px;
 		z-index: 10;
-		text-transform: uppercase;
 	}
 
+	.color-out {
+		position: relative;
+	}
+
+	.color-out::after {
+        content: "";
+        position: absolute;
+        top: 40%;
+        left: -5px;
+        width: 110%;
+        height: 5px;
+        background: #ff0019;
+        transform: rotate(-35deg);
+        pointer-events: none;
+    }
 
 	.color-radio input {
-        display: none;
-    }
+		display: none;
+	}
 
-    .color-circle {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 2px solid #000000;
-        cursor: pointer;
-        display: inline-block;
-    }
+	.color-circle {
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		border: 2px solid #000000;
+		cursor: pointer;
+		display: inline-block;
+	}
 
-    .color-radio input:checked+.color-circle {
-        border: 3px solid #0d6efd;
-        box-shadow: 0 0 0 2px rgba(13, 110, 253, .3);
-    }
+	.color-radio input:checked+.color-circle {
+		border: 3px solid #0d6efd;
+		box-shadow: 0 0 0 2px rgba(13, 110, 253, .3);
+	}
 
 	@media (max-width: 576px) {
 		.container-fluid {
@@ -211,7 +226,7 @@
 									incididunt ut labore et dolore magna aliqua.</p>
 								<h3><span>Now Only</span> $320.99</h3>
 								<div class="button">
-									<a href="<?= site_url('detailproduct') ?>" class="btn">Shop Now</a>
+									<a href="<?= site_url('detailproduct') ?>" class="btn">Beli Sekarang</a>
 								</div>
 							</div>
 						</div>
@@ -227,7 +242,7 @@
 									incididunt ut labore et dolore magna aliqua.</p>
 								<h3><span>Combo Only:</span> $590.00</h3>
 								<div class="button">
-									<a href="<?= site_url('detailproduct') ?>" class="btn">Shop Now</a>
+									<a href="<?= site_url('detailproduct') ?>" class="btn">Beli Sekarang</a>
 								</div>
 							</div>
 						</div>
@@ -317,7 +332,7 @@
 						<h2>Smart Watch 2.0</h2>
 						<p>Space Gray Aluminum Case with <br>Black/Volt Real Sport Band </p>
 						<div class="button">
-							<a href="<?= site_url('detailproduct') ?>" class="btn">View Details</a>
+							<a href="<?= site_url('detailproduct') ?>" class="btn">Lihat Detail</a>
 						</div>
 					</div>
 				</div>
@@ -330,7 +345,7 @@
 						<p>Lorem ipsum dolor sit amet, <br>eiusmod tempor
 							incididunt ut labore.</p>
 						<div class="button">
-							<a href="<?= site_url('detailproduct') ?>" class="btn">Shop Now</a>
+							<a href="<?= site_url('detailproduct') ?>" class="btn">Beli Sekarang</a>
 						</div>
 					</div>
 				</div>

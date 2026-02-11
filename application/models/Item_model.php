@@ -30,7 +30,7 @@ class Item_model extends CI_Model
     public function get_warna($id_item)
     {
         return $this->db
-            ->select('warna, kode_hex,MIN(gambar) AS gambar')
+            ->select('warna, kode_hex, SUM(stok) AS total_stok, MIN(gambar) AS gambar')
             ->from('item_detail')
             ->where('id_item', $id_item)
             ->group_by('warna, kode_hex')

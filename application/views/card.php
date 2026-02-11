@@ -5,7 +5,7 @@
                 <div class="product-image position-relative">
                     <a href="<?= site_url('detailproduct/' . $item->id_item) ?>" class="detail-link">
                         <?php if ($item->total_stok <= 0): ?>
-                            <div class="stok-overlay">HABIS</div>
+                            <div class="stok-overlay">Stok Tidak <br> Tersedia</div>
                         <?php endif; ?>
                         <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" class="img-fluid product-img"
                             alt="<?= $item->nama_item ?>">
@@ -106,11 +106,17 @@
                         <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
                             <?php if (!empty($item->warna)): ?>
                                 <?php foreach ($item->warna as $w): ?>
-                                    <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
+                                    <label class="color-radio d-flex align-items-center m-0 
+                                        <?= ($w->total_stok <= 0 ? 'color-out' : '') ?>" style="cursor:pointer;">
                                         <input type="radio" name="warna_<?= $item->id_item ?>" value="<?= $w->warna ?>"
                                             data-image="<?= base_url('assets/images/item/' . $w->gambar) ?>" style="display:none;">
-                                        <span class="color-circle mb-1 me-2" style="width:30px;height:30px;border-radius:50%;
-                                                background-color:<?= $w->kode_hex ?>;">
+
+                                        <span class="color-circle mb-1 me-2" style="
+                                                width:30px;
+                                                height:30px;
+                                                border-radius:50%;
+                                                background-color:<?= $w->kode_hex ?>;
+                                            ">
                                         </span>
                                     </label>
                                 <?php endforeach ?>
@@ -155,19 +161,19 @@
     <?php endforeach; ?>
 </div>
 <script>
-document.addEventListener('change', function (e) {
-    if (!e.target.matches('input[type="radio"][name^="warna_"]')) return;
-    const radio = e.target;
-    const card  = radio.closest('.product-card');
-    if (!card) return;
-    const img = card.querySelector('.product-img');
-    const link = card.querySelector('.detail-link');
-    if (!img || !link) return;
-    const newImg   = radio.dataset.image;
-    const warnaVal = radio.value;
-    if (newImg) img.src = newImg;
-    card.dataset.selectedColor = warnaVal;
-    const baseUrl = link.getAttribute('href').split('?')[0];
-    link.setAttribute('href', baseUrl + '?warna=' + encodeURIComponent(warnaVal));
-});
+    document.addEventListener('change', function (e) {
+        if (!e.target.matches('input[type="radio"][name^="warna_"]')) return;
+        const radio = e.target;
+        const card = radio.closest('.product-card');
+        if (!card) return;
+        const img = card.querySelector('.product-img');
+        const link = card.querySelector('.detail-link');
+        if (!img || !link) return;
+        const newImg = radio.dataset.image;
+        const warnaVal = radio.value;
+        if (newImg) img.src = newImg;
+        card.dataset.selectedColor = warnaVal;
+        const baseUrl = link.getAttribute('href').split('?')[0];
+        link.setAttribute('href', baseUrl + '?warna=' + encodeURIComponent(warnaVal));
+    });
 </script>

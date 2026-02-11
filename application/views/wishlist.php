@@ -76,18 +76,32 @@
         display: none;
     }
     .stok-overlay {
+		position: absolute;
+		inset: 0;
+		background: rgba(255, 255, 255, 0.6);
+		display: flex;
+		text-align: center;
+		align-items: center;
+		justify-content: center;
+		font-size: 35px;
+		font-weight: 700;
+		color: red;
+		letter-spacing: 3px;
+		z-index: 10;
+	}
+    .color-out {
+		position: relative;
+	}
+    .color-out::after {
+        content: "";
         position: absolute;
-        inset: 0;
-        background: rgba(255, 255, 255, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 32px;
-        font-weight: 800;
-        color: red;
-        letter-spacing: 3px;
-        z-index: 2;
-        text-transform: uppercase;
+        top: 40%;
+        left: -5px;
+        width: 110%;
+        height: 5px;
+        background: #ff0019;
+        transform: rotate(-35deg);
+        pointer-events: none;
     }
     .color-radio input {
         display: none;
@@ -212,7 +226,7 @@
                                 <div class="product-image position-relative">
                                     <a href="<?= site_url('detailproduct/' . $w->id_item) ?>" class="detail-link">
                                         <?php if ($w->total_stok <= 0): ?>
-                                            <div class="stok-overlay">HABIS</div>
+                                            <div class="stok-overlay">Stok Tidak <br> Tersedia</div>
                                         <?php endif; ?>
                                         <img
                                             src="<?= base_url('assets/images/item/' . $w->gambar_item) ?>" alt="<?= $w->nama_item ?>"
@@ -316,16 +330,16 @@
                                         <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
                                             <?php if (!empty($w->warna)): ?>
                                                 <?php foreach ($w->warna as $index => $warna_item): ?>
-                                                    <label class="color-radio" style="cursor:pointer;">
-                                                        <input type="radio" 
-                                                            name="warna_<?= $w->id_item ?>" 
-                                                            value="<?= $warna_item->warna ?>"
-                                                            data-image="<?= base_url('assets/images/item/' . $warna_item->gambar) ?>"
-                                                            <?= $index === 0 ? 'checked' : '' ?>
-                                                            style="display:none;">
-                                                        <span class="color-circle" 
-                                                            style="width:30px; height:30px; border-radius:50%; 
-                                                                    background-color:<?= $warna_item->kode_hex ?>;">
+                                                    <label class="color-radio d-flex align-items-center m-0 
+                                                    <?= ($warna_item->total_stok <= 0 ? 'color-out' : '') ?>" style="cursor:pointer;">
+                                                        <input type="radio" name="warna_<?= $w->id_item ?>" value="<?= $warna_item->warna ?>"
+                                                            data-image="<?= base_url('assets/images/item/' . $warna_item->gambar) ?>" style="display:none;">
+                                                        <span class="color-circle mb-1 me-2" style="
+                                                            width:30px;
+                                                            height:30px;
+                                                            border-radius:50%;
+                                                            background-color:<?= $warna_item->kode_hex ?>;
+                                                        ">
                                                         </span>
                                                     </label>
                                                 <?php endforeach ?>
