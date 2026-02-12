@@ -30,19 +30,36 @@ class Ajax extends MY_Controller
         $id_item = $this->input->post('id_item');
         $warna = $this->input->post('warna');
         $ukuran = $this->input->post('ukuran');
+        $id_customer = $this->session->userdata('id_customer');
+
         $detail = $this->Item_model->get_by_option($id_item, $warna, $ukuran);
+
         if (!$detail) {
             echo json_encode([
                 'harga' => 0,
-                'stok' => 0
+                'stok' => 0,
+                'id_item_detail' => null,
+                'is_in_cart' => false
             ]);
             return;
         }
+
+        // 🔹 cek apakah sudah di cart
+        $this->load->model('Keranjang_model');
+        $is_in_cart = false;
+        if ($id_customer) {
+            $is_in_cart = $this->Keranjang_model
+                ->is_in_cart($id_customer, $detail->id_item_detail);
+        }
+
         echo json_encode([
+            'id_item_detail' => $detail->id_item_detail,
             'harga' => (int) $detail->harga,
-            'stok' => (int) $detail->stok
+            'stok' => (int) $detail->stok,
+            'is_in_cart' => $is_in_cart
         ]);
     }
+
     public function get_gambar_warna()
     {
         $id_item = $this->input->post('id_item');

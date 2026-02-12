@@ -264,8 +264,11 @@
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="wish-button">
-                                        <button id="btn-add-cart" type="button" class="btn">
-                                            <i class="lni lni-cart"></i> Keranjang
+                                        <button id="btn-cart-toggle" class="btn <?= $is_in_cart ? 'in-cart' : '' ?>"
+                                            data-id-detail="<?= isset($detail_aktif) && $detail_aktif ? $detail_aktif->id_item_detail : '' ?>"
+                                            data-login="<?= $this->session->userdata('id_customer') ? 1 : 0 ?>">
+                                            <i class="lni <?= $is_in_cart ? 'lni-cart-full' : 'lni-cart' ?>"></i>
+                                            Keranjang
                                         </button>
                                     </div>
                                 </div>
@@ -314,42 +317,13 @@
 
                 if (res.status === 'added') {
                     icon.removeClass('lni-heart').addClass('lni-heart-filled');
+                    showAlert('Masuk ke wishlist!', 'success');
                 }
 
                 if (res.status === 'removed') {
                     icon.removeClass('lni-heart-filled').addClass('lni-heart');
+                    showAlert('Dihapus dari wishlist', 'info');
                 }
-            }
-        });
-    });
-</script>
-<script>
-    $(document).on('click', '#btn-add-cart', function () {
-        let warna = $('input[name="warna"]:checked').val();
-        let ukuran = $('#ukuran').val();
-        let qty = parseInt($('#qty').val());
-
-        console.log({ warna, ukuran, qty });
-
-        $.ajax({
-            url: "<?= site_url('keranjang/add') ?>",
-            type: "POST",
-            data: {
-                id_item: "<?= $item->id_item ?>",
-                warna: warna,
-                ukuran: ukuran,
-                qty: qty
-            },
-            dataType: "json",
-            success: function (res) {
-                if (res.status === 'ok') {
-                    showAlert('Berhasil masuk keranjang!', 'success');
-                } else {
-                    showAlert(res.message, 'error');
-                }
-            },
-            error: function () {
-                showAlert('Terjadi kesalahan server', 'error');
             }
         });
     });
@@ -369,6 +343,121 @@
             }
         });
     }
+</script>
+<script>
+    function updateCartButton(detail) {
+        const btn = $('#btn-cart-toggle');
+
+        btn.attr('data-id-detail', detail.id_item_detail)
+            .data('id-detail', detail.id_item_detail);
+
+        if (detail.is_in_cart) {
+            btn.addClass('in-cart')
+                .html('<i class="lni lni-cart-full"></i> Keranjang');
+        } else {
+            btn.removeClass('in-cart')
+                .html('<i class="lni lni-cart"></i> Keranjang');
+        }
+    }
+
+    function loadDetail() {
+        let warna = $('input[name="warna"]:checked').val();
+        let ukuran = $('#ukuran').val();
+        let id_item = '<?= $item->id_item ?>';
+
+        if (!warna || !ukuran) return;
+
+        $.post(
+            '<?= site_url("ajax/get_detail") ?>',
+            { id_item, warna, ukuran },
+            function (res) {
+                const data = JSON.parse(res);
+                updateCartButton(data);
+
+                if (data.stok <= 0) {
+                    $('#qty').val(0).prop('disabled', true);
+                } else {
+                    $('#qty').prop('disabled', false);
+                    if ($('#qty').val() < 1) $('#qty').val(1);
+                }
+            }
+        );
+    }
+
+    $(document).ready(function () {
+
+        loadDetail();
+
+        $(document).on('change', 'input[name="warna"]', function () {
+            const warna = $(this).val();
+            const id_item = '<?= $item->id_item ?>';
+
+            $.post('<?= site_url("ajax/get_ukuran") ?>', { id_item, warna }, function (res) {
+                $('#ukuran-wrapper').html(res);
+                $('#ukuran').val('');
+
+                let target = $('.size-box:not(.disabled)').first();
+                if (target.length) target.trigger('click');
+            });
+        });
+
+        $(document).on('click', '.size-box', function () {
+            if ($(this).hasClass('disabled')) return;
+
+            $('.size-box').removeClass('active');
+            $(this).addClass('active');
+
+            $('#ukuran').val($(this).data('ukuran'));
+            loadDetail();
+        });
+
+        $(document).on('click', '#btn-cart-toggle', function () {
+            let btn = $(this);
+            let idDetail = btn.data('id-detail');
+            let login = btn.data('login');
+            let qty = parseInt($('#qty').val());
+            console.log('ID DETAIL:', idDetail, 'QTY:', qty);
+            if (!login) {
+                $('#loginModal').modal('show');
+                return;
+            }
+
+            if (!idDetail) {
+                showAlert('Pilih warna & ukuran dulu');
+                return;
+            }
+
+            if (!btn.hasClass('in-cart') && qty <= 0) {
+                showAlert('Jumlah minimal 1');
+                return;
+            }
+
+            $.ajax({
+                url: "<?= site_url('keranjang/toggle') ?>",
+                type: "POST",
+                data: { id_item_detail: idDetail, qty: qty },
+                dataType: "json",
+                success: function (res) {
+                    console.log('RESP TOGGLE:', res);
+                    if (res.status === 'added') {
+                        btn.addClass('in-cart')
+                            .html('<i class="lni lni-cart-full"></i> Keranjang');
+                        showAlert('Masuk ke keranjang!', 'success');
+                    }
+
+                    if (res.status === 'removed') {
+                        btn.removeClass('in-cart')
+                            .html('<i class="lni lni-cart"></i> Keranjang');
+                        showAlert('Dihapus dari keranjang', 'info');
+                    }
+                },
+                error: function (xhr) {
+                    console.log('ERROR:', xhr.responseText);
+                }
+            });
+        });
+
+    });
 </script>
 
 <!-- End Item Details -->

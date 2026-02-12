@@ -23,6 +23,7 @@ class Detailproduct extends MY_Controller
 	{
 		$this->load->model('Item_model');
 		$this->load->model('Wishlist_model');
+		$this->load->model('Keranjang_model');
 
 		$id_customer = $this->session->userdata('id_customer');
 		$warna_selected = $this->input->get('warna');
@@ -32,19 +33,18 @@ class Detailproduct extends MY_Controller
 		$warna_list = $this->Item_model->get_warna($id_item);
 		$total_stok = $this->Item_model->total_stok_item($id_item);
 
-		$in_wishlist = false;
-		if ($id_customer) {
-			$in_wishlist = $this->Wishlist_model->is_exist($id_customer, $id_item);
-		}
+		$detail_aktif = null;
 		if ($warna_selected) {
 			$detail = $this->Item_model->get_detail_by_warna($id_item, $warna_selected);
 			if ($detail) {
+				$detail_aktif = $detail;
 				$gambar_detail = $detail->gambar;
 				$default_warna = $detail->warna;
 				$default_ukuran = $detail->ukuran;
 				$harga = $detail->harga;
 				$stok = $detail->stok;
 			} else {
+				$detail_aktif = $termurah;
 				$gambar_detail = $termurah->gambar;
 				$default_warna = $termurah->warna;
 				$default_ukuran = $termurah->ukuran;
@@ -52,11 +52,20 @@ class Detailproduct extends MY_Controller
 				$stok = $termurah->stok;
 			}
 		} else {
+			$detail_aktif = $termurah;
 			$gambar_detail = $termurah->gambar;
 			$default_warna = $termurah->warna;
 			$default_ukuran = $termurah->ukuran;
 			$harga = $termurah->harga;
 			$stok = $termurah->stok;
+		}
+
+		$in_wishlist = false;
+		$is_in_cart = false;
+
+		if ($id_customer && $detail_aktif) {
+			$in_wishlist = $this->Wishlist_model->is_exist($id_customer, $id_item);
+			$is_in_cart = $this->Keranjang_model->is_in_cart($id_customer, $detail_aktif->id_item_detail);
 		}
 
 		$data = [
@@ -68,7 +77,9 @@ class Detailproduct extends MY_Controller
 			'harga' => $harga,
 			'stok' => $stok,
 			'total_stok' => (int) $total_stok,
-			'in_wishlist' => $in_wishlist
+			'in_wishlist' => $in_wishlist,
+			'is_in_cart' => $is_in_cart,
+			'detail_aktif' => $detail_aktif
 		];
 
 		$data['contents'] = $this->load->view('detailproduct', $data, TRUE);

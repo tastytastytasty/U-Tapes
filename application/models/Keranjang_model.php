@@ -3,10 +3,10 @@ class Keranjang_model extends CI_Model
 {
     public function get_by_customer($id_customer)
     {
-        return $this->db->select(' cart.id_cart,cart.qty,cart.checklist,item.id_item,item.merk,item.nama_item,item.gambar_item,
+        return $this->db->select(' cart.id_cart,cart.qty,cart.checklist,item.id_item,item.merk,item.nama_item,item.jenis_kelamin,item.gambar_item,
             kategori.nama_kategori,item_detail.id_item_detail,item_detail.warna,item_detail.ukuran,item_detail.harga,item_detail.gambar,COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END),
             MIN(item_detail.harga)) AS harga_termurah,item_detail.stok,MAX(promo.persen_promo) AS persen_promo,MAX(promo.harga_promo) AS harga_promo,
-            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
+            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new, MAX(item_detail.harga * cart.qty) AS total,
             MAX(
                 CASE 
                     WHEN promo.id_promo IS NOT NULL 
@@ -60,6 +60,22 @@ class Keranjang_model extends CI_Model
             ->get()
             ->row()
             ->total;
+    }
+    public function is_in_cart($id_customer, $id_item_detail)
+    {
+        return $this->db
+            ->where('id_customer', $id_customer)
+            ->where('id_item_detail', $id_item_detail)
+            ->get('cart')
+            ->row();
+    }
+
+    public function remove($id_customer, $id_item_detail)
+    {
+        return $this->db
+            ->where('id_customer', $id_customer)
+            ->where('id_item_detail', $id_item_detail)
+            ->delete('cart');
     }
 
 }

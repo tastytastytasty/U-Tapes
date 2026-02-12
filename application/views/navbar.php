@@ -19,7 +19,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href="<?= base_url('assets/css/main.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/sweetalert2.min.css') ?>">
     <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
-
 </head>
 <style>
     .profile-img {
@@ -317,7 +316,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                             </h4>
                                                             <p class="quantity">
                                                                 <span class="amount">
-                                                                    Rp <?= number_format($c->harga_termurah, 0, ',', '.') ?>
+                                                                    Rp <?= number_format($c->total, 0, ',', '.') ?> (<?= $c->qty ?>)
                                                                 </span>
                                                             </p>
                                                         </div>
@@ -327,7 +326,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <div class="bottom">
                                                 <div class="total">
                                                     <span>Total</span>
-                                                    <span class="total-amount">Rp <?= number_format($cart_total, 0, ',', '.') ?></span>
+                                                    <span class="total-amount">Rp
+                                                        <?= number_format($cart_total, 0, ',', '.') ?></span>
                                                 </div>
                                                 <div class="button">
                                                     <a href="<?= site_url('checkout') ?>" class="btn animate">Checkout</a>
@@ -416,7 +416,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
 
                 <div class="modal-body text-center">
-                    <p class="mb-2">Untuk wishlist, silakan login terlebih dahulu</p>
+                    <p class="mb-2">Untuk menggunakan fitur ini, silakan login terlebih dahulu</p>
                     <a href="<?= site_url('login') ?>" class="btn btn-primary">Login</a>
                 </div>
 
@@ -675,16 +675,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     function (res) {
                         $('#ukuran-wrapper').html(res);
                         $('#ukuran').val('');
+
                         if (itemHabis) {
-                            $('.size-box')
-                                .addClass('disabled')
-                                .removeClass('active');
+                            $('.size-box').addClass('disabled').removeClass('active');
                             return;
                         }
+
                         let target = $('.size-box[data-ukuran="' + DEFAULT_UKURAN + '"]:not(.disabled)');
                         if (!target.length) {
                             target = $('.size-box:not(.disabled)').first();
                         }
+
                         if (target.length) {
                             target.trigger('click');
                         } else {
@@ -692,7 +693,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         }
                     }
                 );
+                $.post(
+                    '<?= site_url("ajax/get_detail") ?>',
+                    { id_item, warna, ukuran: $('#ukuran').val() },
+                    function (res) {
+                        const data = JSON.parse(res);
+                        updateCartButton(data);
+                    }
+                );
             });
+            
             $(document).on('click', '.size-box:not(.disabled)', function () {
                 if (itemHabis) return;
                 $('.size-box').removeClass('active');
@@ -782,11 +792,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     if (res.status === 'added') {
                         icon.removeClass('lni-heart')
                             .addClass('lni-heart-filled');
+                            showAlert('Masuk ke wishlist!', 'success');
                     }
 
                     if (res.status === 'removed') {
                         icon.removeClass('lni-heart-filled')
                             .addClass('lni-heart');
+                        showAlert('Dihapus dari wishlist', 'info');
                     }
                 }
             });
