@@ -191,7 +191,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="d-flex align-items-center gap-3 ms-auto">
 
                         <div class="navbar-cart">
-                            <div class="cart-items me-2">
+                            <div class="cart-items me-3">
                                 <a href="javascript:void(0)" class="main-btn">
                                     <i class="lni lni-ticket"></i>
                                 </a>
@@ -219,7 +219,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     </ul>
                                 </div>
                             </div>
-                            <div class="cart-items me-2">
+                            <div class="cart-items me-3">
                                 <?php if ($this->session->userdata('logged_in')): ?>
                                     <a href="javascript:void(0)" class="main-btn btn-wishlist-navbar"
                                         data-href="<?= site_url('wishlist') ?>">
@@ -283,7 +283,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <div class="cart-items me-2">
+                            <div class="cart-items me-3">
                                 <?php if ($this->session->userdata('logged_in')): ?>
                                     <a href="javascript:void(0)" class="main-btn btn-cart-navbar"
                                         data-href="<?= site_url('keranjang') ?>">
@@ -306,13 +306,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         <div class="cart-img-head">
                                                             <a class="cart-img"
                                                                 href="<?= site_url('detailproduct/' . $c->id_item) ?>">
-                                                                <img src="<?= base_url('assets/images/item/' . $c->gambar_item) ?>">
+                                                                <img src="<?= base_url('assets/images/item/' . $c->gambar) ?>">
                                                             </a>
                                                         </div>
                                                         <div class="content">
                                                             <h4>
                                                                 <a href="<?= site_url('detailproduct/' . $c->id_item) ?>">
-                                                                    <?= $c->nama_item ?>
+                                                                    <?= $c->nama_item ?> (<?= $c->ukuran ?>)
                                                                 </a>
                                                             </h4>
                                                             <p class="quantity">
