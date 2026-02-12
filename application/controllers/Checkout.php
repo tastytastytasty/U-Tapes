@@ -8,6 +8,7 @@ class Checkout extends MY_Controller
     {
         parent::__construct();
         $this->load->model('AlamatModel');
+        $this->load->model('Checkout_model'); // TAMBAHAN: Load model checkout
         $this->load->library('session');
 
         // Pastikan user sudah login
@@ -36,10 +37,24 @@ class Checkout extends MY_Controller
         // PERUBAHAN: Set flag jika tidak ada alamat (tidak redirect lagi)
         $has_no_address = empty($alamat_list);
 
+        // TAMBAHAN: Ambil cart items yang di-checklist (untuk halaman checkout)
+        $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
+        
+        // TAMBAHAN: Hitung summary (total, diskon, dll)
+        $summary = $this->Checkout_model->calculate_summary($checkout_items);
+
+        // TAMBAHAN: Ambil SEMUA cart items untuk navbar (ga peduli checklist)
+        $this->load->model('Keranjang_model');
+        $all_cart_items = $this->Keranjang_model->get_by_customer($id_customer);
+
         $data = [
             'alamat_checkout' => $alamat_checkout,
             'alamat_list' => $alamat_list,
-            'has_no_address' => $has_no_address  // TAMBAHAN: Flag untuk trigger modal
+            'has_no_address' => $has_no_address,
+            'checkout_items' => $checkout_items,   // Untuk halaman checkout (checklist Yes)
+            'summary' => $summary,                  
+            'checkout_model' => $this->Checkout_model,
+            'cart_items' => $all_cart_items        // OVERRIDE: Untuk navbar (SEMUA item, ga peduli checklist)
         ];
 
         $data['contents'] = $this->load->view('checkout', $data, TRUE);

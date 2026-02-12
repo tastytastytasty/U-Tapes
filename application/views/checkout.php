@@ -34,11 +34,17 @@
       padding: 0;
     }
 
+    html,
+    body {
+      overflow-x: hidden;
+    }
+
     body {
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
+      background: #ffffff;
       color: var(--text);
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
     .checkout-wrapper {
@@ -47,7 +53,7 @@
       display: grid;
       grid-template-columns: 1fr 420px;
       gap: 2rem;
-      padding: 0 1.5rem;
+      padding: 0;
     }
 
     .box {
@@ -61,7 +67,7 @@
     }
 
     .box:hover {
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow);
     }
 
     .box-header {
@@ -202,8 +208,6 @@
 
     .product-item:hover {
       background: white;
-      border-color: var(--primary);
-      transform: translateX(4px);
       box-shadow: var(--shadow);
     }
 
@@ -607,28 +611,102 @@
       box-shadow: var(--shadow);
     }
 
+    .promo-buttons-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
     .btn-promo-trigger {
-      width: 100%;
       padding: 1rem;
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      color: #92400e;
       border: 2px dashed #f59e0b;
       border-radius: var(--radius-sm);
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 700;
       cursor: pointer;
-      margin-bottom: 1.5rem;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      flex-direction: column;
+      text-align: center;
     }
 
-    .btn-promo-trigger:hover {
+    .btn-promo-item {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+    }
+
+    .btn-promo-item:hover {
       background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+    }
+
+    .btn-promo-shipping {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      color: #1e40af;
+      border-color: #3b82f6;
+    }
+
+    .btn-promo-shipping:hover {
+      background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-promo-trigger .promo-icon {
+      font-size: 1.5rem;
+    }
+
+    .btn-promo-trigger .promo-text {
+      font-size: 0.875rem;
+      line-height: 1.2;
+    }
+
+    .btn-promo-trigger.active {
+      border-style: solid;
+      padding: 0.875rem;
+    }
+
+    .btn-promo-item.active {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    .btn-promo-item.active:hover {
+      background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+    }
+
+    .btn-promo-shipping.active {
+      background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+      border-color: #3b82f6;
+      color: #1e3a8a;
+    }
+
+    .btn-promo-shipping.active:hover {
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+    }
+
+    .btn-promo-trigger.active .promo-icon {
+      font-size: 1.25rem;
+    }
+
+    .btn-promo-trigger.active .promo-code {
+      font-weight: 800;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 0.125rem;
+    }
+
+    .btn-promo-trigger.active .promo-text {
+      font-size: 0.75rem;
+      font-weight: 500;
+      opacity: 0.8;
     }
 
     /* Summary */
@@ -702,7 +780,7 @@
     }
 
     .summary-section:hover {
-      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
     }
 
     .summary-header {
@@ -717,7 +795,7 @@
     }
 
     .summary-header:hover {
-      background: var(--primary-light);
+      background: var(--bg-secondary);
     }
 
     .summary-header.active {
@@ -1246,8 +1324,7 @@
     }
 
     .address-card:hover {
-      border-color: var(--primary);
-      background: var(--primary-light);
+      background: var(--bg-secondary);
       transform: translateY(-2px);
       box-shadow: var(--shadow);
     }
@@ -1793,7 +1870,7 @@
   .checkout-wrapper {
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    padding: 0 1rem;
+    padding: 0;
     margin: 1.5rem auto 2rem;
   }
 
@@ -1822,7 +1899,7 @@
 /* Mobile (768px and below) */
 @media (max-width: 768px) {
   .checkout-wrapper {
-    padding: 0 0.75rem;
+    padding: 0;
     margin: 1rem auto 1.5rem;
   }
 
@@ -1945,7 +2022,7 @@
   /* Offcanvas responsive */
   .offcanvas {
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
   }
 
   .offcanvas-header {
@@ -1972,6 +2049,24 @@
 
   .btn-use-voucher {
     width: 100%;
+  }
+
+  /* Promo buttons responsive */
+  .promo-buttons-container {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .btn-promo-trigger {
+    padding: 0.875rem;
+  }
+
+  .btn-promo-trigger .promo-icon {
+    font-size: 1.25rem;
+  }
+
+  .btn-promo-trigger .promo-text {
+    font-size: 0.8125rem;
   }
 
   /* Promo input responsive */
@@ -2312,7 +2407,11 @@
       <div class="box">
         <div class="box-header">
           <h3>📍 Alamat Pengiriman</h3>
-          <button class="btn btn-link" id="btn-open-modal">Ganti Alamat</button>
+          <div id="btn-ganti-alamat-container">
+            <?php if ($alamat_checkout): ?>
+              <button class="btn btn-link" id="btn-open-modal">Ganti Alamat</button>
+            <?php endif; ?>
+          </div>
         </div>
 
         <div class="address-display" id="address-display-main">
@@ -2339,82 +2438,59 @@
         </div>
       </div>
 
-      <!-- Produk - DUMMY DATA -->
+      <!-- Produk - DARI DATABASE -->
       <div class="box">
-        <h3>🛍️ Pesanan Anda (3 item)</h3>
+        <h3>🛍️ Pesanan Anda (<?= count($checkout_items) ?> item)</h3>
 
-        <!-- Product 1 -->
-        <div class="product-item">
-          <div class="product-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop" class="product-img" alt="Nike Air Max">
-            <div class="product-discount-badge">-30%</div>
-          </div>
-          <div class="product-info">
-            <h4 class="product-name">Nike Air Max 270</h4>
-            <div class="product-variant">
-              <span>📏 Ukuran: 42</span>
-              <span>🎨 Warna: Hitam</span>
-            </div>
-            <div class="product-price-row">
-              <div class="product-qty-display">
-                <span class="qty-label">Jumlah:</span>
-                <span class="qty-value">1</span>
+        <?php if (!empty($checkout_items)): ?>
+          <?php foreach ($checkout_items as $item): ?>
+            <?php
+            // Hitung harga final (setelah diskon)
+            $final_price = $checkout_model->get_item_final_price($item);
+            $subtotal = $final_price * $item->qty;
+            
+            // Cek apakah ada diskon
+            $has_discount = ($item->is_sale == 1 && ($item->persen_promo > 0 || $item->harga_promo > 0));
+            $discount_percentage = $has_discount && $item->persen_promo > 0 ? $item->persen_promo : 0;
+            ?>
+            
+            <div class="product-item">
+              <div class="product-img-wrapper">
+                <img src="<?= base_url('assets/images/products/' . $item->gambar_item) ?>" 
+                     class="product-img" 
+                     alt="<?= htmlspecialchars($item->nama_item) ?>">
+                <?php if ($has_discount): ?>
+                  <div class="product-discount-badge">-<?= $discount_percentage ?>%</div>
+                <?php endif; ?>
               </div>
-              <div class="product-prices">
-                <span class="product-price-original">Rp 1.500.000</span>
-                <span class="product-price">Rp 1.050.000</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 2 -->
-        <div class="product-item">
-          <div class="product-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop" class="product-img" alt="Adidas Ultraboost">
-          </div>
-          <div class="product-info">
-            <h4 class="product-name">Adidas Ultraboost 21</h4>
-            <div class="product-variant">
-              <span>📏 Ukuran: 41</span>
-              <span>🎨 Warna: Putih</span>
-            </div>
-            <div class="product-price-row">
-              <div class="product-qty-display">
-                <span class="qty-label">Jumlah:</span>
-                <span class="qty-value">2</span>
-              </div>
-              <div class="product-prices">
-                <span class="product-price no-discount">Rp 3.800.000</span>
+              <div class="product-info">
+                <h4 class="product-name"><?= htmlspecialchars($item->nama_item) ?></h4>
+                <div class="product-variant">
+                  <span>📏 Ukuran: <?= htmlspecialchars($item->ukuran) ?></span>
+                  <span>🎨 Warna: <?= htmlspecialchars($item->warna) ?></span>
+                </div>
+                <div class="product-price-row">
+                  <div class="product-qty-display">
+                    <span class="qty-label">Jumlah:</span>
+                    <span class="qty-value"><?= $item->qty ?></span>
+                  </div>
+                  <div class="product-prices">
+                    <?php if ($has_discount): ?>
+                      <span class="product-price-original">Rp <?= number_format($item->harga * $item->qty, 0, ',', '.') ?></span>
+                      <span class="product-price">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
+                    <?php else: ?>
+                      <span class="product-price no-discount">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
+                    <?php endif; ?>
+                  </div>
+                </div>
               </div>
             </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="alert alert-warning">
+            ⚠️ Keranjang kosong. <a href="<?= site_url('keranjang') ?>">Kembali ke keranjang</a>
           </div>
-        </div>
-
-        <!-- Product 3 -->
-        <div class="product-item">
-          <div class="product-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=400&fit=crop" class="product-img" alt="Converse Chuck Taylor">
-            <div class="product-discount-badge">-25%</div>
-          </div>
-          <div class="product-info">
-            <h4 class="product-name">Converse Chuck Taylor All Star</h4>
-            <div class="product-variant">
-              <span>📏 Ukuran: 40</span>
-              <span>🎨 Warna: Merah</span>
-            </div>
-            <div class="product-price-row">
-              <div class="product-qty-display">
-                <span class="qty-label">Jumlah:</span>
-                <span class="qty-value">1</span>
-              </div>
-              <div class="product-prices">
-                <span class="product-price-original">Rp 800.000</span>
-                <span class="product-price">Rp 600.000</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
 
     </div>
@@ -2425,10 +2501,18 @@
 
       <div class="box">
 
-        <!-- TOMBOL PROMO -->
-        <button class="btn-promo-trigger" id="btn-open-promo">
-          🎁 Pakai Promo / Voucher
-        </button>
+        <!-- TOMBOL PROMO - DIPISAH -->
+        <div class="promo-buttons-container">
+          <button class="btn-promo-trigger btn-promo-item" id="btn-open-promo-item">
+            <span class="promo-icon">🎁</span>
+            <span class="promo-text">Promo Item</span>
+          </button>
+          
+          <button class="btn-promo-trigger btn-promo-shipping" id="btn-open-promo-shipping">
+            <span class="promo-icon">🚚</span>
+            <span class="promo-text">Gratis Ongkir</span>
+          </button>
+        </div>
 
         <!-- SUBTOTAL PRODUK - COLLAPSIBLE -->
         <div class="summary-section">
@@ -2495,23 +2579,23 @@
       </div>
     </div>
 
-    <!-- Off-Canvas Promo -->
-    <div class="offcanvas-overlay" id="offcanvas-overlay"></div>
-    <div class="offcanvas" id="offcanvas-promo">
+    <!-- Off-Canvas Promo ITEM -->
+    <div class="offcanvas-overlay" id="offcanvas-overlay-item"></div>
+    <div class="offcanvas" id="offcanvas-promo-item">
       <div class="offcanvas-header">
-        <h3>🎁 Promo & Voucher</h3>
-        <button class="offcanvas-close" id="offcanvas-close">×</button>
+        <h3>🎁 Promo Item</h3>
+        <button class="offcanvas-close" id="offcanvas-close-item">×</button>
       </div>
       <div class="offcanvas-body">
-        <div id="promo-container">
-          <!-- Input Promo -->
+        <div id="promo-item-container">
+          <!-- Input Promo Item -->
           <div class="promo-input-group">
-            <input type="text" class="promo-input" id="promo-code" placeholder="Masukkan kode promo">
-            <button class="btn-apply-promo" id="btn-apply-promo">Pakai</button>
+            <input type="text" class="promo-input" id="promo-code-item" placeholder="Masukkan kode promo item">
+            <button class="btn-apply-promo" id="btn-apply-promo-item">Pakai</button>
           </div>
 
-          <!-- Available Vouchers -->
-          <div class="voucher-section-title">✨ Voucher Tersedia</div>
+          <!-- Available Vouchers ITEM -->
+          <div class="voucher-section-title">✨ Voucher Item Tersedia</div>
 
           <!-- Voucher 1 -->
           <div class="voucher-card" data-code="DISKON10" data-type="percentage" data-value="10">
@@ -2523,7 +2607,7 @@
                 <div class="voucher-valid">Berlaku hingga 31 Jan 2026</div>
               </div>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucher('DISKON10', 'percentage', 10)">
+            <button class="btn-use-voucher" onclick="applyVoucherItem('DISKON10', 'percentage', 10)">
               Pakai
             </button>
           </div>
@@ -2538,10 +2622,31 @@
                 <div class="voucher-valid">Berlaku hingga 28 Feb 2026</div>
               </div>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucher('GRATIS50', 'fixed', 50000)">
+            <button class="btn-use-voucher" onclick="applyVoucherItem('GRATIS50', 'fixed', 50000)">
               Pakai
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Off-Canvas Promo GRATIS ONGKIR -->
+    <div class="offcanvas-overlay" id="offcanvas-overlay-shipping"></div>
+    <div class="offcanvas" id="offcanvas-promo-shipping">
+      <div class="offcanvas-header">
+        <h3>🚚 Gratis Ongkir</h3>
+        <button class="offcanvas-close" id="offcanvas-close-shipping">×</button>
+      </div>
+      <div class="offcanvas-body">
+        <div id="promo-shipping-container">
+          <!-- Input Promo Shipping -->
+          <div class="promo-input-group">
+            <input type="text" class="promo-input" id="promo-code-shipping" placeholder="Masukkan kode gratis ongkir">
+            <button class="btn-apply-promo" id="btn-apply-promo-shipping">Pakai</button>
+          </div>
+
+          <!-- Available Vouchers SHIPPING -->
+          <div class="voucher-section-title">✨ Voucher Gratis Ongkir Tersedia</div>
 
           <!-- Voucher 3 -->
           <div class="voucher-card" data-code="FREEONGKIR" data-type="shipping" data-value="0">
@@ -2553,7 +2658,22 @@
                 <div class="voucher-valid">Berlaku hingga 15 Feb 2026</div>
               </div>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucher('FREEONGKIR', 'shipping', 0)">
+            <button class="btn-use-voucher" onclick="applyVoucherShipping('FREEONGKIR', 'shipping', 0)">
+              Pakai
+            </button>
+          </div>
+
+          <!-- Voucher Shipping 50% -->
+          <div class="voucher-card" data-code="ONGKIR50" data-type="shipping_percentage" data-value="50">
+            <div class="voucher-left">
+              <div class="voucher-icon">50%</div>
+              <div class="voucher-info">
+                <div class="voucher-title">Diskon Ongkir 50%</div>
+                <div class="voucher-desc">Potongan 50% biaya pengiriman</div>
+                <div class="voucher-valid">Berlaku hingga 20 Feb 2026</div>
+              </div>
+            </div>
+            <button class="btn-use-voucher" onclick="applyVoucherShipping('ONGKIR50', 'shipping_percentage', 50)">
               Pakai
             </button>
           </div>
@@ -2882,15 +3002,16 @@
     </div>
 
     <script>
-      // State - DUMMY PRICING
+      // State - DATA DARI PHP
       const state = {
-        totalBefore: 6100000,
-        productDiscount: 650000,
-        subtotal: 5450000,
+        totalBefore: <?= isset($summary) ? $summary['total_before'] : 0 ?>,
+        productDiscount: <?= isset($summary) ? $summary['total_discount'] : 0 ?>,
+        subtotal: <?= isset($summary) ? $summary['subtotal'] : 0 ?>, // Ini UDAH include diskon produk
         shipping: 25000,
-        voucherDiscount: 0,
-        shippingDiscount: 0, // TAMBAHAN UNTUK DISKON ONGKIR
-        promoCode: null,
+        voucherDiscount: 0, // Voucher TAMBAHAN dari promo code
+        shippingDiscount: 0,
+        promoCodeItem: null, // Promo untuk item
+        promoCodeShipping: null, // Promo untuk shipping
         selectedPayment: null
       };
 
@@ -2899,9 +3020,18 @@
         return 'Rp ' + amount.toLocaleString('id-ID');
       }
 
-      // Calculate Total
+      // Calculate Total - FIXED: GA BOLEH MINUS
       function calculateTotal() {
-        return state.subtotal + (state.shipping - state.shippingDiscount) - state.voucherDiscount;
+        // Hitung subtotal produk (ga boleh minus)
+        const subtotalProduk = Math.max(0, state.subtotal - state.voucherDiscount);
+        
+        // Hitung subtotal ongkir (ga boleh minus)
+        const subtotalOngkir = Math.max(0, state.shipping - state.shippingDiscount);
+        
+        // Total akhir (ga boleh minus)
+        const total = Math.max(0, subtotalProduk + subtotalOngkir);
+        
+        return total;
       }
 
       function toggleSummary(section) {
@@ -2915,9 +3045,9 @@
 
       // Update Display
       function updatePriceDisplay() {
-        // Hitung subtotal produk
-        const subtotalProduk = state.subtotal - state.voucherDiscount;
-        const subtotalOngkir = state.shipping - state.shippingDiscount;
+        // Hitung subtotal produk (ga boleh minus)
+        const subtotalProduk = Math.max(0, state.subtotal - state.voucherDiscount);
+        const subtotalOngkir = Math.max(0, state.shipping - state.shippingDiscount);
 
         // Update Subtotal Produk Section
         document.getElementById('subtotal-produk-display').textContent = formatRupiah(subtotalProduk);
@@ -2955,101 +3085,205 @@
           paymentAmount.textContent = formatRupiah(calculateTotal());
         }
       }
-      // Apply Promo
-      function applyPromo(code) {
+
+      // Apply Voucher ITEM
+      function applyVoucherItem(code, type, value) {
+        // Cek jika sudah ada promo item
+        if (state.promoCodeItem) {
+          showNotification('⚠️ Hanya bisa pakai 1 promo item! Hapus promo item yang aktif dulu.', 'error');
+          return;
+        }
+
+        let desc = '';
+        let discountAmount = 0;
+        
+        if (type === 'percentage') {
+          discountAmount = Math.floor(state.subtotal * (value / 100));
+          desc = `Diskon ${value}%`;
+        } else if (type === 'fixed') {
+          discountAmount = value;
+          desc = `Potongan Rp ${value.toLocaleString('id-ID')}`;
+        }
+        
+        // PENTING: Diskon ga boleh lebih dari subtotal (biar ga minus)
+        state.voucherDiscount = Math.min(discountAmount, state.subtotal);
+        
+        // Kalau diskon lebih dari subtotal, kasih warning
+        if (discountAmount > state.subtotal) {
+          showNotification(`⚠️ Diskon maksimal Rp ${state.subtotal.toLocaleString('id-ID')} (nilai pesanan)`, 'warning');
+        }
+
+        state.promoCodeItem = code;
+
+        // Update UI - tampilkan promo applied
+        const promoItemContainer = document.getElementById('promo-item-container');
+        promoItemContainer.innerHTML = `
+          <div class="promo-applied">
+            <div class="promo-applied-info">
+              <div class="promo-icon">🎉</div>
+              <div class="promo-text">
+                <strong>${code}</strong>
+                <small>${desc} diterapkan</small>
+              </div>
+            </div>
+            <button class="btn-remove-promo" onclick="removePromoItem()">Hapus</button>
+          </div>
+        `;
+
+        // Update tombol promo item
+        updatePromoItemButton(code, desc);
+
+        updatePriceDisplay();
+        showNotification('✅ Voucher item berhasil diterapkan!', 'success');
+        closeOffcanvasItem();
+      }
+
+      // Update Promo Item Button
+      function updatePromoItemButton(code, desc) {
+        const btnPromoItem = document.getElementById('btn-open-promo-item');
+        if (code) {
+          btnPromoItem.classList.add('active');
+          btnPromoItem.innerHTML = `
+            <span class="promo-icon">✓</span>
+            <span class="promo-code">${code}</span>
+            <span class="promo-text">${desc}</span>
+          `;
+        } else {
+          btnPromoItem.classList.remove('active');
+          btnPromoItem.innerHTML = `
+            <span class="promo-icon">🎁</span>
+            <span class="promo-text">Promo Item</span>
+          `;
+        }
+      }
+
+      // Apply Voucher SHIPPING
+      function applyVoucherShipping(code, type, value) {
+        // Cek jika sudah ada promo shipping
+        if (state.promoCodeShipping) {
+          showNotification('⚠️ Hanya bisa pakai 1 promo ongkir! Hapus promo ongkir yang aktif dulu.', 'error');
+          return;
+        }
+
+        let desc = '';
+        let discountAmount = 0;
+        
+        if (type === 'shipping') {
+          discountAmount = state.shipping; // GRATIS ONGKIR 100%
+          desc = 'Gratis Ongkir';
+        } else if (type === 'shipping_percentage') {
+          discountAmount = Math.floor(state.shipping * (value / 100));
+          desc = `Diskon Ongkir ${value}%`;
+        }
+        
+        // PENTING: Diskon ongkir ga boleh lebih dari ongkir (biar ga minus)
+        state.shippingDiscount = Math.min(discountAmount, state.shipping);
+
+        state.promoCodeShipping = code;
+
+        // Update UI - tampilkan promo applied
+        const promoShippingContainer = document.getElementById('promo-shipping-container');
+        promoShippingContainer.innerHTML = `
+          <div class="promo-applied">
+            <div class="promo-applied-info">
+              <div class="promo-icon">🎉</div>
+              <div class="promo-text">
+                <strong>${code}</strong>
+                <small>${desc} diterapkan</small>
+              </div>
+            </div>
+            <button class="btn-remove-promo" onclick="removePromoShipping()">Hapus</button>
+          </div>
+        `;
+
+        // Update tombol promo shipping
+        updatePromoShippingButton(code, desc);
+
+        updatePriceDisplay();
+        showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
+        closeOffcanvasShipping();
+      }
+
+      // Update Promo Shipping Button
+      function updatePromoShippingButton(code, desc) {
+        const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
+        if (code) {
+          btnPromoShipping.classList.add('active');
+          btnPromoShipping.innerHTML = `
+            <span class="promo-icon">✓</span>
+            <span class="promo-code">${code}</span>
+            <span class="promo-text">${desc}</span>
+          `;
+        } else {
+          btnPromoShipping.classList.remove('active');
+          btnPromoShipping.innerHTML = `
+            <span class="promo-icon">🚚</span>
+            <span class="promo-text">Gratis Ongkir</span>
+          `;
+        }
+      }
+
+      // Apply Promo ITEM dari input
+      function applyPromoItem(code) {
         code = code.toUpperCase().trim();
 
         const promos = {
           'DISKON10': {
             type: 'percentage',
-            value: 10,
-            desc: 'Diskon 10%'
+            value: 10
           },
           'GRATIS50': {
             type: 'fixed',
-            value: 50000,
-            desc: 'Potongan Rp 50.000'
-          },
-          'FREEONGKIR': {
-            type: 'shipping',
-            value: 0,
-            desc: 'Gratis Ongkir'
+            value: 50000
           }
         };
 
         if (!promos[code]) {
-          showNotification('❌ Kode promo tidak valid', 'error');
+          showNotification('❌ Kode promo item tidak valid', 'error');
           return;
         }
 
         const promo = promos[code];
-        applyDiscount(code, promo.type, promo.value, promo.desc);
+        applyVoucherItem(code, promo.type, promo.value);
       }
 
-      // Apply Voucher
-      function applyVoucher(code, type, value) {
-        let desc = '';
-        if (type === 'percentage') desc = `Diskon ${value}%`;
-        else if (type === 'fixed') desc = `Potongan Rp ${value.toLocaleString('id-ID')}`;
-        else if (type === 'shipping') desc = 'Gratis Ongkir';
+      // Apply Promo SHIPPING dari input
+      function applyPromoShipping(code) {
+        code = code.toUpperCase().trim();
 
-        applyDiscount(code, type, value, desc);
-      }
+        const promos = {
+          'FREEONGKIR': {
+            type: 'shipping',
+            value: 0
+          },
+          'ONGKIR50': {
+            type: 'shipping_percentage',
+            value: 50
+          }
+        };
 
-      // Core Apply Discount
-      function applyDiscount(code, type, value, description) {
-        let discountAmount = 0;
-
-        if (type === 'percentage') {
-          discountAmount = Math.floor(state.subtotal * (value / 100));
-          state.voucherDiscount = discountAmount;
-          state.shippingDiscount = 0;
-        } else if (type === 'fixed') {
-          discountAmount = value;
-          state.voucherDiscount = discountAmount;
-          state.shippingDiscount = 0;
-        } else if (type === 'shipping') {
-          state.shippingDiscount = state.shipping; // GRATIS ONGKIR
-          state.voucherDiscount = 0;
+        if (!promos[code]) {
+          showNotification('❌ Kode promo ongkir tidak valid', 'error');
+          return;
         }
 
-        state.promoCode = code;
-
-        const promoContainer = document.getElementById('promo-container');
-        promoContainer.innerHTML = `
-    <div class="promo-applied">
-      <div class="promo-applied-info">
-        <div class="promo-icon">🎉</div>
-        <div class="promo-text">
-          <strong>${code}</strong>
-          <small>${description} diterapkan</small>
-        </div>
-      </div>
-      <button class="btn-remove-promo" onclick="removePromo()">Hapus</button>
-    </div>
-  `;
-
-        updatePriceDisplay();
-        showNotification('✅ Voucher berhasil diterapkan!', 'success');
-        closeOffcanvas();
+        const promo = promos[code];
+        applyVoucherShipping(code, promo.type, promo.value);
       }
 
-      // Remove Promo - FIXED
-      function removePromo() {
-        // Reset state
+      // Remove Promo ITEM
+      function removePromoItem() {
         state.voucherDiscount = 0;
-        state.shippingDiscount = 0;
-        state.promoCode = null;
+        state.promoCodeItem = null;
 
-        // Reset promo container UI
-        const promoContainer = document.getElementById('promo-container');
-        promoContainer.innerHTML = `
+        const promoItemContainer = document.getElementById('promo-item-container');
+        promoItemContainer.innerHTML = `
           <div class="promo-input-group">
-            <input type="text" class="promo-input" id="promo-code" placeholder="Masukkan kode promo">
-            <button class="btn-apply-promo" id="btn-apply-promo">Pakai</button>
+            <input type="text" class="promo-input" id="promo-code-item" placeholder="Masukkan kode promo item">
+            <button class="btn-apply-promo" id="btn-apply-promo-item">Pakai</button>
           </div>
 
-          <div class="voucher-section-title">✨ Voucher Tersedia</div>
+          <div class="voucher-section-title">✨ Voucher Item Tersedia</div>
 
           <div class="voucher-card" data-code="DISKON10" data-type="percentage" data-value="10">
             <div class="voucher-left">
@@ -3060,7 +3294,7 @@
                 <div class="voucher-valid">Berlaku hingga 31 Jan 2026</div>
               </div>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucher('DISKON10', 'percentage', 10)">
+            <button class="btn-use-voucher" onclick="applyVoucherItem('DISKON10', 'percentage', 10)">
               Pakai
             </button>
           </div>
@@ -3074,10 +3308,33 @@
                 <div class="voucher-valid">Berlaku hingga 28 Feb 2026</div>
               </div>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucher('GRATIS50', 'fixed', 50000)">
+            <button class="btn-use-voucher" onclick="applyVoucherItem('GRATIS50', 'fixed', 50000)">
               Pakai
             </button>
           </div>
+        `;
+
+        // Reset tampilan tombol
+        updatePromoItemButton(null, null);
+
+        attachPromoItemEvents();
+        updatePriceDisplay();
+        showNotification('✅ Promo item berhasil dihapus', 'success');
+      }
+
+      // Remove Promo SHIPPING
+      function removePromoShipping() {
+        state.shippingDiscount = 0;
+        state.promoCodeShipping = null;
+
+        const promoShippingContainer = document.getElementById('promo-shipping-container');
+        promoShippingContainer.innerHTML = `
+          <div class="promo-input-group">
+            <input type="text" class="promo-input" id="promo-code-shipping" placeholder="Masukkan kode gratis ongkir">
+            <button class="btn-apply-promo" id="btn-apply-promo-shipping">Pakai</button>
+          </div>
+
+          <div class="voucher-section-title">✨ Voucher Gratis Ongkir Tersedia</div>
 
           <div class="voucher-card" data-code="FREEONGKIR" data-type="shipping" data-value="0">
             <div class="voucher-left">
@@ -3088,43 +3345,71 @@
                 <div class="voucher-valid">Berlaku hingga 15 Feb 2026</div>
               </div>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucher('FREEONGKIR', 'shipping', 0)">
+            <button class="btn-use-voucher" onclick="applyVoucherShipping('FREEONGKIR', 'shipping', 0)">
+              Pakai
+            </button>
+          </div>
+
+          <div class="voucher-card" data-code="ONGKIR50" data-type="shipping_percentage" data-value="50">
+            <div class="voucher-left">
+              <div class="voucher-icon">50%</div>
+              <div class="voucher-info">
+                <div class="voucher-title">Diskon Ongkir 50%</div>
+                <div class="voucher-desc">Potongan 50% biaya pengiriman</div>
+                <div class="voucher-valid">Berlaku hingga 20 Feb 2026</div>
+              </div>
+            </div>
+            <button class="btn-use-voucher" onclick="applyVoucherShipping('ONGKIR50', 'shipping_percentage', 50)">
               Pakai
             </button>
           </div>
         `;
 
-        // Re-attach promo events
-        attachPromoEvents();
+        // Reset tampilan tombol
+        updatePromoShippingButton(null, null);
 
-        // Update display
+        attachPromoShippingEvents();
         updatePriceDisplay();
-        showNotification('✅ Promo berhasil dihapus', 'success');
+        showNotification('✅ Promo ongkir berhasil dihapus', 'success');
       }
 
-      // Off-canvas Functions
-      function openOffcanvas() {
-        document.getElementById('offcanvas-overlay').classList.add('active');
-        document.getElementById('offcanvas-promo').classList.add('active');
+      // HAPUS FUNGSI LAMA
+      // Apply Promo
+      // Off-canvas Functions - UPDATED UNTUK DUA OFFCANVAS
+      function openOffcanvasItem() {
+        document.getElementById('offcanvas-overlay-item').classList.add('active');
+        document.getElementById('offcanvas-promo-item').classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
-      function closeOffcanvas() {
-        document.getElementById('offcanvas-overlay').classList.remove('active');
-        document.getElementById('offcanvas-promo').classList.remove('active');
+      function closeOffcanvasItem() {
+        document.getElementById('offcanvas-overlay-item').classList.remove('active');
+        document.getElementById('offcanvas-promo-item').classList.remove('active');
         document.body.style.overflow = '';
       }
 
-      // Attach Promo Events - FIXED
-      function attachPromoEvents() {
-        const btnApplyPromo = document.getElementById('btn-apply-promo');
-        const promoCodeInput = document.getElementById('promo-code');
+      function openOffcanvasShipping() {
+        document.getElementById('offcanvas-overlay-shipping').classList.add('active');
+        document.getElementById('offcanvas-promo-shipping').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeOffcanvasShipping() {
+        document.getElementById('offcanvas-overlay-shipping').classList.remove('active');
+        document.getElementById('offcanvas-promo-shipping').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      // Attach Promo Events - UNTUK ITEM
+      function attachPromoItemEvents() {
+        const btnApplyPromo = document.getElementById('btn-apply-promo-item');
+        const promoCodeInput = document.getElementById('promo-code-item');
 
         if (btnApplyPromo) {
           btnApplyPromo.addEventListener('click', function() {
             const code = promoCodeInput.value;
             if (code) {
-              applyPromo(code);
+              applyPromoItem(code);
             } else {
               showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
             }
@@ -3137,7 +3422,38 @@
               e.preventDefault();
               const code = promoCodeInput.value;
               if (code) {
-                applyPromo(code);
+                applyPromoItem(code);
+              } else {
+                showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+              }
+            }
+          });
+        }
+      }
+
+      // Attach Promo Events - UNTUK SHIPPING
+      function attachPromoShippingEvents() {
+        const btnApplyPromo = document.getElementById('btn-apply-promo-shipping');
+        const promoCodeInput = document.getElementById('promo-code-shipping');
+
+        if (btnApplyPromo) {
+          btnApplyPromo.addEventListener('click', function() {
+            const code = promoCodeInput.value;
+            if (code) {
+              applyPromoShipping(code);
+            } else {
+              showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+            }
+          });
+        }
+
+        if (promoCodeInput) {
+          promoCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              const code = promoCodeInput.value;
+              if (code) {
+                applyPromoShipping(code);
               } else {
                 showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
               }
@@ -3297,24 +3613,42 @@
       // Event Listeners
       document.addEventListener('DOMContentLoaded', function() {
 
-        // Off-canvas triggers
-        const btnOpenPromo = document.getElementById('btn-open-promo');
-        if (btnOpenPromo) {
-          btnOpenPromo.addEventListener('click', openOffcanvas);
+        // Off-canvas triggers - UNTUK DUA OFFCANVAS TERPISAH
+        const btnOpenPromoItem = document.getElementById('btn-open-promo-item');
+        if (btnOpenPromoItem) {
+          btnOpenPromoItem.addEventListener('click', openOffcanvasItem);
         }
 
-        const offcanvasClose = document.getElementById('offcanvas-close');
-        if (offcanvasClose) {
-          offcanvasClose.addEventListener('click', closeOffcanvas);
+        const btnOpenPromoShipping = document.getElementById('btn-open-promo-shipping');
+        if (btnOpenPromoShipping) {
+          btnOpenPromoShipping.addEventListener('click', openOffcanvasShipping);
         }
 
-        const offcanvasOverlay = document.getElementById('offcanvas-overlay');
-        if (offcanvasOverlay) {
-          offcanvasOverlay.addEventListener('click', closeOffcanvas);
+        // Close offcanvas item
+        const offcanvasCloseItem = document.getElementById('offcanvas-close-item');
+        if (offcanvasCloseItem) {
+          offcanvasCloseItem.addEventListener('click', closeOffcanvasItem);
+        }
+
+        const offcanvasOverlayItem = document.getElementById('offcanvas-overlay-item');
+        if (offcanvasOverlayItem) {
+          offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem);
+        }
+
+        // Close offcanvas shipping
+        const offcanvasCloseShipping = document.getElementById('offcanvas-close-shipping');
+        if (offcanvasCloseShipping) {
+          offcanvasCloseShipping.addEventListener('click', closeOffcanvasShipping);
+        }
+
+        const offcanvasOverlayShipping = document.getElementById('offcanvas-overlay-shipping');
+        if (offcanvasOverlayShipping) {
+          offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping);
         }
 
         // Promo events
-        attachPromoEvents();
+        attachPromoItemEvents();
+        attachPromoShippingEvents();
 
         // Open address modal
         const btnOpenModal = document.getElementById('btn-open-modal');
@@ -3386,7 +3720,8 @@
             closeModal('alamat-modal');
             closePaymentModal();
             closeModal('modalAlamat');
-            closeOffcanvas();
+            closeOffcanvasItem();
+            closeOffcanvasShipping();
           }
         });
 
@@ -3903,11 +4238,57 @@
             btnCheckout.style.cursor = 'not-allowed';
           }
         }
+        
+        // Update tombol Ganti Alamat juga
+        updateGantiAlamatButton(hasAddress);
+      }
+
+      // ========== UPDATE GANTI ALAMAT BUTTON ==========
+      function updateGantiAlamatButton(hasAddress) {
+        const btnContainer = document.getElementById('btn-ganti-alamat-container');
+        
+        console.log('🔍 Debug Ganti Alamat Button:');
+        console.log('- hasAddress:', hasAddress);
+        console.log('- btnContainer:', btnContainer);
+        
+        if (!btnContainer) {
+          console.log('❌ btnContainer tidak ditemukan!');
+          return;
+        }
+        
+        const existingBtn = document.getElementById('btn-open-modal');
+        console.log('- existingBtn:', existingBtn);
+        
+        if (hasAddress) {
+          // Jika ada alamat dan tombol belum ada, buat tombol baru
+          if (!existingBtn) {
+            console.log('✅ Membuat tombol Ganti Alamat baru');
+            btnContainer.innerHTML = '<button class="btn btn-link" id="btn-open-modal">Ganti Alamat</button>';
+            
+            // Attach event listener ke tombol yang baru dibuat
+            const newBtn = document.getElementById('btn-open-modal');
+            if (newBtn) {
+              newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                openModal('alamat-modal');
+              });
+              console.log('✅ Event listener attached');
+            }
+          } else {
+            console.log('ℹ️ Tombol sudah ada dari PHP');
+          }
+        } else {
+          // Jika tidak ada alamat, hapus tombol jika ada
+          if (existingBtn) {
+            console.log('🗑️ Menghapus tombol Ganti Alamat');
+            btnContainer.innerHTML = '';
+          }
+        }
       }
 
       // Panggil saat halaman load
       document.addEventListener('DOMContentLoaded', function() {
-        updateCheckoutButtonState();
+        updateCheckoutButtonState(); // Ini sudah memanggil updateGantiAlamatButton di dalamnya
 
         // ... kode lainnya tetap sama
       });
