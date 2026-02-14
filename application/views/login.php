@@ -93,8 +93,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
               <div class="card card-plain">
                 <div class="card-header pb-0 text-start">
-                  <h4 class="font-weight-bolder text-center">Login</h4>
-                  <p class="mb-0 text-center">Silahkan Login Terlebih Dahulu</p>
+                  <h4 class="font-weight-bolder text-center">Masuk</h4>
+                  <p class="mb-0 text-center">Silahkan Masuk Terlebih Dahulu</p>
                 </div>
                 <div class="card-body">
                   <form id="loginForm" action="<?= site_url('login/auth') ?>" method="post">
@@ -113,10 +113,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
 
                     <div class="mb-3">
-                      <p class="mb-0">Password</p>
+                      <p class="mb-0">Kata sandi</p>
                       <div class="input-group">
                         <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
-                          placeholder="Password" autocomplete="off" value="<?= set_value('password') ?>">
+                          placeholder="Kata sandi" autocomplete="off" value="<?= set_value('password') ?>">
                         <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword">
                           <i class="fa fa-eye" id="eyeIcon"></i>
                         </button>
@@ -130,12 +130,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                     <p class="text-sm text-end">
                       <button type="button" id="btn-forgot-password" class="btn btn-link p-0">
-                        <span id="forgot-password-text">Lupa Password?</span>
+                        <span id="forgot-password-text">Lupa Kata sandi?</span>
                       </button>
                     </p>
                     <div class="text-center">
                       <button type="submit" class="btn btn-lg btn-primary w-100">
-                        Login
+                        Masuk
                       </button>
                     </div>
 
@@ -194,14 +194,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Buat Password Baru</h5>
+          <h5 class="modal-title">Buat Kata sandi Baru</h5>
           <button type="button" class="btn-close text-primary" data-bs-dismiss="modal">X</button>
         </div>
         <div class="modal-body">
-          <p class="text-muted">Masukkan password baru Anda</p>
+          <p class="text-muted">Masukkan Kata sandi baru Anda</p>
 
           <div class="mb-3">
-            <label>Password Baru</label>
+            <label>Kata sandi Baru</label>
             <div class="input-group">
               <input type="password" id="newPassword" class="form-control form-control-lg"
                 placeholder="Minimal 8 karakter" autocomplete="off">
@@ -212,16 +212,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           </div>
 
           <div class="mb-3">
-            <label>Konfirmasi Password Baru</label>
+            <label>Konfirmasi Kata sandi Baru</label>
             <div class="input-group">
               <input type="password" id="newPassword2" class="form-control form-control-lg"
-                placeholder="Ulangi password baru" autocomplete="off">
+                placeholder="Ulangi Kata sandi baru" autocomplete="off">
               <button class="btn btn-primary m-0 w-15" type="button" id="toggleNewPassword2">
                 <i class="fa fa-eye" id="eyeIconNew2"></i>
               </button>
             </div>
           </div>
-          <button id="btn-reset-password" class="btn btn-primary w-100">Ubah Password</button>
+          <button id="btn-reset-password" class="btn btn-primary w-100">Ubah Kata sandi</button>
         </div>
       </div>
     </div>
@@ -292,7 +292,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             forgotPasswordCooldown--;
           } else {
             clearInterval(forgotPasswordTimer);
-            $('#forgot-password-text').text('Lupa Password?');
+            $('#forgot-password-text').text('Lupa Kata sandi?');
           }
         }, 1000);
       }
@@ -382,15 +382,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         let password = $('#newPassword').val();
         let password2 = $('#newPassword2').val();
         if (!password || !password2) {
-          showAlert('Password wajib diisi', 'error');
+          showAlert('Kata sandi wajib diisi', 'error');
           return;
         }
         if (password !== password2) {
-          showAlert('Konfirmasi password tidak sama', 'error');
+          showAlert('Konfirmasi Kata sandi tidak sama', 'error');
           return;
         }
         if (password.length < 8) {
-          showAlert('Password minimal 8 karakter', 'error');
+          showAlert('Kata sandi minimal 8 karakter', 'error');
           return;
         }
         $('#resetPreloader').removeClass('d-none');
@@ -442,7 +442,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
       $('#newPasswordModal').on('hidden.bs.modal', function () {
         clearInterval(forgotPasswordTimer);
-        $('#forgot-password-text').text('Lupa Password?');
+        $('#forgot-password-text').text('Lupa Kata sandi?');
         $('#btn-forgot-password').prop('disabled', false);
         forgotPasswordCooldown = 0;
       });

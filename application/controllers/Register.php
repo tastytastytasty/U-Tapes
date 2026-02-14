@@ -42,12 +42,12 @@ class Register extends MY_Controller
 			'required' => 'Nama wajib diisi.'
 		]);
 		$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]', [
-			'required' => 'Password wajib diisi.',
-			'min_length' => 'Password minimal 8 karakter.'
+			'required' => 'Kata sandi wajib diisi.',
+			'min_length' => 'Kata sandi minimal 8 karakter.'
 		]);
 		$this->form_validation->set_rules('password2', 'Konfirmasi Password', 'required|matches[password]', [
-			'required' => 'Konfirmasi password wajib diisi.',
-			'matches' => 'Konfirmasi password harus sama dengan password.'
+			'required' => 'Konfirmasi kata sandi wajib diisi.',
+			'matches' => 'Konfirmasi kata sandi harus sama dengan kata sandi.'
 		]);
 
 		if ($this->form_validation->run() === FALSE) {
@@ -221,6 +221,6 @@ Belanja Mudah, Langkah Maksimal.
 
 		$this->db->where('id', $row['id'])->update('register_otp', ['dipakai' => 1]);
 
-		echo json_encode(['status' => true, 'message' => 'Registrasi berhasil! Silakan login']);
+		echo json_encode(['status' => true, 'message' => 'Registrasi berhasil! Silakan masuk']);
 	}
 }

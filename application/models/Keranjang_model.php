@@ -77,6 +77,20 @@ class Keranjang_model extends CI_Model
             ->where('id_item_detail', $id_item_detail)
             ->delete('cart');
     }
+    public function delete_by_id($id_cart)
+    {
+        return $this->db
+            ->where('id_cart', $id_cart)
+            ->delete('cart');
+    }
 
+    public function get_cart_item($id_cart, $id_customer)
+    {
+        return $this->db
+            ->where('id_cart', $id_cart)
+            ->where('id_customer', $id_customer)
+            ->get('cart')
+            ->row();
+    }
 }
 

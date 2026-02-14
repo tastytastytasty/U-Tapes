@@ -87,7 +87,7 @@
 		font-weight: 700;
 		color: red;
 		letter-spacing: 3px;
-		z-index: 10;
+		z-index: 5;
 	}
     .color-out {
 		position: relative;
@@ -404,10 +404,10 @@
                     <div class="col-12 text-center">
                         <h5 class="mb-3 text-muted">
                             <i class="lni lni-lock me-1"></i>
-                            Login dulu untuk melihat wishlist
+                            Masuk dulu untuk melihat wishlist
                         </h5>
                         <a href="<?= site_url('login') ?>" class="btn btn-primary">
-                            Login Sekarang
+                            Masuk Sekarang
                         </a>
                     </div>
                 </div>

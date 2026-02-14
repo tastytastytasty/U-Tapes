@@ -129,10 +129,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 autocomplete="off">
                                         </div>
                                         <div class="mb-3">
-                                            <p class="mb-0">Password</p>
+                                            <p class="mb-0">Kata sandi</p>
                                             <div class="input-group">
                                                 <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
-                                                min="8" placeholder="Password" value="<?= set_value('password') ?>"
+                                                min="8" placeholder="Kata sandi" value="<?= set_value('password') ?>"
                                                 autocomplete="off">
                                                 <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword">
                                                     <i class="fa fa-eye" id="eyeIcon"></i>
@@ -140,10 +140,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             </div>
                                         </div>
                                         <div class="mb-3">
-                                            <p class="mb-0">Konfirmasi Password</p>
+                                            <p class="mb-0">Konfirmasi Kata sandi</p>
                                             <div class="input-group">
                                                 <input type="password" class="form-control form-control-lg" name="password2" id="passwordInput2"
-                                                    placeholder="Konfirmasi Password" value="<?= set_value('password2') ?>"
+                                                    placeholder="Konfirmasi Kata sandi" value="<?= set_value('password2') ?>"
                                                     autocomplete="off">
                                                 <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword2">
                                                     <i class="fa fa-eye" id="eyeIcon2"></i>

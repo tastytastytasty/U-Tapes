@@ -86,4 +86,28 @@ class Keranjang extends MY_Controller
             echo json_encode(['status' => 'added']);
         }
     }
+    public function delete()
+    {
+        $this->load->model('Keranjang_model');
+        $id_customer = $this->session->userdata('id_customer');
+        $id_cart = $this->input->post('id_cart');
+
+        if (!$id_customer) {
+            echo json_encode(['status' => 'error', 'message' => 'Silakan login dulu']);
+            return;
+        }
+
+        if (!$id_cart) {
+            echo json_encode(['status' => 'error', 'message' => 'ID keranjang tidak valid']);
+            return;
+        }
+        $cart_item = $this->Keranjang_model->get_cart_item($id_cart, $id_customer);
+
+        if (!$cart_item) {
+            echo json_encode(['status' => 'error', 'message' => 'Item tidak ditemukan']);
+            return;
+        }
+        $this->Keranjang_model->delete_by_id($id_cart);
+        echo json_encode(['status' => 'success', 'message' => 'Item berhasil dihapus']);
+    }
 }

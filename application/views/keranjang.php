@@ -26,7 +26,7 @@
             </div>
             <div class="col-lg-6 col-md-6 col-12">
                 <ul class="breadcrumb-nav">
-                    <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Homepage</a></li>
+                    <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Beranda</a></li>
                     <li>Keranjang</li>
                 </ul>
             </div>
@@ -120,7 +120,7 @@
                                         <button class="btn btn-outline-primary qty-minus" type="button">−</button>
 
                                         <input type="number" class="form-control text-center qty-input" min="1"
-                                            value="<?= $c->qty ?>">
+                                            value="<?= $c->qty ?>" max="<?=$c->stok?>">
 
                                         <button class="btn btn-outline-primary qty-plus" type="button">+</button>
                                     </div>
@@ -166,10 +166,10 @@
                     <div class="col-12 text-center">
                         <h5 class="mb-3 text-muted">
                             <i class="lni lni-lock me-1"></i>
-                            Login dulu untuk melihat keranjang
+                            Masuk dulu untuk melihat keranjang
                         </h5>
                         <a href="<?= site_url('login') ?>" class="btn btn-primary">
-                            Login Sekarang
+                            Masuk Sekarang
                         </a>
                     </div>
                 </div>
@@ -183,7 +183,6 @@
             const input = e.target.previousElementSibling;
             input.value = parseInt(input.value) + 1;
         }
-
         if (e.target.classList.contains('qty-minus')) {
             const input = e.target.nextElementSibling;
             if (parseInt(input.value) > 1) {

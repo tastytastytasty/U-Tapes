@@ -248,7 +248,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
-                        <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Homepage</a></li>
+                        <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Beranda</a></li>
                         <li>Profile</li>
                     </ul>
                 </div>
@@ -278,7 +278,7 @@
                     </li>
                     <li><a href="#" class="active">Profil</a></li>
                     <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
-                    <li><a href="#">Ubah Password</a></li>
+                    <li><a href="#">Ubah Kata sandi</a></li>
 
                     <hr>
 

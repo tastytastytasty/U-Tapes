@@ -113,7 +113,7 @@
             </div>
             <div class="col-lg-6 col-md-6 col-12">
                 <ul class="breadcrumb-nav">
-                    <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Homepage</a></li>
+                    <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Beranda</a></li>
                     <li><a href="<?= site_url('katalog') ?>">Katalog Produk</a></li>
                     <li><?= $item->nama_item ?></li>
                 </ul>

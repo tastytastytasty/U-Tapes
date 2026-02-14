@@ -197,8 +197,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <!-- Shopping Item -->
                                 <div class="shopping-item">
                                     <div class="dropdown-cart-header">
-                                        <span>1 Items</span>
-                                        <a href="<?= site_url('keranjang') ?>">Selengkapnya</a>
+                                        <span>1 Item</span>
+                                        <a href="<?= site_url('keranjang') ?>">Lihat semua</a>
                                     </div>
                                     <ul class="shopping-list">
                                         <li>
@@ -274,10 +274,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="shopping-item text-center p-3">
                                         <p class="mb-3 text-muted">
                                             <i class="lni lni-lock me-1"></i>
-                                            Login dulu untuk melihat wishlist
+                                            Masuk dulu untuk melihat wishlist
                                         </p>
                                         <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
-                                            Login Sekarang
+                                            Masuk Sekarang
                                         </a>
                                     </div>
                                 <?php endif; ?>
@@ -287,12 +287,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <a href="javascript:void(0)" class="main-btn btn-cart-navbar"
                                         data-href="<?= site_url('keranjang') ?>">
                                         <i class="lni lni-cart"></i>
-                                        <span class="total-items total-cart"><?= $cart_count ?></span>
+                                        <span class="total-items total-carts"><?= $cart_count ?></span>
                                     </a>
                                     <div class="shopping-item">
                                         <div class="dropdown-cart-header">
                                             <span id="cart-count"><?= $cart_count ?> Item</span>
-                                            <a href="<?= site_url('keranjang') ?>">Lihat Semua</a>
+                                            <a href="<?= site_url('checkout') ?>">Lihat Semua</a>
                                         </div>
                                         <ul class="shopping-list" id="cart-list">
                                             <?php if (!empty($cart_items)): ?>
@@ -347,10 +347,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="shopping-item text-center p-3">
                                     <p class="mb-3 text-muted">
                                         <i class="lni lni-lock me-1"></i>
-                                        Login dulu untuk melihat keranjang belanja
+                                        Masuk dulu untuk melihat keranjang belanja
                                     </p>
                                     <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
-                                        Login Sekarang
+                                        Masuk Sekarang
                                     </a>
                                 </div>
                             <?php endif; ?>
@@ -385,15 +385,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div>
 
                                 <ul class="sub-category">
-                                    <li><a href="<?= site_url('profile') ?>">Profile</a></li>
-                                    <li><a href="<?= site_url('login/logout') ?>">Logout</a></li>
+                                    <li><a href="<?= site_url('profile') ?>">Profil</a></li>
+                                    <li><a href="<?= site_url('login/logout') ?>">Keluar</a></li>
                                 </ul>
                             </div>
 
                         <?php else: ?>
                             <div class="button ms-2">
                                 <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary animate">
-                                    Login
+                                    Masuk
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -416,8 +416,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
 
                 <div class="modal-body text-center">
-                    <p class="mb-2">Untuk menggunakan fitur ini, silakan login terlebih dahulu</p>
-                    <a href="<?= site_url('login') ?>" class="btn btn-primary">Login</a>
+                    <p class="mb-2">Untuk menggunakan fitur ini, silakan masuk terlebih dahulu</p>
+                    <a href="<?= site_url('login') ?>" class="btn btn-primary">Masuk</a>
                 </div>
 
             </div>
@@ -702,40 +702,84 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     }
                 );
             });
-            
             $(document).on('click', '.size-box:not(.disabled)', function () {
                 if (itemHabis) return;
+
                 $('.size-box').removeClass('active');
                 $(this).addClass('active');
+
                 const ukuran = $(this).data('ukuran');
                 const warna = $('input[name="warna"]:checked').val();
+
                 $('#ukuran').val(ukuran);
-                $.post(
-                    '<?= site_url("ajax/get_detail") ?>',
-                    { id_item, warna, ukuran },
-                    function (res) {
-                        const data = JSON.parse(res);
-                        if (data.harga_diskon && data.harga_diskon < data.harga_asli) {
-                            $('.price').html(`
-                                <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_diskon)}</h4>
-                                <span class="discount-price text-muted text-decoration-line-through fs-5 mt-2" style="margin-left: 0 !important;">
-                                    Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}
-                                </span>
-                            `);
-                        } else {
-                            $('.price').html(`
-                                <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli || data.harga)}</h4>
-                            `);
-                        }
-                        currentStok = parseInt(data.stok);
-                        if (currentStok <= 0) {
-                            $('#qty').val(0).prop('disabled', true);
-                        } else {
-                            $('#qty').val(1).prop('disabled', false);
-                        }
-                    }
-                );
+
+                updateHargaStok(warna, ukuran);
             });
+            $(document).on('change', 'input[name="warna"]', function () {
+                if (itemHabis) return;
+
+                const warna = $(this).val();
+                const ukuran = $('#ukuran').val() || $('.size-box.active').data('ukuran');
+
+                updateHargaStok(warna, ukuran);
+            });
+            function updateHargaStok(warna, ukuran) {
+                if (!warna || !ukuran) return;
+
+                $.ajax({
+                    url: '<?= site_url("ajax/get_detail") ?>',
+                    type: 'POST',
+                    data: {
+                        id_item: id_item,
+                        warna: warna,
+                        ukuran: ukuran
+                    },
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $('.price').css('opacity', '0.5');
+                    },
+                    success: function (data) {
+                        console.log('Response dari server:', data);
+                        if (data.success) {
+                            if (data.is_sale && data.harga_diskon < data.harga_asli) {
+                                $('.price').html(`
+                                    <div class="d-flex justify-content-start align-items-center gap-2">
+                                        <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_diskon)}</h4>
+                                        <span class="discount-price text-muted text-decoration-line-through fs-5">
+                                            Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}
+                                        </span>
+                                    </div>
+                                `);
+                            } else {
+                                $('.price').html(`
+                                    <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}</h4>
+                                `);
+                            }
+                            currentStok = parseInt(data.stok);
+                            if (currentStok <= 0) {
+                                $('#qty').val(0).prop('disabled', true);
+                            } else {
+                                $('#qty').val(1).prop('disabled', false);
+                            }
+                            if (data.is_in_cart) {
+                                console.log('Item sudah ada di keranjang');
+                            }
+
+                            $('.price').css('opacity', '1');
+                        } else {
+                            $('.price').html(`
+                                <h4 class="text-danger">Tidak tersedia</h4>
+                            `);
+                            $('#qty').val(0).prop('disabled', true);
+                            $('.price').css('opacity', '1');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        $('.price').css('opacity', '1');
+                    }
+                });
+            }
             $(document).on('click', '.qty-plus', function () {
                 if (itemHabis || $('#qty').prop('disabled')) return;
 
@@ -792,7 +836,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     if (res.status === 'added') {
                         icon.removeClass('lni-heart')
                             .addClass('lni-heart-filled');
-                            showAlert('Masuk ke wishlist!', 'success');
+                        showAlert('Masuk ke wishlist!', 'success');
                     }
 
                     if (res.status === 'removed') {
@@ -858,6 +902,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 if (sisa === 0) {
                                     $('#wishlist-list').hide();
                                     $('#wishlist-empty').show();
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        $(document)
+            .off('click', '.btn-remove-cart')
+            .on('click', '.btn-remove-cart', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let id = $(this).data('cart');
+                $.ajax({
+                    url: "<?= site_url('keranjang/delete') ?>",
+                    type: "POST",
+                    data: { id_cart: id },
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            $('#nav-cart-' + id).fadeOut(300, function () {
+                                $(this).remove();
+                                let sisa = $('#cart-list li').length;
+                                $('.total-carts').text(sisa);
+                                $('#cart-count').text(sisa + ' Item');
+                                if (sisa === 0) {
+                                    $('#cart-list').hide();
+                                    $('#cart-empty').show();
                                 }
                             });
                         }

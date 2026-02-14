@@ -2456,7 +2456,7 @@
             
             <div class="product-item">
               <div class="product-img-wrapper">
-                <img src="<?= base_url('assets/images/products/' . $item->gambar_item) ?>" 
+                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
                      class="product-img" 
                      alt="<?= htmlspecialchars($item->nama_item) ?>">
                 <?php if ($has_discount): ?>
