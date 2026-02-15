@@ -143,19 +143,11 @@
                                     </span>
                                 <?php endif; ?>
                                 <?php if ($item->is_sale): ?>
-                                    <?php if ($item->persen_promo > 0): ?>
-                                        <span
-                                            style="position: absolute;top: 10px;left: 10px;
-                                        z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
-                                        color: #fff;background: #dc3545;
-                                        border-radius: 4px; position: static !important;">-<?= $item->persen_promo ?>%</span>
-                                    <?php elseif ($item->harga_promo > 0): ?>
-                                        <span style="position: absolute;top: 10px;left: 10px;
-                                        z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
-                                        color: #fff;background: #dc3545;
-                                        border-radius: 4px; position: static !important;">-Rp
-                                            <?= number_format($item->harga_promo, 0, ',', '.') ?></span>
-                                    <?php endif; ?>
+                                    <div style="min-height: 29px;">
+                                        <span id="discount-badge"
+                                            style="display: none; padding: 4px 10px; font-size: 13px; font-weight: 600; color: #fff; background: #dc3545; border-radius: 4px;">
+                                        </span>
+                                    </div>
                                 <?php endif; ?>
                                 <img src="<?= base_url('assets/images/item/' . $gambar_detail) ?>"
                                     class="product-main-img" id="current" alt="#" style="object-fit: contain;">

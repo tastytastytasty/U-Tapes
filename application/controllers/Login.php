@@ -119,7 +119,7 @@ class Login extends MY_Controller
 
         echo json_encode([
             'status' => true,
-            'message' => 'Login berhasil. Selamat datang ' . $customer['nama']
+            'message' => 'Masuk berhasil. Selamat datang ' . $customer['nama']
         ]);
     }
     public function forgot_password_send_otp()

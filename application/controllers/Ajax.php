@@ -48,36 +48,36 @@ class Ajax extends MY_Controller
             return;
         }
 
-        // 🔥 AMBIL PROMO SPESIFIK UNTUK item_detail INI
         $promo = $this->db
             ->select('promo.persen_promo, promo.harga_promo')
             ->from('promo_detail')
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
-            ->where('promo_detail.id_item_detail', $detail->id_item_detail) // 🔴 Filter by id_item_detail
-            ->where('CURDATE() BETWEEN promo.dari AND promo.hingga') // 🔴 Promo masih aktif
-            ->where('promo.kuota >', 0) // 🔴 Kuota masih ada
-            ->order_by('promo.persen_promo', 'DESC') // 🔴 Ambil promo terbesar jika ada multiple
+            ->where('promo_detail.id_item_detail', $detail->id_item_detail)
+            ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
+            ->where('promo.kuota >', 0)
+            ->order_by('promo.persen_promo', 'DESC')
             ->limit(1)
             ->get()
             ->row();
 
-        // Hitung harga diskon
         $harga_asli = (int) $detail->harga;
         $harga_diskon = $harga_asli;
         $is_sale = false;
+        $persen_promo = 0;
+        $harga_promo = 0;
 
-        // Cek apakah ada promo aktif untuk item_detail ini
         if ($promo) {
             $is_sale = true;
+            $persen_promo = (int) $promo->persen_promo;
+            $harga_promo = (int) $promo->harga_promo;
 
-            if (isset($promo->persen_promo) && $promo->persen_promo > 0) {
-                $harga_diskon = $harga_asli - ($harga_asli * $promo->persen_promo / 100);
-            } elseif (isset($promo->harga_promo) && $promo->harga_promo > 0) {
-                $harga_diskon = $harga_asli - $promo->harga_promo;
+            if ($persen_promo > 0) {
+                $harga_diskon = $harga_asli - ($harga_asli * $persen_promo / 100);
+            } elseif ($harga_promo > 0) {
+                $harga_diskon = $harga_asli - $harga_promo;
             }
         }
 
-        // Cek apakah sudah di cart
         $this->load->model('Keranjang_model');
         $is_in_cart = false;
         if ($id_customer) {
@@ -92,7 +92,9 @@ class Ajax extends MY_Controller
             'harga_asli' => $harga_asli,
             'harga_diskon' => (int) $harga_diskon,
             'is_sale' => $is_sale,
-            'stok' => (int) $detail->stok, // 🔴 Stok dari item_detail
+            'persen_promo' => $persen_promo,
+            'harga_promo' => $harga_promo,
+            'stok' => (int) $detail->stok,
             'is_in_cart' => $is_in_cart
         ]);
     }

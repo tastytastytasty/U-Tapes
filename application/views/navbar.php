@@ -713,6 +713,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                 $('#ukuran').val(ukuran);
 
+                $('#discount-badge').hide().text('');
                 updateHargaStok(warna, ukuran);
             });
             $(document).on('change', 'input[name="warna"]', function () {
@@ -721,6 +722,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 const warna = $(this).val();
                 const ukuran = $('#ukuran').val() || $('.size-box.active').data('ukuran');
 
+                $('#discount-badge').hide().text('');
                 updateHargaStok(warna, ukuran);
             });
             function updateHargaStok(warna, ukuran) {
@@ -737,6 +739,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     dataType: 'json',
                     beforeSend: function () {
                         $('.price').css('opacity', '0.5');
+                        $('#discount-badge').hide().text('');
                     },
                     success: function (data) {
                         console.log('Response dari server:', data);
@@ -750,10 +753,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </span>
                                     </div>
                                 `);
+                                if (data.persen_promo > 0) {
+                                    $('#discount-badge').text('-' + data.persen_promo + '%').show();
+                                } else if (data.harga_promo > 0) {
+                                    $('#discount-badge').text('-Rp ' + new Intl.NumberFormat('id-ID').format(data.harga_promo)).show();
+                                }
                             } else {
                                 $('.price').html(`
-                                    <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}</h4>
+                                    <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}</h4>
                                 `);
+                                $('#discount-badge').hide().text('');
                             }
                             currentStok = parseInt(data.stok);
                             if (currentStok <= 0) {
@@ -768,14 +777,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $('.price').css('opacity', '1');
                         } else {
                             $('.price').html(`
-                                <h4 class="text-danger">Tidak tersedia</h4>
+                                <h4 class="text-danger mb-0">Tidak tersedia</h4>
                             `);
                             $('#qty').val(0).prop('disabled', true);
+                            $('#discount-badge').hide().text('');
                             $('.price').css('opacity', '1');
                         }
                     },
                     error: function (xhr, status, error) {
                         console.error('AJAX Error:', error);
+                        $('#discount-badge').hide().text('');
                         $('.price').css('opacity', '1');
                     }
                 });
