@@ -765,6 +765,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 $('#discount-badge').hide().text('');
                             }
                             currentStok = parseInt(data.stok);
+                            $('#stok-tersedia').text(currentStok);
                             if (currentStok <= 0) {
                                 $('#qty').val(0).prop('disabled', true);
                             } else {
@@ -777,8 +778,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $('.price').css('opacity', '1');
                         } else {
                             $('.price').html(`
-                                <h4 class="text-danger mb-0">Tidak tersedia</h4>
+                                <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}</h4>
                             `);
+                            $('#stok-tersedia').text('0');
                             $('#qty').val(0).prop('disabled', true);
                             $('#discount-badge').hide().text('');
                             $('.price').css('opacity', '1');

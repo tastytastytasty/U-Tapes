@@ -193,30 +193,51 @@
                                     <label class="title-label">Pilih Warna</label>
                                     <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
                                         <?php foreach ($warna as $w): ?>
-                                            <div class="card d-flex justify-content-center align-items-center"
-                                                style="width:140px; height:60px; border-radius:12px; cursor:pointer;">
+                                            <?php
+                                            $promo_warna = $this->db
+                                                ->select('MAX(promo.persen_promo) as persen_promo, MAX(promo.harga_promo) as harga_promo')
+                                                ->from('promo_detail')
+                                                ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
+                                                ->join('item_detail', 'item_detail.id_item_detail = promo_detail.id_item_detail', 'inner')
+                                                ->where('item_detail.id_item', $item->id_item)
+                                                ->where('item_detail.warna', $w->warna)
+                                                ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
+                                                ->where('promo.kuota >', 0)
+                                                ->get()
+                                                ->row();
+                                            $ada_diskon_warna = false;
+                                            $badge_text_warna = '';
+                                            if ($promo_warna && ($promo_warna->persen_promo > 0 || $promo_warna->harga_promo > 0)) {
+                                                $ada_diskon_warna = true;
 
+                                                if ($promo_warna->persen_promo > 0) {
+                                                    $badge_text_warna = '%';
+                                                } elseif ($promo_warna->harga_promo > 0) {
+                                                    $badge_text_warna = 'Rp';
+                                                }
+                                            }
+                                            ?>
+                                            <div class="card d-flex justify-content-center align-items-center position-relative"
+                                                style="width:140px; height:60px; border-radius:12px; cursor:pointer;">
+                                                <?php if ($ada_diskon_warna && $badge_text_warna): ?>
+                                                    <span
+                                                        style="position: absolute; top: -6px; right: -6px; background: #dc3545; color: #fff; border-radius: 50%; width: 25px; height: 25px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">
+                                                        <?= $badge_text_warna ?>
+                                                    </span>
+                                                <?php endif; ?>
                                                 <label
                                                     class="color-radio d-flex align-items-center m-0 <?= ($w->total_stok <= 0 ? 'color-out' : '') ?>"
                                                     style="cursor:pointer;">
-
                                                     <input type="radio" name="warna" value="<?= $w->warna ?>"
                                                         <?= $w->warna == $default_warna ? 'checked' : '' ?>
                                                         style="display:none;">
-
-                                                    <span class="color-circle mb-1 me-2" style="
-                                                        width:30px;
-                                                        height:30px;
-                                                        border-radius:50%;
-                                                        background-color:<?= $w->kode_hex ?>;
-                                                    ">
+                                                    <span class="color-circle mb-1 me-2"
+                                                        style="width:30px; height:30px; border-radius:50%; background-color:<?= $w->kode_hex ?>;">
                                                     </span>
-
                                                     <span style="font-size:13px;font-weight:500;"
                                                         class="<?= ($w->total_stok <= 0 ? 'text-muted text-decoration-line-through' : 'text-dark') ?>">
                                                         <?= $w->warna ?>
                                                     </span>
-
                                                 </label>
                                             </div>
                                         <?php endforeach ?>
@@ -236,7 +257,8 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group quantity">
-                                    <label>Jumlah</label>
+                                    <label>Jumlah | Stok yang tersedia : <span
+                                            id="stok-tersedia"><?= $item->stok ?></span></label>
                                     <div class="input-group input-group-sm" style="max-width:150px">
                                         <button class="btn btn-outline-primary qty-minus" type="button">−</button>
                                         <input type="number" id="qty" class="form-control" min="0" value="0">

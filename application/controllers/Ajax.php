@@ -14,15 +14,46 @@ class Ajax extends MY_Controller
         $id_item = $this->input->post('id_item');
         $warna = $this->input->post('warna');
         $ukuran = $this->Item_model->get_ukuran($id_item, $warna);
+
         if (!$ukuran) {
             echo '<div class="size-box disabled">Tidak tersedia</div>';
             return;
         }
+
         foreach ($ukuran as $u) {
             $disabled = $u->stok <= 0 ? 'disabled' : '';
-            echo '<div class="size-box ' . $disabled . '" data-ukuran="' . $u->ukuran . '">'
-                . $u->ukuran .
-                '</div>';
+            $detail = $this->Item_model->get_by_option($id_item, $warna, $u->ukuran);
+            $ada_diskon = false;
+            $badge_text = '';
+            if ($detail) {
+                $promo = $this->db
+                    ->select('promo.id_promo, promo.persen_promo, promo.harga_promo')
+                    ->from('promo_detail')
+                    ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
+                    ->where('promo_detail.id_item_detail', $detail->id_item_detail)
+                    ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
+                    ->where('promo.kuota >', 0)
+                    ->get()
+                    ->row();
+
+                if ($promo) {
+                    $ada_diskon = true;
+                    if ($promo->persen_promo > 0) {
+                        $badge_text = '%';
+                    } elseif ($promo->harga_promo > 0) {
+                        $badge_text = 'Rp';
+                    }
+                }
+            }
+            echo '<div class="card d-flex justify-content-center align-items-center size-box position-relative ' . $disabled . '" 
+                   data-ukuran="' . $u->ukuran . '">';
+            if ($ada_diskon && $badge_text) {
+                echo '<span style="position: absolute; top: -12px; right: -12px; background: #dc3545; color: #fff; border-radius: 50%; width: 25px; height: 25px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">
+                    ' . $badge_text . '
+                  </span>';
+            }
+            echo '<span style="font-size:14px;font-weight:500;" class="' . ($disabled ? 'text-muted' : '') . '">' . $u->ukuran . '</span>';
+            echo '</div>';
         }
     }
     public function get_detail()
