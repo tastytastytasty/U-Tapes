@@ -110,4 +110,69 @@ class Keranjang extends MY_Controller
         $this->Keranjang_model->delete_by_id($id_cart);
         echo json_encode(['status' => 'success', 'message' => 'Item berhasil dihapus']);
     }
+    public function update_quantity()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+            return;
+        }
+        if (!$this->session->userdata('id_customer')) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Silakan login terlebih dahulu'
+            ]);
+            return;
+        }
+        $id_cart = $this->input->post('id_cart');
+        $qty = (int) $this->input->post('qty');
+        $id_customer = $this->session->userdata('id_customer');
+        if (empty($id_cart) || $qty < 1) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Data tidak valid'
+            ]);
+            return;
+        }
+        $this->db->select('c.*, id.stok, id.harga');
+        $this->db->from('cart c');
+        $this->db->join('item_detail id', 'c.id_item_detail = id.id_item_detail');
+        $this->db->where('c.id_cart', $id_cart);
+        $this->db->where('c.id_customer', $id_customer);
+        $cart = $this->db->get()->row();
+        if (!$cart) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Item tidak ditemukan'
+            ]);
+            return;
+        }
+        if ($qty > $cart->stok) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Stok tidak mencukupi. Stok tersisa: ' . $cart->stok
+            ]);
+            return;
+        }
+        $update = $this->db->where('id_cart', $id_cart)
+            ->where('id_customer', $id_customer)
+            ->update('cart', ['qty' => $qty]);
+        if (!$update) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Gagal update keranjang'
+            ]);
+            return;
+        }
+        $this->db->select('SUM(c.qty * id.harga) as cart_total, SUM(c.qty) as total_items');
+        $this->db->from('cart c');
+        $this->db->join('item_detail id', 'c.id_item_detail = id.id_item_detail');
+        $this->db->where('c.id_customer', $id_customer);
+        $result = $this->db->get()->row();
+        echo json_encode([
+            'success' => true,
+            'cart_total' => $result->cart_total ?? 0,
+            'total_items' => $result->total_items ?? 0,
+            'message' => 'Keranjang berhasil diupdate'
+        ]);
+    }
 }
