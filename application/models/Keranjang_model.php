@@ -78,5 +78,8 @@ class Keranjang_model extends CI_Model
             ->delete('cart');
     }
 
+    public function delete($id_cart) {
+        return $this->db->where('id_cart', $id_cart)->delete('cart');
+    }
 }
 

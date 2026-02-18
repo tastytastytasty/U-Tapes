@@ -67,7 +67,7 @@
     }
 
     .box:hover {
-      box-shadow: var(--shadow);
+      border-color: var(--primary);
     }
 
     .box-header {
@@ -195,7 +195,7 @@
     /* Product Item */
     .product-item {
       display: grid;
-      grid-template-columns: 100px 1fr;
+      grid-template-columns: 40px 100px 1fr;
       gap: 1.25rem;
       padding: 1.25rem;
       background: var(--bg);
@@ -209,7 +209,28 @@
     .product-item:hover {
       background: white;
       box-shadow: var(--shadow);
+      /* DISABLED: transform bikin reflow, bikin berat
+      border-color: var(--primary);
+      transform: translateX(4px);
+      */
     }
+    
+    /* Checkbox Styling */
+    .product-checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 0.5rem;
+    }
+    
+    .product-checkbox input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      accent-color: var(--primary);
+      border-radius: 6px;
+    }
+
 
     .product-img-wrapper {
       position: relative;
@@ -229,6 +250,21 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      background: var(--bg); /* Fallback kalau img ga load */
+    }
+    
+    /* Fallback untuk broken image */
+    .product-img[data-errored="1"] {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .product-img[data-errored="1"]::before {
+      content: '🖼️';
+      font-size: 2rem;
+      opacity: 0.3;
     }
 
     .product-discount-badge {
@@ -780,7 +816,7 @@
     }
 
     .summary-section:hover {
-      box-shadow: var(--shadow-sm);
+      border-color: var(--primary);
     }
 
     .summary-header {
@@ -795,7 +831,7 @@
     }
 
     .summary-header:hover {
-      background: var(--bg-secondary);
+      background: var(--primary-light);
     }
 
     .summary-header.active {
@@ -1324,7 +1360,8 @@
     }
 
     .address-card:hover {
-      background: var(--bg-secondary);
+      border-color: var(--primary);
+      background: var(--primary-light);
       transform: translateY(-2px);
       box-shadow: var(--shadow);
     }
@@ -2440,7 +2477,7 @@
 
       <!-- Produk - DARI DATABASE -->
       <div class="box">
-        <h3>🛍️ Pesanan Anda (<?= count($checkout_items) ?> item)</h3>
+        <h3>🛍️ Pesanan Anda (<span id="checked-items-count">0</span> item dipilih)</h3>
 
         <?php if (!empty($checkout_items)): ?>
           <?php foreach ($checkout_items as $item): ?>
@@ -2449,16 +2486,31 @@
             $final_price = $checkout_model->get_item_final_price($item);
             $subtotal = $final_price * $item->qty;
             
+            // DEBUG: Echo subtotal ke HTML comment
+            // echo "<!-- DEBUG: Item {$item->id_cart} - final_price: {$final_price} - qty: {$item->qty} - subtotal: {$subtotal} -->\n";
+            
             // Cek apakah ada diskon
             $has_discount = ($item->is_sale == 1 && ($item->persen_promo > 0 || $item->harga_promo > 0));
             $discount_percentage = $has_discount && $item->persen_promo > 0 ? $item->persen_promo : 0;
             ?>
             
-            <div class="product-item">
+            <div class="product-item" data-id-cart="<?= $item->id_cart ?>" data-price="<?= $subtotal ?>">
+              <!-- CHECKBOX UNTUK PILIH ITEM -->
+              <div class="product-checkbox">
+                <input type="checkbox" 
+                       class="item-checkbox" 
+                       id="item-<?= $item->id_cart ?>" 
+                       data-id-cart="<?= $item->id_cart ?>"
+                       data-price="<?= $subtotal ?>"
+                       data-debug-price="<?= $subtotal ?>">
+                <label for="item-<?= $item->id_cart ?>"></label>
+              </div>
+              
               <div class="product-img-wrapper">
                 <img src="<?= base_url('assets/images/products/' . $item->gambar_item) ?>" 
                      class="product-img" 
-                     alt="<?= htmlspecialchars($item->nama_item) ?>">
+                     alt="<?= htmlspecialchars($item->nama_item) ?>"
+                     onerror="if(!this.dataset.errored){this.dataset.errored=1;this.src='<?= base_url('assets/images/no-image.jpg') ?>';}">
                 <?php if ($has_discount): ?>
                   <div class="product-discount-badge">-<?= $discount_percentage ?>%</div>
                 <?php endif; ?>
@@ -2521,20 +2573,22 @@
               <span class="summary-header-icon">▼</span>
               <span class="summary-header-title">🛍️ Subtotal Produk</span>
             </div>
-            <span class="summary-header-value" id="subtotal-produk-display">Rp 5.450.000</span>
+            <span class="summary-header-value" id="subtotal-produk-display">Rp 0</span>
           </div>
           <div class="summary-body" id="product-body">
             <div class="summary-body-content">
               <div class="summary-detail-row">
-                <span class="label">Total Harga (3 item)</span>
-                <span class="value" id="total-before-detail">Rp 6.100.000</span>
+                <span class="label">Total Harga (<span id="total-items-count">0</span> item)</span>
+                <span class="value" id="total-before-detail">Rp 0</span>
               </div>
-              <div class="summary-detail-row discount">
-                <span class="label">💸 Diskon Produk</span>
-                <span class="value" id="product-discount-detail">- Rp 650.000</span>
-              </div>
+              <?php if (isset($summary) && $summary['total_discount'] > 0): ?>
+                <div class="summary-detail-row discount">
+                  <span class="label">💸 Diskon Produk</span>
+                  <span class="value" id="product-discount-detail">- Rp <?= number_format($summary['total_discount'], 0, ',', '.') ?></span>
+                </div>
+              <?php endif; ?>
               <div class="summary-detail-row voucher" id="voucher-product-row" style="display: none;">
-                <span class="label">🎁 Diskon Voucher</span>
+                <span class="label" id="voucher-product-label">🎁 Voucher</span>
                 <span class="value" id="voucher-product-detail">- Rp 0</span>
               </div>
             </div>
@@ -2557,7 +2611,7 @@
                 <span class="value" id="shipping-cost-detail">Rp 25.000</span>
               </div>
               <div class="summary-detail-row discount" id="shipping-discount-row" style="display: none;">
-                <span class="label">🎁 Diskon Ongkir</span>
+                <span class="label" id="shipping-discount-label">🎁 Diskon Ongkir</span>
                 <span class="value" id="shipping-discount-detail">- Rp 0</span>
               </div>
             </div>
@@ -2568,11 +2622,11 @@
         <div class="summary-total-section">
           <div class="summary-total-row">
             <span class="label">Total Pembayaran</span>
-            <span class="value" id="total-final">Rp 5.475.000</span>
+            <span class="value" id="total-final">Rp 25.000</span>
           </div>
         </div>
 
-        <button class="btn-checkout" id="btn-checkout" <?php if (!$alamat_checkout): ?>disabled<?php endif; ?>>
+        <button class="btn-checkout" id="btn-pay-now" <?php if (!$alamat_checkout): ?>disabled<?php endif; ?>>
           <span>💳</span>
           <span>Bayar Sekarang</span>
         </button>
@@ -3006,21 +3060,163 @@
       const state = {
         totalBefore: <?= isset($summary) ? $summary['total_before'] : 0 ?>,
         productDiscount: <?= isset($summary) ? $summary['total_discount'] : 0 ?>,
-        subtotal: <?= isset($summary) ? $summary['subtotal'] : 0 ?>, // Ini UDAH include diskon produk
+        subtotal: <?= isset($summary) ? $summary['subtotal'] : 0 ?>,
         shipping: 25000,
-        voucherDiscount: 0, // Voucher TAMBAHAN dari promo code
+        voucherDiscount: 0,
         shippingDiscount: 0,
         promoCodeItem: null, // Promo untuk item
         promoCodeShipping: null, // Promo untuk shipping
         selectedPayment: null
       };
 
+      // ========== RECALCULATE FROM CHECKBOXES ==========
+      // Debounce untuk optimasi (ga perlu recalc terlalu sering)
+      let recalcTimeout = null;
+      
+      function recalculateFromCheckboxes() {
+        if (recalcTimeout) clearTimeout(recalcTimeout);
+        
+        recalcTimeout = setTimeout(() => {
+          let total = 0;
+          let count = 0;
+          
+          console.log('🔄 Recalculating...');
+          
+          const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+          console.log('📊 Checkboxes checked:', checkboxes.length);
+          
+          checkboxes.forEach(checkbox => {
+            const priceAttr = checkbox.getAttribute('data-price');
+            const debugPrice = checkbox.getAttribute('data-debug-price');
+            const price = parseFloat(priceAttr);
+            
+            console.log('  💰 Item:', checkbox.getAttribute('data-id-cart'));
+            console.log('     data-price:', priceAttr);
+            console.log('     data-debug-price:', debugPrice);
+            console.log('     Parsed:', price);
+            
+            if (!isNaN(price) && price > 0) {
+              total += price;
+              count++;
+            } else {
+              console.warn('     ⚠️ SKIP - Invalid price!');
+            }
+          });
+          
+          console.log('✅ TOTAL:', total, '| COUNT:', count);
+          
+          // Update state
+          state.totalBefore = total;
+          state.subtotal = total;
+          
+          // 1. Update jumlah item dipilih (di header "Pesanan Anda")
+          const checkedCount = document.getElementById('checked-items-count');
+          if (checkedCount) {
+            checkedCount.textContent = count;
+            console.log('✅ Updated checked-items-count:', count);
+          }
+          
+          // 1.5. Update jumlah item di detail ringkasan "Total Harga (X item)"
+          const totalItemsCount = document.getElementById('total-items-count');
+          if (totalItemsCount) {
+            totalItemsCount.textContent = count;
+            console.log('✅ Updated total-items-count:', count);
+          }
+          
+          // 2. Update SUBTOTAL PRODUK (Header ringkasan)
+          const subtotalProdukEl = document.getElementById('subtotal-produk-display');
+          if (subtotalProdukEl) {
+            // Kurangi voucher discount dari subtotal
+            const subtotalAfterVoucher = Math.max(0, total - state.voucherDiscount);
+            subtotalProdukEl.textContent = formatRupiah(subtotalAfterVoucher);
+            console.log('✅ Updated subtotal-produk-display:', formatRupiah(subtotalAfterVoucher), '(after voucher:', state.voucherDiscount, ')');
+          } else {
+            console.error('❌ subtotal-produk-display NOT FOUND');
+          }
+          
+          // 3. Update TOTAL SEBELUM DISKON (Detail ringkasan)
+          const totalBeforeEl = document.getElementById('total-before-detail');
+          if (totalBeforeEl) {
+            totalBeforeEl.textContent = formatRupiah(total);
+            console.log('✅ Updated total-before-detail');
+          }
+          
+          // 3.5. Update VOUCHER ROW (tampilkan jika ada voucher)
+          const voucherProductRow = document.getElementById('voucher-product-row');
+          const voucherProductLabel = document.getElementById('voucher-product-label');
+          const voucherProductDetail = document.getElementById('voucher-product-detail');
+          if (voucherProductRow && voucherProductLabel && voucherProductDetail) {
+            if (state.voucherDiscount > 0 && state.voucherDesc) {
+              voucherProductRow.style.display = 'flex';
+              voucherProductDetail.textContent = '- ' + formatRupiah(state.voucherDiscount);
+              
+              // Set label langsung dengan desc (🎁 Diskon 10% atau 🎁 Potongan Rp 50.000)
+              voucherProductLabel.textContent = `🎁 ${state.voucherDesc}`;
+              
+              console.log('✅ Voucher ditampilkan:', state.voucherDesc, '-', formatRupiah(state.voucherDiscount));
+            } else {
+              voucherProductRow.style.display = 'none';
+            }
+          }
+          
+          // 3.6. Update SHIPPING DISCOUNT ROW
+          const shippingDiscountRow = document.getElementById('shipping-discount-row');
+          const shippingDiscountLabel = document.getElementById('shipping-discount-label');
+          const shippingDiscountDetail = document.getElementById('shipping-discount-detail');
+          if (shippingDiscountRow && shippingDiscountLabel && shippingDiscountDetail) {
+            if (state.shippingDiscount > 0 && state.shippingDesc) {
+              shippingDiscountRow.style.display = 'flex';
+              shippingDiscountDetail.textContent = '- ' + formatRupiah(state.shippingDiscount);
+              
+              // Set label langsung dengan desc (🎁 Gratis Ongkir atau 🎁 Diskon Ongkir 50%)
+              shippingDiscountLabel.textContent = `🎁 ${state.shippingDesc}`;
+              
+              console.log('✅ Shipping discount ditampilkan:', state.shippingDesc, '-', formatRupiah(state.shippingDiscount));
+            } else {
+              shippingDiscountRow.style.display = 'none';
+            }
+          }
+          
+          // 4. Update TOTAL AKHIR
+          const shipping = state.shipping || 25000; // Default ongkir
+          const finalTotal = total + shipping - state.shippingDiscount - state.voucherDiscount;
+          
+          const totalFinalEl = document.getElementById('total-final');
+          if (totalFinalEl) {
+            totalFinalEl.textContent = formatRupiah(Math.max(0, finalTotal));
+            console.log('✅ Updated total-final:', formatRupiah(finalTotal));
+          } else {
+            console.error('❌ total-final NOT FOUND');
+          }
+          
+          // 5. Enable/Disable TOMBOL BAYAR
+          const btnPayNow = document.getElementById('btn-pay-now');
+          if (btnPayNow) {
+            if (count === 0) {
+              btnPayNow.disabled = true;
+              btnPayNow.style.opacity = '0.5';
+              btnPayNow.style.cursor = 'not-allowed';
+              console.log('🔒 Tombol bayar DISABLED (ga ada item)');
+            } else {
+              btnPayNow.disabled = false;
+              btnPayNow.style.opacity = '1';
+              btnPayNow.style.cursor = 'pointer';
+              console.log('✅ Tombol bayar ENABLED');
+            }
+          } else {
+            console.error('❌ btn-pay-now NOT FOUND');
+          }
+          
+          console.log('═══════════════════════════════');
+        }, 100);
+      }
+
       // Format Rupiah
       function formatRupiah(amount) {
         return 'Rp ' + amount.toLocaleString('id-ID');
       }
 
-      // Calculate Total - FIXED: GA BOLEH MINUS
+      // Calculate Total - FIXED
       function calculateTotal() {
         // Hitung subtotal produk (ga boleh minus)
         const subtotalProduk = Math.max(0, state.subtotal - state.voucherDiscount);
@@ -3045,9 +3241,9 @@
 
       // Update Display
       function updatePriceDisplay() {
-        // Hitung subtotal produk (ga boleh minus)
-        const subtotalProduk = Math.max(0, state.subtotal - state.voucherDiscount);
-        const subtotalOngkir = Math.max(0, state.shipping - state.shippingDiscount);
+        // Hitung subtotal produk
+        const subtotalProduk = state.subtotal - state.voucherDiscount;
+        const subtotalOngkir = state.shipping - state.shippingDiscount;
 
         // Update Subtotal Produk Section
         document.getElementById('subtotal-produk-display').textContent = formatRupiah(subtotalProduk);
@@ -3095,25 +3291,17 @@
         }
 
         let desc = '';
-        let discountAmount = 0;
-        
         if (type === 'percentage') {
-          discountAmount = Math.floor(state.subtotal * (value / 100));
+          const discountAmount = Math.floor(state.subtotal * (value / 100));
+          state.voucherDiscount = discountAmount;
           desc = `Diskon ${value}%`;
         } else if (type === 'fixed') {
-          discountAmount = value;
+          state.voucherDiscount = value;
           desc = `Potongan Rp ${value.toLocaleString('id-ID')}`;
-        }
-        
-        // PENTING: Diskon ga boleh lebih dari subtotal (biar ga minus)
-        state.voucherDiscount = Math.min(discountAmount, state.subtotal);
-        
-        // Kalau diskon lebih dari subtotal, kasih warning
-        if (discountAmount > state.subtotal) {
-          showNotification(`⚠️ Diskon maksimal Rp ${state.subtotal.toLocaleString('id-ID')} (nilai pesanan)`, 'warning');
         }
 
         state.promoCodeItem = code;
+        state.voucherDesc = desc; // ✅ SIMPAN DESC KE STATE!
 
         // Update UI - tampilkan promo applied
         const promoItemContainer = document.getElementById('promo-item-container');
@@ -3133,7 +3321,9 @@
         // Update tombol promo item
         updatePromoItemButton(code, desc);
 
-        updatePriceDisplay();
+        // ✅ PENTING: Panggil recalculate supaya voucher row muncul!
+        recalculateFromCheckboxes();
+        
         showNotification('✅ Voucher item berhasil diterapkan!', 'success');
         closeOffcanvasItem();
       }
@@ -3166,20 +3356,16 @@
         }
 
         let desc = '';
-        let discountAmount = 0;
-        
         if (type === 'shipping') {
-          discountAmount = state.shipping; // GRATIS ONGKIR 100%
+          state.shippingDiscount = state.shipping; // GRATIS ONGKIR 100%
           desc = 'Gratis Ongkir';
         } else if (type === 'shipping_percentage') {
-          discountAmount = Math.floor(state.shipping * (value / 100));
+          state.shippingDiscount = Math.floor(state.shipping * (value / 100));
           desc = `Diskon Ongkir ${value}%`;
         }
-        
-        // PENTING: Diskon ongkir ga boleh lebih dari ongkir (biar ga minus)
-        state.shippingDiscount = Math.min(discountAmount, state.shipping);
 
         state.promoCodeShipping = code;
+        state.shippingDesc = desc; // ✅ SIMPAN DESC KE STATE!
 
         // Update UI - tampilkan promo applied
         const promoShippingContainer = document.getElementById('promo-shipping-container');
@@ -3199,7 +3385,9 @@
         // Update tombol promo shipping
         updatePromoShippingButton(code, desc);
 
-        updatePriceDisplay();
+        // ✅ PENTING: Panggil recalculate supaya shipping discount row muncul!
+        recalculateFromCheckboxes();
+        
         showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
         closeOffcanvasShipping();
       }
@@ -3275,6 +3463,7 @@
       function removePromoItem() {
         state.voucherDiscount = 0;
         state.promoCodeItem = null;
+        state.voucherDesc = null; // ✅ RESET DESC JUGA!
 
         const promoItemContainer = document.getElementById('promo-item-container');
         promoItemContainer.innerHTML = `
@@ -3318,7 +3507,7 @@
         updatePromoItemButton(null, null);
 
         attachPromoItemEvents();
-        updatePriceDisplay();
+        recalculateFromCheckboxes(); // ✅ PENTING: Update tampilan!
         showNotification('✅ Promo item berhasil dihapus', 'success');
       }
 
@@ -3326,6 +3515,7 @@
       function removePromoShipping() {
         state.shippingDiscount = 0;
         state.promoCodeShipping = null;
+        state.shippingDesc = null; // ✅ RESET DESC JUGA!
 
         const promoShippingContainer = document.getElementById('promo-shipping-container');
         promoShippingContainer.innerHTML = `
@@ -3369,7 +3559,7 @@
         updatePromoShippingButton(null, null);
 
         attachPromoShippingEvents();
-        updatePriceDisplay();
+        recalculateFromCheckboxes(); // ✅ PENTING: Update tampilan!
         showNotification('✅ Promo ongkir berhasil dihapus', 'success');
       }
 
@@ -3497,10 +3687,22 @@
         document.getElementById('btn-confirm-payment').disabled = true;
       }
 
-      // Process Payment - FIXED: Insert ke database
+      // Process Payment - FIXED: Insert ke database + HAPUS CART YANG CHECKED
       function processPayment() {
         if (!state.selectedPayment) {
           showNotification('⚠️ Pilih metode pembayaran terlebih dahulu', 'error');
+          return;
+        }
+        
+        // Ambil semua cart ID yang checked
+        const checkedCartIds = [];
+        document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+          checkedCartIds.push(checkbox.getAttribute('data-id-cart'));
+        });
+        
+        // Validasi: harus ada minimal 1 item yang checked
+        if (checkedCartIds.length === 0) {
+          showNotification('⚠️ Pilih minimal 1 produk untuk checkout', 'error');
           return;
         }
 
@@ -3528,9 +3730,10 @@
         const dataTransaksi = {
           total: totalPembayaran,
           metode_pembayaran: metodePembayaran,
-          bayar: totalPembayaran, // Diasumsikan bayar pas (bisa diubah sesuai kebutuhan)
-          kembali: 0, // Karena bayar pas
-          ongkir: ongkir
+          bayar: totalPembayaran,
+          kembali: 0,
+          ongkir: ongkir,
+          cart_ids: checkedCartIds.join(',') // Kirim ID cart yang checked
         };
 
         console.log('📤 Data transaksi:', dataTransaksi);
@@ -3554,6 +3757,11 @@
               closePaymentModal();
               showPaymentSuccess(idTransaksi);
               showNotification('✅ Pembayaran berhasil!', 'success');
+              
+              // REDIRECT KE HALAMAN HOME SETELAH 2 DETIK
+              setTimeout(() => {
+                window.location.href = "<?= base_url('') ?>";
+              }, 2000);
             } else {
               btnConfirm.innerHTML = originalText;
               btnConfirm.disabled = false;
@@ -3612,8 +3820,37 @@
 
       // Event Listeners
       document.addEventListener('DOMContentLoaded', function() {
+        
+        console.log('🚀 DOM Loaded - Initializing checkout...');
+        
+        // OPTIMASI: Lazy init checkbox events (cuma attach sekali)
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        console.log('✅ Found', checkboxes.length, 'checkboxes');
+        
+        checkboxes.forEach((checkbox, index) => {
+          console.log('  📌 Attaching listener to checkbox', index + 1, '- ID:', checkbox.id);
+          checkbox.addEventListener('change', function() {
+            console.log('🔔 Checkbox changed:', checkbox.id, 'Checked:', checkbox.checked);
+            recalculateFromCheckboxes();
+          });
+        });
+        
+        // Init: Calculate first time (ONCE)
+        console.log('🔄 Initial calculation...');
+        recalculateFromCheckboxes();
 
-        // Off-canvas triggers - UNTUK DUA OFFCANVAS TERPISAH
+        // OPTIMASI: Modal event listeners - passive untuk scroll performance
+        const offcanvasOverlayItem = document.getElementById('offcanvas-overlay-item');
+        if (offcanvasOverlayItem) {
+          offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem, { passive: true });
+        }
+
+        const offcanvasOverlayShipping = document.getElementById('offcanvas-overlay-shipping');
+        if (offcanvasOverlayShipping) {
+          offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping, { passive: true });
+        }
+
+        // Off-canvas triggers
         const btnOpenPromoItem = document.getElementById('btn-open-promo-item');
         if (btnOpenPromoItem) {
           btnOpenPromoItem.addEventListener('click', openOffcanvasItem);
@@ -3630,10 +3867,10 @@
           offcanvasCloseItem.addEventListener('click', closeOffcanvasItem);
         }
 
-        const offcanvasOverlayItem = document.getElementById('offcanvas-overlay-item');
-        if (offcanvasOverlayItem) {
-          offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem);
-        }
+        // (offcanvasOverlayItem sudah di-declare di atas)
+        // if (offcanvasOverlayItem) {
+        //   offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem);
+        // }
 
         // Close offcanvas shipping
         const offcanvasCloseShipping = document.getElementById('offcanvas-close-shipping');
@@ -3641,10 +3878,10 @@
           offcanvasCloseShipping.addEventListener('click', closeOffcanvasShipping);
         }
 
-        const offcanvasOverlayShipping = document.getElementById('offcanvas-overlay-shipping');
-        if (offcanvasOverlayShipping) {
-          offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping);
-        }
+        // (offcanvasOverlayShipping sudah di-declare di atas)
+        // if (offcanvasOverlayShipping) {
+        //   offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping);
+        // }
 
         // Promo events
         attachPromoItemEvents();
@@ -3686,7 +3923,7 @@
         }
 
         // Checkout button
-        const btnCheckout = document.getElementById('btn-checkout');
+        const btnCheckout = document.getElementById('btn-pay-now');
         if (btnCheckout) {
           btnCheckout.addEventListener('click', function() {
             openPaymentModal();
@@ -4223,7 +4460,7 @@
 
       // ========== UPDATE CHECKOUT BUTTON STATE ==========
       function updateCheckoutButtonState() {
-        const btnCheckout = document.getElementById('btn-checkout');
+        const btnCheckout = document.getElementById('btn-pay-now');
         const addressDisplay = document.getElementById('address-display-main');
 
         // Cek apakah ada alamat (cek dari content, bukan dari alert warning)

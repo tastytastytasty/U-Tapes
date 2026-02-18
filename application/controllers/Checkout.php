@@ -8,7 +8,7 @@ class Checkout extends MY_Controller
     {
         parent::__construct();
         $this->load->model('AlamatModel');
-        $this->load->model('Checkout_model'); // TAMBAHAN: Load model checkout
+        $this->load->model('Checkout_model'); // Load model checkout
         $this->load->library('session');
 
         // Pastikan user sudah login
@@ -21,6 +21,7 @@ class Checkout extends MY_Controller
     {
         $id_customer = $this->session->userdata('id_customer');
 
+        // ========== ALAMAT ==========
         // Ambil alamat yang dipilih untuk checkout (dari session)
         // Kalau belum pilih, pakai alamat default
         $id_alamat_checkout = $this->session->userdata('id_alamat_checkout');
@@ -34,27 +35,30 @@ class Checkout extends MY_Controller
         // Ambil semua alamat untuk modal
         $alamat_list = $this->AlamatModel->getAlamatWithNames($id_customer);
 
-        // PERUBAHAN: Set flag jika tidak ada alamat (tidak redirect lagi)
+        // Set flag jika tidak ada alamat
         $has_no_address = empty($alamat_list);
 
-        // TAMBAHAN: Ambil cart items yang di-checklist (untuk halaman checkout)
+        // ========== CART ITEMS (CRITICAL!) ==========
+        // Ambil cart items customer yang login (SEMUA, ga peduli checklist)
         $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
         
-        // TAMBAHAN: Hitung summary (total, diskon, dll)
+        // Hitung summary (total, diskon, dll)
         $summary = $this->Checkout_model->calculate_summary($checkout_items);
 
-        // TAMBAHAN: Ambil SEMUA cart items untuk navbar (ga peduli checklist)
+        // ========== NAVBAR CART ==========
+        // Ambil SEMUA cart items untuk navbar (ga peduli checklist)
         $this->load->model('Keranjang_model');
         $all_cart_items = $this->Keranjang_model->get_by_customer($id_customer);
 
+        // ========== PREPARE DATA ==========
         $data = [
             'alamat_checkout' => $alamat_checkout,
             'alamat_list' => $alamat_list,
             'has_no_address' => $has_no_address,
-            'checkout_items' => $checkout_items,   // Untuk halaman checkout (checklist Yes)
-            'summary' => $summary,                  
-            'checkout_model' => $this->Checkout_model,
-            'cart_items' => $all_cart_items        // OVERRIDE: Untuk navbar (SEMUA item, ga peduli checklist)
+            'checkout_items' => $checkout_items,        // PENTING: Untuk halaman checkout
+            'summary' => $summary,                       // PENTING: Untuk ringkasan
+            'checkout_model' => $this->Checkout_model,   // PENTING: Untuk helper functions
+            'cart_items' => $all_cart_items              // Untuk navbar
         ];
 
         $data['contents'] = $this->load->view('checkout', $data, TRUE);

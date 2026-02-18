@@ -17,6 +17,7 @@ class Transaksi extends CI_Controller {
     /**
      * Simpan transaksi baru
      * Menerima data dari AJAX POST
+     * ✅ UPDATED: Hapus cart yang checked setelah bayar
      */
     public function simpan() {
         // Set header JSON
@@ -28,6 +29,7 @@ class Transaksi extends CI_Controller {
             $metode_pembayaran = $this->input->post('metode_pembayaran');
             $bayar = $this->input->post('bayar');
             $ongkir = $this->input->post('ongkir');
+            $cart_ids_string = $this->input->post('cart_ids'); // Ambil ID cart yang di-checklist
 
             // Validasi data
             if (empty($total) || empty($metode_pembayaran)) {
@@ -74,6 +76,19 @@ class Transaksi extends CI_Controller {
             $insert = $this->Transaksi_model->insert($data_transaksi);
 
             if ($insert) {
+                // ✅ CRITICAL: HAPUS CART YANG CHECKED SETELAH TRANSAKSI BERHASIL
+                if (!empty($cart_ids_string)) {
+                    $this->load->model('Keranjang_model');
+                    
+                    // Convert string "CART001,CART002" menjadi array
+                    $cart_ids = explode(',', $cart_ids_string);
+                    
+                    // Hapus setiap cart yang checked
+                    foreach ($cart_ids as $cart_id) {
+                        $this->Keranjang_model->delete(trim($cart_id));
+                    }
+                }
+                
                 echo json_encode([
                     'success' => true,
                     'message' => 'Transaksi berhasil disimpan',

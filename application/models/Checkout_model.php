@@ -4,13 +4,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Checkout_model extends CI_Model
 {
     /**
-     * Get cart items - SUPER SIMPLE (no promo)
+     * Get ALL cart items - GA PAKE FILTER CHECKLIST
+     * Nanti di frontend yang decide mana yang mau dibeli
      */
     public function get_checkout_items($id_customer)
     {
         $items = $this->db->select('
                 cart.id_cart,
                 cart.qty,
+                cart.checklist,
                 item.nama_item,
                 item.gambar_item,
                 item_detail.warna,
@@ -21,7 +23,8 @@ class Checkout_model extends CI_Model
             ->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail')
             ->join('item', 'item_detail.id_item = item.id_item')
             ->where('cart.id_customer', $id_customer)
-            ->where('cart.checklist', 'Yes')
+            // Hapus filter checklist
+            // ->where('cart.checklist', 'Yes')
             ->get()
             ->result();
 
