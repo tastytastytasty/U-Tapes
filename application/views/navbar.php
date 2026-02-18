@@ -316,36 +316,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                             data-cart="<?= $c->id_cart ?>">
                                                             <i class="lni lni-close"></i>
                                                         </a>
-                                                        <div class="cart-img-head">
-                                                            <a class="cart-img"
-                                                                href="<?= site_url('detailproduct/' . $c->id_item) ?>">
-                                                                <img src="<?= base_url('assets/images/item/' . $c->gambar) ?>">
-                                                            </a>
-                                                        </div>
-                                                        <div class="content">
-                                                            <h4>
-                                                                <a href="<?= site_url('detailproduct/' . $c->id_item) ?>">
-                                                                    <?= $c->nama_item ?> (<?= $c->ukuran ?>)
+                                                        <div class="row">
+                                                            <div class="cart-img-head">
+                                                                <a class="cart-img"
+                                                                    href="<?= site_url('detailproduct/' . $c->id_item) ?>">
+                                                                    <img src="<?= base_url('assets/images/item/' . $c->gambar) ?>">
                                                                 </a>
-                                                            </h4>
-                                                            <small class="text-muted">Stok: <?= $c->stok ?></small>
-                                                            <div class="input-group input-group-sm mt-2" style="max-width:150px">
-                                                                <button class="btn btn-outline-primary cart-qty-minus"
-                                                                    data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                    data-stok="<?= $c->stok ?>" type="button">−</button>
-                                                                <input type="number" class="form-control cart-qty-input text-center"
-                                                                    id="cart-qty-<?= $c->id_cart ?>" data-cart="<?= $c->id_cart ?>"
-                                                                    data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
-                                                                    min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>">
-                                                                <button class="btn btn-outline-primary cart-qty-plus"
-                                                                    data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                    data-stok="<?= $c->stok ?>" type="button">+</button>
                                                             </div>
-                                                            <p class="quantity mt-2">
-                                                                <span class="amount" id="item-total-<?= $c->id_cart ?>">
-                                                                    Rp <?= number_format($c->harga * $c->qty, 0, ',', '.') ?>
-                                                                </span>
-                                                            </p>
+                                                            <div class="content">
+                                                                <h4>
+                                                                    <a href="<?= site_url('detailproduct/' . $c->id_item) ?>">
+                                                                        <?= $c->nama_item ?> (<?= $c->ukuran ?>)
+                                                                    </a>
+                                                                </h4>
+                                                                <small class="text-muted">Stok: <?= $c->stok ?></small>
+                                                            </div>
+                                                            <div class="mt-2 d-flex justify-content-between gap-2">
+                                                               <div class="input-group input-group-sm" style="max-width:100px">
+                                                                    <button class="btn btn-outline-primary cart-qty-minus"
+                                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                        data-stok="<?= $c->stok ?>" type="button">−</button>
+                                                                    <input type="number" class="form-control cart-qty-input text-center"
+                                                                        id="cart-qty-<?= $c->id_cart ?>" data-cart="<?= $c->id_cart ?>"
+                                                                        data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
+                                                                        min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>">
+                                                                    <button class="btn btn-outline-primary cart-qty-plus"
+                                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                        data-stok="<?= $c->stok ?>" type="button">+</button>
+                                                                </div> <div class="quantity mt-2">
+                                                                    <h6 class="amount text-dark mb-0"
+                                                                        id="item-total-<?= $c->id_cart ?>">
+                                                                        Rp <?= number_format($c->harga * $c->qty, 0, ',', '.') ?>
+                                                                    </h6>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </li>
                                                 <?php endforeach ?>
@@ -1168,6 +1172,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 loadKatalog(1);
                 return false;
             }
+        });
+        $(document).on('change', 'input[name="minusia"]', function () {
+            const minVal = parseInt($(this).val());
+            const $maxInput = $('input[name="maxusia"]');
+            const maxVal = parseInt($maxInput.val());
+
+            $maxInput.attr('min', minVal || 0);
+
+            if (maxVal < minVal) {
+                $maxInput.val($(this).val());
+            }
+
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => loadKatalog(1), typingDelay);
+        });
+        $(document).on('keyup', 'input[name="maxusia"]', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => loadKatalog(1), typingDelay);
+        });
+
+        $(document).on('change', 'input[name="maxusia"]', function () {
+            const $minInput = $('input[name="minusia"]');
+            const minVal = parseInt($minInput.val());
+            const maxVal = parseInt($(this).val());
+
+            if (minVal && maxVal < minVal) {
+                $(this).val($minInput.val());
+                loadKatalog(1);
+            }
+        });
+        $(document).on('keyup', 'input[name="minusia"], input[name="maxusia"]', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => loadKatalog(1), typingDelay);
         });
         $(document).on('click', '.page-link', function (e) {
             e.preventDefault();

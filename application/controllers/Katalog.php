@@ -15,7 +15,9 @@ class Katalog extends MY_Controller
 			'keyword' => $this->input->get('keyword'),
 			'sort' => $this->input->get('sort'),
 			'sex' => $this->input->get('sex'),
-			'kategori' => $this->input->get('kategori')
+			'kategori' => $this->input->get('kategori'),
+			'minusia' => $this->input->get('minusia'),
+			'maxusia' => $this->input->get('maxusia')
 		];
 		$items = $this->Item_model->get_items_with_wishlist(
 			$id_customer,

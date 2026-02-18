@@ -52,7 +52,8 @@
                                 <?= $item->nama_item ?>
                             </a>
                         </h4>
-                        <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
+                        <span class="text-secondary mt-2"> Usia : <?= $item->usia_min ?> - <?= $item->usia_max ?></span>
+                        <div class="color-wrapper d-flex gap-2 flex-wrap mt-3">
                             <?php if (!empty($item->warna)): ?>
                                 <?php foreach ($item->warna as $w): ?>
                                     <label class="color-radio d-flex align-items-center m-0" style="cursor:pointer;">
@@ -103,7 +104,8 @@
                                 <?= $item->nama_item ?>
                             </a>
                         </h4>
-                        <div class="color-wrapper d-flex gap-2 flex-wrap mt-4">
+                        <span class="text-primary mt-2"> Usia : <?= $item->usia_min ?> - <?= $item->usia_max ?></span>
+                        <div class="color-wrapper d-flex gap-2 flex-wrap mt-3">
                             <?php if (!empty($item->warna)): ?>
                                 <?php foreach ($item->warna as $w): ?>
                                     <label class="color-radio d-flex align-items-center m-0 

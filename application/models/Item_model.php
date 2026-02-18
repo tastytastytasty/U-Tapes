@@ -75,6 +75,8 @@ class Item_model extends CI_Model
         item.merk,
         item.nama_item,
         item.gambar_item,
+        item.usia_min,
+        item.usia_max,
         kategori.nama_kategori,
         MAX(promo.persen_promo) AS persen_promo,
         MAX(promo.harga_promo) AS harga_promo,
@@ -111,6 +113,12 @@ class Item_model extends CI_Model
         }
         if (!empty($filter['kategori'])) {
             $this->db->where_in('item.id_kategori', $filter['kategori']);
+        }
+        if (!empty($filter['minusia'])) {
+            $this->db->where('usia_max >=', $filter['minusia']);
+        }
+        if (!empty($filter['maxusia'])) {
+            $this->db->where('usia_min <=', $filter['maxusia']);
         }
         $this->db->group_by('item.id_item');
         $this->db->order_by('(SUM(item_detail.stok) <= 0)', 'ASC');
@@ -151,6 +159,12 @@ class Item_model extends CI_Model
 
         if (!empty($filter['kategori'])) {
             $this->db->where_in('item.id_kategori', $filter['kategori']);
+        }
+        if (!empty($filter['minusia'])) {
+            $this->db->where('usia_max >=', $filter['minusia']);
+        }
+        if (!empty($filter['maxusia'])) {
+            $this->db->where('usia_min <=', $filter['maxusia']);
         }
 
         return $this->db->get()->row()->total;

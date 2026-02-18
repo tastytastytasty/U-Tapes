@@ -94,6 +94,20 @@
                                 </select>
                             </div>
 
+                            <div class="single-widget mb-4">
+                                <label class="mb-2 text-primary">Usia</label>
+                                <div class="d-flex justify-content-between gap-4">
+                                    <label class="mb-2 text-primary w-100">Min.</label>
+                                    <label class="mb-2 text-primary w-100">Max.</label>
+                                </div>
+                                <div class="d-flex justify-content-between gap-4">
+                                    <input type="number" name="minusia" id="minusia" class="form-control w-100"
+                                        placeholder="Minimal Usia..." min="0">
+                                    <input type="number" name="maxusia" id="maxusia" class="form-control w-100"
+                                        placeholder="Maksimal Usia..." min="0">
+                                </div>
+                            </div>
+
                             <div class="single-widget">
                                 <label class="mb-2 text-primary">Kategori</label>
                                 <?php foreach ($kategori as $kat): ?>
