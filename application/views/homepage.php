@@ -22,7 +22,7 @@
 
 	.product-actions {
 		transition: opacity 0.3s ease, transform 0.2s ease;
-		z-index: 10;
+		z-index: 6;
 	}
 
 	.product-actions .action-btn {
@@ -94,7 +94,7 @@
 		font-weight: 700;
 		color: red;
 		letter-spacing: 3px;
-		z-index: 10;
+		z-index: 5;
 	}
 
 	.color-out {

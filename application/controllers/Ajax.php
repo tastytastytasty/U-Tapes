@@ -14,15 +14,46 @@ class Ajax extends MY_Controller
         $id_item = $this->input->post('id_item');
         $warna = $this->input->post('warna');
         $ukuran = $this->Item_model->get_ukuran($id_item, $warna);
+
         if (!$ukuran) {
             echo '<div class="size-box disabled">Tidak tersedia</div>';
             return;
         }
+
         foreach ($ukuran as $u) {
             $disabled = $u->stok <= 0 ? 'disabled' : '';
-            echo '<div class="size-box ' . $disabled . '" data-ukuran="' . $u->ukuran . '">'
-                . $u->ukuran .
-                '</div>';
+            $detail = $this->Item_model->get_by_option($id_item, $warna, $u->ukuran);
+            $ada_diskon = false;
+            $badge_text = '';
+            if ($detail) {
+                $promo = $this->db
+                    ->select('promo.id_promo, promo.persen_promo, promo.harga_promo')
+                    ->from('promo_detail')
+                    ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
+                    ->where('promo_detail.id_item_detail', $detail->id_item_detail)
+                    ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
+                    ->where('promo.kuota >', 0)
+                    ->get()
+                    ->row();
+
+                if ($promo) {
+                    $ada_diskon = true;
+                    if ($promo->persen_promo > 0) {
+                        $badge_text = '%';
+                    } elseif ($promo->harga_promo > 0) {
+                        $badge_text = 'Rp';
+                    }
+                }
+            }
+            echo '<div class="card d-flex justify-content-center align-items-center size-box position-relative ' . $disabled . '" 
+                   data-ukuran="' . $u->ukuran . '">';
+            if ($ada_diskon && $badge_text) {
+                echo '<span style="position: absolute; top: -12px; right: -12px; background: #dc3545; color: #fff; border-radius: 50%; width: 25px; height: 25px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">
+                    ' . $badge_text . '
+                  </span>';
+            }
+            echo '<span style="font-size:14px;font-weight:500;" class="' . ($disabled ? 'text-muted' : '') . '">' . $u->ukuran . '</span>';
+            echo '</div>';
         }
     }
     public function get_detail()
@@ -36,7 +67,11 @@ class Ajax extends MY_Controller
 
         if (!$detail) {
             echo json_encode([
+                'success' => false,
                 'harga' => 0,
+                'harga_asli' => 0,
+                'harga_diskon' => 0,
+                'is_sale' => false,
                 'stok' => 0,
                 'id_item_detail' => null,
                 'is_in_cart' => false
@@ -44,7 +79,36 @@ class Ajax extends MY_Controller
             return;
         }
 
-        // 🔹 cek apakah sudah di cart
+        $promo = $this->db
+            ->select('promo.persen_promo, promo.harga_promo')
+            ->from('promo_detail')
+            ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
+            ->where('promo_detail.id_item_detail', $detail->id_item_detail)
+            ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
+            ->where('promo.kuota >', 0)
+            ->order_by('promo.persen_promo', 'DESC')
+            ->limit(1)
+            ->get()
+            ->row();
+
+        $harga_asli = (int) $detail->harga;
+        $harga_diskon = $harga_asli;
+        $is_sale = false;
+        $persen_promo = 0;
+        $harga_promo = 0;
+
+        if ($promo) {
+            $is_sale = true;
+            $persen_promo = (int) $promo->persen_promo;
+            $harga_promo = (int) $promo->harga_promo;
+
+            if ($persen_promo > 0) {
+                $harga_diskon = $harga_asli - ($harga_asli * $persen_promo / 100);
+            } elseif ($harga_promo > 0) {
+                $harga_diskon = $harga_asli - $harga_promo;
+            }
+        }
+
         $this->load->model('Keranjang_model');
         $is_in_cart = false;
         if ($id_customer) {
@@ -53,8 +117,14 @@ class Ajax extends MY_Controller
         }
 
         echo json_encode([
+            'success' => true,
             'id_item_detail' => $detail->id_item_detail,
-            'harga' => (int) $detail->harga,
+            'harga' => $harga_asli,
+            'harga_asli' => $harga_asli,
+            'harga_diskon' => (int) $harga_diskon,
+            'is_sale' => $is_sale,
+            'persen_promo' => $persen_promo,
+            'harga_promo' => $harga_promo,
             'stok' => (int) $detail->stok,
             'is_in_cart' => $is_in_cart
         ]);

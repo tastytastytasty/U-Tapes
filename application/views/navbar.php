@@ -21,6 +21,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 </head>
 <style>
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
     .profile-img {
         width: 50px;
         height: 50px;
@@ -122,7 +132,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     .cart-items .shopping-item {
         position: absolute;
         top: 100%;
-        left: 50%;
+        left: 25%;
         transform: translateX(-50%);
         margin-top: 10px;
         z-index: 9999;
@@ -149,7 +159,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
     </div>
     <!-- /End Preloader -->
-
     <header class="header navbar-area">
         <div class="header-middle">
             <div class="container-fluid px-4">
@@ -197,8 +206,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <!-- Shopping Item -->
                                 <div class="shopping-item">
                                     <div class="dropdown-cart-header">
-                                        <span>1 Items</span>
-                                        <a href="<?= site_url('keranjang') ?>">Selengkapnya</a>
+                                        <span>1 Item</span>
+                                        <a href="<?= site_url('keranjang') ?>">Lihat semua</a>
                                     </div>
                                     <ul class="shopping-list">
                                         <li>
@@ -274,10 +283,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="shopping-item text-center p-3">
                                         <p class="mb-3 text-muted">
                                             <i class="lni lni-lock me-1"></i>
-                                            Login dulu untuk melihat wishlist
+                                            Masuk dulu untuk melihat wishlist
                                         </p>
                                         <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
-                                            Login Sekarang
+                                            Masuk Sekarang
                                         </a>
                                     </div>
                                 <?php endif; ?>
@@ -287,16 +296,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <a href="javascript:void(0)" class="main-btn btn-cart-navbar"
                                         data-href="<?= site_url('keranjang') ?>">
                                         <i class="lni lni-cart"></i>
-                                        <span class="total-items total-cart"><?= $cart_count ?></span>
+                                        <span class="total-items total-carts"><?= $cart_count ?></span>
                                     </a>
                                     <div class="shopping-item">
                                         <div class="dropdown-cart-header">
                                             <span id="cart-count"><?= $cart_count ?> Item</span>
-                                            <a href="<?= site_url('keranjang') ?>">Lihat Semua</a>
+                                            <a href="<?= site_url('checkout') ?>">Lihat Semua</a>
                                         </div>
                                         <ul class="shopping-list" id="cart-list">
                                             <?php if (!empty($cart_items)): ?>
-                                                <?php foreach ($cart_items as $c): ?>
+                                                <?php
+                                                $total_items = count($cart_items);
+                                                $displayed_items = array_slice($cart_items, 0, 3);
+                                                $remaining_items = $total_items - 3;
+                                                ?>
+                                                <?php foreach ($displayed_items as $c): ?>
                                                     <li id="nav-cart-<?= $c->id_cart ?>">
                                                         <a href="javascript:void(0)" class="remove btn-remove-cart"
                                                             data-cart="<?= $c->id_cart ?>">
@@ -314,19 +328,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                     <?= $c->nama_item ?> (<?= $c->ukuran ?>)
                                                                 </a>
                                                             </h4>
-                                                            <p class="quantity">
-                                                                <span class="amount">
-                                                                    Rp <?= number_format($c->total, 0, ',', '.') ?> (<?= $c->qty ?>)
+                                                            <small class="text-muted">Stok: <?= $c->stok ?></small>
+                                                            <div class="input-group input-group-sm mt-2" style="max-width:150px">
+                                                                <button class="btn btn-outline-primary cart-qty-minus"
+                                                                    data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                    data-stok="<?= $c->stok ?>" type="button">−</button>
+                                                                <input type="number" class="form-control cart-qty-input text-center"
+                                                                    id="cart-qty-<?= $c->id_cart ?>" data-cart="<?= $c->id_cart ?>"
+                                                                    data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
+                                                                    min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>">
+                                                                <button class="btn btn-outline-primary cart-qty-plus"
+                                                                    data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                    data-stok="<?= $c->stok ?>" type="button">+</button>
+                                                            </div>
+                                                            <p class="quantity mt-2">
+                                                                <span class="amount" id="item-total-<?= $c->id_cart ?>">
+                                                                    Rp <?= number_format($c->harga * $c->qty, 0, ',', '.') ?>
                                                                 </span>
                                                             </p>
                                                         </div>
                                                     </li>
                                                 <?php endforeach ?>
+                                                <?php if ($remaining_items > 0): ?>
+                                                    <li style="text-align: center; padding: 10px; background: #f8f9fa;">
+                                                        <a href="<?= site_url('checkout') ?>"
+                                                            style="color: #0d6efd; text-decoration: none;">
+                                                            <strong><?= $remaining_items ?> produk lainnya...</strong>
+                                                        </a>
+                                                    </li>
+                                                <?php endif; ?>
                                             </ul>
                                             <div class="bottom">
                                                 <div class="total">
                                                     <span>Total</span>
-                                                    <span class="total-amount">Rp
+                                                    <span class="total-amount" id="cart-total">Rp
                                                         <?= number_format($cart_total, 0, ',', '.') ?></span>
                                                 </div>
                                                 <div class="button">
@@ -347,10 +382,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="shopping-item text-center p-3">
                                     <p class="mb-3 text-muted">
                                         <i class="lni lni-lock me-1"></i>
-                                        Login dulu untuk melihat keranjang belanja
+                                        Masuk dulu untuk melihat keranjang belanja
                                     </p>
                                     <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
-                                        Login Sekarang
+                                        Masuk Sekarang
                                     </a>
                                 </div>
                             <?php endif; ?>
@@ -385,15 +420,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div>
 
                                 <ul class="sub-category">
-                                    <li><a href="<?= site_url('profile') ?>">Profile</a></li>
-                                    <li><a href="<?= site_url('login/logout') ?>">Logout</a></li>
+                                    <li><a href="<?= site_url('profile') ?>">Profil</a></li>
+                                    <li><a href="<?= site_url('login/logout') ?>">Keluar</a></li>
                                 </ul>
                             </div>
 
                         <?php else: ?>
                             <div class="button ms-2">
                                 <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary animate">
-                                    Login
+                                    Masuk
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -416,8 +451,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
 
                 <div class="modal-body text-center">
-                    <p class="mb-2">Untuk menggunakan fitur ini, silakan login terlebih dahulu</p>
-                    <a href="<?= site_url('login') ?>" class="btn btn-primary">Login</a>
+                    <p class="mb-2">Untuk menggunakan fitur ini, silakan masuk terlebih dahulu</p>
+                    <a href="<?= site_url('login') ?>" class="btn btn-primary">Masuk</a>
                 </div>
 
             </div>
@@ -602,6 +637,158 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/js/tiny-slider.js') ?>"></script>
     <script src="<?= base_url('assets/js/glightbox.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/main.js') ?>"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.cart-qty-plus', function (e) {
+                e.preventDefault();
+                var cartId = $(this).data('cart');
+                var price = $(this).data('price');
+                var stok = parseInt($(this).data('stok')) || 0;
+                var qtyInput = $('#cart-qty-' + cartId);
+                var currentQty = parseInt(qtyInput.val()) || 0;
+                var newQty = currentQty + 1;
+                updateCartQuantity(cartId, newQty, price, stok);
+            });
+            $(document).on('click', '.cart-qty-minus', function (e) {
+                e.preventDefault();
+                var cartId = $(this).data('cart');
+                var price = $(this).data('price');
+                var stok = parseInt($(this).data('stok')) || 0;
+                var qtyInput = $('#cart-qty-' + cartId);
+                var currentQty = parseInt(qtyInput.val()) || 0;
+                if (currentQty > 1) {
+                    var newQty = currentQty - 1;
+                    updateCartQuantity(cartId, newQty, price, stok);
+                }
+            });
+            $(document).on('input', '.cart-qty-input', function () {
+                var cartId = $(this).data('cart');
+                var price = $(this).data('price');
+                var stok = parseInt($(this).data('stok')) || 0;
+                var qty = parseInt($(this).val()) || 1;
+                if (qty < 1) {
+                    qty = 1;
+                }
+                if (qty > stok) {
+                    qty = stok;
+                }
+                $(this).val(qty);
+            });
+            $(document).on('blur', '.cart-qty-input', function () {
+                var cartId = $(this).data('cart');
+                var price = $(this).data('price');
+                var stok = parseInt($(this).data('stok')) || 0;
+                var qty = parseInt($(this).val()) || 1;
+                if (qty < 1) qty = 1;
+                if (qty > stok) qty = stok;
+                $(this).val(qty);
+                updateCartQuantity(cartId, qty, price, stok);
+            });
+            function updateCartQuantity(cartId, qty, price, stok) {
+                if (qty < 1) qty = 1;
+                if (qty > stok) qty = stok;
+                $.ajax({
+                    url: '<?= site_url("keranjang/update_quantity") ?>',
+                    type: 'POST',
+                    data: {
+                        id_cart: cartId,
+                        qty: qty
+                    },
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $('.cart-qty-plus[data-cart="' + cartId + '"]').prop('disabled', true);
+                        $('.cart-qty-minus[data-cart="' + cartId + '"]').prop('disabled', true);
+                        $('#cart-qty-' + cartId).prop('disabled', true);
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#cart-qty-' + cartId).val(qty);
+                            var itemTotal = qty * price;
+                            $('#item-total-' + cartId).text('Rp ' + formatRupiah(itemTotal));
+                            $('#cart-total').text('Rp ' + formatRupiah(response.cart_total));
+                            if (qty >= stok) {
+                                $('.cart-qty-plus[data-cart="' + cartId + '"]')
+                                    .prop('disabled', true)
+                                    .addClass('disabled');
+                            } else {
+                                $('.cart-qty-plus[data-cart="' + cartId + '"]')
+                                    .removeClass('disabled');
+                            }
+                        } else {
+                            alert(response.message || 'Gagal mengupdate keranjang');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', xhr.responseText);
+                        alert('Terjadi kesalahan saat mengupdate keranjang');
+                    },
+                    complete: function () {
+                        $('.cart-qty-plus[data-cart="' + cartId + '"]').prop('disabled', false);
+                        $('.cart-qty-minus[data-cart="' + cartId + '"]').prop('disabled', false);
+                        $('#cart-qty-' + cartId).prop('disabled', false);
+                        var currentQty = parseInt($('#cart-qty-' + cartId).val());
+                        if (currentQty >= stok) {
+                            $('.cart-qty-plus[data-cart="' + cartId + '"]')
+                                .prop('disabled', true)
+                                .addClass('disabled');
+                        }
+                    }
+                });
+            }
+            if ($('#stok-tersedia').length > 0 && $('#product-qty').length > 0) {
+                var currentStok = parseInt($('#stok-tersedia').text()) || 0;
+                var itemHabis = currentStok <= 0;
+                if (itemHabis) {
+                    $('#product-qty').val(0).prop('disabled', true);
+                    $('.product-qty-plus, .product-qty-minus').prop('disabled', true);
+                }
+                $('.product-qty-plus').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (itemHabis || $('#product-qty').prop('disabled')) return;
+
+                    let qty = parseInt($('#product-qty').val()) || 0;
+                    if (qty < currentStok) {
+                        $('#product-qty').val(qty + 1);
+                    }
+                });
+                $('.product-qty-minus').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (itemHabis || $('#product-qty').prop('disabled')) return;
+                    let qty = parseInt($('#product-qty').val()) || 0;
+                    if (qty > 1) {
+                        $('#product-qty').val(qty - 1);
+                    }
+                });
+                $('#product-qty').on('input', function (e) {
+                    e.stopPropagation();
+                    if (itemHabis || $(this).prop('disabled')) return;
+                    let qty = parseInt($(this).val()) || 1;
+                    if (qty < 1) qty = 1;
+                    if (qty > currentStok) {
+                        qty = currentStok;
+                    }
+                    $(this).val(qty);
+                });
+            }
+            function formatRupiah(angka) {
+                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            $('.cart-qty-input').each(function () {
+                var cartId = $(this).data('cart');
+                var qty = parseInt($(this).val());
+                var stok = parseInt($(this).data('stok'));
+
+                if (qty >= stok) {
+                    $('.cart-qty-plus[data-cart="' + cartId + '"]')
+                        .prop('disabled', true)
+                        .addClass('disabled');
+                }
+            });
+        });
+    </script>
     <script type="text/javascript">
         //========= Hero Slider 
         tns({
@@ -702,40 +889,98 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     }
                 );
             });
-            
             $(document).on('click', '.size-box:not(.disabled)', function () {
                 if (itemHabis) return;
+
                 $('.size-box').removeClass('active');
                 $(this).addClass('active');
+
                 const ukuran = $(this).data('ukuran');
                 const warna = $('input[name="warna"]:checked').val();
+
                 $('#ukuran').val(ukuran);
-                $.post(
-                    '<?= site_url("ajax/get_detail") ?>',
-                    { id_item, warna, ukuran },
-                    function (res) {
-                        const data = JSON.parse(res);
-                        if (data.harga_diskon && data.harga_diskon < data.harga_asli) {
-                            $('.price').html(`
-                                <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_diskon)}</h4>
-                                <span class="discount-price text-muted text-decoration-line-through fs-5 mt-2" style="margin-left: 0 !important;">
-                                    Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}
-                                </span>
-                            `);
-                        } else {
-                            $('.price').html(`
-                                <h4>Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli || data.harga)}</h4>
-                            `);
-                        }
-                        currentStok = parseInt(data.stok);
-                        if (currentStok <= 0) {
-                            $('#qty').val(0).prop('disabled', true);
-                        } else {
-                            $('#qty').val(1).prop('disabled', false);
-                        }
-                    }
-                );
+
+                $('#discount-badge').hide().text('');
+                updateHargaStok(warna, ukuran);
             });
+            $(document).on('change', 'input[name="warna"]', function () {
+                if (itemHabis) return;
+
+                const warna = $(this).val();
+                const ukuran = $('#ukuran').val() || $('.size-box.active').data('ukuran');
+
+                $('#discount-badge').hide().text('');
+                updateHargaStok(warna, ukuran);
+            });
+            function updateHargaStok(warna, ukuran) {
+                if (!warna || !ukuran) return;
+
+                $.ajax({
+                    url: '<?= site_url("ajax/get_detail") ?>',
+                    type: 'POST',
+                    data: {
+                        id_item: id_item,
+                        warna: warna,
+                        ukuran: ukuran
+                    },
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $('.price').css('opacity', '0.5');
+                        $('#discount-badge').hide().text('');
+                    },
+                    success: function (data) {
+                        console.log('Response dari server:', data);
+                        if (data.success) {
+                            if (data.is_sale && data.harga_diskon < data.harga_asli) {
+                                $('.price').html(`
+                                    <div class="d-flex justify-content-start align-items-center gap-2">
+                                        <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_diskon)}</h4>
+                                        <span class="discount-price text-muted text-decoration-line-through fs-5">
+                                            Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}
+                                        </span>
+                                    </div>
+                                `);
+                                if (data.persen_promo > 0) {
+                                    $('#discount-badge').text('-' + data.persen_promo + '%').show();
+                                } else if (data.harga_promo > 0) {
+                                    $('#discount-badge').text('-Rp ' + new Intl.NumberFormat('id-ID').format(data.harga_promo)).show();
+                                }
+                            } else {
+                                $('.price').html(`
+                                    <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}</h4>
+                                `);
+                                $('#discount-badge').hide().text('');
+                            }
+                            currentStok = parseInt(data.stok);
+                            $('#stok-tersedia').text(currentStok);
+                            if (currentStok <= 0) {
+                                $('#qty').val(0).prop('disabled', true);
+                            } else {
+                                $('#qty').val(1).prop('disabled', false);
+                            }
+                            if (data.is_in_cart) {
+                                console.log('Item sudah ada di keranjang');
+                            }
+
+                            $('.price').css('opacity', '1');
+                        } else {
+                            $('.price').html(`
+                                <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_asli)}</h4>
+                            `);
+                            $('#stok-tersedia').text('0');
+                            $('#qty').val(0).prop('disabled', true);
+                            $('#discount-badge').hide().text('');
+                            $('.price').css('opacity', '1');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        $('#discount-badge').hide().text('');
+                        $('.price').css('opacity', '1');
+                    }
+                });
+            }
+
             $(document).on('click', '.qty-plus', function () {
                 if (itemHabis || $('#qty').prop('disabled')) return;
 
@@ -792,7 +1037,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     if (res.status === 'added') {
                         icon.removeClass('lni-heart')
                             .addClass('lni-heart-filled');
-                            showAlert('Masuk ke wishlist!', 'success');
+                        showAlert('Masuk ke wishlist!', 'success');
                     }
 
                     if (res.status === 'removed') {
@@ -858,6 +1103,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 if (sisa === 0) {
                                     $('#wishlist-list').hide();
                                     $('#wishlist-empty').show();
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        $(document)
+            .off('click', '.btn-remove-cart')
+            .on('click', '.btn-remove-cart', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let id = $(this).data('cart');
+                $.ajax({
+                    url: "<?= site_url('keranjang/delete') ?>",
+                    type: "POST",
+                    data: { id_cart: id },
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            $('#nav-cart-' + id).fadeOut(300, function () {
+                                $(this).remove();
+                                let sisa = $('#cart-list li').length;
+                                $('.total-carts').text(sisa);
+                                $('#cart-count').text(sisa + ' Item');
+                                if (sisa === 0) {
+                                    $('#cart-list').hide();
+                                    $('#cart-empty').show();
                                 }
                             });
                         }

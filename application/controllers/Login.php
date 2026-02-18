@@ -39,7 +39,7 @@ class Login extends MY_Controller
         if (!$post) {
             echo json_encode([
                 'status' => false,
-                'message' => 'Data belum diisi. Silakan masukkan email/no telp dan password.'
+                'message' => 'Data belum diisi. Silakan masukkan email/no telp dan kata sandi.'
             ]);
             return;
         }
@@ -58,7 +58,7 @@ class Login extends MY_Controller
             'Password',
             'required|trim',
             [
-                'required' => 'Password wajib diisi.'
+                'required' => 'Kata sandi wajib diisi.'
             ]
         );
 
@@ -119,7 +119,7 @@ class Login extends MY_Controller
 
         echo json_encode([
             'status' => true,
-            'message' => 'Login berhasil. Selamat datang ' . $customer['nama']
+            'message' => 'Masuk berhasil. Selamat datang ' . $customer['nama']
         ]);
     }
     public function forgot_password_send_otp()
@@ -198,9 +198,9 @@ class Login extends MY_Controller
         $this->email->message("
 Halo {$user['nama']},
 
-Anda menerima email ini karena ada permintaan reset password untuk akun Anda.
+Anda menerima email ini karena ada permintaan reset kata sandi untuk akun Anda.
 
-🔐 KODE RESET PASSWORD: $otp
+🔐 KODE RESET KATA SANDI: $otp
 
 Kode ini berlaku selama 5 menit.
 Jangan bagikan kode ini kepada siapa pun demi keamanan akun Anda.
@@ -216,10 +216,10 @@ Belanja Mudah, Langkah Maksimal.
             echo json_encode(['status' => false, 'message' => 'Gagal kirim kode reset ke email']);
             return;
         }
-        $message = 'Kode reset password telah dikirim ke email Anda';
+        $message = 'Kode reset kata sandi telah dikirim ke email Anda';
         if (preg_match('/^[0-9]+$/', $identity)) {
             $censored_email = substr($email, 0, 3) . '***@' . explode('@', $email)[1];
-            $message = "Kode reset password telah dikirim ke email terdaftar ($censored_email)";
+            $message = "Kode reset kata sandi telah dikirim ke email terdaftar ($censored_email)";
         }
 
         echo json_encode(['status' => true, 'message' => $message]);
@@ -297,22 +297,22 @@ Belanja Mudah, Langkah Maksimal.
         $password = $this->input->post('password');
         $password2 = $this->input->post('password2');
         if (!$password || !$password2) {
-            echo json_encode(['status' => false, 'message' => 'Password wajib diisi']);
+            echo json_encode(['status' => false, 'message' => 'Kata sandi wajib diisi']);
             return;
         }
         if ($password !== $password2) {
-            echo json_encode(['status' => false, 'message' => 'Konfirmasi password tidak sama']);
+            echo json_encode(['status' => false, 'message' => 'Konfirmasi kata sandi tidak sama']);
             return;
         }
         if (strlen($password) < 8) {
-            echo json_encode(['status' => false, 'message' => 'Password minimal 8 karakter']);
+            echo json_encode(['status' => false, 'message' => 'Kata sandi minimal 8 karakter']);
             return;
         }
         $this->db->where('email', $email)->update('customer', [
             'password' => password_hash($password, PASSWORD_DEFAULT)
         ]);
         $this->session->unset_userdata('reset_password_email');
-        echo json_encode(['status' => true, 'message' => 'Password berhasil diubah']);
+        echo json_encode(['status' => true, 'message' => 'Kata sandi berhasil diubah']);
     }
 
     public function logout()

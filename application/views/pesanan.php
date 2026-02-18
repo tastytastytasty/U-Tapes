@@ -676,7 +676,7 @@
                 </li>
                 <li><a href="#" class="active">Profil</a></li>
                 <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
-                <li><a href="#">Ubah Password</a></li>
+                <li><a href="#">Ubah Kata sandi</a></li>
 
                 <hr>
 

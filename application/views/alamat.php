@@ -976,7 +976,7 @@
                     <li class="menu-title"><i class="bi bi-person"></i> Akun Saya</li>
                     <li><a href="<?= site_url('profile') ?>">Profil</a></li>
                     <li><a href="<?= site_url('alamat') ?>" class="active">Alamat</a></li>
-                    <li><a href="<?= site_url('ubah-password') ?>">Ubah Password</a></li>
+                    <li><a href="<?= site_url('ubah-password') ?>">Ubah Kata sandi</a></li>
                     <hr>
                     <li><a href="<?= site_url('pesanan') ?>"><i class="bi bi-receipt"></i> Pesanan Saya</a></li>
                     <li><a href="#"><i class="bi bi-bell"></i> Notifikasi</a></li>
