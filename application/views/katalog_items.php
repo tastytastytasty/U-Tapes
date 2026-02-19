@@ -208,7 +208,7 @@
     }
 </style>
 <?php if (empty($items)): ?>
-    <div class="col-12 text-center">
+    <div class="col-12 text-center d-flex flex-column justify-content-center align-items-center" style="height:500px">
         <i class="lni lni-search-alt fs-1 text-primary mb-3"></i>
         <h5 class="text-primary">Produk tidak ditemukan</h5>
         <p class="text-primary mb-0">

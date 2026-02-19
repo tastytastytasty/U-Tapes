@@ -200,32 +200,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                         <div class="navbar-cart">
                             <div class="cart-items me-3">
-                                <a href="javascript:void(0)" class="main-btn">
+                                <a href="<?=site_url('promo')?>" class="main-btn">
                                     <i class="lni lni-ticket"></i>
                                 </a>
-                                <!-- Shopping Item -->
-                                <div class="shopping-item">
-                                    <div class="dropdown-cart-header">
-                                        <span>1 Item</span>
-                                        <a href="<?= site_url('keranjang') ?>">Lihat semua</a>
-                                    </div>
-                                    <ul class="shopping-list">
-                                        <li>
-                                            <a href="javascript:void(0)" class="remove" title="Remove this item"><i
-                                                    class="lni lni-close"></i></a>
-                                            <div class="cart-img-head">
-                                                <a class="cart-img" href="<?= site_url('detailproduct') ?>"><img
-                                                        src="<?= base_url('assets/images/header/cart-items/item1.jpg') ?>"
-                                                        alt="#"></a>
-                                            </div>
-                                            <div class="content">
-                                                <h4><a href="<?= site_url('detailproduct') ?>">
-                                                        Apple Watch Series 6</a></h4>
-                                                <p class="quantity">1x - <span class="amount">$99.00</span></p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                             <div class="cart-items me-3">
                                 <?php if ($this->session->userdata('logged_in')): ?>
