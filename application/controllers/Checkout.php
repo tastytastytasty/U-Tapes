@@ -8,7 +8,8 @@ class Checkout extends MY_Controller
     {
         parent::__construct();
         $this->load->model('AlamatModel');
-        $this->load->model('Checkout_model'); // Load model checkout
+        $this->load->model('Checkout_model');
+        $this->load->model('Promo_model'); // TAMBAHAN: Load promo model
         $this->load->library('session');
 
         // Pastikan user sudah login
@@ -147,5 +148,56 @@ class Checkout extends MY_Controller
             'message' => 'Checkout berhasil',
             'order_id' => 'ORD-' . time()
         ]);
+    }
+
+    /**
+     * TAMBAHAN: Get promo aktif (untuk frontend)
+     */
+    public function get_promos()
+    {
+        header('Content-Type: application/json');
+
+        $jenis = $this->input->get('jenis'); // 'item' atau 'ongkir'
+
+        if (!$jenis || !in_array($jenis, ['item', 'ongkir'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Jenis promo tidak valid'
+            ]);
+            return;
+        }
+
+        $promos = $this->Promo_model->get_active_promos($jenis);
+
+        echo json_encode([
+            'success' => true,
+            'data' => $promos
+        ]);
+    }
+
+    /**
+     * TAMBAHAN: Validate & apply promo code
+     */
+    public function apply_promo()
+    {
+        header('Content-Type: application/json');
+
+        $kode_promo = $this->input->post('kode_promo');
+        $jenis = $this->input->post('jenis'); // 'item' atau 'ongkir'
+        $total_belanja = (int) $this->input->post('total_belanja');
+
+        // Validasi input
+        if (!$kode_promo || !$jenis) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Data tidak lengkap'
+            ]);
+            return;
+        }
+
+        // Validate promo
+        $result = $this->Promo_model->validate_promo($kode_promo, $jenis, $total_belanja);
+
+        echo json_encode($result);
     }
 }

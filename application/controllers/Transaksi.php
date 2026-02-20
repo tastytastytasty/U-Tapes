@@ -6,6 +6,7 @@ class Transaksi extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('Transaksi_model');
+        $this->load->model('M_pembayaran');  // ← tambahan
         $this->load->library('session');
         
         // Pastikan user sudah login
@@ -17,7 +18,6 @@ class Transaksi extends CI_Controller {
     /**
      * Simpan transaksi baru
      * Menerima data dari AJAX POST
-     * ✅ UPDATED: Hapus cart yang checked setelah bayar
      */
     public function simpan() {
         // Set header JSON
@@ -25,11 +25,10 @@ class Transaksi extends CI_Controller {
 
         try {
             // Ambil data dari POST
-            $total = $this->input->post('total');
+            $total             = $this->input->post('total');
             $metode_pembayaran = $this->input->post('metode_pembayaran');
-            $bayar = $this->input->post('bayar');
-            $ongkir = $this->input->post('ongkir');
-            $cart_ids_string = $this->input->post('cart_ids'); // Ambil ID cart yang di-checklist
+            $bayar             = $this->input->post('bayar');
+            $ongkir            = $this->input->post('ongkir');
 
             // Validasi data
             if (empty($total) || empty($metode_pembayaran)) {
@@ -61,47 +60,42 @@ class Transaksi extends CI_Controller {
 
             // Prepare data untuk insert
             $data_transaksi = [
-                'id_transaksi' => $id_transaksi,
-                'no_nota' => $no_nota,
-                'tanggal' => date('Y-m-d'),
-                'id_customer' => $id_customer,
-                'total' => intval($total),
+                'id_transaksi'      => $id_transaksi,
+                'no_nota'           => $no_nota,
+                'tanggal'           => date('Y-m-d'),
+                'id_customer'       => $id_customer,
+                'total'             => intval($total),
                 'metode_pembayaran' => $metode_pembayaran,
-                'bayar' => intval($bayar),
-                'ongkir' => intval($ongkir),
-                'status_transaksi' => 'dikemas' // Default status: dikemas
+                'bayar'             => intval($bayar),
+                'ongkir'            => intval($ongkir),
+                'status_transaksi'  => 'dikemas'
             ];
 
-            // Insert ke database
+            // Insert transaksi ke database
             $insert = $this->Transaksi_model->insert($data_transaksi);
 
-            if ($insert) {
-                // ✅ CRITICAL: HAPUS CART YANG CHECKED SETELAH TRANSAKSI BERHASIL
-                if (!empty($cart_ids_string)) {
-                    $this->load->model('Keranjang_model');
-                    
-                    // Convert string "CART001,CART002" menjadi array
-                    $cart_ids = explode(',', $cart_ids_string);
-                    
-                    // Hapus setiap cart yang checked
-                    foreach ($cart_ids as $cart_id) {
-                        $this->Keranjang_model->delete(trim($cart_id));
-                    }
-                }
-                
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Transaksi berhasil disimpan',
-                    'id_transaksi' => $id_transaksi,
-                    'no_nota' => $no_nota,
-                    'data' => $data_transaksi
-                ]);
-            } else {
+            if (!$insert) {
                 echo json_encode([
                     'success' => false,
                     'message' => 'Gagal menyimpan transaksi'
                 ]);
+                return;
             }
+
+            // ===== INSERT PEMBAYARAN =====
+            $this->M_pembayaran->insert([
+                'tanggal'      => date('Y-m-d H:i:s'),
+                'id_transaksi' => $id_transaksi,
+                'status'       => 'Menunggu'
+            ]);
+
+            echo json_encode([
+                'success'      => true,
+                'message'      => 'Transaksi berhasil disimpan',
+                'id_transaksi' => $id_transaksi,
+                'no_nota'      => $no_nota,
+                'data'         => $data_transaksi
+            ]);
 
         } catch (Exception $e) {
             echo json_encode([
@@ -110,6 +104,7 @@ class Transaksi extends CI_Controller {
             ]);
         }
     }
+
 
     /**
      * Generate ID Transaksi unik

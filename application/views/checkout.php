@@ -27,6 +27,10 @@
       --radius: 16px;
       --radius-sm: 10px;
     }
+    
+    html {
+      scroll-behavior: smooth;
+    }
 
     * {
       box-sizing: border-box;
@@ -1958,18 +1962,42 @@
 
   /* Product items responsive */
   .product-item {
-    grid-template-columns: 80px 1fr;
-    gap: 1rem;
-    padding: 1rem;
+    grid-template-columns: 32px 70px 1fr; /* Checkbox lebih kecil, gambar lebih kecil */
+    gap: 0.75rem;
+    padding: 0.875rem;
+  }
+  
+  .product-checkbox {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .item-checkbox {
+    width: 18px;
+    height: 18px;
   }
 
   .product-img-wrapper {
-    width: 80px;
-    padding-bottom: 80px;
+    width: 70px;
+    height: 70px;
+    padding-bottom: 0;
+  }
+  
+  .product-img {
+    position: static;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .product-name {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    -webkit-line-clamp: 2;
+  }
+  
+  .product-variant {
+    font-size: 0.75rem;
   }
 
   .product-variant {
@@ -1986,6 +2014,15 @@
 
   .product-prices {
     align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .price-current {
+    font-size: 1rem;
+  }
+  
+  .price-original {
+    font-size: 0.75rem;
   }
 
   /* Form grid responsive */
@@ -1997,26 +2034,87 @@
   .address-card {
     flex-direction: column;
     align-items: stretch;
+    padding: 1rem;
   }
 
   .address-info {
     width: 100%;
   }
+  
+  .address-name {
+    font-size: 0.9375rem;
+  }
+  
+  .address-phone {
+    font-size: 0.875rem;
+  }
+  
+  .address-detail {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
 
   .btn-use-address {
     width: 100%;
+    margin-top: 0.75rem;
   }
 
   /* Modal responsive */
   .modal-content {
-    margin: 1rem;
-    padding: 1.5rem;
-    max-height: calc(100vh - 2rem);
+    margin: 0;
+    padding: 1.25rem;
+    max-height: 100vh;
+    width: 100%;
+    border-radius: 0;
+    overflow-y: auto;
   }
 
   .modal-close {
     right: 1rem;
     top: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.25rem;
+    padding-right: 2.5rem;
+  }
+  
+  .modal-body {
+    padding: 1rem 0;
+  }
+  
+  /* Address list in modal */
+  .address-list {
+    gap: 0.75rem;
+  }
+  
+  .address-card {
+    padding: 1rem;
+  }
+  
+  /* Form dalam modal */
+  .form-group label {
+    font-size: 0.875rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 0.9375rem;
+    padding: 0.625rem 0.875rem;
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+    margin: 0;
   }
 
   /* Payment modal responsive */
@@ -2203,6 +2301,184 @@
     margin: 0 -1.25rem;
     padding: 1rem 1.25rem;
   }
+  
+  /* Summary section mobile */
+  .summary-header {
+    padding: 1rem;
+  }
+  
+  .summary-header-title {
+    font-size: 0.9375rem;
+  }
+  
+  .summary-header-value {
+    font-size: 1rem;
+  }
+  
+  .summary-body {
+    padding: 0.75rem 1rem;
+  }
+  
+  .summary-detail-row {
+    font-size: 0.875rem;
+  }
+  
+  .summary-row.total {
+    padding: 1rem;
+  }
+  
+  .summary-row.total .label {
+    font-size: 1rem;
+  }
+  
+  .summary-row.total .value {
+    font-size: 1.25rem;
+  }
+  
+  /* ✨ BOTTOM SHEET - COLLAPSIBLE SUMMARY */
+  .checkout-wrapper {
+    padding-bottom: 100px; /* Space untuk bottom sheet collapsed */
+  }
+  
+  .box:has(.summary-section) {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10001; /* Di atas navbar (navbar = 1000) */
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    background: white;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 130px; /* Default: collapsed - cuma total + tombol */
+    overflow: hidden;
+  }
+  
+  /* Expanded state */
+  .box:has(.summary-section).expanded {
+    max-height: calc(100vh - env(safe-area-inset-top, 60px)); /* Safe area untuk notch + navbar */
+    overflow-y: auto;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 60px); /* Space untuk navbar */
+  }
+  
+  /* Handle / drag indicator */
+  .box:has(.summary-section)::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    cursor: grab;
+  }
+  
+  /* Promo buttons - HIDE saat collapsed */
+  .promo-buttons-container {
+    display: none;
+    gap: 0.5rem;
+    margin: 0.5rem 1rem 0.75rem;
+    padding-top: 0.5rem;
+  }
+  
+  .expanded .promo-buttons-container {
+    display: flex;
+  }
+  
+  .btn-promo-trigger {
+    flex: 1;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+    min-width: 0;
+  }
+  
+  .promo-icon {
+    font-size: 1.125rem;
+  }
+  
+  .promo-text {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Summary sections - HIDE saat collapsed */
+  .summary-section {
+    display: none;
+    margin-bottom: 0.5rem;
+  }
+  
+  .expanded .summary-section {
+    display: block;
+  }
+  
+  .summary-header {
+    padding: 0.875rem 1rem;
+  }
+  
+  /* Total section - ALWAYS VISIBLE */
+  .summary-total-section {
+    padding: 1rem 1rem 0.75rem;
+    background: white;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 1.5rem; /* Space for handle */
+  }
+  
+  .summary-total-section:active {
+    background: #f8fafc;
+  }
+  
+  .summary-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .summary-total-row .label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  
+  .summary-total-row .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  /* Tombol bayar - ALWAYS VISIBLE */
+  .btn-checkout {
+    margin: 0.75rem 1rem 1rem;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+  
+  /* Overlay untuk close saat expanded */
+  /* Overlay untuk close saat expanded */
+  .summary-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 10000; /* Di atas navbar (1000), di bawah bottom sheet (10001) */
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .summary-overlay.active {
+    display: block;
+    opacity: 1;
+  }
 }
 
 /* Small mobile (480px and below) */
@@ -2216,30 +2492,72 @@
   }
 
   .product-item {
-    grid-template-columns: 70px 1fr;
-    gap: 0.875rem;
-    padding: 0.875rem;
+    grid-template-columns: 28px 60px 1fr; /* Checkbox + gambar lebih kecil */
+    gap: 0.625rem;
+    padding: 0.75rem;
+  }
+  
+  .product-checkbox {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .item-checkbox {
+    width: 16px;
+    height: 16px;
   }
 
   .product-img-wrapper {
-    width: 70px;
-    padding-bottom: 70px;
+    width: 60px;
+    height: 60px;
   }
 
   .product-name {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    line-height: 1.2;
   }
 
   .product-variant {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
   }
 
-  .product-price {
-    font-size: 1rem;
+  .price-current {
+    font-size: 0.9375rem;
   }
 
-  .product-price-original {
+  .price-original {
+    font-size: 0.6875rem;
+  }
+  
+  /* Modal full screen di mobile kecil */
+  .modal-content {
+    border-radius: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    padding: 1rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.125rem;
+  }
+  
+  /* Address card lebih compact */
+  .address-card {
+    padding: 0.875rem;
+  }
+  
+  .address-name {
+    font-size: 0.875rem;
+  }
+  
+  .address-phone {
     font-size: 0.8125rem;
+  }
+  
+  .address-detail {
+    font-size: 0.75rem;
   }
 
   .voucher-icon {
@@ -2941,42 +3259,7 @@
         </div>
 
         <div class="payment-methods">
-          <div class="payment-method-title">E-Wallet</div>
-
-          <label class="payment-option" for="gopay">
-            <input type="radio" name="payment" id="gopay" value="gopay">
-            <div class="payment-icon" style="background: linear-gradient(135deg, #00AA13 0%, #00D41D 100%);">
-              💚
-            </div>
-            <div class="payment-details">
-              <div class="payment-name">GoPay</div>
-              <div class="payment-desc">Bayar pakai saldo GoPay</div>
-            </div>
-          </label>
-
-          <label class="payment-option" for="ovo">
-            <input type="radio" name="payment" id="ovo" value="ovo">
-            <div class="payment-icon" style="background: linear-gradient(135deg, #4C3494 0%, #6B4AB8 100%);">
-              💜
-            </div>
-            <div class="payment-details">
-              <div class="payment-name">OVO</div>
-              <div class="payment-desc">Bayar pakai saldo OVO</div>
-            </div>
-          </label>
-
-          <label class="payment-option" for="dana">
-            <input type="radio" name="payment" id="dana" value="dana">
-            <div class="payment-icon" style="background: linear-gradient(135deg, #118EEA 0%, #3DA5F4 100%);">
-              💙
-            </div>
-            <div class="payment-details">
-              <div class="payment-name">DANA</div>
-              <div class="payment-desc">Bayar pakai saldo DANA</div>
-            </div>
-          </label>
-
-          <div class="payment-method-title" style="margin-top: 1.5rem;">Transfer Bank</div>
+          <div class="payment-method-title">Transfer Bank</div>
 
           <label class="payment-option" for="bca">
             <input type="radio" name="payment" id="bca" value="bca">
@@ -3716,15 +3999,13 @@
         const ongkir = state.shipping - state.shippingDiscount;
 
         // Map metode pembayaran ke format database
+        // Map metode pembayaran ke format database
         const metodePembayaranMap = {
-          'gopay': 'E-wallet',
-          'ovo': 'E-wallet',
-          'dana': 'E-wallet',
           'bca': 'Rekening',
           'mandiri': 'Rekening'
         };
 
-        const metodePembayaran = metodePembayaranMap[state.selectedPayment] || 'E-wallet';
+        const metodePembayaran = metodePembayaranMap[state.selectedPayment] || 'Rekening';
 
         // Prepare data untuk dikirim
         const dataTransaksi = {
@@ -3838,6 +4119,170 @@
         // Init: Calculate first time (ONCE)
         console.log('🔄 Initial calculation...');
         recalculateFromCheckboxes();
+        
+        // ✨ BOTTOM SHEET - Swipe & Click Handler (Mobile Only)
+        if (window.innerWidth <= 768) {
+          const summaryBox = document.querySelector('.box:has(.summary-section)');
+          const summaryTotal = document.querySelector('.summary-total-section');
+          
+          if (!summaryBox || !summaryTotal) return;
+          
+          // Create overlay
+          const summaryOverlay = document.createElement('div');
+          summaryOverlay.className = 'summary-overlay';
+          document.body.appendChild(summaryOverlay);
+          
+          // Create visible drag handle bar
+          const dragHandleBar = document.createElement('div');
+          dragHandleBar.style.cssText = `
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 2px;
+            z-index: 1;
+          `;
+          summaryBox.insertBefore(dragHandleBar, summaryBox.firstChild);
+          
+          // Create invisible drag area (larger touch target)
+          const dragHandle = document.createElement('div');
+          dragHandle.className = 'summary-drag-handle';
+          dragHandle.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            cursor: grab;
+            touch-action: pan-y;
+            z-index: 2;
+            -webkit-user-select: none;
+            user-select: none;
+          `;
+          summaryBox.insertBefore(dragHandle, summaryBox.firstChild);
+          
+          let startY = 0;
+          let currentY = 0;
+          let isDragging = false;
+          let startTime = 0;
+          let isExpanded = false;
+          
+          // Click total section to toggle
+          summaryTotal.addEventListener('click', function(e) {
+            if (e.target.closest('.btn-checkout')) return;
+            
+            isExpanded = !isExpanded;
+            summaryBox.classList.toggle('expanded', isExpanded);
+            summaryOverlay.classList.toggle('active', isExpanded);
+          });
+          
+          // Drag handle - touch events
+          dragHandle.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+            currentY = startY;
+            isDragging = true;
+            startTime = Date.now();
+            dragHandle.style.cursor = 'grabbing';
+            e.stopPropagation();
+          }, { passive: false });
+          
+          dragHandle.addEventListener('touchmove', function(e) {
+            if (!isDragging) return;
+            
+            currentY = e.touches[0].clientY;
+            const diff = currentY - startY;
+            
+            // Visual feedback
+            if (!isExpanded && diff < 0) {
+              const translateY = Math.max(diff, -200);
+              summaryBox.style.transform = `translateY(${translateY}px)`;
+            } else if (isExpanded && diff > 0) {
+              const translateY = Math.min(diff, 200);
+              summaryBox.style.transform = `translateY(${translateY}px)`;
+            }
+            
+            e.preventDefault();
+            e.stopPropagation();
+          }, { passive: false });
+          
+          dragHandle.addEventListener('touchend', function(e) {
+            if (!isDragging) return;
+            
+            const diff = currentY - startY;
+            const duration = Date.now() - startTime;
+            const velocity = Math.abs(diff) / duration;
+            
+            dragHandle.style.cursor = 'grab';
+            summaryBox.style.transform = '';
+            summaryBox.style.transition = 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            const threshold = velocity > 0.5 ? 30 : 50;
+            
+            if (diff > threshold) {
+              isExpanded = false;
+              summaryBox.classList.remove('expanded');
+              summaryOverlay.classList.remove('active');
+            } else if (diff < -threshold) {
+              isExpanded = true;
+              summaryBox.classList.add('expanded');
+              summaryOverlay.classList.add('active');
+            }
+            
+            isDragging = false;
+            
+            setTimeout(() => {
+              summaryBox.style.transition = '';
+            }, 300);
+            
+            e.stopPropagation();
+          });
+          
+          // Click overlay to collapse
+          summaryOverlay.addEventListener('click', function(e) {
+            isExpanded = false;
+            summaryBox.classList.remove('expanded');
+            summaryOverlay.classList.remove('active');
+          });
+          
+          // Prevent sheet collapse saat buka promo offcanvas
+          const btnPromoItem = document.getElementById('btn-open-promo-item');
+          const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
+          
+          if (btnPromoItem) {
+            btnPromoItem.addEventListener('click', function(e) {
+              e.stopPropagation();
+              // ✅ AUTO CLOSE sheet pas buka promo modal
+              isExpanded = false;
+              summaryBox.classList.remove('expanded');
+              summaryOverlay.classList.remove('active');
+            });
+          }
+          
+          if (btnPromoShipping) {
+            btnPromoShipping.addEventListener('click', function(e) {
+              e.stopPropagation();
+              // ✅ AUTO CLOSE sheet pas buka promo modal
+              isExpanded = false;
+              summaryBox.classList.remove('expanded');
+              summaryOverlay.classList.remove('active');
+            });
+          }
+          
+          // Auto close sheet saat buka payment modal
+          const btnPayNow = document.getElementById('btn-pay-now');
+          if (btnPayNow) {
+            btnPayNow.addEventListener('click', function(e) {
+              e.stopPropagation();
+              // ✅ AUTO CLOSE sheet pas buka payment modal
+              isExpanded = false;
+              summaryBox.classList.remove('expanded');
+              summaryOverlay.classList.remove('active');
+            });
+          }
+        }
 
         // OPTIMASI: Modal event listeners - passive untuk scroll performance
         const offcanvasOverlayItem = document.getElementById('offcanvas-overlay-item');
