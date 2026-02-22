@@ -17,7 +17,8 @@ class Checkout_model extends CI_Model
                 item.gambar_item,
                 item_detail.warna,
                 item_detail.ukuran,
-                item_detail.harga
+                item_detail.harga,
+                item_detail.gambar
             ')
             ->from('cart')
             ->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail')

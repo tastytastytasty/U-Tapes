@@ -38,11 +38,7 @@ class Ajax extends MY_Controller
 
                 if ($promo) {
                     $ada_diskon = true;
-                    if ($promo->persen_promo > 0) {
-                        $badge_text = '%';
-                    } elseif ($promo->harga_promo > 0) {
-                        $badge_text = 'Rp';
-                    }
+                    $badge_text = '%';
                 }
             }
             echo '<div class="card d-flex justify-content-center align-items-center size-box position-relative ' . $disabled . '" 
@@ -64,21 +60,14 @@ class Ajax extends MY_Controller
         $id_customer = $this->session->userdata('id_customer');
 
         $detail = $this->Item_model->get_by_option($id_item, $warna, $ukuran);
-
         if (!$detail) {
-            echo json_encode([
-                'success' => false,
-                'harga' => 0,
-                'harga_asli' => 0,
-                'harga_diskon' => 0,
-                'is_sale' => false,
-                'stok' => 0,
-                'id_item_detail' => null,
-                'is_in_cart' => false
-            ]);
-            return;
+            $detail = $this->db
+                ->where('id_item', $id_item)
+                ->where('warna', $warna)
+                ->order_by('stok', 'DESC')
+                ->get('item_detail')
+                ->row();
         }
-
         $promo = $this->db
             ->select('promo.persen_promo, promo.harga_promo')
             ->from('promo_detail')

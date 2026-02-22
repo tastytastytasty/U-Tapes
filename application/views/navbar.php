@@ -278,7 +278,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="shopping-item">
                                         <div class="dropdown-cart-header">
                                             <span id="cart-count"><?= $cart_count ?> Item</span>
-                                            <a href="<?= site_url('checkout') ?>">Lihat Semua</a>
+                                            <a href="<?= site_url('keranjang') ?>">Lihat Semua</a>
                                         </div>
                                         <ul class="shopping-list" id="cart-list">
                                             <?php if (!empty($cart_items)): ?>
