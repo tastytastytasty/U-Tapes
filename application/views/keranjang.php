@@ -115,16 +115,16 @@
                     <button class="btn btn-sm btn-primary">Cari</button>
                 </div>
                 <div class="form-check mb-0">
-                    <input class="form-check-input me-2" type="checkbox" id="selectAll" >
-                    <label class="form-check-label" for="selectAll">
-                        Pilih semua
-                    </label>
+                    <input class="form-check-input me-2" type="checkbox" id="selectAll" style="width: 22px; height: 22px; cursor: pointer;">
+                    <label class="form-check-label" for="selectAll"> Pilih semua </label>
                 </div>
             </div>
             <?php if (!empty($cart)): ?>
-                <div class="row">
+                <div class="row" id="cart-items-wrapper">
                     <?php
-                    $total_awal = 0;
+                    $total_harga_asli = 0;
+                    $total_potongan = 0;
+                    $total_akhir = 0;
                     foreach ($cart as $index => $c):
                         $harga_asli = $c->harga * $c->qty;
                         $harga_diskon = $harga_asli;
@@ -135,8 +135,10 @@
                                 $harga_diskon = $harga_asli - ($c->harga_promo * $c->qty);
                             }
                         }
+                        $total_harga_asli += $harga_asli;
                         $subtotal = $harga_diskon;
-                        $total_awal += $subtotal;
+                        $total_akhir += $subtotal;
+                        $total_potongan = $total_harga_asli - $total_akhir;
                         ?>
                         <div class="col-6 mb-3">
                             <div class="single-product product-card d-flex flex-row align-items-stretch h-100 mt-0"
@@ -218,25 +220,37 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
-                                        <span class="text-muted small">
-                                            Qty: <strong><?= $c->qty ?></strong>
-                                        </span>
+                                        <div class="input-group input-group-sm" style="max-width:100px">
+                                            <button class="btn btn-outline-primary cart-qty-minus" data-cart="<?= $c->id_cart ?>"
+                                                data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?? 0 ?>"
+                                                data-promo="<?= $c->harga_promo ?? 0 ?>" data-issale="<?= $c->is_sale ? 1 : 0 ?>" type="button">−
+                                            </button>
+                                            <input type="number" class="form-control cart-qty-input text-center" id="cart-qty-<?= $c->id_cart ?>"
+                                            data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?>"
+                                            data-promo="<?= $c->harga_promo ?>" data-issale="<?= $c->is_sale ?>" min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>">
+                                            <button class="btn btn-outline-primary cart-qty-plus" data-cart="<?= $c->id_cart ?>"
+                                                data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?? 0 ?>"
+                                                data-promo="<?= $c->harga_promo ?? 0 ?>" data-issale="<?= $c->is_sale ? 1 : 0 ?>" type="button">+
+                                            </button>
+                                        </div>
                                         <div class="price d-flex-md flex-column text-end">
                                             <?php if ($c->is_sale && $harga_diskon < $harga_asli): ?>
-                                                <span class="discount-price text-muted text-decoration-line-through small me-2">
+                                                <span class="discount-price text-muted text-decoration-line-through small me-2"
+                                                    id="item-harga-asli-<?= $c->id_cart ?>">
                                                     Rp <?= number_format($harga_asli, 0, ',', '.') ?>
                                                 </span>
-                                                <span class="fw-bold text-primary">
+                                                <span class="fw-bold text-primary"
+                                                    id="item-harga-diskon-<?= $c->id_cart ?>">
                                                     Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
                                                 </span>
                                             <?php else: ?>
-                                                <span class="fw-bold text-primary">
+                                                <span class="fw-bold text-primary"
+                                                    id="item-harga-asli-<?= $c->id_cart ?>">
                                                     Rp <?= number_format($harga_asli, 0, ',', '.') ?>
                                                 </span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -253,20 +267,22 @@
                         <ul class="list-unstyled mb-0">
                             <li class="d-flex justify-content-between mb-2">
                                 <span class="text-dark">Total harga barang</span>
-                                <span class="text-primary">Rp <?= number_format($total_awal, 0, ',', '.') ?></span>
+                                <span class="text-primary" id="summary-harga-asli">Rp <?= number_format($total_harga_asli, 0, ',', '.') ?></span>
                             </li>
                             <li class="d-flex justify-content-between mb-2">
                                 <span class="text-dark">Potongan</span>
-                                <span class="text-primary">-</span>
+                                <span class="text-primary" id="summary-potongan">
+                                    <?= $total_potongan > 0 ? '- Rp ' . number_format($total_potongan, 0, ',', '.') : '-' ?>
+                                </span>
                             </li>
                             <hr>
-                            <li class="d-flex justify-content-between">
+                            <li class="d-flex justify-content-between mb-2">
                                 <span class="fw-bold text-dark">Total Akhir</span>
-                                <span class="fw-bold text-primary">Rp <?= number_format($total_awal, 0, ',', '.') ?></span>
+                                <span class="fw-bold text-primary" id="summary-total-akhir">Rp <?= number_format($total_akhir, 0, ',', '.') ?></span>
                             </li>
-                            <li class="d-flex justify-content-end">
-                                <a href="<?= site_url('checkout') ?>" class="btn btn-primary w-50 mt-3">Checkout</a>
-                            </li>
+                            <li> <div class="button">
+                                <a href="<?= site_url('checkout') ?>" class="btn animate w-100">Checkout</a>
+                            </div> </li>
                         </ul>
                     </div>
                 </div>

@@ -25,6 +25,7 @@ class Keranjang_model extends CI_Model
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
             ->where('cart.id_customer', $id_customer)
             ->group_by('cart.id_cart')
+            ->order_by('cart.id_cart', 'DESC')
             ->get()
             ->result();
     }
@@ -53,14 +54,21 @@ class Keranjang_model extends CI_Model
     }
     public function get_total_by_customer($id_customer)
     {
-        return $this->db
-            ->select('SUM(cart.qty * item_detail.harga) AS total')
-            ->from('cart')
-            ->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail')
-            ->where('cart.id_customer', $id_customer)
-            ->get()
-            ->row()
-            ->total;
+        $this->db->select('
+            SUM(
+                CASE 
+                    WHEN p.persen_promo > 0 THEN (cart.qty * item_detail.harga) - ((cart.qty * item_detail.harga) * p.persen_promo / 100)
+                    WHEN p.harga_promo > 0 THEN (cart.qty * item_detail.harga) - (p.harga_promo * cart.qty)
+                    ELSE cart.qty * item_detail.harga
+                END
+            ) AS total
+        ');
+        $this->db->from('cart');
+        $this->db->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail');
+        $this->db->join('promo_detail pd', 'pd.id_item_detail = item_detail.id_item_detail', 'left');
+        $this->db->join('promo p', 'p.id_promo = pd.id_promo', 'left');
+        $this->db->where('cart.id_customer', $id_customer);
+        return $this->db->get()->row()->total ?? 0;
     }
     public function is_in_cart($id_customer, $id_item_detail)
     {
