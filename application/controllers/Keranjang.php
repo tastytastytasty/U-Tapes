@@ -217,4 +217,29 @@ class Keranjang extends MY_Controller
             'message' => $update ? 'Checklist berhasil diupdate' : 'Gagal update checklist'
         ]);
     }
+    public function hapus_item()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+            return;
+        }
+        $id_customer = $this->session->userdata('id_customer');
+        if (!$id_customer) {
+            echo json_encode(['success' => false, 'message' => 'Silakan login terlebih dahulu']);
+            return;
+        }
+        $id_cart = $this->input->post('id_cart');
+        if (empty($id_cart)) {
+            echo json_encode(['success' => false, 'message' => 'Data tidak valid']);
+            return;
+        }
+        $delete = $this->db
+            ->where('id_cart', $id_cart)
+            ->where('id_customer', $id_customer)
+            ->delete('cart');
+        echo json_encode([
+            'success' => $delete,
+            'message' => $delete ? 'Item berhasil dihapus' : 'Gagal menghapus item'
+        ]);
+    }
 }

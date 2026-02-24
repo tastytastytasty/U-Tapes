@@ -474,6 +474,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalConfirm" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="lni lni-warning text-warning mb-3" style="font-size:50px;"></i>
+                    <p id="modalConfirmMsg" class="fs-6 mb-0"></p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="modalConfirmOk">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Start Footer Area -->
     <footer class="footer">
         <!-- Start Footer Top -->
@@ -872,12 +886,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     showAlert('Terjadi kesalahan saat update checklist');
                 }
             });
-
-            // Hitung ulang summary berdasarkan yang dicentang
             updateSummaryByChecklist();
         });
-
-        // Fungsi hitung total berdasarkan checklist
         function updateSummaryByChecklist() {
             var newTotalAsli = 0;
             var newTotalDiskon = 0;
@@ -1268,6 +1278,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     }
                 });
             });
+        function ShowConfirm(message, onConfirm) {
+            $('#modalConfirmMsg').text(message);
+            $('#modalConfirm').modal('show');
+            $('#modalConfirmOk').off('click').on('click', function () {
+                $('#modalConfirm').modal('hide');
+                onConfirm();
+            });
+        }
+        $(document).on('click', '.btn-hapus-item', function () {
+            var idCart = $(this).data('id-cart');
+
+            ShowConfirm('Hapus item ini dari keranjang?', function () {
+                $.ajax({
+                    url: '<?= site_url("keranjang/hapus_item") ?>',
+                    type: 'POST',
+                    data: { id_cart: idCart },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            var $item = $('#cart-' + idCart);
+
+                            $item.fadeOut(300, function () {
+                                $(this).remove();
+                                updateSummaryByChecklist();
+
+                                var sisa = $('.cart-item').length;
+                                if (sisa === 0) {
+                                    $('#cart-items-wrapper').remove();
+                                    $('#cart-empty').removeClass('d-none').show();
+                                }
+                            });
+                        } else {
+                            ShowAlert(response.message || 'Gagal menghapus item');
+                        }
+                    },
+                    error: function () {
+                        ShowAlert('Terjadi kesalahan saat menghapus item');
+                    }
+                });
+            });
+        });
     </script>
     <script>
         let typingTimer;
