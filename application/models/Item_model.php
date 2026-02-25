@@ -182,5 +182,12 @@ class Item_model extends CI_Model
     {
         return $this->db->get('kategori')->result();
     }
-
+    public function get_banners() {
+    $this->db->select('banner.*, item.nama_item, item.deskripsi, item.gambar_item, item.id_item');
+    $this->db->from('banner');
+    $this->db->join('item', 'item.id_item = banner.id_item');
+    $this->db->where('banner.is_active', 1);
+    $this->db->order_by('banner.position', 'ASC');
+    return $this->db->get()->result();
+}
 }

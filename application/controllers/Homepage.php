@@ -31,6 +31,7 @@ class Homepage extends MY_Controller
 		$data['promo_items'] = array_values(array_filter($items, function($i) { return $i->is_sale == 1; }));
     	$data['new_items']   = array_values(array_filter($items, function($i) { return $i->is_new == 1; }));
 		$data['kategori'] = $this->Item_model->get_kategori();
+		$data['banners'] = $this->Item_model->get_banners();
 		$data['contents'] = $this->load->view('homepage', $data, TRUE);
 		$this->load->view('navbar', array_merge($this->global_data, $data));
 	}

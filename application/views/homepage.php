@@ -222,73 +222,114 @@
 		<div class="row">
 			<div class="col-lg-8 col-12 custom-padding-right">
 				<div class="slider-head">
-					<!-- Start Hero Slider -->
 					<div class="hero-slider">
-						<!-- Start Single Slider -->
-						<div class="single-slider"
-							style="background-image: url(<?= base_url('assets/images/hero/slider-bg1.jpg') ?>);">
-							<div class="content">
-								<h2><span>No restocking fee ($35 savings)</span>
-									M75 Sport Watch
-								</h2>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-									incididunt ut labore et dolore magna aliqua.</p>
-								<h3><span>Now Only</span> $320.99</h3>
-								<div class="button">
-									<a href="<?= site_url('detailproduct') ?>" class="btn">Beli Sekarang</a>
+						<?php foreach ($banners as $banner): ?>
+							<div class="single-slider"
+								style="background-image: url('<?= base_url('assets/images/hero/slider2.jpg') ?>');">
+								<div class="content"
+									style="display:flex; align-items:center; justify-content:space-between; width:100%; padding-right:25px;">
+									<div style="flex:1; min-width:0; padding-right:15px;">
+										<h2>
+											<span><?= $banner->subtitle ?></span>
+											<?= $banner->nama_item ?>
+										</h2>
+										<p><?= $banner->deskripsi ?></p>
+										<div class="button">
+											<a href="<?= site_url('detailproduct/' . $banner->id_item) ?>" class="btn">Beli
+												Sekarang</a>
+										</div>
+									</div>
+									<div style="flex-shrink:0; align-self:stretch; display:flex; align-items:flex-end;">
+										<img src="<?= base_url('assets/images/item/' . $banner->gambar_item) ?>"
+											alt="<?= $banner->nama_item ?>"
+											style="height:450px; object-fit:cover; border-top-left-radius:12px; border-bottom-left-radius:12px; border: 1px solid #0d6efd;">
+									</div>
 								</div>
 							</div>
-						</div>
-						<!-- End Single Slider -->
-						<!-- Start Single Slider -->
-						<div class="single-slider"
-							style="background-image: url(<?= base_url('assets/images/hero/slider-bg2.jpg') ?>);">
-							<div class="content">
-								<h2><span>Big Sale Offer</span>
-									Get the Best Deal on CCTV Camera
-								</h2>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-									incididunt ut labore et dolore magna aliqua.</p>
-								<h3><span>Combo Only:</span> $590.00</h3>
-								<div class="button">
-									<a href="<?= site_url('detailproduct') ?>" class="btn">Beli Sekarang</a>
-								</div>
-							</div>
-						</div>
-						<!-- End Single Slider -->
+						<?php endforeach; ?>
 					</div>
-					<!-- End Hero Slider -->
 				</div>
 			</div>
 			<div class="col-lg-4 col-12">
 				<div class="row">
 					<div class="col-lg-12 col-md-6 col-12 md-custom-padding">
 						<!-- Start Small Banner -->
-						<div class="hero-small-banner"
-							style="background-image: url('<?= base_url('assets/images/hero/slider-bnr.jpg') ?>');">
-							<a href="<?= site_url('detailproduct') ?>">
-								<div class="content">
-									<h2>
-										<span>Sepatu terbaru</span>
-										Sepaut
-									</h2>
-									<h3>Rp. 1.000</h3>
-								</div>
-							</a>
-						</div>
+						<?php $new = isset($new_items[0]) ? $new_items[0] : null; ?>
+						<?php if ($new): ?>
+							<div class="hero-small-banner"
+								style="background-image: url('<?= base_url('assets/images/hero/slider1.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0, 0, 0, 0.2);">
+								<a href="<?= site_url('detailproduct/' . $new->id_item) ?>"
+									style="display:flex; align-items:center; justify-content:space-between; width:100%; text-decoration:none;">
+									<div class="content">
+										<h5 class="fw-bold text-primary mb-4">Produk Baru</h5>
+										<h5 class="title fw-bold mb-2">
+											<a href="<?= site_url('detailproduct/' . $new->id_item) ?>">
+												<?= $new->nama_item ?>
+											</a>
+										</h5>
+										<h3>Rp <?= number_format($new->harga_termurah, 0, ',', '.') ?></h3>
+										<div class="mt-4">
+											<a class="btn btn-primary fw-bold"
+												href="<?= site_url('detailproduct/' . $new->id_item) ?>">Lihat</a>
+										</div>
+									</div>
+									<img src="<?= base_url('assets/images/item/' . $new->gambar_item) ?>"
+										alt="<?= $new->nama_item ?>"
+										style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border: 1px solid #0d6efd; border-radius: 8px;">
+								</a>
+							</div>
+						<?php endif; ?>
 						<!-- End Small Banner -->
 					</div>
-					<div class="col-lg-12 col-md-6 col-12">
+					<div class="col-lg-12 col-md-6 col-12 mt-2">
 						<!-- Start Small Banner -->
-						<div class="hero-small-banner style2">
-							<div class="content">
-								<h2>Promo baru</h2>
-								<p>Promo Natal 25% dari 21 - 26 Desember 2025.</p>
-								<div class="button">
-									<a class="btn" href="<?= site_url('katalog') ?>">Beli Sekarang</a>
-								</div>
+						<?php $promo = isset($promo_items[0]) ? $promo_items[0] : null; ?>
+						<?php if ($promo): ?>
+							<div class="hero-small-banner"
+								style="background-image: url('<?= base_url('assets/images/hero/slider3.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0, 0, 0, 0.2);">
+								<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>"
+									style="display:flex; align-items:center; justify-content:space-between; width:100%; text-decoration:none;">
+									<div class="content" style="flex:1; min-width:0; padding-right:15px;">
+										<h5 class="fw-bold text-danger mb-4">Promo</h5>
+										<h5 class="title fw-bold mb-2">
+											<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>">
+												<?= $promo->nama_item ?>
+											</a>
+										</h5>
+										<?php
+										$harga_asli = $promo->harga_termurah;
+										$harga_diskon = $harga_asli;
+										if ($promo->is_sale) {
+											if ($promo->persen_promo > 0) {
+												$harga_diskon = $harga_asli - ($harga_asli * $promo->persen_promo / 100);
+											} elseif ($promo->harga_promo > 0) {
+												$harga_diskon = $harga_asli - $promo->harga_promo;
+											}
+										}
+										?>
+										<h3 class="text-danger mb-2">Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+										</h3>
+										<del class="text-muted">Rp
+											<?= number_format($harga_asli, 0, ',', '.') ?></del>
+										<?php if ($promo->persen_promo > 0): ?>
+											<span class="text-danger ms-2 fw-bold"><?= $promo->persen_promo ?>%</span>
+										<?php elseif ($promo->harga_promo > 0): ?>
+											<span class="text-danger ms-2 fw-bold">Rp
+												<?= number_format($promo->harga_promo, 0, ',', '.') ?></span>
+										<?php endif; ?>
+										<div class="mt-4">
+											<a class="btn btn-danger fw-bold"
+												href="<?= site_url('detailproduct/' . $promo->id_item) ?>">Lihat</a>
+										</div>
+									</div>
+									<div style="flex-shrink:0;">
+										<img src="<?= base_url('assets/images/item/' . $promo->gambar_item) ?>"
+											alt="<?= $promo->nama_item ?>"
+											style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border: 1px solid #dc3545; border-radius: 8px;">
+									</div>
+								</a>
 							</div>
-						</div>
+						<?php endif; ?>
 						<!-- Start Small Banner -->
 					</div>
 				</div>
