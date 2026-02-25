@@ -199,7 +199,7 @@
     /* Product Item */
     .product-item {
       display: grid;
-      grid-template-columns: 40px 100px 1fr;
+      grid-template-columns: 100px 1fr; /* UPDATED: Hapus kolom checkbox */
       gap: 1.25rem;
       padding: 1.25rem;
       background: var(--bg);
@@ -213,26 +213,6 @@
     .product-item:hover {
       background: white;
       box-shadow: var(--shadow);
-      /* DISABLED: transform bikin reflow, bikin berat
-      border-color: var(--primary);
-      transform: translateX(4px);
-      */
-    }
-    
-    /* Checkbox Styling */
-    .product-checkbox {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-top: 0.5rem;
-    }
-    
-    .product-checkbox input[type="checkbox"] {
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-      accent-color: var(--primary);
-      border-radius: 6px;
     }
 
 
@@ -2795,7 +2775,7 @@
 
       <!-- Produk - DARI DATABASE -->
       <div class="box">
-        <h3>🛍️ Pesanan Anda (<span id="checked-items-count">0</span> item dipilih)</h3>
+        <h3>🛍️ Pesanan Anda (<?= isset($summary) && isset($summary['total_items']) ? $summary['total_items'] : 0 ?> item)</h3>
 
         <?php if (!empty($checkout_items)): ?>
           <?php foreach ($checkout_items as $item): ?>
@@ -2813,16 +2793,6 @@
             ?>
             
             <div class="product-item" data-id-cart="<?= $item->id_cart ?>" data-price="<?= $subtotal ?>">
-              <!-- CHECKBOX UNTUK PILIH ITEM -->
-              <div class="product-checkbox">
-                <input type="checkbox" 
-                       class="item-checkbox" 
-                       id="item-<?= $item->id_cart ?>" 
-                       data-id-cart="<?= $item->id_cart ?>"
-                       data-price="<?= $subtotal ?>"
-                       data-debug-price="<?= $subtotal ?>">
-                <label for="item-<?= $item->id_cart ?>"></label>
-              </div>
               
               <div class="product-img-wrapper">
                 <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
@@ -2858,7 +2828,18 @@
           <?php endforeach; ?>
         <?php else: ?>
           <div class="alert alert-warning">
-            ⚠️ Keranjang kosong. <a href="<?= site_url('keranjang') ?>">Kembali ke keranjang</a>
+            ⚠️ Tidak ada item yang dipilih untuk checkout. 
+            <a href="<?= site_url('keranjang') ?>">Kembali ke keranjang dan centang item yang ingin dibeli</a>
+            
+            <?php if (ENVIRONMENT === 'development'): ?>
+              <!-- DEBUG INFO -->
+              <div style="margin-top: 1rem; padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; font-size: 0.875rem;">
+                <strong>🐛 Debug Info:</strong><br>
+                - ID Customer: <?= $this->session->userdata('id_customer') ?><br>
+                - Total items di cart (semua): <?= count($this->Keranjang_model->get_by_customer($this->session->userdata('id_customer'))) ?><br>
+                - Total items checklist "Yes": <?= count($checkout_items) ?><br>
+              </div>
+            <?php endif; ?>
           </div>
         <?php endif; ?>
       </div>
@@ -2942,6 +2923,20 @@
             <span class="label">Total Pembayaran</span>
             <span class="value" id="total-final">Rp 25.000</span>
           </div>
+        </div>
+
+        <!-- METODE PEMBAYARAN DROPDOWN -->
+        <div class="payment-method-section" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg); border-radius: var(--radius-sm); border: 2px solid var(--border);">
+          <label style="font-size: 0.875rem; font-weight: 700; color: var(--text); display: block; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            💳 Metode Pembayaran
+          </label>
+          <select id="payment-method-select" style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9375rem; font-weight: 600; color: var(--text); background: white; cursor: pointer; transition: all 0.3s; font-family: inherit;">
+            <option value="">Pilih metode pembayaran</option>
+            <option value="bca">🏦 Bank BCA</option>
+            <option value="mandiri">🏧 Bank Mandiri</option>
+            <option value="bni">🏦 Bank BNI</option>
+            <option value="bri">🏦 Bank BRI</option>
+          </select>
         </div>
 
         <button class="btn-checkout" id="btn-pay-now" <?php if (!$alamat_checkout): ?>disabled<?php endif; ?>>
@@ -3246,50 +3241,6 @@
       </div>
     </div>
 
-    <!-- Payment Modal -->
-    <div id="payment-modal" class="modal" aria-hidden="true">
-      <div class="modal-overlay" onclick="closePaymentModal()"></div>
-      <div class="modal-content payment-modal-content">
-        <button class="modal-close" onclick="closePaymentModal()">×</button>
-
-        <div class="payment-header">
-          <h2>Pilih Metode Pembayaran</h2>
-          <p style="color: var(--text-secondary); font-size: 0.9375rem; font-weight: 500;">Total yang harus dibayar</p>
-          <div class="payment-amount" id="payment-amount-display">Rp 5.475.000</div>
-        </div>
-
-        <div class="payment-methods">
-          <div class="payment-method-title">Transfer Bank</div>
-
-          <label class="payment-option" for="bca">
-            <input type="radio" name="payment" id="bca" value="bca">
-            <div class="payment-icon" style="background: linear-gradient(135deg, #0066AE 0%, #0080D6 100%);">
-              🏦
-            </div>
-            <div class="payment-details">
-              <div class="payment-name">Bank BCA</div>
-              <div class="payment-desc">Transfer via BCA Virtual Account</div>
-            </div>
-          </label>
-
-          <label class="payment-option" for="mandiri">
-            <input type="radio" name="payment" id="mandiri" value="mandiri">
-            <div class="payment-icon" style="background: linear-gradient(135deg, #003D79 0%, #00529C 100%);">
-              🏧
-            </div>
-            <div class="payment-details">
-              <div class="payment-name">Bank Mandiri</div>
-              <div class="payment-desc">Transfer via Mandiri Virtual Account</div>
-            </div>
-          </label>
-        </div>
-
-        <button class="btn-confirm-payment" id="btn-confirm-payment" disabled>
-          Konfirmasi Pembayaran
-        </button>
-      </div>
-    </div>
-
     <!-- Success Modal -->
     <div id="success-modal" class="modal" aria-hidden="true">
       <div class="modal-overlay"></div>
@@ -3351,148 +3302,6 @@
         promoCodeShipping: null, // Promo untuk shipping
         selectedPayment: null
       };
-
-      // ========== RECALCULATE FROM CHECKBOXES ==========
-      // Debounce untuk optimasi (ga perlu recalc terlalu sering)
-      let recalcTimeout = null;
-      
-      function recalculateFromCheckboxes() {
-        if (recalcTimeout) clearTimeout(recalcTimeout);
-        
-        recalcTimeout = setTimeout(() => {
-          let total = 0;
-          let count = 0;
-          
-          console.log('🔄 Recalculating...');
-          
-          const checkboxes = document.querySelectorAll('.item-checkbox:checked');
-          console.log('📊 Checkboxes checked:', checkboxes.length);
-          
-          checkboxes.forEach(checkbox => {
-            const priceAttr = checkbox.getAttribute('data-price');
-            const debugPrice = checkbox.getAttribute('data-debug-price');
-            const price = parseFloat(priceAttr);
-            
-            console.log('  💰 Item:', checkbox.getAttribute('data-id-cart'));
-            console.log('     data-price:', priceAttr);
-            console.log('     data-debug-price:', debugPrice);
-            console.log('     Parsed:', price);
-            
-            if (!isNaN(price) && price > 0) {
-              total += price;
-              count++;
-            } else {
-              console.warn('     ⚠️ SKIP - Invalid price!');
-            }
-          });
-          
-          console.log('✅ TOTAL:', total, '| COUNT:', count);
-          
-          // Update state
-          state.totalBefore = total;
-          state.subtotal = total;
-          
-          // 1. Update jumlah item dipilih (di header "Pesanan Anda")
-          const checkedCount = document.getElementById('checked-items-count');
-          if (checkedCount) {
-            checkedCount.textContent = count;
-            console.log('✅ Updated checked-items-count:', count);
-          }
-          
-          // 1.5. Update jumlah item di detail ringkasan "Total Harga (X item)"
-          const totalItemsCount = document.getElementById('total-items-count');
-          if (totalItemsCount) {
-            totalItemsCount.textContent = count;
-            console.log('✅ Updated total-items-count:', count);
-          }
-          
-          // 2. Update SUBTOTAL PRODUK (Header ringkasan)
-          const subtotalProdukEl = document.getElementById('subtotal-produk-display');
-          if (subtotalProdukEl) {
-            // Kurangi voucher discount dari subtotal
-            const subtotalAfterVoucher = Math.max(0, total - state.voucherDiscount);
-            subtotalProdukEl.textContent = formatRupiah(subtotalAfterVoucher);
-            console.log('✅ Updated subtotal-produk-display:', formatRupiah(subtotalAfterVoucher), '(after voucher:', state.voucherDiscount, ')');
-          } else {
-            console.error('❌ subtotal-produk-display NOT FOUND');
-          }
-          
-          // 3. Update TOTAL SEBELUM DISKON (Detail ringkasan)
-          const totalBeforeEl = document.getElementById('total-before-detail');
-          if (totalBeforeEl) {
-            totalBeforeEl.textContent = formatRupiah(total);
-            console.log('✅ Updated total-before-detail');
-          }
-          
-          // 3.5. Update VOUCHER ROW (tampilkan jika ada voucher)
-          const voucherProductRow = document.getElementById('voucher-product-row');
-          const voucherProductLabel = document.getElementById('voucher-product-label');
-          const voucherProductDetail = document.getElementById('voucher-product-detail');
-          if (voucherProductRow && voucherProductLabel && voucherProductDetail) {
-            if (state.voucherDiscount > 0 && state.voucherDesc) {
-              voucherProductRow.style.display = 'flex';
-              voucherProductDetail.textContent = '- ' + formatRupiah(state.voucherDiscount);
-              
-              // Set label langsung dengan desc (🎁 Diskon 10% atau 🎁 Potongan Rp 50.000)
-              voucherProductLabel.textContent = `🎁 ${state.voucherDesc}`;
-              
-              console.log('✅ Voucher ditampilkan:', state.voucherDesc, '-', formatRupiah(state.voucherDiscount));
-            } else {
-              voucherProductRow.style.display = 'none';
-            }
-          }
-          
-          // 3.6. Update SHIPPING DISCOUNT ROW
-          const shippingDiscountRow = document.getElementById('shipping-discount-row');
-          const shippingDiscountLabel = document.getElementById('shipping-discount-label');
-          const shippingDiscountDetail = document.getElementById('shipping-discount-detail');
-          if (shippingDiscountRow && shippingDiscountLabel && shippingDiscountDetail) {
-            if (state.shippingDiscount > 0 && state.shippingDesc) {
-              shippingDiscountRow.style.display = 'flex';
-              shippingDiscountDetail.textContent = '- ' + formatRupiah(state.shippingDiscount);
-              
-              // Set label langsung dengan desc (🎁 Gratis Ongkir atau 🎁 Diskon Ongkir 50%)
-              shippingDiscountLabel.textContent = `🎁 ${state.shippingDesc}`;
-              
-              console.log('✅ Shipping discount ditampilkan:', state.shippingDesc, '-', formatRupiah(state.shippingDiscount));
-            } else {
-              shippingDiscountRow.style.display = 'none';
-            }
-          }
-          
-          // 4. Update TOTAL AKHIR
-          const shipping = state.shipping || 25000; // Default ongkir
-          const finalTotal = total + shipping - state.shippingDiscount - state.voucherDiscount;
-          
-          const totalFinalEl = document.getElementById('total-final');
-          if (totalFinalEl) {
-            totalFinalEl.textContent = formatRupiah(Math.max(0, finalTotal));
-            console.log('✅ Updated total-final:', formatRupiah(finalTotal));
-          } else {
-            console.error('❌ total-final NOT FOUND');
-          }
-          
-          // 5. Enable/Disable TOMBOL BAYAR
-          const btnPayNow = document.getElementById('btn-pay-now');
-          if (btnPayNow) {
-            if (count === 0) {
-              btnPayNow.disabled = true;
-              btnPayNow.style.opacity = '0.5';
-              btnPayNow.style.cursor = 'not-allowed';
-              console.log('🔒 Tombol bayar DISABLED (ga ada item)');
-            } else {
-              btnPayNow.disabled = false;
-              btnPayNow.style.opacity = '1';
-              btnPayNow.style.cursor = 'pointer';
-              console.log('✅ Tombol bayar ENABLED');
-            }
-          } else {
-            console.error('❌ btn-pay-now NOT FOUND');
-          }
-          
-          console.log('═══════════════════════════════');
-        }, 100);
-      }
 
       // Format Rupiah
       function formatRupiah(amount) {
@@ -3604,9 +3413,7 @@
         // Update tombol promo item
         updatePromoItemButton(code, desc);
 
-        // ✅ PENTING: Panggil recalculate supaya voucher row muncul!
-        recalculateFromCheckboxes();
-        
+        updatePriceDisplay(); // Update tampilan ringkasan
         showNotification('✅ Voucher item berhasil diterapkan!', 'success');
         closeOffcanvasItem();
       }
@@ -3668,9 +3475,7 @@
         // Update tombol promo shipping
         updatePromoShippingButton(code, desc);
 
-        // ✅ PENTING: Panggil recalculate supaya shipping discount row muncul!
-        recalculateFromCheckboxes();
-        
+        updatePriceDisplay(); // Update tampilan ringkasan
         showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
         closeOffcanvasShipping();
       }
@@ -3790,7 +3595,7 @@
         updatePromoItemButton(null, null);
 
         attachPromoItemEvents();
-        recalculateFromCheckboxes(); // ✅ PENTING: Update tampilan!
+        updatePriceDisplay(); // Update tampilan
         showNotification('✅ Promo item berhasil dihapus', 'success');
       }
 
@@ -3842,7 +3647,7 @@
         updatePromoShippingButton(null, null);
 
         attachPromoShippingEvents();
-        recalculateFromCheckboxes(); // ✅ PENTING: Update tampilan!
+        updatePriceDisplay(); // Update tampilan
         showNotification('✅ Promo ongkir berhasil dihapus', 'success');
       }
 
@@ -3953,45 +3758,36 @@
       }
 
       // Payment Modal Functions
-      function openPaymentModal() {
-        openModal('payment-modal');
-        updatePriceDisplay();
-      }
-
-      function closePaymentModal() {
-        closeModal('payment-modal');
-        state.selectedPayment = null;
-        document.querySelectorAll('input[name="payment"]').forEach(input => {
-          input.checked = false;
-        });
-        document.querySelectorAll('.payment-option').forEach(option => {
-          option.classList.remove('selected');
-        });
-        document.getElementById('btn-confirm-payment').disabled = true;
-      }
-
-      // Process Payment - FIXED: Insert ke database + HAPUS CART YANG CHECKED
+      // Process Payment - UPDATED: Ambil payment method dari dropdown
       function processPayment() {
-        if (!state.selectedPayment) {
+        // Ambil metode pembayaran dari dropdown
+        const paymentSelect = document.getElementById('payment-method-select');
+        const selectedPayment = paymentSelect ? paymentSelect.value : null;
+        
+        if (!selectedPayment) {
           showNotification('⚠️ Pilih metode pembayaran terlebih dahulu', 'error');
           return;
         }
         
-        // Ambil semua cart ID yang checked
+        // Ambil semua cart ID dari product items (semua yang tampil di halaman)
         const checkedCartIds = [];
-        document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
-          checkedCartIds.push(checkbox.getAttribute('data-id-cart'));
+        document.querySelectorAll('.product-item').forEach(item => {
+          const cartId = item.getAttribute('data-id-cart');
+          if (cartId) {
+            checkedCartIds.push(cartId);
+          }
         });
         
-        // Validasi: harus ada minimal 1 item yang checked
+        // Validasi: harus ada minimal 1 item
         if (checkedCartIds.length === 0) {
-          showNotification('⚠️ Pilih minimal 1 produk untuk checkout', 'error');
+          showNotification('⚠️ Keranjang kosong', 'error');
           return;
         }
 
-        const btnConfirm = document.getElementById('btn-confirm-payment');
+        const btnConfirm = document.getElementById('btn-pay-now');
         const originalText = btnConfirm.innerHTML;
         btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...';
+        btnConfirm.disabled = true;
         btnConfirm.disabled = true;
 
         // Hitung total pembayaran
@@ -3999,13 +3795,14 @@
         const ongkir = state.shipping - state.shippingDiscount;
 
         // Map metode pembayaran ke format database
-        // Map metode pembayaran ke format database
         const metodePembayaranMap = {
           'bca': 'Rekening',
-          'mandiri': 'Rekening'
+          'mandiri': 'Rekening',
+          'bni': 'Rekening',
+          'bri': 'Rekening'
         };
 
-        const metodePembayaran = metodePembayaranMap[state.selectedPayment] || 'Rekening';
+        const metodePembayaran = metodePembayaranMap[selectedPayment] || 'Rekening';
 
         // Prepare data untuk dikirim
         const dataTransaksi = {
@@ -4035,8 +3832,7 @@
               // Simpan ID transaksi yang baru dibuat
               const idTransaksi = result.id_transaksi || result.data?.id_transaksi;
 
-              closePaymentModal();
-              showPaymentSuccess(idTransaksi);
+              showPaymentSuccess(idTransaksi, selectedPayment);
               showNotification('✅ Pembayaran berhasil!', 'success');
               
               // REDIRECT KE HALAMAN HOME SETELAH 2 DETIK
@@ -4058,20 +3854,19 @@
       }
 
       // Show Payment Success
-      function showPaymentSuccess(idTransaksi) {
+      function showPaymentSuccess(idTransaksi, selectedPayment) {
         // Gunakan ID transaksi dari database atau generate fallback
         const orderId = idTransaksi || 'ORDER-' + new Date().getFullYear() + '-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
         document.getElementById('generated-order-id').textContent = orderId;
 
         const paymentMethods = {
-          'gopay': 'GoPay',
-          'ovo': 'OVO',
-          'dana': 'DANA',
           'bca': 'Bank BCA',
           'mandiri': 'Bank Mandiri',
+          'bni': 'Bank BNI',
+          'bri': 'Bank BRI'
         };
 
-        document.getElementById('selected-payment-method').textContent = paymentMethods[state.selectedPayment] || state.selectedPayment;
+        document.getElementById('selected-payment-method').textContent = paymentMethods[selectedPayment] || selectedPayment;
         document.getElementById('paid-amount').textContent = formatRupiah(calculateTotal());
 
         const now = new Date();
@@ -4103,22 +3898,6 @@
       document.addEventListener('DOMContentLoaded', function() {
         
         console.log('🚀 DOM Loaded - Initializing checkout...');
-        
-        // OPTIMASI: Lazy init checkbox events (cuma attach sekali)
-        const checkboxes = document.querySelectorAll('.item-checkbox');
-        console.log('✅ Found', checkboxes.length, 'checkboxes');
-        
-        checkboxes.forEach((checkbox, index) => {
-          console.log('  📌 Attaching listener to checkbox', index + 1, '- ID:', checkbox.id);
-          checkbox.addEventListener('change', function() {
-            console.log('🔔 Checkbox changed:', checkbox.id, 'Checked:', checkbox.checked);
-            recalculateFromCheckboxes();
-          });
-        });
-        
-        // Init: Calculate first time (ONCE)
-        console.log('🔄 Initial calculation...');
-        recalculateFromCheckboxes();
         
         // ✨ BOTTOM SHEET - Swipe & Click Handler (Mobile Only)
         if (window.innerWidth <= 768) {
@@ -4367,40 +4146,18 @@
           });
         }
 
-        // Checkout button
+        // Checkout button - UPDATED: Langsung process payment (ga buka modal)
         const btnCheckout = document.getElementById('btn-pay-now');
         if (btnCheckout) {
           btnCheckout.addEventListener('click', function() {
-            openPaymentModal();
+            processPayment(); // Langsung proses payment
           });
-        }
-
-        // Payment method selection
-        const paymentOptions = document.querySelectorAll('.payment-option');
-        paymentOptions.forEach(option => {
-          option.addEventListener('click', function() {
-            const radio = this.querySelector('input[type="radio"]');
-            radio.checked = true;
-
-            paymentOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-
-            state.selectedPayment = radio.value;
-            document.getElementById('btn-confirm-payment').disabled = false;
-          });
-        });
-
-        // Confirm payment button
-        const btnConfirmPayment = document.getElementById('btn-confirm-payment');
-        if (btnConfirmPayment) {
-          btnConfirmPayment.addEventListener('click', processPayment);
         }
 
         // Keyboard
         document.addEventListener('keydown', function(e) {
           if (e.key === 'Escape') {
             closeModal('alamat-modal');
-            closePaymentModal();
             closeModal('modalAlamat');
             closeOffcanvasItem();
             closeOffcanvasShipping();

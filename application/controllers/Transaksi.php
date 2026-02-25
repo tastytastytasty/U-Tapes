@@ -6,7 +6,8 @@ class Transaksi extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('Transaksi_model');
-        $this->load->model('M_pembayaran');  // ← tambahan
+        $this->load->model('M_pembayaran');
+        $this->load->model('Checkout_model'); // ✅ TAMBAHAN: Load Checkout_model
         $this->load->library('session');
         
         // Pastikan user sudah login
@@ -23,6 +24,9 @@ class Transaksi extends CI_Controller {
         // Set header JSON
         header('Content-Type: application/json');
 
+        // ✅ START DATABASE TRANSACTION
+        $this->db->trans_start();
+
         try {
             // Ambil data dari POST
             $total             = $this->input->post('total');
@@ -32,6 +36,7 @@ class Transaksi extends CI_Controller {
 
             // Validasi data
             if (empty($total) || empty($metode_pembayaran)) {
+                $this->db->trans_rollback();
                 echo json_encode([
                     'success' => false,
                     'message' => 'Data tidak lengkap'
@@ -42,9 +47,25 @@ class Transaksi extends CI_Controller {
             // Validasi metode pembayaran
             $valid_methods = ['Tunai', 'E-wallet', 'Rekening'];
             if (!in_array($metode_pembayaran, $valid_methods)) {
+                $this->db->trans_rollback();
                 echo json_encode([
                     'success' => false,
                     'message' => 'Metode pembayaran tidak valid'
+                ]);
+                return;
+            }
+
+            // Ambil ID Customer dari session
+            $id_customer = $this->session->userdata('id_customer');
+
+            // ===== 1. AMBIL CART ITEMS (CHECKLIST YES) =====
+            $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
+
+            if (empty($checkout_items)) {
+                $this->db->trans_rollback();
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Keranjang kosong atau tidak ada item yang dipilih'
                 ]);
                 return;
             }
@@ -54,9 +75,6 @@ class Transaksi extends CI_Controller {
 
             // Generate No Nota (Invoice)
             $no_nota = $this->generate_no_nota();
-
-            // Ambil ID Customer dari session
-            $id_customer = $this->session->userdata('id_customer');
 
             // Prepare data untuk insert
             $data_transaksi = [
@@ -71,10 +89,11 @@ class Transaksi extends CI_Controller {
                 'status_transaksi'  => 'dikemas'
             ];
 
-            // Insert transaksi ke database
+            // ===== 2. INSERT TRANSAKSI =====
             $insert = $this->Transaksi_model->insert($data_transaksi);
 
             if (!$insert) {
+                $this->db->trans_rollback();
                 echo json_encode([
                     'success' => false,
                     'message' => 'Gagal menyimpan transaksi'
@@ -82,22 +101,68 @@ class Transaksi extends CI_Controller {
                 return;
             }
 
-            // ===== INSERT PEMBAYARAN =====
-            $this->M_pembayaran->insert([
+            // ===== 3. INSERT PEMBAYARAN =====
+            $insert_payment = $this->M_pembayaran->insert([
                 'tanggal'      => date('Y-m-d H:i:s'),
                 'id_transaksi' => $id_transaksi,
                 'status'       => 'Menunggu'
             ]);
 
+            if (!$insert_payment) {
+                $this->db->trans_rollback();
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Gagal membuat pembayaran'
+                ]);
+                return;
+            }
+
+            // ===== 4. KURANGI STOK ITEM =====
+            $reduce_stock = $this->Checkout_model->reduce_stock($checkout_items);
+
+            if (!$reduce_stock) {
+                $this->db->trans_rollback();
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Gagal mengurangi stok. Mungkin stok tidak cukup.'
+                ]);
+                return;
+            }
+
+            // ===== 5. HAPUS ITEM DARI CART (CHECKLIST YES) =====
+            $clear_cart = $this->Checkout_model->clear_checkout_items($id_customer);
+
+            if (!$clear_cart) {
+                $this->db->trans_rollback();
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Gagal menghapus item dari keranjang'
+                ]);
+                return;
+            }
+
+            // ✅ COMMIT TRANSACTION
+            $this->db->trans_complete();
+
+            if ($this->db->trans_status() === FALSE) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Transaksi gagal. Silakan coba lagi.'
+                ]);
+                return;
+            }
+
+            // ✅ SUCCESS
             echo json_encode([
                 'success'      => true,
-                'message'      => 'Transaksi berhasil disimpan',
+                'message'      => 'Transaksi berhasil! Item sudah dihapus dari keranjang.',
                 'id_transaksi' => $id_transaksi,
                 'no_nota'      => $no_nota,
                 'data'         => $data_transaksi
             ]);
 
         } catch (Exception $e) {
+            $this->db->trans_rollback();
             echo json_encode([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
