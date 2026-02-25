@@ -97,21 +97,30 @@
 		z-index: 5;
 	}
 
-	.color-out {
+	.color-out .color-circle {
+		opacity: 0.45;
 		position: relative;
+		outline: 2px solid #ccc;
+		outline-offset: 2px;
 	}
 
-	.color-out::after {
-        content: "";
-        position: absolute;
-        top: 40%;
-        left: -5px;
-        width: 110%;
-        height: 5px;
-        background: #ff0019;
-        transform: rotate(-35deg);
-        pointer-events: none;
-    }
+	.color-out .color-circle::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 140%;
+		height: 2px;
+		background: #aaa;
+		transform: translate(-50%, -50%) rotate(-45deg);
+		pointer-events: none;
+		border-radius: 2px;
+	}
+
+	.color-out {
+		pointer-events: none;
+		cursor: not-allowed !important;
+	}
 
 	.color-radio input {
 		display: none;

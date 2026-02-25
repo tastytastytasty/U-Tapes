@@ -135,20 +135,22 @@
                         </div>
                         <main id="gallery">
                             <div class="main-img" style="position: relative;">
-                                <?php if ($item->is_new): ?>
-                                    <span style="position: absolute;top: 10px;left: 10px;
-                                        z-index: 10;padding: 4px 10px;font-size: 13px;font-weight: 600;
-                                        color: #fff;background: #0d6efd;
-                                        border-radius: 4px; position: static !important;">Baru
-                                    </span>
-                                <?php endif; ?>
-                                <?php if ($item->is_sale): ?>
-                                    <div style="min-height: 29px;">
-                                        <span id="discount-badge"
-                                            style="display: none; padding: 4px 10px; font-size: 13px; font-weight: 600; color: #fff; background: #dc3545; border-radius: 4px;">
+
+                                <div class="d-flex gap-2 flex-wrap"
+                                    style="position: absolute; top: 10px; left: 10px; z-index: 10;">
+                                    <?php if ($item->is_new): ?>
+                                        <span style="padding: 4px 10px; font-size: 13px; font-weight: 600;
+                                            color: #fff; background: #0d6efd; border-radius: 4px;">
+                                            Baru
                                         </span>
-                                    </div>
-                                <?php endif; ?>
+                                    <?php endif; ?>
+                                    <?php if ($item->is_sale): ?>
+                                        <span id="discount-badge" style="display: none; padding: 4px 10px; font-size: 13px; font-weight: 600;
+                                            color: #fff; background: #dc3545; border-radius: 4px;">
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+
                                 <img src="<?= base_url('assets/images/item/' . $gambar_detail) ?>"
                                     class="product-main-img" id="current" alt="#" style="object-fit: contain;">
                             </div>
@@ -209,12 +211,7 @@
                                             $badge_text_warna = '';
                                             if ($promo_warna && ($promo_warna->persen_promo > 0 || $promo_warna->harga_promo > 0)) {
                                                 $ada_diskon_warna = true;
-
-                                                if ($promo_warna->persen_promo > 0) {
-                                                    $badge_text_warna = '%';
-                                                } elseif ($promo_warna->harga_promo > 0) {
-                                                    $badge_text_warna = 'Rp';
-                                                }
+                                                $badge_text_warna = '%';
                                             }
                                             ?>
                                             <div class="card d-flex justify-content-center align-items-center position-relative"
@@ -225,8 +222,7 @@
                                                         <?= $badge_text_warna ?>
                                                     </span>
                                                 <?php endif; ?>
-                                                <label
-                                                    class="color-radio d-flex align-items-center m-0 <?= ($w->total_stok <= 0 ? 'color-out' : '') ?>"
+                                                <label class="color-radio d-flex align-items-center m-0"
                                                     style="cursor:pointer;">
                                                     <input type="radio" name="warna" value="<?= $w->warna ?>"
                                                         <?= $w->warna == $default_warna ? 'checked' : '' ?>
@@ -234,8 +230,13 @@
                                                     <span class="color-circle mb-1 me-2"
                                                         style="width:30px; height:30px; border-radius:50%; background-color:<?= $w->kode_hex ?>;">
                                                     </span>
-                                                    <span style="font-size:13px;font-weight:500;"
-                                                        class="<?= ($w->total_stok <= 0 ? 'text-muted text-decoration-line-through' : 'text-dark') ?>">
+                                                    <?php if ($w->total_stok <= 0): ?>
+                                                        <span
+                                                            style="position: absolute; top: -6px; right: -6px; background: #dc3545; color: #fff; border-radius: 999px; min-width: 25px; height: 25px; padding: 0 5px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;">
+                                                            Habis
+                                                        </span>
+                                                    <?php endif; ?>
+                                                    <span style="font-size:13px;font-weight:500;" class="text-dark">
                                                         <?= $w->warna ?>
                                                     </span>
                                                 </label>

@@ -2795,7 +2795,7 @@
             <div class="product-item" data-id-cart="<?= $item->id_cart ?>" data-price="<?= $subtotal ?>">
               
               <div class="product-img-wrapper">
-                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                <img src="<?= base_url('assets/images/item/' . $item->gambar) ?>" 
                      class="product-img" 
                      alt="<?= htmlspecialchars($item->nama_item) ?>"
                      onerror="if(!this.dataset.errored){this.dataset.errored=1;this.src='<?= base_url('assets/images/no-image.jpg') ?>';}">

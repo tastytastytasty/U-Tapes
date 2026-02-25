@@ -200,7 +200,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                         <div class="navbar-cart">
                             <div class="cart-items me-3">
-                                <a href="<?=site_url('promo')?>" class="main-btn">
+                                <a href="<?= site_url('promo') ?>" class="main-btn">
                                     <i class="lni lni-ticket"></i>
                                 </a>
                             </div>
@@ -278,7 +278,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="shopping-item">
                                         <div class="dropdown-cart-header">
                                             <span id="cart-count"><?= $cart_count ?> Item</span>
-                                            <a href="<?= site_url('checkout') ?>">Lihat Semua</a>
+                                            <a href="<?= site_url('keranjang') ?>">Lihat Semua</a>
                                         </div>
                                         <ul class="shopping-list" id="cart-list">
                                             <?php if (!empty($cart_items)): ?>
@@ -286,8 +286,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 $total_items = count($cart_items);
                                                 $displayed_items = array_slice($cart_items, 0, 3);
                                                 $remaining_items = $total_items - 3;
-                                                ?>
-                                                <?php foreach ($displayed_items as $c): ?>
+                                                foreach ($displayed_items as $c):
+                                                    $harga_asli = $c->harga * $c->qty;
+                                                    $harga_diskon = $harga_asli;
+                                                    if ($c->is_sale) {
+                                                        if ($c->persen_promo > 0) {
+                                                            $harga_diskon = $harga_asli - ($harga_asli * $c->persen_promo / 100);
+                                                        } elseif ($c->harga_promo > 0) {
+                                                            $harga_diskon = $harga_asli - ($c->harga_promo * $c->qty);
+                                                        }
+                                                    } ?>
                                                     <li id="nav-cart-<?= $c->id_cart ?>">
                                                         <a href="javascript:void(0)" class="remove btn-remove-cart"
                                                             data-cart="<?= $c->id_cart ?>">
@@ -309,21 +317,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                 <small class="text-muted">Stok: <?= $c->stok ?></small>
                                                             </div>
                                                             <div class="mt-2 d-flex justify-content-between gap-2">
-                                                               <div class="input-group input-group-sm" style="max-width:100px">
+                                                                <div class="input-group input-group-sm" style="max-width:100px">
                                                                     <button class="btn btn-outline-primary cart-qty-minus"
                                                                         data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
                                                                         data-stok="<?= $c->stok ?>" type="button">−</button>
-                                                                    <input type="number" class="form-control cart-qty-input text-center"
-                                                                        id="cart-qty-<?= $c->id_cart ?>" data-cart="<?= $c->id_cart ?>"
-                                                                        data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
-                                                                        min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>">
+                                                                    <input type="number"
+                                                                        class="form-control cart-qty-input text-center"
+                                                                        id="cart-qty-<?= $c->id_cart ?>"
+                                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                        data-stok="<?= $c->stok ?>"
+                                                                        data-persen="<?= $c->persen_promo ?>"
+                                                                        data-promo="<?= $c->harga_promo ?>"
+                                                                        data-issale="<?= $c->is_sale ?>" min="1"
+                                                                        max="<?= $c->stok ?>" value="<?= $c->qty ?>">
                                                                     <button class="btn btn-outline-primary cart-qty-plus"
                                                                         data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
                                                                         data-stok="<?= $c->stok ?>" type="button">+</button>
-                                                                </div> <div class="quantity mt-2">
+                                                                </div>
+                                                                <div class="quantity mt-2">
                                                                     <h6 class="amount text-dark mb-0"
                                                                         id="item-total-<?= $c->id_cart ?>">
-                                                                        Rp <?= number_format($c->harga * $c->qty, 0, ',', '.') ?>
+                                                                        Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
                                                                     </h6>
                                                                 </div>
                                                             </div>
@@ -332,7 +346,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <?php endforeach ?>
                                                 <?php if ($remaining_items > 0): ?>
                                                     <li style="text-align: center; padding: 10px; background: #f8f9fa;">
-                                                        <a href="<?= site_url('checkout') ?>"
+                                                        <a href="<?= site_url('keranjang') ?>"
                                                             style="color: #0d6efd; text-decoration: none;">
                                                             <strong><?= $remaining_items ?> produk lainnya...</strong>
                                                         </a>
@@ -456,6 +470,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <button type="button" class="btn btn-danger" id="btnConfirmDelete">
                         Ya, hapus
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalConfirm" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="lni lni-warning text-warning mb-3" style="font-size:50px;"></i>
+                    <p id="modalConfirmMsg" class="fs-6 mb-0"></p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="modalConfirmOk">Hapus</button>
                 </div>
             </div>
         </div>
@@ -619,6 +647,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/js/glightbox.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/main.js') ?>"></script>
     <script>
+        function formatRupiah(angka) {
+            return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        function showAlert(message, type = 'error') {
+            Swal.fire({
+                toast: true,
+                position: 'top',
+                icon: type,
+                title: message,
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        }
         $(document).ready(function () {
             $(document).on('click', '.cart-qty-plus', function (e) {
                 e.preventDefault();
@@ -668,6 +715,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             function updateCartQuantity(cartId, qty, price, stok) {
                 if (qty < 1) qty = 1;
                 if (qty > stok) qty = stok;
+                var allInputs = $('.cart-qty-input[data-cart="' + cartId + '"]');
+                var qtyInput = allInputs.filter('[data-persen]').first();
+
+                var hargaSatuan = parseFloat(qtyInput.attr('data-price')) || 0;
+                var diskonPersen = parseFloat(qtyInput.attr('data-persen')) || 0;
+                var diskonRp = parseFloat(qtyInput.attr('data-promo')) || 0;
+                var isSale = qtyInput.attr('data-issale') == '1';
                 $.ajax({
                     url: '<?= site_url("keranjang/update_quantity") ?>',
                     type: 'POST',
@@ -684,24 +738,59 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     success: function (response) {
                         if (response.success) {
                             $('#cart-qty-' + cartId).val(qty);
-                            var itemTotal = qty * price;
-                            $('#item-total-' + cartId).text('Rp ' + formatRupiah(itemTotal));
+                            $('.cart-qty-input[data-cart="' + cartId + '"]').val(qty);
+                            var hargaAsli = hargaSatuan * qty;
+                            var hargaDiskon = hargaAsli;
+                            if (isSale) {
+                                if (diskonPersen > 0) {
+                                    hargaDiskon = hargaAsli - (hargaAsli * diskonPersen / 100);
+                                } else if (diskonRp > 0) {
+                                    hargaDiskon = hargaAsli - (diskonRp * qty);
+                                }
+                            }
+                            $('#item-harga-asli-' + cartId).text('Rp ' + formatRupiah(Math.round(hargaAsli)));
+                            if ($('#item-harga-diskon-' + cartId).length) {
+                                $('#item-harga-diskon-' + cartId).text('Rp ' + formatRupiah(Math.round(hargaDiskon)));
+                            }
+                            $('#item-total-' + cartId).text('Rp ' + formatRupiah(Math.round(hargaDiskon)));
+                            var newTotalAsli = 0;
+                            var newTotalDiskon = 0;
+                            $('#cart-items-wrapper .cart-qty-input').each(function () {
+                                var itemQty = parseInt($(this).val()) || 0;
+                                var itemHarga = parseFloat($(this).attr('data-price')) || 0;
+                                var itemPersen = parseFloat($(this).attr('data-persen')) || 0;
+                                var itemPromo = parseFloat($(this).attr('data-promo')) || 0;
+                                var itemIsSale = $(this).attr('data-issale') == '1';
+
+                                var itemAsli = itemHarga * itemQty;
+                                var itemDiskon = itemAsli;
+
+                                if (itemIsSale) {
+                                    if (itemPersen > 0) {
+                                        itemDiskon = itemAsli - (itemAsli * itemPersen / 100);
+                                    } else if (itemPromo > 0) {
+                                        itemDiskon = itemAsli - (itemPromo * itemQty);
+                                    }
+                                }
+
+                                newTotalAsli += itemAsli;
+                                newTotalDiskon += itemDiskon;
+                            });
+                            var newPotongan = newTotalAsli - newTotalDiskon;
+                            $('#summary-harga-asli').text('Rp ' + formatRupiah(Math.round(newTotalAsli)));
+                            $('#summary-potongan').text(newPotongan > 0 ? '- Rp ' + formatRupiah(Math.round(newPotongan)) : '-');
+                            $('#summary-total-akhir').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
                             $('#cart-total').text('Rp ' + formatRupiah(response.cart_total));
                             if (qty >= stok) {
                                 $('.cart-qty-plus[data-cart="' + cartId + '"]')
-                                    .prop('disabled', true)
-                                    .addClass('disabled');
+                                    .prop('disabled', true).addClass('disabled');
                             } else {
                                 $('.cart-qty-plus[data-cart="' + cartId + '"]')
                                     .removeClass('disabled');
                             }
                         } else {
-                            alert(response.message || 'Gagal mengupdate keranjang');
+                            showAlert(response.message || 'Gagal mengupdate keranjang');
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('AJAX Error:', xhr.responseText);
-                        alert('Terjadi kesalahan saat mengupdate keranjang');
                     },
                     complete: function () {
                         $('.cart-qty-plus[data-cart="' + cartId + '"]').prop('disabled', false);
@@ -754,9 +843,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $(this).val(qty);
                 });
             }
-            function formatRupiah(angka) {
-                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
             $('.cart-qty-input').each(function () {
                 var cartId = $(this).data('cart');
                 var qty = parseInt($(this).val());
@@ -768,6 +854,81 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         .addClass('disabled');
                 }
             });
+        });
+        $(document).on('change', '#selectAll', function () {
+            var isChecked = $(this).is(':checked');
+            $('.item-checkbox').each(function () {
+                if ($(this).is(':checked') !== isChecked) {
+                    $(this).prop('checked', isChecked).trigger('change');
+                }
+            });
+        });
+
+        $(document).on('change', '.item-checkbox', function () {
+            var total = $('.item-checkbox').length;
+            var checked = $('.item-checkbox:checked').length;
+            $('#selectAll').prop('checked', total === checked);
+
+            var idCart = $(this).data('id-cart');
+            var checklist = $(this).is(':checked') ? 'Yes' : 'No';
+
+            $.ajax({
+                url: '<?= site_url("keranjang/update_checklist") ?>',
+                type: 'POST',
+                data: { id_cart: idCart, checklist: checklist },
+                dataType: 'json',
+                success: function (response) {
+                    if (!response.success) {
+                        showAlert(response.message || 'Gagal update checklist');
+                    }
+                },
+                error: function () {
+                    showAlert('Terjadi kesalahan saat update checklist');
+                }
+            });
+            updateSummaryByChecklist();
+        });
+        function updateSummaryByChecklist() {
+            var newTotalAsli = 0;
+            var newTotalDiskon = 0;
+
+            $('#cart-items-wrapper .item-checkbox:checked').each(function () {
+                var idCart = $(this).attr('data-id-cart');
+                var input = $('#cart-items-wrapper .cart-qty-input[data-cart="' + idCart + '"]');
+
+                var itemQty = parseInt(input.val()) || 0;
+                var itemHarga = parseFloat(input.attr('data-price')) || 0;
+                var itemPersen = parseFloat(input.attr('data-persen')) || 0;
+                var itemPromo = parseFloat(input.attr('data-promo')) || 0;
+                var itemIsSale = input.attr('data-issale') == '1';
+
+                var itemAsli = itemHarga * itemQty;
+                var itemDiskon = itemAsli;
+
+                if (itemIsSale) {
+                    if (itemPersen > 0) {
+                        itemDiskon = itemAsli - (itemAsli * itemPersen / 100);
+                    } else if (itemPromo > 0) {
+                        itemDiskon = itemAsli - (itemPromo * itemQty);
+                    }
+                }
+
+                newTotalAsli += itemAsli;
+                newTotalDiskon += itemDiskon;
+            });
+
+            var newPotongan = newTotalAsli - newTotalDiskon;
+
+            $('#summary-harga-asli').text('Rp ' + formatRupiah(Math.round(newTotalAsli)));
+            $('#summary-potongan').text(newPotongan > 0 ? '- Rp ' + formatRupiah(Math.round(newPotongan)) : '-');
+            $('#summary-total-akhir').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
+        }
+        $(document).on('click', 'a[href*="checkout"]', function (e) {
+            var checked = $('.item-checkbox:checked').length;
+            if (checked === 0) {
+                e.preventDefault();
+                showAlert('Pilih minimal 1 produk sebelum checkout!');
+            }
         });
     </script>
     <script type="text/javascript">
@@ -1117,6 +1278,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     }
                 });
             });
+        function ShowConfirm(message, onConfirm) {
+            $('#modalConfirmMsg').text(message);
+            $('#modalConfirm').modal('show');
+            $('#modalConfirmOk').off('click').on('click', function () {
+                $('#modalConfirm').modal('hide');
+                onConfirm();
+            });
+        }
+        $(document).on('click', '.btn-hapus-item', function () {
+            var idCart = $(this).data('id-cart');
+
+            ShowConfirm('Hapus item ini dari keranjang?', function () {
+                $.ajax({
+                    url: '<?= site_url("keranjang/hapus_item") ?>',
+                    type: 'POST',
+                    data: { id_cart: idCart },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            var $item = $('#cart-' + idCart);
+
+                            $item.fadeOut(300, function () {
+                                $(this).remove();
+                                updateSummaryByChecklist();
+
+                                var sisa = $('.cart-item').length;
+                                if (sisa === 0) {
+                                    $('#cart-items-wrapper').remove();
+                                    $('#cart-empty').removeClass('d-none').show();
+                                }
+                            });
+                        } else {
+                            ShowAlert(response.message || 'Gagal menghapus item');
+                        }
+                    },
+                    error: function () {
+                        ShowAlert('Terjadi kesalahan saat menghapus item');
+                    }
+                });
+            });
+        });
     </script>
     <script>
         let typingTimer;

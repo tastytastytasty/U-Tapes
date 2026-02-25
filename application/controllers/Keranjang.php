@@ -163,9 +163,20 @@ class Keranjang extends MY_Controller
             ]);
             return;
         }
-        $this->db->select('SUM(c.qty * id.harga) as cart_total, SUM(c.qty) as total_items');
+        $this->db->select('
+            SUM(
+                CASE 
+                    WHEN p.persen_promo > 0 THEN (c.qty * id.harga) - ((c.qty * id.harga) * p.persen_promo / 100)
+                    WHEN p.harga_promo > 0 THEN (c.qty * id.harga) - (p.harga_promo * c.qty)
+                    ELSE c.qty * id.harga
+                END
+            ) as cart_total,
+            SUM(c.qty) as total_items
+        ');
         $this->db->from('cart c');
         $this->db->join('item_detail id', 'c.id_item_detail = id.id_item_detail');
+        $this->db->join('promo_detail pd', 'pd.id_item_detail = id.id_item_detail', 'left');
+        $this->db->join('promo p', 'p.id_promo = pd.id_promo', 'left');
         $this->db->where('c.id_customer', $id_customer);
         $result = $this->db->get()->row();
         echo json_encode([
@@ -173,6 +184,62 @@ class Keranjang extends MY_Controller
             'cart_total' => $result->cart_total ?? 0,
             'total_items' => $result->total_items ?? 0,
             'message' => 'Keranjang berhasil diupdate'
+        ]);
+    }
+    public function update_checklist()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+            return;
+        }
+
+        $id_customer = $this->session->userdata('id_customer');
+        if (!$id_customer) {
+            echo json_encode(['success' => false, 'message' => 'Silakan login terlebih dahulu']);
+            return;
+        }
+
+        $id_cart = $this->input->post('id_cart');
+        $checklist = $this->input->post('checklist') === 'Yes' ? 'Yes' : 'No';
+
+        if (empty($id_cart)) {
+            echo json_encode(['success' => false, 'message' => 'Data tidak valid']);
+            return;
+        }
+
+        $update = $this->db
+            ->where('id_cart', $id_cart)
+            ->where('id_customer', $id_customer)
+            ->update('cart', ['checklist' => $checklist]);
+
+        echo json_encode([
+            'success' => $update,
+            'message' => $update ? 'Checklist berhasil diupdate' : 'Gagal update checklist'
+        ]);
+    }
+    public function hapus_item()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+            return;
+        }
+        $id_customer = $this->session->userdata('id_customer');
+        if (!$id_customer) {
+            echo json_encode(['success' => false, 'message' => 'Silakan login terlebih dahulu']);
+            return;
+        }
+        $id_cart = $this->input->post('id_cart');
+        if (empty($id_cart)) {
+            echo json_encode(['success' => false, 'message' => 'Data tidak valid']);
+            return;
+        }
+        $delete = $this->db
+            ->where('id_cart', $id_cart)
+            ->where('id_customer', $id_customer)
+            ->delete('cart');
+        echo json_encode([
+            'success' => $delete,
+            'message' => $delete ? 'Item berhasil dihapus' : 'Gagal menghapus item'
         ]);
     }
 }

@@ -19,6 +19,8 @@ class Checkout_model extends CI_Model
                 item_detail.warna,
                 item_detail.ukuran,
                 item_detail.harga,
+                item_detail.gambar
+                item_detail.harga,
                 item_detail.stok
             ')
             ->from('cart')
