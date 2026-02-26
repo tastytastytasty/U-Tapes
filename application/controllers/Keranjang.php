@@ -166,6 +166,7 @@ class Keranjang extends MY_Controller
         $this->db->select('
             SUM(
                 CASE 
+                    WHEN id.stok <= 0 THEN 0
                     WHEN p.persen_promo > 0 THEN (c.qty * id.harga) - ((c.qty * id.harga) * p.persen_promo / 100)
                     WHEN p.harga_promo > 0 THEN (c.qty * id.harga) - (p.harga_promo * c.qty)
                     ELSE c.qty * id.harga

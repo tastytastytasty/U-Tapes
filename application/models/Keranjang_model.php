@@ -57,6 +57,7 @@ class Keranjang_model extends CI_Model
         $this->db->select('
             SUM(
                 CASE 
+                    WHEN item_detail.stok <= 0 THEN 0
                     WHEN p.persen_promo > 0 THEN (cart.qty * item_detail.harga) - ((cart.qty * item_detail.harga) * p.persen_promo / 100)
                     WHEN p.harga_promo > 0 THEN (cart.qty * item_detail.harga) - (p.harga_promo * cart.qty)
                     ELSE cart.qty * item_detail.harga

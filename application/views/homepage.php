@@ -118,7 +118,6 @@
 	}
 
 	.color-out {
-		pointer-events: none;
 		cursor: not-allowed !important;
 	}
 

@@ -114,6 +114,177 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         font-weight: 600;
     }
 
+    .login-modal-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.14), 0 4px 16px rgba(0, 0, 0, 0.08);
+        background: #ffffff;
+        animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalSlideUp {
+        from {
+            transform: translateY(24px) scale(0.97);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+    }
+
+    .login-modal-accent {
+        height: 5px;
+        background: linear-gradient(90deg, #0d397b, #0d6efd, #72aaff);
+    }
+
+    .btn-close-custom {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: #e8ebee;
+        color: #0d6efd;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .btn-close-custom:hover {
+        background: #d4d6db;
+        color: #0d397b;
+        transform: rotate(90deg);
+    }
+
+    .login-modal-icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #deebff, #c8deff);
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #111827;
+        letter-spacing: -0.02em;
+    }
+
+    .login-modal-text {
+        font-size: 0.9rem;
+        color: #6b7280;
+        line-height: 1.6;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-modal-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #0d6efd, #0d397b);
+        color: #fff !important;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        width: 100%;
+        justify-content: center;
+    }
+
+    .login-modal-btn:hover {
+        filter: brightness(1.08);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .login-modal-btn:active {
+        transform: translateY(0);
+    }
+
+    .login-modal-cancel {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+
+    .login-modal-cancel a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .login-modal-cancel a:hover {
+        color: #6b7280;
+        text-decoration: underline;
+    }
+
+    .delete-accent {
+        background: linear-gradient(90deg, #c91818, #ef4444, #ff8888) !important;
+    }
+
+    .delete-icon {
+        background: linear-gradient(135deg, #ffefef, #fadada) !important;
+        color: #ef4444 !important;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #ef4444, #c91818) !important;
+        box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35) !important;
+    }
+
+    .delete-btn:hover {
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.45) !important;
+    }
+
+    .delete-modal .btn-close-custom {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: #fee8e8;
+        color: #ef4444;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .delete-modal .btn-close-custom:hover {
+        background: #ffcbcb;
+        color: #c91818;
+    }
+    .nav-cart-item-empty {
+    position: relative;
+    }
+    .nav-cart-item-empty .remove {
+        opacity: 1 !important;
+        pointer-events: all !important;
+        z-index: 10;
+        position: relative;
+    }
+
+    .nav-cart-item-empty .input-group button:disabled,
+    .nav-cart-item-empty .input-group input:disabled {
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+
     @media (max-width: 991px) {
         .navbar-nav {
             padding: 15px 0;
@@ -287,25 +458,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 $displayed_items = array_slice($cart_items, 0, 3);
                                                 $remaining_items = $total_items - 3;
                                                 foreach ($displayed_items as $c):
+                                                    $is_empty = ($c->stok <= 0);
+
                                                     $harga_asli = $c->harga * $c->qty;
                                                     $harga_diskon = $harga_asli;
-                                                    if ($c->is_sale) {
+                                                    if (!$is_empty && $c->is_sale) {
                                                         if ($c->persen_promo > 0) {
                                                             $harga_diskon = $harga_asli - ($harga_asli * $c->persen_promo / 100);
                                                         } elseif ($c->harga_promo > 0) {
                                                             $harga_diskon = $harga_asli - ($c->harga_promo * $c->qty);
                                                         }
-                                                    } ?>
-                                                    <li id="nav-cart-<?= $c->id_cart ?>">
-                                                        <a href="javascript:void(0)" class="remove btn-remove-cart"
-                                                            data-cart="<?= $c->id_cart ?>">
+                                                    }
+                                                ?>
+                                                    <li id="nav-cart-<?= $c->id_cart ?>" class="<?= $is_empty ? 'nav-cart-item-empty' : '' ?>">
+                                                        <a href="javascript:void(0)" class="remove btn-remove-cart" data-cart="<?= $c->id_cart ?>">
                                                             <i class="lni lni-close"></i>
                                                         </a>
-                                                        <div class="row">
+                                                        <div class="row" style="<?= $is_empty ? 'opacity: 0.5;' : '' ?>">
                                                             <div class="cart-img-head">
-                                                                <a class="cart-img"
-                                                                    href="<?= site_url('detailproduct/' . $c->id_item) ?>">
-                                                                    <img src="<?= base_url('assets/images/item/' . $c->gambar) ?>">
+                                                                <a class="cart-img" href="<?= site_url('detailproduct/' . $c->id_item) ?>">
+                                                                    <img src="<?= base_url('assets/images/item/' . $c->gambar) ?>"
+                                                                        style="<?= $is_empty ? 'filter: grayscale(60%);' : '' ?>">
                                                                 </a>
                                                             </div>
                                                             <div class="content">
@@ -314,13 +487,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                         <?= $c->nama_item ?> (<?= $c->ukuran ?>)
                                                                     </a>
                                                                 </h4>
-                                                                <small class="text-muted">Stok: <?= $c->stok ?></small>
+                                                                <?php if ($is_empty): ?>
+                                                                    <small class="text-danger fw-semibold">
+                                                                        <i class="lni lni-ban"></i> Produk tidak tersedia
+                                                                    </small>
+                                                                <?php else: ?>
+                                                                    <small class="text-muted">Stok: <?= $c->stok ?></small>
+                                                                <?php endif; ?>
                                                             </div>
                                                             <div class="mt-2 d-flex justify-content-between gap-2">
                                                                 <div class="input-group input-group-sm" style="max-width:100px">
                                                                     <button class="btn btn-outline-primary cart-qty-minus"
                                                                         data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                        data-stok="<?= $c->stok ?>" type="button">−</button>
+                                                                        data-stok="<?= $c->stok ?>" type="button"
+                                                                        <?= $is_empty ? 'disabled' : '' ?>>−</button>
                                                                     <input type="number"
                                                                         class="form-control cart-qty-input text-center"
                                                                         id="cart-qty-<?= $c->id_cart ?>"
@@ -328,17 +508,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                         data-stok="<?= $c->stok ?>"
                                                                         data-persen="<?= $c->persen_promo ?>"
                                                                         data-promo="<?= $c->harga_promo ?>"
-                                                                        data-issale="<?= $c->is_sale ?>" min="1"
-                                                                        max="<?= $c->stok ?>" value="<?= $c->qty ?>">
+                                                                        data-issale="<?= $is_empty ? 0 : $c->is_sale ?>"
+                                                                        min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>"
+                                                                        <?= $is_empty ? 'disabled' : '' ?>>
                                                                     <button class="btn btn-outline-primary cart-qty-plus"
                                                                         data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                        data-stok="<?= $c->stok ?>" type="button">+</button>
+                                                                        data-stok="<?= $c->stok ?>" type="button"
+                                                                        <?= $is_empty ? 'disabled' : '' ?>>+</button>
                                                                 </div>
                                                                 <div class="quantity mt-2">
-                                                                    <h6 class="amount text-dark mb-0"
-                                                                        id="item-total-<?= $c->id_cart ?>">
-                                                                        Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
-                                                                    </h6>
+                                                                    <?php if ($is_empty): ?>
+                                                                        <h6 class="amount text-muted mb-0" id="item-total-<?= $c->id_cart ?>">-</h6>
+                                                                    <?php else: ?>
+                                                                        <h6 class="amount text-dark mb-0" id="item-total-<?= $c->id_cart ?>">
+                                                                            Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+                                                                        </h6>
+                                                                    <?php endif; ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -346,8 +531,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <?php endforeach ?>
                                                 <?php if ($remaining_items > 0): ?>
                                                     <li style="text-align: center; padding: 10px; background: #f8f9fa;">
-                                                        <a href="<?= site_url('keranjang') ?>"
-                                                            style="color: #0d6efd; text-decoration: none;">
+                                                        <a href="<?= site_url('keranjang') ?>" style="color: #0d6efd; text-decoration: none;">
                                                             <strong><?= $remaining_items ?> produk lainnya...</strong>
                                                         </a>
                                                     </li>
@@ -438,37 +622,68 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <div class="modal fade" id="loginModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+            <div class="modal-content login-modal-content">
+                <div class="login-modal-accent"></div>
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <button type="button" class="btn-close-custom ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
-
-                <div class="modal-body text-center">
-                    <p class="mb-2">Untuk menggunakan fitur ini, silakan masuk terlebih dahulu</p>
-                    <a href="<?= site_url('login') ?>" class="btn btn-primary">Masuk</a>
+                <div class="modal-body text-center px-5 pb-5 pt-2">
+                    <div class="login-modal-icon mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h5 class="login-modal-title mb-2">Masuk Diperlukan</h5>
+                    <p class="login-modal-text mb-4">Untuk menggunakan fitur ini, silakan masuk ke akun Anda terlebih
+                        dahulu.</p>
+                    <a href="<?= site_url('login') ?>" class="btn login-modal-btn">
+                        <span>Masuk Sekarang</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
                 </div>
-
             </div>
         </div>
     </div>
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Konfirmasi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Apakah Anda yakin ingin menghapus item ini dari wishlist?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Batal
+            <div class="modal-content login-modal-content delete-modal">
+                <div class="login-modal-accent delete-accent"></div>
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <button type="button" class="btn-close-custom ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
                     </button>
-                    <button type="button" class="btn btn-danger" id="btnConfirmDelete">
-                        Ya, hapus
+                </div>
+                <div class="modal-body text-center px-5 pb-5 pt-2">
+                    <div class="login-modal-icon delete-icon mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                            <path d="M10 11v6"></path>
+                            <path d="M14 11v6"></path>
+                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                        </svg>
+                    </div>
+                    <h5 class="login-modal-title mb-2">Hapus dari Wishlist?</h5>
+                    <p class="login-modal-text mb-4">Apakah Anda yakin ingin menghapus item ini dari wishlist?</p>
+                    <button type="button" class="btn login-modal-btn delete-btn mb-2" id="btnConfirmDelete">
+                        <span>Ya, Hapus</span>
                     </button>
                 </div>
             </div>
@@ -476,14 +691,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
     <div class="modal fade" id="modalConfirm" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center py-4">
-                    <i class="lni lni-warning text-warning mb-3" style="font-size:50px;"></i>
-                    <p id="modalConfirmMsg" class="fs-6 mb-0"></p>
+            <div class="modal-content login-modal-content delete-modal">
+                <div class="login-modal-accent delete-accent"></div>
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <button type="button" class="btn-close-custom ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
-                <div class="modal-footer justify-content-center border-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="modalConfirmOk">Hapus</button>
+                <div class="modal-body text-center px-5 pb-5 pt-2">
+                    <div class="login-modal-icon delete-icon mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                            <path d="M10 11v6"></path>
+                            <path d="M14 11v6"></path>
+                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                        </svg>
+                    </div>
+                    <h5 class="login-modal-title mb-2">Hapus dari Keranjang?</h5>
+                    <p class="login-modal-text mb-4">Apakah Anda yakin ingin menghapus item ini dari keranjang?</p>
+                    <button type="button" class="btn login-modal-btn delete-btn mb-2" id="modalConfirmOk">
+                        <span>Ya, Hapus</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -667,6 +901,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             });
         }
         $(document).ready(function () {
+            updateSummaryByChecklist();
             $(document).on('click', '.cart-qty-plus', function (e) {
                 e.preventDefault();
                 var cartId = $(this).data('cart');
@@ -857,7 +1092,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         });
         $(document).on('change', '#selectAll', function () {
             var isChecked = $(this).is(':checked');
-            $('.item-checkbox').each(function () {
+            $('.item-checkbox:not(:disabled)').each(function () {
                 if ($(this).is(':checked') !== isChecked) {
                     $(this).prop('checked', isChecked).trigger('change');
                 }
@@ -865,13 +1100,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         });
 
         $(document).on('change', '.item-checkbox', function () {
-            var total = $('.item-checkbox').length;
-            var checked = $('.item-checkbox:checked').length;
-            $('#selectAll').prop('checked', total === checked);
-
+            var total = $('.item-checkbox:not(:disabled)').length;
+            var checked = $('.item-checkbox:not(:disabled):checked').length;
+            $('#selectAll').prop('checked', total > 0 && total === checked);
             var idCart = $(this).data('id-cart');
             var checklist = $(this).is(':checked') ? 'Yes' : 'No';
-
             $.ajax({
                 url: '<?= site_url("keranjang/update_checklist") ?>',
                 type: 'POST',

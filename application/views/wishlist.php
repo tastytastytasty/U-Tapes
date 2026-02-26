@@ -110,7 +110,6 @@
     }
 
     .color-out {
-        pointer-events: none;
         cursor: not-allowed !important;
     }
     .color-radio input {
