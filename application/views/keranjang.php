@@ -234,10 +234,10 @@
                                         </div>
                                         <div class="ms-2 flex-shrink-0 d-flex align-items-center gap-1">
                                             <input type="checkbox" class="item-checkbox form-check-input mt-0"
-                                                id="item-<?= $c->id_cart ?>" data-id-cart="<?= $c->id_cart ?>"
-                                                data-price="<?= $subtotal ?>" data-debug-price="<?= $subtotal ?>"
-                                                style="width: 22px; height: 22px; cursor: <?= $is_empty ? 'not-allowed' : 'pointer' ?>;"
-                                                <?= $is_empty ? 'disabled' : '' ?>>
+                                            id="item-<?= $c->id_cart ?>" data-id-cart="<?= $c->id_cart ?>"
+                                            data-price="<?= $subtotal ?>" data-debug-price="<?= $subtotal ?>"
+                                            style="width: 22px; height: 22px; cursor: <?= $is_empty ? 'not-allowed' : 'pointer' ?>;"
+                                            <?= $is_empty ? 'disabled' : '' ?> <?= (!$is_empty && $c->checklist === 'Yes') ? 'checked' : '' ?>>
                                             <label for="item-<?= $c->id_cart ?>"></label>
                                             <button class="btn btn-sm btn-none btn-hapus-item"
                                                 data-id-cart="<?= $c->id_cart ?>" title="Hapus item"
