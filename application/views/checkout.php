@@ -2777,6 +2777,8 @@
       <div class="box">
         <h3>🛍️ Pesanan Anda (<?= isset($summary) && isset($summary['total_items']) ? $summary['total_items'] : 0 ?> item)</h3>
 
+       
+
         <?php if (!empty($checkout_items)): ?>
           <?php foreach ($checkout_items as $item): ?>
             <?php
@@ -2795,7 +2797,7 @@
             <div class="product-item" data-id-cart="<?= $item->id_cart ?>" data-price="<?= $subtotal ?>">
               
               <div class="product-img-wrapper">
-                <img src="<?= base_url('assets/images/item/' . $item->gambar) ?>" 
+                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
                      class="product-img" 
                      alt="<?= htmlspecialchars($item->nama_item) ?>"
                      onerror="if(!this.dataset.errored){this.dataset.errored=1;this.src='<?= base_url('assets/images/no-image.jpg') ?>';}">
@@ -2827,17 +2829,44 @@
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <div class="alert alert-warning">
-            ⚠️ Tidak ada item yang dipilih untuk checkout. 
-            <a href="<?= site_url('keranjang') ?>">Kembali ke keranjang dan centang item yang ingin dibeli</a>
+          <div class="alert alert-warning" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 1.5rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🛒</div>
+            <h4 style="color: #856404; margin-bottom: 0.5rem;">Tidak ada item yang dipilih untuk checkout</h4>
+            <p style="color: #856404; margin-bottom: 1rem;">
+              Silakan kembali ke halaman keranjang dan centang item yang ingin dibeli.
+            </p>
+            <a href="<?= site_url('keranjang') ?>" 
+               style="display: inline-block; background: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700;">
+              🔙 Kembali ke Keranjang
+            </a>
             
             <?php if (ENVIRONMENT === 'development'): ?>
               <!-- DEBUG INFO -->
-              <div style="margin-top: 1rem; padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; font-size: 0.875rem;">
-                <strong>🐛 Debug Info:</strong><br>
-                - ID Customer: <?= $this->session->userdata('id_customer') ?><br>
-                - Total items di cart (semua): <?= count($this->Keranjang_model->get_by_customer($this->session->userdata('id_customer'))) ?><br>
-                - Total items checklist "Yes": <?= count($checkout_items) ?><br>
+              <div style="margin-top: 1.5rem; padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; font-size: 0.875rem; text-align: left;">
+                <strong>🐛 Debug Info - Kenapa Kosong?</strong><br><br>
+                
+                <strong>1. Session Info:</strong><br>
+                - ID Customer: <?= $this->session->userdata('id_customer') ?><br><br>
+                
+                <strong>2. Database Query:</strong><br>
+                - Query: SELECT * FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>' AND checklist = 'Yes'<br>
+                - Result: 0 rows<br><br>
+                
+                <strong>3. Kemungkinan Penyebab:</strong><br>
+                - ❌ Semua item di cart memiliki checklist = 'No'<br>
+                - ❌ Cart kosong (belum ada item)<br>
+                - ❌ User belum centang item di halaman keranjang<br><br>
+                
+                <strong>4. Solusi:</strong><br>
+                1. Buka halaman keranjang<br>
+                2. Centang checkbox item yang mau dibeli<br>
+                3. Klik "Checkout"<br>
+                4. Item yang dicentang akan muncul di sini<br><br>
+                
+                <strong>5. Check Database Manual:</strong><br>
+                <code style="background: #333; color: #0f0; padding: 0.5rem; display: block; border-radius: 4px; margin-top: 0.5rem;">
+                  SELECT id_cart, checklist FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>';
+                </code>
               </div>
             <?php endif; ?>
           </div>
@@ -3413,7 +3442,7 @@
         // Update tombol promo item
         updatePromoItemButton(code, desc);
 
-        updatePriceDisplay(); // Update tampilan ringkasan
+        updateCheckoutTotals(); // Update all displays
         showNotification('✅ Voucher item berhasil diterapkan!', 'success');
         closeOffcanvasItem();
       }
@@ -3475,7 +3504,7 @@
         // Update tombol promo shipping
         updatePromoShippingButton(code, desc);
 
-        updatePriceDisplay(); // Update tampilan ringkasan
+        updateCheckoutTotals(); // Update all displays
         showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
         closeOffcanvasShipping();
       }
@@ -3595,7 +3624,7 @@
         updatePromoItemButton(null, null);
 
         attachPromoItemEvents();
-        updatePriceDisplay(); // Update tampilan
+        updateCheckoutTotals(); // Update all displays
         showNotification('✅ Promo item berhasil dihapus', 'success');
       }
 
@@ -3647,7 +3676,7 @@
         updatePromoShippingButton(null, null);
 
         attachPromoShippingEvents();
-        updatePriceDisplay(); // Update tampilan
+        updateCheckoutTotals(); // Update all displays
         showNotification('✅ Promo ongkir berhasil dihapus', 'success');
       }
 
@@ -3894,10 +3923,91 @@
         showNotification('🛍️ Kembali ke halaman belanja...', 'info');
       }
 
+      // ✅ GLOBAL FUNCTION - Recalculate & Update All Totals
+      function updateCheckoutTotals() {
+        // Calculate from items
+        let total = 0;
+        let count = 0;
+        
+        document.querySelectorAll('.product-item').forEach(item => {
+          const price = parseFloat(item.getAttribute('data-price'));
+          if (!isNaN(price) && price > 0) {
+            total += price;
+            count++;
+          }
+        });
+        
+        // Update state
+        state.totalBefore = total;
+        state.subtotal = total;
+        
+        // Update displays
+        const finalTotal = calculateTotal();
+        
+        // Item counts
+        document.querySelectorAll('#checked-items-count, #total-items-count').forEach(el => {
+          if (el) el.textContent = count;
+        });
+        
+        // Subtotal produk
+        const subtotalEl = document.getElementById('subtotal-produk-display');
+        if (subtotalEl) {
+          subtotalEl.textContent = formatRupiah(Math.max(0, total - state.voucherDiscount));
+        }
+        
+        // Total before
+        const totalBeforeEl = document.getElementById('total-before-detail');
+        if (totalBeforeEl) totalBeforeEl.textContent = formatRupiah(total);
+        
+        // Voucher row
+        const voucherRow = document.getElementById('voucher-product-row');
+        const voucherLabel = document.getElementById('voucher-product-label');
+        const voucherDetail = document.getElementById('voucher-product-detail');
+        if (voucherRow && state.voucherDiscount > 0 && state.voucherDesc) {
+          voucherRow.style.display = 'flex';
+          if (voucherLabel) voucherLabel.textContent = `🎁 ${state.voucherDesc}`;
+          if (voucherDetail) voucherDetail.textContent = '- ' + formatRupiah(state.voucherDiscount);
+        } else if (voucherRow) {
+          voucherRow.style.display = 'none';
+        }
+        
+        // Shipping discount row
+        const shippingRow = document.getElementById('shipping-discount-row');
+        const shippingLabel = document.getElementById('shipping-discount-label');
+        const shippingDetail = document.getElementById('shipping-discount-detail');
+        if (shippingRow && state.shippingDiscount > 0 && state.shippingDesc) {
+          shippingRow.style.display = 'flex';
+          if (shippingLabel) shippingLabel.textContent = `🎁 ${state.shippingDesc}`;
+          if (shippingDetail) shippingDetail.textContent = '- ' + formatRupiah(state.shippingDiscount);
+        } else if (shippingRow) {
+          shippingRow.style.display = 'none';
+        }
+        
+        // Total final
+        const totalFinalEl = document.getElementById('total-final');
+        if (totalFinalEl) totalFinalEl.textContent = formatRupiah(finalTotal);
+        
+        // Payment modal
+        const paymentEl = document.getElementById('payment-amount-display');
+        if (paymentEl) paymentEl.textContent = formatRupiah(finalTotal);
+        
+        // Button state
+        const btnPayNow = document.getElementById('btn-pay-now');
+        if (btnPayNow) {
+          btnPayNow.disabled = (count === 0);
+          btnPayNow.style.opacity = (count === 0) ? '0.5' : '1';
+        }
+        
+        console.log('✅ Totals updated:', {total, count, finalTotal});
+      }
+
       // Event Listeners
       document.addEventListener('DOMContentLoaded', function() {
         
         console.log('🚀 DOM Loaded - Initializing checkout...');
+        
+        // ✅ Calculate totals on page load
+        updateCheckoutTotals();
         
         // ✨ BOTTOM SHEET - Swipe & Click Handler (Mobile Only)
         if (window.innerWidth <= 768) {

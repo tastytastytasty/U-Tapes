@@ -4,8 +4,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Checkout_model extends CI_Model
 {
     /**
-     * Get cart items yang CHECKLIST = Yes
-     * Cuma barang yang mau dibeli yang masuk checkout
+     * Get cart items yang DIPILIH (checklist = Yes)
+     * Ini dipanggil dari halaman checkout
      */
     public function get_checkout_items($id_customer)
     {
@@ -19,15 +19,13 @@ class Checkout_model extends CI_Model
                 item_detail.warna,
                 item_detail.ukuran,
                 item_detail.harga,
-                item_detail.gambar
-                item_detail.harga,
                 item_detail.stok
             ')
             ->from('cart')
             ->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail')
             ->join('item', 'item_detail.id_item = item.id_item')
             ->where('cart.id_customer', $id_customer)
-            ->where('cart.checklist', 'Yes') // ✅ FILTER CHECKLIST
+            ->where('cart.checklist', 'Yes') // ✅ FILTER: Cuma yang dipilih!
             ->get()
             ->result();
 
@@ -42,7 +40,7 @@ class Checkout_model extends CI_Model
     }
 
     /**
-     * Calculate summary - Based on checklist Yes items
+     * Calculate summary - Based on checklist Yes items only
      */
     public function calculate_summary($cart_items)
     {
@@ -71,6 +69,32 @@ class Checkout_model extends CI_Model
     }
     
     /**
+     * Get ONLY checked items (checklist = Yes) untuk payment
+     * 
+     * @param string $id_customer
+     * @return array
+     */
+    public function get_checked_items($id_customer)
+    {
+        return $this->db->select('
+                cart.id_cart,
+                cart.qty,
+                cart.checklist,
+                cart.id_item_detail,
+                item.nama_item,
+                item_detail.harga,
+                item_detail.stok
+            ')
+            ->from('cart')
+            ->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail')
+            ->join('item', 'item_detail.id_item = item.id_item')
+            ->where('cart.id_customer', $id_customer)
+            ->where('cart.checklist', 'Yes') // ✅ CUMA YANG CHECKED
+            ->get()
+            ->result();
+    }
+    
+    /**
      * Reduce stock after payment
      * 
      * @param array $cart_items Array of cart items with id_item_detail & qty
@@ -93,7 +117,8 @@ class Checkout_model extends CI_Model
     }
     
     /**
-     * Delete cart items after successful checkout
+     * Delete ONLY checked items (checklist = Yes) after successful checkout
+     * Items yang ga di-check tetap ada di keranjang
      * 
      * @param string $id_customer
      * @return bool
@@ -102,7 +127,7 @@ class Checkout_model extends CI_Model
     {
         return $this->db
             ->where('id_customer', $id_customer)
-            ->where('checklist', 'Yes')
+            ->where('checklist', 'Yes') // ✅ Cuma hapus yang dipilih!
             ->delete('cart');
     }
 }
