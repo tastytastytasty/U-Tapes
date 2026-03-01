@@ -25,7 +25,7 @@ class Keranjang_model extends CI_Model
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
             ->where('cart.id_customer', $id_customer)
             ->group_by('cart.id_cart')
-            ->order_by('cart.id_cart', 'DESC')
+            ->order_by('MIN(item_detail.stok) = 0 ASC, cart.id_cart DESC')
             ->get()
             ->result();
     }

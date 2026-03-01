@@ -404,7 +404,7 @@
                 <div class="row" id="wishlist-empty">
                     <div class="col-12 text-center d-flex flex-column justify-content-center align-items-center"
                         style="height:500px">
-                        <i class="lni lni-heart mb-3" style="font-size:100px;"></i>
+                        <i class="lni lni-sad mb-4 text-primary" style="font-size:100px;"></i>
                         <h5 class="text-muted">Wishlist kamu kosong</h5>
                     </div>
                 </div>

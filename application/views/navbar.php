@@ -309,15 +309,81 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         z-index: 9999;
         min-width: 280px;
     }
+    #wishlist-list {
+    max-height: 320px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    }
+
+    #wishlist-list::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    #wishlist-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #wishlist-list::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 10px;
+    }
+    #cart-list {
+    max-height: 430px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    }
+
+    #cart-list::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    #cart-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #cart-list::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 10px;
+    }
+    .shopping-item {
+    width: 380px !important;
+    }
+
+    .shopping-list li {
+        padding: 10px;
+    }
+
+    .cart-img-head {
+        position: relative;
+        display: block;
+        width: 110px;
+        flex-shrink: 0;
+    }
+
+    .cart-img {
+        display: block;
+        width: 110px !important;
+        height: 110px !important;
+    }
+
+    .cart-img img {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+    }
 </style>
 
 <body>
     <!--[if lte IE 9]>
-      <p class="browserupgrade">
+    <p class="browserupgrade">
         You are using an <strong>outdated</strong> browser. Please
         <a href="https://browsehappy.com/">upgrade your browser</a> to improve
         your experience and security.
-      </p>
+    </p>
     <![endif]-->
 
     <!-- Preloader -->
@@ -451,15 +517,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <span id="cart-count"><?= $cart_count ?> Item</span>
                                             <a href="<?= site_url('keranjang') ?>">Lihat Semua</a>
                                         </div>
-                                        <ul class="shopping-list" id="cart-list">
-                                            <?php if (!empty($cart_items)): ?>
+                                        <?php if (!empty($cart_items)): ?>
+                                            <ul class="shopping-list" id="cart-list">
                                                 <?php
-                                                $total_items = count($cart_items);
-                                                $displayed_items = array_slice($cart_items, 0, 3);
-                                                $remaining_items = $total_items - 3;
-                                                foreach ($displayed_items as $c):
+                                                foreach ($cart_items as $c):
                                                     $is_empty = ($c->stok <= 0);
-
                                                     $harga_asli = $c->harga * $c->qty;
                                                     $harga_diskon = $harga_asli;
                                                     if (!$is_empty && $c->is_sale) {
@@ -469,20 +531,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                             $harga_diskon = $harga_asli - ($c->harga_promo * $c->qty);
                                                         }
                                                     }
-                                                ?>
+                                                    $subtotal = $harga_diskon;
+                                                    ?>
                                                     <li id="nav-cart-<?= $c->id_cart ?>" class="<?= $is_empty ? 'nav-cart-item-empty' : '' ?>">
                                                         <a href="javascript:void(0)" class="remove btn-remove-cart" data-cart="<?= $c->id_cart ?>">
                                                             <i class="lni lni-close"></i>
                                                         </a>
-                                                        <div class="row" style="<?= $is_empty ? 'opacity: 0.5;' : '' ?>">
-                                                            <div class="cart-img-head">
+                                                        <div class="d-flex align-items-start gap-3" style="<?= $is_empty ? 'opacity: 0.5;' : '' ?>">
+                                                            <div class="cart-img-head" style="position: relative; display: block; width: 110px; flex-shrink: 0;">
                                                                 <a class="cart-img" href="<?= site_url('detailproduct/' . $c->id_item) ?>">
                                                                     <img src="<?= base_url('assets/images/item/' . $c->gambar) ?>"
-                                                                        style="<?= $is_empty ? 'filter: grayscale(60%);' : '' ?>">
+                                                                        style="width: 110px; height: 110px; object-fit: cover; border-radius: 8px; display: block; <?= $is_empty ? 'filter: grayscale(60%);' : '' ?>">
                                                                 </a>
+                                                                <input type="checkbox" class="item-checkbox form-check-input mt-0" id="item-<?= $c->id_cart ?>"
+                                                                    data-id-cart="<?= $c->id_cart ?>" data-price="<?= $subtotal ?>" data-debug-price="<?= $subtotal ?>"
+                                                                    style="width: 20px; height: 20px; cursor: <?= $is_empty ? 'not-allowed' : 'pointer' ?>;
+                                                                        position: absolute; top: 6px; left: 6px; z-index: 10;"
+                                                                    <?= $is_empty ? 'disabled' : '' ?> <?= (!$is_empty && $c->checklist === 'Yes') ? 'checked' : '' ?>>
                                                             </div>
-                                                            <div class="content">
-                                                                <h4>
+                                                            <div class="flex-grow-1">
+                                                                <h4 class="mb-1" style="font-size: 0.9rem;">
                                                                     <a href="<?= site_url('detailproduct/' . $c->id_item) ?>">
                                                                         <?= $c->nama_item ?> (<?= $c->ukuran ?>)
                                                                     </a>
@@ -494,33 +562,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                 <?php else: ?>
                                                                     <small class="text-muted">Stok: <?= $c->stok ?></small>
                                                                 <?php endif; ?>
-                                                            </div>
-                                                            <div class="mt-2 d-flex justify-content-between gap-2">
-                                                                <div class="input-group input-group-sm" style="max-width:100px">
-                                                                    <button class="btn btn-outline-primary cart-qty-minus"
-                                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                        data-stok="<?= $c->stok ?>" type="button"
-                                                                        <?= $is_empty ? 'disabled' : '' ?>>−</button>
-                                                                    <input type="number"
-                                                                        class="form-control cart-qty-input text-center"
-                                                                        id="cart-qty-<?= $c->id_cart ?>"
-                                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                        data-stok="<?= $c->stok ?>"
-                                                                        data-persen="<?= $c->persen_promo ?>"
-                                                                        data-promo="<?= $c->harga_promo ?>"
-                                                                        data-issale="<?= $is_empty ? 0 : $c->is_sale ?>"
-                                                                        min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>"
-                                                                        <?= $is_empty ? 'disabled' : '' ?>>
-                                                                    <button class="btn btn-outline-primary cart-qty-plus"
-                                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                                        data-stok="<?= $c->stok ?>" type="button"
-                                                                        <?= $is_empty ? 'disabled' : '' ?>>+</button>
-                                                                </div>
-                                                                <div class="quantity mt-2">
+                                                                <div class="mt-2">
+                                                                    <div class="input-group input-group-sm mb-1" style="max-width: 95px;">
+                                                                        <button class="btn btn-outline-primary cart-qty-minus"
+                                                                            data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                            data-stok="<?= $c->stok ?>" type="button"
+                                                                            <?= $is_empty ? 'disabled' : '' ?>>−</button>
+                                                                        <input type="number" class="form-control cart-qty-input text-center"
+                                                                            id="cart-qty-<?= $c->id_cart ?>"
+                                                                            data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                            data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?>"
+                                                                            data-promo="<?= $c->harga_promo ?>"
+                                                                            data-issale="<?= $is_empty ? 0 : $c->is_sale ?>"
+                                                                            min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>"
+                                                                            <?= $is_empty ? 'disabled' : '' ?>>
+                                                                        <button class="btn btn-outline-primary cart-qty-plus"
+                                                                            data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                                            data-stok="<?= $c->stok ?>" type="button"
+                                                                            <?= $is_empty ? 'disabled' : '' ?>>+</button>
+                                                                    </div>
                                                                     <?php if ($is_empty): ?>
-                                                                        <h6 class="amount text-muted mb-0" id="item-total-<?= $c->id_cart ?>">-</h6>
+                                                                        <h6 class="amount text-muted mb-0 mt-4 ms-2" id="item-total-<?= $c->id_cart ?>">-</h6>
                                                                     <?php else: ?>
-                                                                        <h6 class="amount text-dark mb-0" id="item-total-<?= $c->id_cart ?>">
+                                                                        <h6 class="amount text-dark mb-0 mt-2 ms-2 fw-bold" id="item-total-<?= $c->id_cart ?>">
                                                                             Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
                                                                         </h6>
                                                                     <?php endif; ?>
@@ -529,16 +593,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         </div>
                                                     </li>
                                                 <?php endforeach ?>
-                                                <?php if ($remaining_items > 0): ?>
-                                                    <li style="text-align: center; padding: 10px; background: #f8f9fa;">
-                                                        <a href="<?= site_url('keranjang') ?>" style="color: #0d6efd; text-decoration: none;">
-                                                            <strong><?= $remaining_items ?> produk lainnya...</strong>
-                                                        </a>
-                                                    </li>
-                                                <?php endif; ?>
                                             </ul>
+                                            <hr class="text-primary fs-bold">
                                             <div class="bottom">
-                                                <div class="total">
+                                                <div class="total mt-4">
                                                     <span>Total</span>
                                                     <span class="total-amount" id="cart-total">Rp
                                                         <?= number_format($cart_total, 0, ',', '.') ?></span>
@@ -553,22 +611,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <span>Keranjang belanja kosong</span>
                                         </div>
                                     </div>
-                                </div>
-                            <?php else: ?>
-                                <a href="javascript:void(0)" class="main-btn btn-cart-navbar" data-need-login="1">
-                                    <i class="lni lni-cart"></i>
-                                </a>
-                                <div class="shopping-item text-center p-3">
-                                    <p class="mb-3 text-muted">
-                                        <i class="lni lni-lock me-1"></i>
-                                        Masuk dulu untuk melihat keranjang belanja
-                                    </p>
-                                    <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
-                                        Masuk Sekarang
+                                <?php else: ?>
+                                    <a href="javascript:void(0)" class="main-btn btn-cart-navbar" data-need-login="1">
+                                        <i class="lni lni-cart"></i>
                                     </a>
-                                </div>
-                            <?php endif; ?>
-                            <!-- End Shopping Item -->
+                                    <div class="shopping-item text-center p-3">
+                                        <p class="mb-3 text-muted">
+                                            <i class="lni lni-lock me-1"></i>
+                                            Masuk dulu untuk melihat keranjang belanja
+                                        </p>
+                                        <a href="<?= site_url('login') ?>" class="btn btn-sm btn-primary w-100">
+                                            Masuk Sekarang
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <!-- End Shopping Item -->
+                            </div>
                         </div>
                     </div>
                     <div class="user d-flex align-items-center gap-2">
@@ -991,15 +1049,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             var newTotalAsli = 0;
                             var newTotalDiskon = 0;
                             $('#cart-items-wrapper .cart-qty-input').each(function () {
+                                var itemCartId = $(this).data('cart');
+                                var isChecked = $('#item-' + itemCartId).is(':checked');
+                                if (!isChecked) return;
                                 var itemQty = parseInt($(this).val()) || 0;
                                 var itemHarga = parseFloat($(this).attr('data-price')) || 0;
                                 var itemPersen = parseFloat($(this).attr('data-persen')) || 0;
                                 var itemPromo = parseFloat($(this).attr('data-promo')) || 0;
                                 var itemIsSale = $(this).attr('data-issale') == '1';
-
                                 var itemAsli = itemHarga * itemQty;
                                 var itemDiskon = itemAsli;
-
                                 if (itemIsSale) {
                                     if (itemPersen > 0) {
                                         itemDiskon = itemAsli - (itemAsli * itemPersen / 100);
@@ -1007,7 +1066,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         itemDiskon = itemAsli - (itemPromo * itemQty);
                                     }
                                 }
-
                                 newTotalAsli += itemAsli;
                                 newTotalDiskon += itemDiskon;
                             });
@@ -1098,7 +1156,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 }
             });
         });
-
         $(document).on('change', '.item-checkbox', function () {
             var total = $('.item-checkbox:not(:disabled)').length;
             var checked = $('.item-checkbox:not(:disabled):checked').length;
@@ -1151,10 +1208,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             });
 
             var newPotongan = newTotalAsli - newTotalDiskon;
+            var totalCheckable = $('.item-checkbox:not(:disabled)').length;
+            var totalChecked = $('.item-checkbox:not(:disabled):checked').length;
 
             $('#summary-harga-asli').text('Rp ' + formatRupiah(Math.round(newTotalAsli)));
             $('#summary-potongan').text(newPotongan > 0 ? '- Rp ' + formatRupiah(Math.round(newPotongan)) : '-');
             $('#summary-total-akhir').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
+            $('#selectAll').prop('checked', totalCheckable > 0 && totalChecked === totalCheckable);
         }
         $(document).on('click', 'a[href*="checkout"]', function (e) {
             var checked = $('.item-checkbox:checked').length;

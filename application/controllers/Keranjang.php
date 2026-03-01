@@ -243,4 +243,27 @@ class Keranjang extends MY_Controller
             'message' => $delete ? 'Item berhasil dihapus' : 'Gagal menghapus item'
         ]);
     }
+    public function checklist_all()
+    {
+        $id_customer = $this->session->userdata('id_customer');
+        $this->db->query("
+        UPDATE cart 
+        JOIN item_detail ON cart.id_item_detail = item_detail.id_item_detail
+        SET cart.checklist = 'yes'
+        WHERE cart.id_customer = ? 
+        AND item_detail.stok > 0
+    ", [$id_customer]);
+        $this->db->query("
+        UPDATE cart 
+        JOIN item_detail ON cart.id_item_detail = item_detail.id_item_detail
+        SET cart.checklist = 'no'
+        WHERE cart.id_customer = ? 
+        AND item_detail.stok = 0
+    ", [$id_customer]);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Berhasil'
+        ]);
+    }
 }

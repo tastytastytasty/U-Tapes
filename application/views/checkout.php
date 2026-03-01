@@ -3879,7 +3879,7 @@
             btnConfirm.innerHTML = originalText;
             btnConfirm.disabled = false;
             showNotification('❌ Terjadi kesalahan saat memproses pembayaran', 'error');
-          });
+          });x
       }
 
       // Show Payment Success
