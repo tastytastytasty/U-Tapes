@@ -310,7 +310,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         min-width: 280px;
     }
     #wishlist-list {
-    max-height: 320px;
+    max-height: 300px;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #ccc transparent;
@@ -329,7 +329,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         border-radius: 10px;
     }
     #cart-list {
-    max-height: 430px;
+    max-height: 450px;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #ccc transparent;
@@ -348,7 +348,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         border-radius: 10px;
     }
     .shopping-item {
-    width: 380px !important;
+    width: 360px !important;
     }
 
     .shopping-list li {
@@ -520,6 +520,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <?php if (!empty($cart_items)): ?>
                                             <ul class="shopping-list" id="cart-list">
                                                 <?php
+                                                $total_akhir = 0;
                                                 foreach ($cart_items as $c):
                                                     $is_empty = ($c->stok <= 0);
                                                     $harga_asli = $c->harga * $c->qty;
@@ -532,6 +533,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         }
                                                     }
                                                     $subtotal = $harga_diskon;
+                                                    $total_akhir += $subtotal;
                                                     ?>
                                                     <li id="nav-cart-<?= $c->id_cart ?>" class="<?= $is_empty ? 'nav-cart-item-empty' : '' ?>">
                                                         <a href="javascript:void(0)" class="remove btn-remove-cart" data-cart="<?= $c->id_cart ?>">
@@ -599,7 +601,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <div class="total mt-4">
                                                     <span>Total</span>
                                                     <span class="total-amount" id="cart-total">Rp
-                                                        <?= number_format($cart_total, 0, ',', '.') ?></span>
+                                                        <?= number_format($total_akhir, 0, ',', '.') ?></span>
                                                 </div>
                                                 <div class="button">
                                                     <a href="<?= site_url('checkout') ?>" class="btn animate">Checkout</a>
@@ -1010,7 +1012,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 if (qty > stok) qty = stok;
                 var allInputs = $('.cart-qty-input[data-cart="' + cartId + '"]');
                 var qtyInput = allInputs.filter('[data-persen]').first();
-
                 var hargaSatuan = parseFloat(qtyInput.attr('data-price')) || 0;
                 var diskonPersen = parseFloat(qtyInput.attr('data-persen')) || 0;
                 var diskonRp = parseFloat(qtyInput.attr('data-promo')) || 0;
@@ -1048,8 +1049,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $('#item-total-' + cartId).text('Rp ' + formatRupiah(Math.round(hargaDiskon)));
                             var newTotalAsli = 0;
                             var newTotalDiskon = 0;
-                            $('#cart-items-wrapper .cart-qty-input').each(function () {
+                            var processedIds = [];
+                            $('.cart-qty-input').each(function () {
                                 var itemCartId = $(this).data('cart');
+                                if (processedIds.indexOf(itemCartId) !== -1) return;
+                                processedIds.push(itemCartId);
                                 var isChecked = $('#item-' + itemCartId).is(':checked');
                                 if (!isChecked) return;
                                 var itemQty = parseInt($(this).val()) || 0;
@@ -1073,7 +1077,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $('#summary-harga-asli').text('Rp ' + formatRupiah(Math.round(newTotalAsli)));
                             $('#summary-potongan').text(newPotongan > 0 ? '- Rp ' + formatRupiah(Math.round(newPotongan)) : '-');
                             $('#summary-total-akhir').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
-                            $('#cart-total').text('Rp ' + formatRupiah(response.cart_total));
+                            $('#cart-total').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
                             if (qty >= stok) {
                                 $('.cart-qty-plus[data-cart="' + cartId + '"]')
                                     .prop('disabled', true).addClass('disabled');
@@ -1157,21 +1161,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             });
         });
         $(document).on('change', '.item-checkbox', function () {
-            var total = $('.item-checkbox:not(:disabled)').length;
-            var checked = $('.item-checkbox:not(:disabled):checked').length;
-            $('#selectAll').prop('checked', total > 0 && total === checked);
             var idCart = $(this).data('id-cart');
-            var checklist = $(this).is(':checked') ? 'Yes' : 'No';
+            var isChecked = $(this).is(':checked');
+            $('.item-checkbox[data-id-cart="' + idCart + '"]').each(function () {
+                if ($(this).is(':checked') !== isChecked) {
+                    $(this).prop('checked', isChecked);
+                }
+            });
+            var total = $('.item-checkbox:not(:disabled)[data-id-cart]').map(function() {
+                return $(this).data('id-cart');
+            }).get().filter((v, i, a) => a.indexOf(v) === i).length;
+            var checked = processedIds = [];
+            $('.item-checkbox:not(:disabled):checked').each(function() {
+                var id = $(this).data('id-cart');
+                if (checked.indexOf(id) === -1) checked.push(id);
+            });
+            $('#selectAll').prop('checked', total > 0 && checked.length === total);
+            var checklist = isChecked ? 'Yes' : 'No';
             $.ajax({
                 url: '<?= site_url("keranjang/update_checklist") ?>',
                 type: 'POST',
                 data: { id_cart: idCart, checklist: checklist },
                 dataType: 'json',
-                success: function (response) {
-                    if (!response.success) {
-                        showAlert(response.message || 'Gagal update checklist');
-                    }
-                },
                 error: function () {
                     showAlert('Terjadi kesalahan saat update checklist');
                 }
@@ -1181,20 +1192,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         function updateSummaryByChecklist() {
             var newTotalAsli = 0;
             var newTotalDiskon = 0;
-
-            $('#cart-items-wrapper .item-checkbox:checked').each(function () {
+            var processedIds = [];
+            $('#cart-items-wrapper .item-checkbox:checked, #cart-list .item-checkbox:checked').each(function () {
                 var idCart = $(this).attr('data-id-cart');
-                var input = $('#cart-items-wrapper .cart-qty-input[data-cart="' + idCart + '"]');
-
+                if (processedIds.indexOf(idCart) !== -1) return;
+                processedIds.push(idCart);
+                var input = $('#cart-items-wrapper .cart-qty-input[data-cart="' + idCart + '"], #cart-list .cart-qty-input[data-cart="' + idCart + '"]').first();
                 var itemQty = parseInt(input.val()) || 0;
                 var itemHarga = parseFloat(input.attr('data-price')) || 0;
                 var itemPersen = parseFloat(input.attr('data-persen')) || 0;
                 var itemPromo = parseFloat(input.attr('data-promo')) || 0;
                 var itemIsSale = input.attr('data-issale') == '1';
-
                 var itemAsli = itemHarga * itemQty;
                 var itemDiskon = itemAsli;
-
                 if (itemIsSale) {
                     if (itemPersen > 0) {
                         itemDiskon = itemAsli - (itemAsli * itemPersen / 100);
@@ -1202,18 +1212,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         itemDiskon = itemAsli - (itemPromo * itemQty);
                     }
                 }
-
                 newTotalAsli += itemAsli;
                 newTotalDiskon += itemDiskon;
             });
-
             var newPotongan = newTotalAsli - newTotalDiskon;
-            var totalCheckable = $('.item-checkbox:not(:disabled)').length;
-            var totalChecked = $('.item-checkbox:not(:disabled):checked').length;
-
+            var totalCheckable = $('.item-checkbox:not(:disabled)').length / (($('#cart-list').length && $('#cart-items-wrapper').length) ? 2 : 1);
+            var totalChecked = $('.item-checkbox:not(:disabled):checked').length / (($('#cart-list').length && $('#cart-items-wrapper').length) ? 2 : 1);
             $('#summary-harga-asli').text('Rp ' + formatRupiah(Math.round(newTotalAsli)));
             $('#summary-potongan').text(newPotongan > 0 ? '- Rp ' + formatRupiah(Math.round(newPotongan)) : '-');
             $('#summary-total-akhir').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
+            $('#cart-total').text('Rp ' + formatRupiah(Math.round(newTotalDiskon)));
             $('#selectAll').prop('checked', totalCheckable > 0 && totalChecked === totalCheckable);
         }
         $(document).on('click', 'a[href*="checkout"]', function (e) {
