@@ -1692,6 +1692,86 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $(document).ready(function () {
             loadKatalog(1);
         });
+        $(document).on('input', '#cart-search-input', function () {
+            var keyword = $(this).val().toLowerCase().trim();
+            var visibleCount = 0;
+            $('.cart-item').each(function () {
+                var namaItem = $(this).find('.title a').text().toLowerCase();
+                if (namaItem.includes(keyword)) {
+                    $(this).show();
+                    visibleCount++;
+                } else {
+                    $(this).hide();
+                }
+            });
+            $('#cart-no-result-wrapper').remove();
+            if (visibleCount === 0 && keyword !== '') {
+                $('#cart-items-wrapper').append(
+                    '<div id="cart-no-result-wrapper" class="col-12 text-center d-flex flex-column justify-content-center align-items-center" style="height:500px">' +
+                    '<i class="lni lni-search-alt fs-1 text-primary mb-3"></i>' +
+                    '<h5 class="text-primary">Produk "<strong>' + keyword + '</strong>" tidak ditemukan</h5>' +
+                    '<p class="text-primary mb-0">Coba ubah kata kunci atau filter yang digunakan.</p>' +
+                    '</div>'
+                );
+            }
+        });
+        function setupSearch(inputSelector, itemSelector, containerSelector, noResultId) {
+            $(document).on('input', inputSelector, function () {
+                var keyword = $(this).val().toLowerCase().trim();
+                var visibleCount = 0;
+                $(itemSelector).each(function () {
+                    var namaItem = $(this).find('.title a').text().toLowerCase();
+                    if (namaItem.includes(keyword)) {
+                        $(this).show();
+                        visibleCount++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                $('#' + noResultId).remove();
+                if (visibleCount === 0 && keyword !== '') {
+                    $(containerSelector).append(
+                        '<div id="' + noResultId + '" class="col-12 text-center d-flex flex-column justify-content-center align-items-center" style="height:500px">' +
+                        '<i class="lni lni-search-alt fs-1 text-primary mb-3"></i>' +
+                        '<h5 class="text-primary">Produk "<strong>' + keyword + '</strong>" tidak ditemukan</h5>' +
+                        '<p class="text-primary mb-0">Coba ubah kata kunci atau filter yang digunakan.</p>' +
+                        '</div>'
+                    );
+                }
+            });
+        }
+        setupSearch(
+            '#wishlist-search-input',
+            '.wishlist-item',
+            '#wishlist-container',
+            'wishlist-no-result-wrapper'
+        );
+        setupSearch(
+            '#promo-search-input',
+            '.promo-item',
+            '#promo-container',
+            'promo-no-result-wrapper'
+        );
+        $(document).on('change', '.sort-select', function () {
+            var sortType = $(this).val();
+            var itemSelector = $(this).data('item');
+            var containerSelector = $(this).data('container');
+            var items = $(itemSelector).get();
+            items.sort(function (a, b) {
+                var priceA = parseInt($(a).data('price')) || 0;
+                var priceB = parseInt($(b).data('price')) || 0;
+                var dateA = new Date($(a).data('date'));
+                var dateB = new Date($(b).data('date'));
+                if (sortType === 'high') return priceB - priceA;
+                if (sortType === 'low') return priceA - priceB;
+                if (sortType === 'newest') return dateB - dateA;
+                if (sortType === 'oldest') return dateA - dateB;
+                return 0;
+            });
+            $.each(items, function (index, item) {
+                $(containerSelector).append(item);
+            });
+        });
     </script>
 
 </body>

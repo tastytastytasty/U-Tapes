@@ -125,7 +125,12 @@
                 </div>
                 <div class="col-lg-9 col-12">
                     <div class="product-grid-topbar d-flex justify-content-between align-items-center mb-4">
-                        <input type="text" name="keyword" class="form-control w-100" placeholder="Cari produk...">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="lni lni-search-alt text-muted"></i>
+                            </span>
+                            <input type="text" name="keyword" class="form-control border-start-0" placeholder="Cari produk...">
+                        </div>
                     </div>
                     <div id="ajax-katalog">
                         <?php $this->load->view('katalog_items', ['items' => $items]); ?>

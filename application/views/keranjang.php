@@ -338,8 +338,13 @@
                         <div class="card border-0 shadow-sm rounded-3 mb-3">
                             <div class="card-body">
                                 <div class="d-flex align-items-center gap-2 mb-3">
-                                    <input type="text" class="form-control form-control-sm search-input" placeholder="Cari produk...">
-                                    <button class="btn btn-sm btn-primary">Cari</button>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="lni lni-search-alt text-muted"></i>
+                                        </span>
+                                        <input type="text" id="cart-search-input" class="form-control border-start-0 ps-0" 
+                                        placeholder="Cari produk di keranjang..." style="font-size: 0.95rem; padding: 10px 12px;">
+                                    </div>
                                 </div>
                                 <div class="form-check mb-0 d-flex align-items-center gap-2">
                                     <input class="form-check-input" type="checkbox" id="selectAll" style="width: 22px; height: 22px; cursor: pointer; margin-top: 0;">
