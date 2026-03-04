@@ -211,26 +211,36 @@
 <div class="shopping-cart section py-5">
     <div class="container-fluid px-4">
         <?php if ($this->session->userdata('logged_in')): ?>
-            <div class="product-grid-topbar d-flex align-items-center justify-content-between mb-4">
-                <div class="d-flex align-items-center gap-2">
-                    <input type="text" class="form-control form-control-sm search-input" placeholder="Cari produk...">
-                    <button class="btn btn-sm btn-primary">Cari</button>
+            <div class="product-grid-topbar d-flex align-items-center mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="lni lni-search-alt text-muted"></i>
+                        </span>
+                        <input type="text" id="wishlist-search-input" class="form-control border-start-0 ps-0" 
+                        placeholder="Cari produk di wishlist..." style="font-size: 0.95rem; padding: 10px 12px;">
+                    </div>
                 </div>
-                <div class="form-check mb-0 d-flex justify-content-inline gap-2 align-items-center">
-                    <label class="fw-bold text-primary">Urut Berdasarkan</label>
-                    <select class="form-control" style="max-width: 140px; margin: 0 auto;">
-                        <option selected>Semua</option>
-                        <option>Terbaru</option>
-                        <option>Terlama</option>
-                        <option>Harga Tertinggi</option>
-                        <option>Harga Terendah</option>
-                    </select>
+                <div class="form-check mb-3 d-flex gap-2 align-items-center" style="width:500px;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="lni lni-funnel text-muted"></i>
+                        </span>
+                        <select class="form-control sort-select border-start-0" data-item=".wishlist-item" data-container="#wishlist-container"
+                            style="max-width:200px;">
+                            <option value="newest" selected>Terbaru</option>
+                            <option value="oldest">Terlama</option>
+                            <option value="high">Harga Tertinggi</option>
+                            <option value="low">Harga Terendah</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <?php if (!empty($wishlist)): ?>
                 <div class="row" id="wishlist-container">
                     <?php foreach ($wishlist as $w): ?>
-                        <div class="col-lg-2 col-md-6 col-6 mb-4 wishlist-item" id="wishlist-<?= $w->id_wishlist ?>">
+                        <div class="col-lg-2 col-md-6 col-6 mb-4 wishlist-item" id="wishlist-<?= $w->id_wishlist ?>"
+                            data-price="<?= $w->harga_termurah ?>" data-date="<?= $w->created_at ?>">
                             <div class="single-product product-card p-3 mb-3 h-100 mt-0" data-selected-color="">
                                 <div class="product-image position-relative">
                                     <a href="<?= site_url('detailproduct/' . $w->id_item) ?>" class="detail-link">
@@ -404,7 +414,7 @@
                 <div class="row" id="wishlist-empty">
                     <div class="col-12 text-center d-flex flex-column justify-content-center align-items-center"
                         style="height:500px">
-                        <i class="lni lni-heart mb-3" style="font-size:100px;"></i>
+                        <i class="lni lni-sad mb-4 text-primary" style="font-size:100px;"></i>
                         <h5 class="text-muted">Wishlist kamu kosong</h5>
                     </div>
                 </div>

@@ -443,7 +443,7 @@
             }
 
             if (!btn.hasClass('in-cart') && qty <= 0) {
-                showAlert('Jumlah minimal 1');
+                showAlert('Stok barang sedang habis');
                 return;
             }
 
