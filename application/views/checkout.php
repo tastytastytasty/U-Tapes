@@ -27,7 +27,7 @@
       --radius: 16px;
       --radius-sm: 10px;
     }
-    
+
     html {
       scroll-behavior: smooth;
     }
@@ -199,7 +199,8 @@
     /* Product Item */
     .product-item {
       display: grid;
-      grid-template-columns: 100px 1fr; /* UPDATED: Hapus kolom checkbox */
+      grid-template-columns: 100px 1fr;
+      /* UPDATED: Hapus kolom checkbox */
       gap: 1.25rem;
       padding: 1.25rem;
       background: var(--bg);
@@ -234,9 +235,10 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      background: var(--bg); /* Fallback kalau img ga load */
+      background: var(--bg);
+      /* Fallback kalau img ga load */
     }
-    
+
     /* Fallback untuk broken image */
     .product-img[data-errored="1"] {
       background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
@@ -244,7 +246,7 @@
       align-items: center;
       justify-content: center;
     }
-    
+
     .product-img[data-errored="1"]::before {
       content: '🖼️';
       font-size: 2rem;
@@ -262,6 +264,21 @@
       font-size: 0.75rem;
       font-weight: 700;
       box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+      z-index: 2;
+    }
+
+    .product-new-badge {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+      z-index: 2;
     }
 
     .product-info {
@@ -1883,828 +1900,839 @@
     }
 
     /* ============================================ */
-/* RESPONSIVE STYLES - TAMBAHKAN DI AKHIR CSS  */
-/* ============================================ */
-
-/* Tablet and below (992px) */
-@media (max-width: 992px) {
-  .checkout-wrapper {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    padding: 0;
-    margin: 1.5rem auto 2rem;
-  }
-
-  .box {
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .box h3 {
-    font-size: 1.125rem;
-  }
-
-  .summary-total-row .value {
-    font-size: 1.5rem;
-  }
-
-  .payment-amount {
-    font-size: 1.875rem;
-  }
-
-  .success-content h2 {
-    font-size: 1.5rem;
-  }
-}
-
-/* Mobile (768px and below) */
-@media (max-width: 768px) {
-  .checkout-wrapper {
-    padding: 0;
-    margin: 1rem auto 1.5rem;
-  }
-
-  .box {
-    padding: 1.25rem;
-    border-radius: 12px;
-  }
-
-  .box-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .btn-link {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Product items responsive */
-  .product-item {
-    grid-template-columns: 32px 70px 1fr; /* Checkbox lebih kecil, gambar lebih kecil */
-    gap: 0.75rem;
-    padding: 0.875rem;
-  }
-  
-  .product-checkbox {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .item-checkbox {
-    width: 18px;
-    height: 18px;
-  }
-
-  .product-img-wrapper {
-    width: 70px;
-    height: 70px;
-    padding-bottom: 0;
-  }
-  
-  .product-img {
-    position: static;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .product-name {
-    font-size: 0.875rem;
-    line-height: 1.3;
-    -webkit-line-clamp: 2;
-  }
-  
-  .product-variant {
-    font-size: 0.75rem;
-  }
-
-  .product-variant {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-  }
-
-  .product-price-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .product-prices {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  
-  .price-current {
-    font-size: 1rem;
-  }
-  
-  .price-original {
-    font-size: 0.75rem;
-  }
-
-  /* Form grid responsive */
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Address card responsive */
-  .address-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1rem;
-  }
-
-  .address-info {
-    width: 100%;
-  }
-  
-  .address-name {
-    font-size: 0.9375rem;
-  }
-  
-  .address-phone {
-    font-size: 0.875rem;
-  }
-  
-  .address-detail {
-    font-size: 0.8125rem;
-    line-height: 1.4;
-  }
-
-  .btn-use-address {
-    width: 100%;
-    margin-top: 0.75rem;
-  }
-
-  /* Modal responsive */
-  .modal-content {
-    margin: 0;
-    padding: 1.25rem;
-    max-height: 100vh;
-    width: 100%;
-    border-radius: 0;
-    overflow-y: auto;
-  }
-
-  .modal-close {
-    right: 1rem;
-    top: 1rem;
-    width: 36px;
-    height: 36px;
-    font-size: 1.5rem;
-  }
-  
-  .modal-header h2 {
-    font-size: 1.25rem;
-    padding-right: 2.5rem;
-  }
-  
-  .modal-body {
-    padding: 1rem 0;
-  }
-  
-  /* Address list in modal */
-  .address-list {
-    gap: 0.75rem;
-  }
-  
-  .address-card {
-    padding: 1rem;
-  }
-  
-  /* Form dalam modal */
-  .form-group label {
-    font-size: 0.875rem;
-  }
-  
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    font-size: 0.9375rem;
-    padding: 0.625rem 0.875rem;
-  }
-  
-  .form-actions {
-    flex-direction: column-reverse;
-    gap: 0.75rem;
-  }
-  
-  .form-actions .btn {
-    width: 100%;
-    margin: 0;
-  }
-
-  /* Payment modal responsive */
-  .payment-modal-content {
-    max-width: 100%;
-  }
-
-  .payment-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .payment-amount {
-    font-size: 1.75rem;
-  }
-
-  .payment-option {
-    padding: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .payment-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-  }
-
-  .payment-details {
-    flex: 1;
-    min-width: 150px;
-  }
-
-  .payment-name {
-    font-size: 0.9375rem;
-  }
-
-  .payment-desc {
-    font-size: 0.8125rem;
-  }
-
-  /* Offcanvas responsive */
-  .offcanvas {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .offcanvas-header {
-    padding: 1.5rem;
-  }
-
-  .offcanvas-header h3 {
-    font-size: 1.25rem;
-  }
-
-  .offcanvas-body {
-    padding: 1.5rem;
-  }
-
-  /* Voucher card responsive */
-  .voucher-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .voucher-left {
-    width: 100%;
-  }
-
-  .btn-use-voucher {
-    width: 100%;
-  }
-
-  /* Promo buttons responsive */
-  .promo-buttons-container {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-
-  .btn-promo-trigger {
-    padding: 0.875rem;
-  }
-
-  .btn-promo-trigger .promo-icon {
-    font-size: 1.25rem;
-  }
-
-  .btn-promo-trigger .promo-text {
-    font-size: 0.8125rem;
-  }
-
-  /* Promo input responsive */
-  .promo-input-group {
-    flex-direction: column;
-  }
-
-  .promo-input {
-    width: 100%;
-    min-width: 100%;
-  }
-
-  .btn-apply-promo {
-    width: 100%;
-  }
-
-  .promo-applied {
-    flex-wrap: wrap;
-  }
-
-  /* Summary responsive */
-  .summary-header {
-    padding: 0.875rem 1rem;
-  }
-
-  .summary-header-title {
-    font-size: 0.875rem;
-  }
-
-  .summary-header-value {
-    font-size: 0.9375rem;
-  }
-
-  .summary-body-content {
-    padding: 0.875rem 1rem;
-  }
-
-  .summary-total-row .label {
-    font-size: 1rem;
-  }
-
-  .summary-total-row .value {
-    font-size: 1.5rem;
-  }
-
-  /* Success modal responsive */
-  .success-icon {
-    width: 100px;
-    height: 100px;
-    font-size: 3rem;
-  }
-
-  .success-content h2 {
-    font-size: 1.5rem;
-  }
-
-  .success-content p {
-    font-size: 0.9375rem;
-  }
-
-  .order-details {
-    padding: 1.5rem;
-  }
-
-  .order-detail-row {
-    flex-wrap: wrap;
-  }
-
-  .order-id {
-    font-size: 1rem;
-    padding: 0.625rem 1.25rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  /* Modal actions responsive */
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions .btn {
-    width: 100%;
-  }
-
-  /* Button responsive */
-  .btn {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.875rem;
-  }
-
-  .btn-checkout {
-    padding: 1rem;
-    font-size: 1rem;
-  }
-
-  .summary-row.total-before {
-    margin: 0 -1.25rem;
-    padding: 1rem 1.25rem;
-  }
-  
-  /* Summary section mobile */
-  .summary-header {
-    padding: 1rem;
-  }
-  
-  .summary-header-title {
-    font-size: 0.9375rem;
-  }
-  
-  .summary-header-value {
-    font-size: 1rem;
-  }
-  
-  .summary-body {
-    padding: 0.75rem 1rem;
-  }
-  
-  .summary-detail-row {
-    font-size: 0.875rem;
-  }
-  
-  .summary-row.total {
-    padding: 1rem;
-  }
-  
-  .summary-row.total .label {
-    font-size: 1rem;
-  }
-  
-  .summary-row.total .value {
-    font-size: 1.25rem;
-  }
-  
-  /* ✨ BOTTOM SHEET - COLLAPSIBLE SUMMARY */
-  .checkout-wrapper {
-    padding-bottom: 100px; /* Space untuk bottom sheet collapsed */
-  }
-  
-  .box:has(.summary-section) {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 10001; /* Di atas navbar (navbar = 1000) */
-    margin: 0;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    background: white;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    max-height: 130px; /* Default: collapsed - cuma total + tombol */
-    overflow: hidden;
-  }
-  
-  /* Expanded state */
-  .box:has(.summary-section).expanded {
-    max-height: calc(100vh - env(safe-area-inset-top, 60px)); /* Safe area untuk notch + navbar */
-    overflow-y: auto;
-    padding-top: calc(env(safe-area-inset-top, 0px) + 60px); /* Space untuk navbar */
-  }
-  
-  /* Handle / drag indicator */
-  .box:has(.summary-section)::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 4px;
-    background: #cbd5e1;
-    border-radius: 2px;
-    cursor: grab;
-  }
-  
-  /* Promo buttons - HIDE saat collapsed */
-  .promo-buttons-container {
-    display: none;
-    gap: 0.5rem;
-    margin: 0.5rem 1rem 0.75rem;
-    padding-top: 0.5rem;
-  }
-  
-  .expanded .promo-buttons-container {
-    display: flex;
-  }
-  
-  .btn-promo-trigger {
-    flex: 1;
-    padding: 0.625rem 0.75rem;
-    font-size: 0.8125rem;
-    min-width: 0;
-  }
-  
-  .promo-icon {
-    font-size: 1.125rem;
-  }
-  
-  .promo-text {
-    font-size: 0.8125rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Summary sections - HIDE saat collapsed */
-  .summary-section {
-    display: none;
-    margin-bottom: 0.5rem;
-  }
-  
-  .expanded .summary-section {
-    display: block;
-  }
-  
-  .summary-header {
-    padding: 0.875rem 1rem;
-  }
-  
-  /* Total section - ALWAYS VISIBLE */
-  .summary-total-section {
-    padding: 1rem 1rem 0.75rem;
-    background: white;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 1.5rem; /* Space for handle */
-  }
-  
-  .summary-total-section:active {
-    background: #f8fafc;
-  }
-  
-  .summary-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .summary-total-row .label {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #1e293b;
-  }
-  
-  .summary-total-row .value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-  }
-  
-  /* Tombol bayar - ALWAYS VISIBLE */
-  .btn-checkout {
-    margin: 0.75rem 1rem 1rem;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  }
-  
-  /* Overlay untuk close saat expanded */
-  /* Overlay untuk close saat expanded */
-  .summary-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 10000; /* Di atas navbar (1000), di bawah bottom sheet (10001) */
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .summary-overlay.active {
-    display: block;
-    opacity: 1;
-  }
-}
-
-/* Small mobile (480px and below) */
-@media (max-width: 480px) {
-  .box {
-    padding: 1rem;
-  }
-
-  .box h3 {
-    font-size: 1rem;
-  }
-
-  .product-item {
-    grid-template-columns: 28px 60px 1fr; /* Checkbox + gambar lebih kecil */
-    gap: 0.625rem;
-    padding: 0.75rem;
-  }
-  
-  .product-checkbox {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .item-checkbox {
-    width: 16px;
-    height: 16px;
-  }
-
-  .product-img-wrapper {
-    width: 60px;
-    height: 60px;
-  }
-
-  .product-name {
-    font-size: 0.8125rem;
-    line-height: 1.2;
-  }
-
-  .product-variant {
-    font-size: 0.75rem;
-  }
-
-  .price-current {
-    font-size: 0.9375rem;
-  }
-
-  .price-original {
-    font-size: 0.6875rem;
-  }
-  
-  /* Modal full screen di mobile kecil */
-  .modal-content {
-    border-radius: 0;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    padding: 1rem;
-  }
-  
-  .modal-header h2 {
-    font-size: 1.125rem;
-  }
-  
-  /* Address card lebih compact */
-  .address-card {
-    padding: 0.875rem;
-  }
-  
-  .address-name {
-    font-size: 0.875rem;
-  }
-  
-  .address-phone {
-    font-size: 0.8125rem;
-  }
-  
-  .address-detail {
-    font-size: 0.75rem;
-  }
-
-  .voucher-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 1.125rem;
-  }
-
-  .voucher-title {
-    font-size: 0.9375rem;
-  }
-
-  .voucher-desc {
-    font-size: 0.8125rem;
-  }
-
-  .payment-header h2 {
-    font-size: 1.25rem;
-  }
-
-  .payment-amount {
-    font-size: 1.5rem;
-  }
-
-  .summary-total-row .value {
-    font-size: 1.375rem;
-  }
-
-  .offcanvas-header h3 {
-    font-size: 1.125rem;
-  }
-
-  .modal-content {
-    padding: 1.25rem;
-  }
-
-  #modalAlamat h3 {
-    font-size: 1.125rem;
-  }
-
-  .address-recipient {
-    font-size: 0.8125rem;
-  }
-
-  .address-detail {
-    font-size: 0.8125rem;
-  }
-}
-
-/* Extra small devices (360px and below) */
-@media (max-width: 360px) {
-  .checkout-wrapper {
-    padding: 0 0.5rem;
-  }
-
-  .box {
-    padding: 0.875rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .product-item {
-    grid-template-columns: 60px 1fr;
-    gap: 0.75rem;
-    padding: 0.75rem;
-  }
-
-  .product-img-wrapper {
-    width: 60px;
-    padding-bottom: 60px;
-  }
-
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.8125rem;
-  }
-
-  .summary-header-title,
-  .summary-header-value {
-    font-size: 0.8125rem;
-  }
-
-  .product-qty-display {
-    padding: 0.375rem 0.625rem;
-  }
-
-  .product-qty-display .qty-label {
-    font-size: 0.75rem;
-  }
-
-  .product-qty-display .qty-value {
-    font-size: 0.875rem;
-  }
-}
-
-/* Landscape orientation fixes */
-@media (max-height: 600px) and (orientation: landscape) {
-  .modal-content {
-    margin: 0.5rem;
-    max-height: calc(100vh - 1rem);
-  }
-
-  .offcanvas-body {
-    padding: 1rem;
-  }
-
-  .payment-header {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-  }
-
-  .payment-amount {
-    font-size: 1.5rem;
-    margin-top: 0.5rem;
-  }
-
-  .success-icon {
-    width: 80px;
-    height: 80px;
-    font-size: 2.5rem;
-  }
-
-  .order-details {
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-}
-
-/* High DPI / Retina displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .product-img {
-    image-rendering: -webkit-optimize-contrast;
-  }
-}
-
-/* Fix untuk Bootstrap conflict */
-.checkout-wrapper * {
-  box-sizing: border-box;
-}
-
-/* Override Bootstrap container if exists */
-.checkout-wrapper.container,
-.checkout-wrapper.container-fluid {
-  max-width: 1200px !important;
-  padding-left: 1.5rem !important;
-  padding-right: 1.5rem !important;
-}
-
-@media (max-width: 768px) {
-  .checkout-wrapper.container,
-  .checkout-wrapper.container-fluid {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-  }
-}
-
-/* Ensure modals are above Bootstrap elements */
-.modal {
-  z-index: 10000 !important;
-}
-
-.offcanvas {
-  z-index: 9999 !important;
-}
-
-.offcanvas-overlay {
-  z-index: 9998 !important;
-}
+    /* RESPONSIVE STYLES - TAMBAHKAN DI AKHIR CSS  */
+    /* ============================================ */
+
+    /* Tablet and below (992px) */
+    @media (max-width: 992px) {
+      .checkout-wrapper {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0;
+        margin: 1.5rem auto 2rem;
+      }
+
+      .box {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .box h3 {
+        font-size: 1.125rem;
+      }
+
+      .summary-total-row .value {
+        font-size: 1.5rem;
+      }
+
+      .payment-amount {
+        font-size: 1.875rem;
+      }
+
+      .success-content h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Mobile (768px and below) */
+    @media (max-width: 768px) {
+      .checkout-wrapper {
+        padding: 0;
+        margin: 1rem auto 1.5rem;
+      }
+
+      .box {
+        padding: 1.25rem;
+        border-radius: 12px;
+      }
+
+      .box-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .btn-link {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* Product items responsive */
+      .product-item {
+        grid-template-columns: 32px 70px 1fr;
+        /* Checkbox lebih kecil, gambar lebih kecil */
+        gap: 0.75rem;
+        padding: 0.875rem;
+      }
+
+      .product-checkbox {
+        width: 32px;
+        height: 32px;
+      }
+
+      .item-checkbox {
+        width: 18px;
+        height: 18px;
+      }
+
+      .product-img-wrapper {
+        width: 70px;
+        height: 70px;
+        padding-bottom: 0;
+      }
+
+      .product-img {
+        position: static;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .product-name {
+        font-size: 0.875rem;
+        line-height: 1.3;
+        -webkit-line-clamp: 2;
+      }
+
+      .product-variant {
+        font-size: 0.75rem;
+      }
+
+      .product-variant {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      .product-price-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .product-prices {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .price-current {
+        font-size: 1rem;
+      }
+
+      .price-original {
+        font-size: 0.75rem;
+      }
+
+      /* Form grid responsive */
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Address card responsive */
+      .address-card {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+      }
+
+      .address-info {
+        width: 100%;
+      }
+
+      .address-name {
+        font-size: 0.9375rem;
+      }
+
+      .address-phone {
+        font-size: 0.875rem;
+      }
+
+      .address-detail {
+        font-size: 0.8125rem;
+        line-height: 1.4;
+      }
+
+      .btn-use-address {
+        width: 100%;
+        margin-top: 0.75rem;
+      }
+
+      /* Modal responsive */
+      .modal-content {
+        margin: 0;
+        padding: 1.25rem;
+        max-height: 100vh;
+        width: 100%;
+        border-radius: 0;
+        overflow-y: auto;
+      }
+
+      .modal-close {
+        right: 1rem;
+        top: 1rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.5rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.25rem;
+        padding-right: 2.5rem;
+      }
+
+      .modal-body {
+        padding: 1rem 0;
+      }
+
+      /* Address list in modal */
+      .address-list {
+        gap: 0.75rem;
+      }
+
+      .address-card {
+        padding: 1rem;
+      }
+
+      /* Form dalam modal */
+      .form-group label {
+        font-size: 0.875rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        font-size: 0.9375rem;
+        padding: 0.625rem 0.875rem;
+      }
+
+      .form-actions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+      }
+
+      .form-actions .btn {
+        width: 100%;
+        margin: 0;
+      }
+
+      /* Payment modal responsive */
+      .payment-modal-content {
+        max-width: 100%;
+      }
+
+      .payment-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .payment-amount {
+        font-size: 1.75rem;
+      }
+
+      .payment-option {
+        padding: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .payment-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+
+      .payment-details {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .payment-name {
+        font-size: 0.9375rem;
+      }
+
+      .payment-desc {
+        font-size: 0.8125rem;
+      }
+
+      /* Offcanvas responsive */
+      .offcanvas {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .offcanvas-header {
+        padding: 1.5rem;
+      }
+
+      .offcanvas-header h3 {
+        font-size: 1.25rem;
+      }
+
+      .offcanvas-body {
+        padding: 1.5rem;
+      }
+
+      /* Voucher card responsive */
+      .voucher-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .voucher-left {
+        width: 100%;
+      }
+
+      .btn-use-voucher {
+        width: 100%;
+      }
+
+      /* Promo buttons responsive */
+      .promo-buttons-container {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .btn-promo-trigger {
+        padding: 0.875rem;
+      }
+
+      .btn-promo-trigger .promo-icon {
+        font-size: 1.25rem;
+      }
+
+      .btn-promo-trigger .promo-text {
+        font-size: 0.8125rem;
+      }
+
+      /* Promo input responsive */
+      .promo-input-group {
+        flex-direction: column;
+      }
+
+      .promo-input {
+        width: 100%;
+        min-width: 100%;
+      }
+
+      .btn-apply-promo {
+        width: 100%;
+      }
+
+      .promo-applied {
+        flex-wrap: wrap;
+      }
+
+      /* Summary responsive */
+      .summary-header {
+        padding: 0.875rem 1rem;
+      }
+
+      .summary-header-title {
+        font-size: 0.875rem;
+      }
+
+      .summary-header-value {
+        font-size: 0.9375rem;
+      }
+
+      .summary-body-content {
+        padding: 0.875rem 1rem;
+      }
+
+      .summary-total-row .label {
+        font-size: 1rem;
+      }
+
+      .summary-total-row .value {
+        font-size: 1.5rem;
+      }
+
+      /* Success modal responsive */
+      .success-icon {
+        width: 100px;
+        height: 100px;
+        font-size: 3rem;
+      }
+
+      .success-content h2 {
+        font-size: 1.5rem;
+      }
+
+      .success-content p {
+        font-size: 0.9375rem;
+      }
+
+      .order-details {
+        padding: 1.5rem;
+      }
+
+      .order-detail-row {
+        flex-wrap: wrap;
+      }
+
+      .order-id {
+        font-size: 1rem;
+        padding: 0.625rem 1.25rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      /* Modal actions responsive */
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .modal-actions .btn {
+        width: 100%;
+      }
+
+      /* Button responsive */
+      .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+      }
+
+      .btn-checkout {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+
+      .summary-row.total-before {
+        margin: 0 -1.25rem;
+        padding: 1rem 1.25rem;
+      }
+
+      /* Summary section mobile */
+      .summary-header {
+        padding: 1rem;
+      }
+
+      .summary-header-title {
+        font-size: 0.9375rem;
+      }
+
+      .summary-header-value {
+        font-size: 1rem;
+      }
+
+      .summary-body {
+        padding: 0.75rem 1rem;
+      }
+
+      .summary-detail-row {
+        font-size: 0.875rem;
+      }
+
+      .summary-row.total {
+        padding: 1rem;
+      }
+
+      .summary-row.total .label {
+        font-size: 1rem;
+      }
+
+      .summary-row.total .value {
+        font-size: 1.25rem;
+      }
+
+      /* ✨ BOTTOM SHEET - COLLAPSIBLE SUMMARY */
+      .checkout-wrapper {
+        padding-bottom: 100px;
+        /* Space untuk bottom sheet collapsed */
+      }
+
+      .box:has(.summary-section) {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10001;
+        /* Di atas navbar (navbar = 1000) */
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        background: white;
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 130px;
+        /* Default: collapsed - cuma total + tombol */
+        overflow: hidden;
+      }
+
+      /* Expanded state */
+      .box:has(.summary-section).expanded {
+        max-height: calc(100vh - env(safe-area-inset-top, 60px));
+        /* Safe area untuk notch + navbar */
+        overflow-y: auto;
+        padding-top: calc(env(safe-area-inset-top, 0px) + 60px);
+        /* Space untuk navbar */
+      }
+
+      /* Handle / drag indicator */
+      .box:has(.summary-section)::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background: #cbd5e1;
+        border-radius: 2px;
+        cursor: grab;
+      }
+
+      /* Promo buttons - HIDE saat collapsed */
+      .promo-buttons-container {
+        display: none;
+        gap: 0.5rem;
+        margin: 0.5rem 1rem 0.75rem;
+        padding-top: 0.5rem;
+      }
+
+      .expanded .promo-buttons-container {
+        display: flex;
+      }
+
+      .btn-promo-trigger {
+        flex: 1;
+        padding: 0.625rem 0.75rem;
+        font-size: 0.8125rem;
+        min-width: 0;
+      }
+
+      .promo-icon {
+        font-size: 1.125rem;
+      }
+
+      .promo-text {
+        font-size: 0.8125rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Summary sections - HIDE saat collapsed */
+      .summary-section {
+        display: none;
+        margin-bottom: 0.5rem;
+      }
+
+      .expanded .summary-section {
+        display: block;
+      }
+
+      .summary-header {
+        padding: 0.875rem 1rem;
+      }
+
+      /* Total section - ALWAYS VISIBLE */
+      .summary-total-section {
+        padding: 1rem 1rem 0.75rem;
+        background: white;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 1.5rem;
+        /* Space for handle */
+      }
+
+      .summary-total-section:active {
+        background: #f8fafc;
+      }
+
+      .summary-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .summary-total-row .label {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .summary-total-row .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      /* Tombol bayar - ALWAYS VISIBLE */
+      .btn-checkout {
+        margin: 0.75rem 1rem 1rem;
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Overlay untuk close saat expanded */
+      /* Overlay untuk close saat expanded */
+      .summary-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        /* Di atas navbar (1000), di bawah bottom sheet (10001) */
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .summary-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+    }
+
+    /* Small mobile (480px and below) */
+    @media (max-width: 480px) {
+      .box {
+        padding: 1rem;
+      }
+
+      .box h3 {
+        font-size: 1rem;
+      }
+
+      .product-item {
+        grid-template-columns: 28px 60px 1fr;
+        /* Checkbox + gambar lebih kecil */
+        gap: 0.625rem;
+        padding: 0.75rem;
+      }
+
+      .product-checkbox {
+        width: 28px;
+        height: 28px;
+      }
+
+      .item-checkbox {
+        width: 16px;
+        height: 16px;
+      }
+
+      .product-img-wrapper {
+        width: 60px;
+        height: 60px;
+      }
+
+      .product-name {
+        font-size: 0.8125rem;
+        line-height: 1.2;
+      }
+
+      .product-variant {
+        font-size: 0.75rem;
+      }
+
+      .price-current {
+        font-size: 0.9375rem;
+      }
+
+      .price-original {
+        font-size: 0.6875rem;
+      }
+
+      /* Modal full screen di mobile kecil */
+      .modal-content {
+        border-radius: 0;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        padding: 1rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.125rem;
+      }
+
+      /* Address card lebih compact */
+      .address-card {
+        padding: 0.875rem;
+      }
+
+      .address-name {
+        font-size: 0.875rem;
+      }
+
+      .address-phone {
+        font-size: 0.8125rem;
+      }
+
+      .address-detail {
+        font-size: 0.75rem;
+      }
+
+      .voucher-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.125rem;
+      }
+
+      .voucher-title {
+        font-size: 0.9375rem;
+      }
+
+      .voucher-desc {
+        font-size: 0.8125rem;
+      }
+
+      .payment-header h2 {
+        font-size: 1.25rem;
+      }
+
+      .payment-amount {
+        font-size: 1.5rem;
+      }
+
+      .summary-total-row .value {
+        font-size: 1.375rem;
+      }
+
+      .offcanvas-header h3 {
+        font-size: 1.125rem;
+      }
+
+      .modal-content {
+        padding: 1.25rem;
+      }
+
+      #modalAlamat h3 {
+        font-size: 1.125rem;
+      }
+
+      .address-recipient {
+        font-size: 0.8125rem;
+      }
+
+      .address-detail {
+        font-size: 0.8125rem;
+      }
+    }
+
+    /* Extra small devices (360px and below) */
+    @media (max-width: 360px) {
+      .checkout-wrapper {
+        padding: 0 0.5rem;
+      }
+
+      .box {
+        padding: 0.875rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .product-item {
+        grid-template-columns: 60px 1fr;
+        gap: 0.75rem;
+        padding: 0.75rem;
+      }
+
+      .product-img-wrapper {
+        width: 60px;
+        padding-bottom: 60px;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+      }
+
+      .summary-header-title,
+      .summary-header-value {
+        font-size: 0.8125rem;
+      }
+
+      .product-qty-display {
+        padding: 0.375rem 0.625rem;
+      }
+
+      .product-qty-display .qty-label {
+        font-size: 0.75rem;
+      }
+
+      .product-qty-display .qty-value {
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Landscape orientation fixes */
+    @media (max-height: 600px) and (orientation: landscape) {
+      .modal-content {
+        margin: 0.5rem;
+        max-height: calc(100vh - 1rem);
+      }
+
+      .offcanvas-body {
+        padding: 1rem;
+      }
+
+      .payment-header {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+      }
+
+      .payment-amount {
+        font-size: 1.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+      }
+
+      .order-details {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    /* High DPI / Retina displays */
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi) {
+      .product-img {
+        image-rendering: -webkit-optimize-contrast;
+      }
+    }
+
+    /* Fix untuk Bootstrap conflict */
+    .checkout-wrapper * {
+      box-sizing: border-box;
+    }
+
+    /* Override Bootstrap container if exists */
+    .checkout-wrapper.container,
+    .checkout-wrapper.container-fluid {
+      max-width: 1200px !important;
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
+
+    @media (max-width: 768px) {
+
+      .checkout-wrapper.container,
+      .checkout-wrapper.container-fluid {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+    }
+
+    /* Ensure modals are above Bootstrap elements */
+    .modal {
+      z-index: 10000 !important;
+    }
+
+    .offcanvas {
+      z-index: 9999 !important;
+    }
+
+    .offcanvas-overlay {
+      z-index: 9998 !important;
+    }
 
     .alert-warning a {
       color: var(--primary);
@@ -2777,7 +2805,7 @@
       <div class="box">
         <h3>🛍️ Pesanan Anda (<?= isset($summary) && isset($summary['total_items']) ? $summary['total_items'] : 0 ?> item)</h3>
 
-       
+
 
         <?php if (!empty($checkout_items)): ?>
           <?php foreach ($checkout_items as $item): ?>
@@ -2785,23 +2813,31 @@
             // Hitung harga final (setelah diskon)
             $final_price = $checkout_model->get_item_final_price($item);
             $subtotal = $final_price * $item->qty;
-            
-            // DEBUG: Echo subtotal ke HTML comment
-            // echo "<!-- DEBUG: Item {$item->id_cart} - final_price: {$final_price} - qty: {$item->qty} - subtotal: {$subtotal} -->\n";
-            
+            $original_subtotal = $item->harga * $item->qty;
+
             // Cek apakah ada diskon
             $has_discount = ($item->is_sale == 1 && ($item->persen_promo > 0 || $item->harga_promo > 0));
             $discount_percentage = $has_discount && $item->persen_promo > 0 ? $item->persen_promo : 0;
+
+            // Cek apakah produk baru (created dalam 3 hari terakhir)
+            $is_new = ($item->is_new == 1);
             ?>
-            
+
             <div class="product-item" data-id-cart="<?= $item->id_cart ?>" data-price="<?= $subtotal ?>">
-              
+
               <div class="product-img-wrapper">
-                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
-                     class="product-img" 
-                     alt="<?= htmlspecialchars($item->nama_item) ?>"
-                     onerror="if(!this.dataset.errored){this.dataset.errored=1;this.src='<?= base_url('assets/images/no-image.jpg') ?>';}">
-                <?php if ($has_discount): ?>
+                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>"
+                  class="product-img"
+                  alt="<?= htmlspecialchars($item->nama_item) ?>"
+                  onerror="if(!this.dataset.errored){this.dataset.errored=1;this.src='<?= base_url('assets/images/no-image.jpg') ?>';}">
+
+                <!-- Badge BARU (kiri atas) -->
+                <?php if ($is_new): ?>
+                  <div class="product-new-badge">✨ BARU</div>
+                <?php endif; ?>
+
+                <!-- Badge Discount (kanan atas) -->
+                <?php if ($has_discount && $discount_percentage > 0): ?>
                   <div class="product-discount-badge">-<?= $discount_percentage ?>%</div>
                 <?php endif; ?>
               </div>
@@ -2818,9 +2854,12 @@
                   </div>
                   <div class="product-prices">
                     <?php if ($has_discount): ?>
-                      <span class="product-price-original">Rp <?= number_format($item->harga * $item->qty, 0, ',', '.') ?></span>
+                      <!-- Harga original (coret) -->
+                      <span class="product-price-original">Rp <?= number_format($original_subtotal, 0, ',', '.') ?></span>
+                      <!-- Harga setelah diskon -->
                       <span class="product-price">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                     <?php else: ?>
+                      <!-- Harga normal (no discount) -->
                       <span class="product-price no-discount">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                     <?php endif; ?>
                   </div>
@@ -2835,40 +2874,41 @@
             <p style="color: #856404; margin-bottom: 1rem;">
               Silakan kembali ke halaman keranjang dan centang item yang ingin dibeli.
             </p>
-            <a href="<?= site_url('keranjang') ?>" 
-               style="display: inline-block; background: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700;">
+            <a href="<?= site_url('keranjang') ?>"
+              style="display: inline-block; background: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700;">
               🔙 Kembali ke Keranjang
             </a>
-            
+
+            <?php /* DEBUG INFO - COMMENTED OUT
             <?php if (ENVIRONMENT === 'development'): ?>
-              <!-- DEBUG INFO -->
               <div style="margin-top: 1.5rem; padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; font-size: 0.875rem; text-align: left;">
                 <strong>🐛 Debug Info - Kenapa Kosong?</strong><br><br>
-                
+
                 <strong>1. Session Info:</strong><br>
                 - ID Customer: <?= $this->session->userdata('id_customer') ?><br><br>
-                
+
                 <strong>2. Database Query:</strong><br>
                 - Query: SELECT * FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>' AND checklist = 'Yes'<br>
                 - Result: 0 rows<br><br>
-                
+
                 <strong>3. Kemungkinan Penyebab:</strong><br>
                 - ❌ Semua item di cart memiliki checklist = 'No'<br>
                 - ❌ Cart kosong (belum ada item)<br>
                 - ❌ User belum centang item di halaman keranjang<br><br>
-                
+
                 <strong>4. Solusi:</strong><br>
                 1. Buka halaman keranjang<br>
                 2. Centang checkbox item yang mau dibeli<br>
                 3. Klik "Checkout"<br>
                 4. Item yang dicentang akan muncul di sini<br><br>
-                
+
                 <strong>5. Check Database Manual:</strong><br>
                 <code style="background: #333; color: #0f0; padding: 0.5rem; display: block; border-radius: 4px; margin-top: 0.5rem;">
                   SELECT id_cart, checklist FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>';
                 </code>
               </div>
             <?php endif; ?>
+            */ ?>
           </div>
         <?php endif; ?>
       </div>
@@ -2887,7 +2927,7 @@
             <span class="promo-icon">🎁</span>
             <span class="promo-text">Promo Item</span>
           </button>
-          
+
           <button class="btn-promo-trigger btn-promo-shipping" id="btn-open-promo-shipping">
             <span class="promo-icon">🚚</span>
             <span class="promo-text">Gratis Ongkir</span>
@@ -3316,117 +3356,117 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
 
-    <script>
-      // State - DATA DARI PHP
-      const state = {
-        totalBefore: <?= isset($summary) ? $summary['total_before'] : 0 ?>,
-        productDiscount: <?= isset($summary) ? $summary['total_discount'] : 0 ?>,
-        subtotal: <?= isset($summary) ? $summary['subtotal'] : 0 ?>,
-        shipping: 25000,
-        voucherDiscount: 0,
-        shippingDiscount: 0,
-        promoCodeItem: null, // Promo untuk item
-        promoCodeShipping: null, // Promo untuk shipping
-        selectedPayment: null
-      };
+  <script>
+    // State - DATA DARI PHP
+    const state = {
+      totalBefore: <?= isset($summary) ? $summary['total_before'] : 0 ?>,
+      productDiscount: <?= isset($summary) ? $summary['total_discount'] : 0 ?>,
+      subtotal: <?= isset($summary) ? $summary['subtotal'] : 0 ?>,
+      shipping: 25000,
+      voucherDiscount: 0,
+      shippingDiscount: 0,
+      promoCodeItem: null, // Promo untuk item
+      promoCodeShipping: null, // Promo untuk shipping
+      selectedPayment: null
+    };
 
-      // Format Rupiah
-      function formatRupiah(amount) {
-        return 'Rp ' + amount.toLocaleString('id-ID');
+    // Format Rupiah
+    function formatRupiah(amount) {
+      return 'Rp ' + amount.toLocaleString('id-ID');
+    }
+
+    // Calculate Total - FIXED
+    function calculateTotal() {
+      // Hitung subtotal produk (ga boleh minus)
+      const subtotalProduk = Math.max(0, state.subtotal - state.voucherDiscount);
+
+      // Hitung subtotal ongkir (ga boleh minus)
+      const subtotalOngkir = Math.max(0, state.shipping - state.shippingDiscount);
+
+      // Total akhir (ga boleh minus)
+      const total = Math.max(0, subtotalProduk + subtotalOngkir);
+
+      return total;
+    }
+
+    function toggleSummary(section) {
+      const header = document.getElementById(section + '-header');
+      const body = document.getElementById(section + '-body');
+
+      header.classList.toggle('active');
+      body.classList.toggle('active');
+    }
+
+
+    // Update Display
+    function updatePriceDisplay() {
+      // Hitung subtotal produk
+      const subtotalProduk = state.subtotal - state.voucherDiscount;
+      const subtotalOngkir = state.shipping - state.shippingDiscount;
+
+      // Update Subtotal Produk Section
+      document.getElementById('subtotal-produk-display').textContent = formatRupiah(subtotalProduk);
+      document.getElementById('total-before-detail').textContent = formatRupiah(state.totalBefore);
+      document.getElementById('product-discount-detail').textContent = '- ' + formatRupiah(state.productDiscount);
+
+      // Voucher Produk (conditional)
+      const voucherProductRow = document.getElementById('voucher-product-row');
+      if (state.voucherDiscount > 0) {
+        voucherProductRow.style.display = 'flex';
+        document.getElementById('voucher-product-detail').textContent = '- ' + formatRupiah(state.voucherDiscount);
+      } else {
+        voucherProductRow.style.display = 'none';
       }
 
-      // Calculate Total - FIXED
-      function calculateTotal() {
-        // Hitung subtotal produk (ga boleh minus)
-        const subtotalProduk = Math.max(0, state.subtotal - state.voucherDiscount);
-        
-        // Hitung subtotal ongkir (ga boleh minus)
-        const subtotalOngkir = Math.max(0, state.shipping - state.shippingDiscount);
-        
-        // Total akhir (ga boleh minus)
-        const total = Math.max(0, subtotalProduk + subtotalOngkir);
-        
-        return total;
+      // Update Subtotal Ongkir Section
+      document.getElementById('subtotal-ongkir-display').textContent = formatRupiah(subtotalOngkir);
+      document.getElementById('shipping-cost-detail').textContent = formatRupiah(state.shipping);
+
+      // Diskon Ongkir (conditional)
+      const shippingDiscountRow = document.getElementById('shipping-discount-row');
+      if (state.shippingDiscount > 0) {
+        shippingDiscountRow.style.display = 'flex';
+        document.getElementById('shipping-discount-detail').textContent = '- ' + formatRupiah(state.shippingDiscount);
+      } else {
+        shippingDiscountRow.style.display = 'none';
       }
 
-      function toggleSummary(section) {
-        const header = document.getElementById(section + '-header');
-        const body = document.getElementById(section + '-body');
+      // Update Total Akhir
+      document.getElementById('total-final').textContent = formatRupiah(calculateTotal());
 
-        header.classList.toggle('active');
-        body.classList.toggle('active');
+      // Update payment modal amount (jika ada)
+      const paymentAmount = document.getElementById('payment-amount-display');
+      if (paymentAmount) {
+        paymentAmount.textContent = formatRupiah(calculateTotal());
+      }
+    }
+
+    // Apply Voucher ITEM
+    function applyVoucherItem(code, type, value) {
+      // Cek jika sudah ada promo item
+      if (state.promoCodeItem) {
+        showNotification('⚠️ Hanya bisa pakai 1 promo item! Hapus promo item yang aktif dulu.', 'error');
+        return;
       }
 
-
-      // Update Display
-      function updatePriceDisplay() {
-        // Hitung subtotal produk
-        const subtotalProduk = state.subtotal - state.voucherDiscount;
-        const subtotalOngkir = state.shipping - state.shippingDiscount;
-
-        // Update Subtotal Produk Section
-        document.getElementById('subtotal-produk-display').textContent = formatRupiah(subtotalProduk);
-        document.getElementById('total-before-detail').textContent = formatRupiah(state.totalBefore);
-        document.getElementById('product-discount-detail').textContent = '- ' + formatRupiah(state.productDiscount);
-
-        // Voucher Produk (conditional)
-        const voucherProductRow = document.getElementById('voucher-product-row');
-        if (state.voucherDiscount > 0) {
-          voucherProductRow.style.display = 'flex';
-          document.getElementById('voucher-product-detail').textContent = '- ' + formatRupiah(state.voucherDiscount);
-        } else {
-          voucherProductRow.style.display = 'none';
-        }
-
-        // Update Subtotal Ongkir Section
-        document.getElementById('subtotal-ongkir-display').textContent = formatRupiah(subtotalOngkir);
-        document.getElementById('shipping-cost-detail').textContent = formatRupiah(state.shipping);
-
-        // Diskon Ongkir (conditional)
-        const shippingDiscountRow = document.getElementById('shipping-discount-row');
-        if (state.shippingDiscount > 0) {
-          shippingDiscountRow.style.display = 'flex';
-          document.getElementById('shipping-discount-detail').textContent = '- ' + formatRupiah(state.shippingDiscount);
-        } else {
-          shippingDiscountRow.style.display = 'none';
-        }
-
-        // Update Total Akhir
-        document.getElementById('total-final').textContent = formatRupiah(calculateTotal());
-
-        // Update payment modal amount (jika ada)
-        const paymentAmount = document.getElementById('payment-amount-display');
-        if (paymentAmount) {
-          paymentAmount.textContent = formatRupiah(calculateTotal());
-        }
+      let desc = '';
+      if (type === 'percentage') {
+        const discountAmount = Math.floor(state.subtotal * (value / 100));
+        state.voucherDiscount = discountAmount;
+        desc = `Diskon ${value}%`;
+      } else if (type === 'fixed') {
+        state.voucherDiscount = value;
+        desc = `Potongan Rp ${value.toLocaleString('id-ID')}`;
       }
 
-      // Apply Voucher ITEM
-      function applyVoucherItem(code, type, value) {
-        // Cek jika sudah ada promo item
-        if (state.promoCodeItem) {
-          showNotification('⚠️ Hanya bisa pakai 1 promo item! Hapus promo item yang aktif dulu.', 'error');
-          return;
-        }
+      state.promoCodeItem = code;
+      state.voucherDesc = desc; // ✅ SIMPAN DESC KE STATE!
 
-        let desc = '';
-        if (type === 'percentage') {
-          const discountAmount = Math.floor(state.subtotal * (value / 100));
-          state.voucherDiscount = discountAmount;
-          desc = `Diskon ${value}%`;
-        } else if (type === 'fixed') {
-          state.voucherDiscount = value;
-          desc = `Potongan Rp ${value.toLocaleString('id-ID')}`;
-        }
-
-        state.promoCodeItem = code;
-        state.voucherDesc = desc; // ✅ SIMPAN DESC KE STATE!
-
-        // Update UI - tampilkan promo applied
-        const promoItemContainer = document.getElementById('promo-item-container');
-        promoItemContainer.innerHTML = `
+      // Update UI - tampilkan promo applied
+      const promoItemContainer = document.getElementById('promo-item-container');
+      promoItemContainer.innerHTML = `
           <div class="promo-applied">
             <div class="promo-applied-info">
               <div class="promo-icon">🎉</div>
@@ -3439,56 +3479,64 @@
           </div>
         `;
 
-        // Update tombol promo item
-        updatePromoItemButton(code, desc);
+      // Update tombol promo item
+      updatePromoItemButton(code, desc);
 
-        updateCheckoutTotals(); // Update all displays
-        showNotification('✅ Voucher item berhasil diterapkan!', 'success');
-        closeOffcanvasItem();
+      // ✅ AUTO-EXPAND product section
+      const productHeader = document.getElementById('product-header');
+      const productBody = document.getElementById('product-body');
+      if (productHeader && productBody) {
+        productHeader.classList.add('active');
+        productBody.classList.add('active');
       }
 
-      // Update Promo Item Button
-      function updatePromoItemButton(code, desc) {
-        const btnPromoItem = document.getElementById('btn-open-promo-item');
-        if (code) {
-          btnPromoItem.classList.add('active');
-          btnPromoItem.innerHTML = `
+      updateCheckoutTotals(); // Update all displays
+      showNotification('✅ Voucher item berhasil diterapkan!', 'success');
+      closeOffcanvasItem();
+    }
+
+    // Update Promo Item Button
+    function updatePromoItemButton(code, desc) {
+      const btnPromoItem = document.getElementById('btn-open-promo-item');
+      if (code) {
+        btnPromoItem.classList.add('active');
+        btnPromoItem.innerHTML = `
             <span class="promo-icon">✓</span>
             <span class="promo-code">${code}</span>
             <span class="promo-text">${desc}</span>
           `;
-        } else {
-          btnPromoItem.classList.remove('active');
-          btnPromoItem.innerHTML = `
+      } else {
+        btnPromoItem.classList.remove('active');
+        btnPromoItem.innerHTML = `
             <span class="promo-icon">🎁</span>
             <span class="promo-text">Promo Item</span>
           `;
-        }
+      }
+    }
+
+    // Apply Voucher SHIPPING
+    function applyVoucherShipping(code, type, value) {
+      // Cek jika sudah ada promo shipping
+      if (state.promoCodeShipping) {
+        showNotification('⚠️ Hanya bisa pakai 1 promo ongkir! Hapus promo ongkir yang aktif dulu.', 'error');
+        return;
       }
 
-      // Apply Voucher SHIPPING
-      function applyVoucherShipping(code, type, value) {
-        // Cek jika sudah ada promo shipping
-        if (state.promoCodeShipping) {
-          showNotification('⚠️ Hanya bisa pakai 1 promo ongkir! Hapus promo ongkir yang aktif dulu.', 'error');
-          return;
-        }
+      let desc = '';
+      if (type === 'shipping') {
+        state.shippingDiscount = state.shipping; // GRATIS ONGKIR 100%
+        desc = 'Gratis Ongkir';
+      } else if (type === 'shipping_percentage') {
+        state.shippingDiscount = Math.floor(state.shipping * (value / 100));
+        desc = `Diskon Ongkir ${value}%`;
+      }
 
-        let desc = '';
-        if (type === 'shipping') {
-          state.shippingDiscount = state.shipping; // GRATIS ONGKIR 100%
-          desc = 'Gratis Ongkir';
-        } else if (type === 'shipping_percentage') {
-          state.shippingDiscount = Math.floor(state.shipping * (value / 100));
-          desc = `Diskon Ongkir ${value}%`;
-        }
+      state.promoCodeShipping = code;
+      state.shippingDesc = desc; // ✅ SIMPAN DESC KE STATE!
 
-        state.promoCodeShipping = code;
-        state.shippingDesc = desc; // ✅ SIMPAN DESC KE STATE!
-
-        // Update UI - tampilkan promo applied
-        const promoShippingContainer = document.getElementById('promo-shipping-container');
-        promoShippingContainer.innerHTML = `
+      // Update UI - tampilkan promo applied
+      const promoShippingContainer = document.getElementById('promo-shipping-container');
+      promoShippingContainer.innerHTML = `
           <div class="promo-applied">
             <div class="promo-applied-info">
               <div class="promo-icon">🎉</div>
@@ -3501,89 +3549,97 @@
           </div>
         `;
 
-        // Update tombol promo shipping
-        updatePromoShippingButton(code, desc);
+      // Update tombol promo shipping
+      updatePromoShippingButton(code, desc);
 
-        updateCheckoutTotals(); // Update all displays
-        showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
-        closeOffcanvasShipping();
+      // ✅ AUTO-EXPAND shipping section
+      const shippingHeader = document.getElementById('shipping-header');
+      const shippingBody = document.getElementById('shipping-body');
+      if (shippingHeader && shippingBody) {
+        shippingHeader.classList.add('active');
+        shippingBody.classList.add('active');
       }
 
-      // Update Promo Shipping Button
-      function updatePromoShippingButton(code, desc) {
-        const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
-        if (code) {
-          btnPromoShipping.classList.add('active');
-          btnPromoShipping.innerHTML = `
+      updateCheckoutTotals(); // Update all displays
+      showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
+      closeOffcanvasShipping();
+    }
+
+    // Update Promo Shipping Button
+    function updatePromoShippingButton(code, desc) {
+      const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
+      if (code) {
+        btnPromoShipping.classList.add('active');
+        btnPromoShipping.innerHTML = `
             <span class="promo-icon">✓</span>
             <span class="promo-code">${code}</span>
             <span class="promo-text">${desc}</span>
           `;
-        } else {
-          btnPromoShipping.classList.remove('active');
-          btnPromoShipping.innerHTML = `
+      } else {
+        btnPromoShipping.classList.remove('active');
+        btnPromoShipping.innerHTML = `
             <span class="promo-icon">🚚</span>
             <span class="promo-text">Gratis Ongkir</span>
           `;
+      }
+    }
+
+    // Apply Promo ITEM dari input
+    function applyPromoItem(code) {
+      code = code.toUpperCase().trim();
+
+      const promos = {
+        'DISKON10': {
+          type: 'percentage',
+          value: 10
+        },
+        'GRATIS50': {
+          type: 'fixed',
+          value: 50000
         }
+      };
+
+      if (!promos[code]) {
+        showNotification('❌ Kode promo item tidak valid', 'error');
+        return;
       }
 
-      // Apply Promo ITEM dari input
-      function applyPromoItem(code) {
-        code = code.toUpperCase().trim();
+      const promo = promos[code];
+      applyVoucherItem(code, promo.type, promo.value);
+    }
 
-        const promos = {
-          'DISKON10': {
-            type: 'percentage',
-            value: 10
-          },
-          'GRATIS50': {
-            type: 'fixed',
-            value: 50000
-          }
-        };
+    // Apply Promo SHIPPING dari input
+    function applyPromoShipping(code) {
+      code = code.toUpperCase().trim();
 
-        if (!promos[code]) {
-          showNotification('❌ Kode promo item tidak valid', 'error');
-          return;
+      const promos = {
+        'FREEONGKIR': {
+          type: 'shipping',
+          value: 0
+        },
+        'ONGKIR50': {
+          type: 'shipping_percentage',
+          value: 50
         }
+      };
 
-        const promo = promos[code];
-        applyVoucherItem(code, promo.type, promo.value);
+      if (!promos[code]) {
+        showNotification('❌ Kode promo ongkir tidak valid', 'error');
+        return;
       }
 
-      // Apply Promo SHIPPING dari input
-      function applyPromoShipping(code) {
-        code = code.toUpperCase().trim();
+      const promo = promos[code];
+      applyVoucherShipping(code, promo.type, promo.value);
+    }
 
-        const promos = {
-          'FREEONGKIR': {
-            type: 'shipping',
-            value: 0
-          },
-          'ONGKIR50': {
-            type: 'shipping_percentage',
-            value: 50
-          }
-        };
+    // Remove Promo ITEM
+    function removePromoItem() {
+      state.voucherDiscount = 0;
+      state.promoCodeItem = null;
+      state.voucherDesc = null; // ✅ RESET DESC JUGA!
 
-        if (!promos[code]) {
-          showNotification('❌ Kode promo ongkir tidak valid', 'error');
-          return;
-        }
-
-        const promo = promos[code];
-        applyVoucherShipping(code, promo.type, promo.value);
-      }
-
-      // Remove Promo ITEM
-      function removePromoItem() {
-        state.voucherDiscount = 0;
-        state.promoCodeItem = null;
-        state.voucherDesc = null; // ✅ RESET DESC JUGA!
-
-        const promoItemContainer = document.getElementById('promo-item-container');
-        promoItemContainer.innerHTML = `
+      const promoItemContainer = document.getElementById('promo-item-container');
+      promoItemContainer.innerHTML = `
           <div class="promo-input-group">
             <input type="text" class="promo-input" id="promo-code-item" placeholder="Masukkan kode promo item">
             <button class="btn-apply-promo" id="btn-apply-promo-item">Pakai</button>
@@ -3620,22 +3676,22 @@
           </div>
         `;
 
-        // Reset tampilan tombol
-        updatePromoItemButton(null, null);
+      // Reset tampilan tombol
+      updatePromoItemButton(null, null);
 
-        attachPromoItemEvents();
-        updateCheckoutTotals(); // Update all displays
-        showNotification('✅ Promo item berhasil dihapus', 'success');
-      }
+      attachPromoItemEvents();
+      updateCheckoutTotals(); // Update all displays
+      showNotification('✅ Promo item berhasil dihapus', 'success');
+    }
 
-      // Remove Promo SHIPPING
-      function removePromoShipping() {
-        state.shippingDiscount = 0;
-        state.promoCodeShipping = null;
-        state.shippingDesc = null; // ✅ RESET DESC JUGA!
+    // Remove Promo SHIPPING
+    function removePromoShipping() {
+      state.shippingDiscount = 0;
+      state.promoCodeShipping = null;
+      state.shippingDesc = null; // ✅ RESET DESC JUGA!
 
-        const promoShippingContainer = document.getElementById('promo-shipping-container');
-        promoShippingContainer.innerHTML = `
+      const promoShippingContainer = document.getElementById('promo-shipping-container');
+      promoShippingContainer.innerHTML = `
           <div class="promo-input-group">
             <input type="text" class="promo-input" id="promo-code-shipping" placeholder="Masukkan kode gratis ongkir">
             <button class="btn-apply-promo" id="btn-apply-promo-shipping">Pakai</button>
@@ -3672,358 +3728,499 @@
           </div>
         `;
 
-        // Reset tampilan tombol
-        updatePromoShippingButton(null, null);
+      // Reset tampilan tombol
+      updatePromoShippingButton(null, null);
 
-        attachPromoShippingEvents();
-        updateCheckoutTotals(); // Update all displays
-        showNotification('✅ Promo ongkir berhasil dihapus', 'success');
-      }
+      attachPromoShippingEvents();
+      updateCheckoutTotals(); // Update all displays
+      showNotification('✅ Promo ongkir berhasil dihapus', 'success');
+    }
 
-      // HAPUS FUNGSI LAMA
-      // Apply Promo
-      // Off-canvas Functions - UPDATED UNTUK DUA OFFCANVAS
-      function openOffcanvasItem() {
-        document.getElementById('offcanvas-overlay-item').classList.add('active');
-        document.getElementById('offcanvas-promo-item').classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
+    // HAPUS FUNGSI LAMA
+    // Apply Promo
+    // Off-canvas Functions - UPDATED UNTUK DUA OFFCANVAS
+    function openOffcanvasItem() {
+      document.getElementById('offcanvas-overlay-item').classList.add('active');
+      document.getElementById('offcanvas-promo-item').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
-      function closeOffcanvasItem() {
-        document.getElementById('offcanvas-overlay-item').classList.remove('active');
-        document.getElementById('offcanvas-promo-item').classList.remove('active');
-        document.body.style.overflow = '';
-      }
+    function closeOffcanvasItem() {
+      document.getElementById('offcanvas-overlay-item').classList.remove('active');
+      document.getElementById('offcanvas-promo-item').classList.remove('active');
+      document.body.style.overflow = '';
+    }
 
-      function openOffcanvasShipping() {
-        document.getElementById('offcanvas-overlay-shipping').classList.add('active');
-        document.getElementById('offcanvas-promo-shipping').classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
+    function openOffcanvasShipping() {
+      document.getElementById('offcanvas-overlay-shipping').classList.add('active');
+      document.getElementById('offcanvas-promo-shipping').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
-      function closeOffcanvasShipping() {
-        document.getElementById('offcanvas-overlay-shipping').classList.remove('active');
-        document.getElementById('offcanvas-promo-shipping').classList.remove('active');
-        document.body.style.overflow = '';
-      }
+    function closeOffcanvasShipping() {
+      document.getElementById('offcanvas-overlay-shipping').classList.remove('active');
+      document.getElementById('offcanvas-promo-shipping').classList.remove('active');
+      document.body.style.overflow = '';
+    }
 
-      // Attach Promo Events - UNTUK ITEM
-      function attachPromoItemEvents() {
-        const btnApplyPromo = document.getElementById('btn-apply-promo-item');
-        const promoCodeInput = document.getElementById('promo-code-item');
+    // ✅ VALIDATE & APPLY PROMO dari DATABASE
+    function validateAndApplyPromo(code, jenis) {
+      // jenis: 'item' atau 'ongkir'
 
-        if (btnApplyPromo) {
-          btnApplyPromo.addEventListener('click', function() {
-            const code = promoCodeInput.value;
-            if (code) {
-              applyPromoItem(code);
-            } else {
-              showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+      // Show loading
+      showNotification('⏳ Memvalidasi kode promo...', 'info');
+
+      // Get current subtotal for validation
+      const currentSubtotal = state.subtotal;
+
+      // AJAX request ke backend
+      fetch('<?= site_url("checkout/apply_promo") ?>', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest' // ✅ For AJAX detection
+          },
+          body: `kode_promo=${encodeURIComponent(code)}&jenis=${jenis}&total_belanja=${currentSubtotal}`
+        })
+        .then(response => {
+          console.log('📡 Response status:', response.status);
+          console.log('📡 Response headers:', response.headers);
+
+          // ✅ Clone response untuk log text
+          return response.clone().text().then(text => {
+            console.log('📄 Raw response:', text);
+
+            // Try parse JSON
+            try {
+              const data = JSON.parse(text);
+              return data;
+            } catch (e) {
+              console.error('❌ JSON Parse Error:', e);
+              console.error('📄 Response was:', text.substring(0, 500));
+              throw new Error('Response bukan JSON valid');
             }
           });
-        }
+        })
+        .then(data => {
+          // ✅ DEBUG: Log full response
+          console.log('🔍 Promo Validation Response:', data);
+          console.log('📝 Request:', {
+            kode_promo: code,
+            jenis: jenis,
+            total_belanja: currentSubtotal
+          });
 
-        if (promoCodeInput) {
-          promoCodeInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              const code = promoCodeInput.value;
-              if (code) {
-                applyPromoItem(code);
+          if (data.valid) {
+            // Promo VALID - apply to state
+            console.log('✅ Promo VALID:', data.promo);
+            const promo = data.promo;
+
+            if (jenis === 'item') {
+              // Apply item promo
+              if (promo.persen_promo > 0) {
+                applyVoucherItem(code, 'percentage', promo.persen_promo);
+              } else if (promo.harga_promo > 0) {
+                applyVoucherItem(code, 'fixed', promo.harga_promo);
+              }
+            } else if (jenis === 'ongkir') {
+              // Apply shipping promo
+              if (promo.persen_promo > 0) {
+                applyVoucherShipping(code, 'shipping_percentage', promo.persen_promo);
               } else {
-                showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+                applyVoucherShipping(code, 'shipping', 0); // Free shipping
               }
             }
+
+            closeOffcanvasItem();
+            closeOffcanvasShipping();
+
+          } else {
+            // Promo INVALID
+            console.log('❌ Promo INVALID:', data.message);
+            console.log('📊 Debug Info:', data.debug || data.debug_request);
+            showNotification(`❌ ${data.message}`, 'error');
+          }
+        })
+        .catch(error => {
+          console.error('❌ Error validating promo:', error);
+          console.error('📍 Error details:', {
+            message: error.message,
+            stack: error.stack
           });
-        }
-      }
 
-      // Attach Promo Events - UNTUK SHIPPING
-      function attachPromoShippingEvents() {
-        const btnApplyPromo = document.getElementById('btn-apply-promo-shipping');
-        const promoCodeInput = document.getElementById('promo-code-shipping');
+          // Show detailed error
+          let errorMsg = 'Gagal memvalidasi kode promo';
+          if (error.message.includes('HTTP')) {
+            errorMsg += ` (${error.message})`;
+          } else if (error.message.includes('JSON')) {
+            errorMsg += ' - Response bukan JSON valid';
+          }
 
-        if (btnApplyPromo) {
-          btnApplyPromo.addEventListener('click', function() {
-            const code = promoCodeInput.value;
-            if (code) {
-              applyPromoShipping(code);
-            } else {
-              showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
-            }
-          });
-        }
+          showNotification(`❌ ${errorMsg}`, 'error');
+        });
+    }
 
-        if (promoCodeInput) {
-          promoCodeInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              const code = promoCodeInput.value;
-              if (code) {
-                applyPromoShipping(code);
-              } else {
-                showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
-              }
-            }
-          });
-        }
-      }
+    // Attach Promo Events - UNTUK ITEM
+    function attachPromoItemEvents() {
+      const btnApplyPromo = document.getElementById('btn-apply-promo-item');
+      const promoCodeInput = document.getElementById('promo-code-item');
 
-      // Modal Functions
-      function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-          modal.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
-        }
-      }
-
-      function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-          modal.setAttribute('aria-hidden', 'true');
-          document.body.style.overflow = '';
-        }
-      }
-
-      // Payment Modal Functions
-      // Process Payment - UPDATED: Ambil payment method dari dropdown
-      function processPayment() {
-        // Ambil metode pembayaran dari dropdown
-        const paymentSelect = document.getElementById('payment-method-select');
-        const selectedPayment = paymentSelect ? paymentSelect.value : null;
-        
-        if (!selectedPayment) {
-          showNotification('⚠️ Pilih metode pembayaran terlebih dahulu', 'error');
-          return;
-        }
-        
-        // Ambil semua cart ID dari product items (semua yang tampil di halaman)
-        const checkedCartIds = [];
-        document.querySelectorAll('.product-item').forEach(item => {
-          const cartId = item.getAttribute('data-id-cart');
-          if (cartId) {
-            checkedCartIds.push(cartId);
+      if (btnApplyPromo) {
+        btnApplyPromo.addEventListener('click', function() {
+          const code = promoCodeInput.value.trim().toUpperCase();
+          if (code) {
+            // ✅ VALIDATE dari DATABASE
+            validateAndApplyPromo(code, 'item');
+          } else {
+            showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
           }
         });
-        
-        // Validasi: harus ada minimal 1 item
-        if (checkedCartIds.length === 0) {
-          showNotification('⚠️ Keranjang kosong', 'error');
-          return;
+      }
+
+      if (promoCodeInput) {
+        promoCodeInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const code = promoCodeInput.value.trim().toUpperCase();
+            if (code) {
+              // ✅ VALIDATE dari DATABASE
+              validateAndApplyPromo(code, 'item');
+            } else {
+              showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+            }
+          }
+        });
+      }
+    }
+
+    // Attach Promo Events - UNTUK SHIPPING
+    function attachPromoShippingEvents() {
+      const btnApplyPromo = document.getElementById('btn-apply-promo-shipping');
+      const promoCodeInput = document.getElementById('promo-code-shipping');
+
+      if (btnApplyPromo) {
+        btnApplyPromo.addEventListener('click', function() {
+          const code = promoCodeInput.value.trim().toUpperCase();
+          if (code) {
+            // ✅ VALIDATE dari DATABASE
+            validateAndApplyPromo(code, 'ongkir');
+          } else {
+            showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+          }
+        });
+      }
+
+      if (promoCodeInput) {
+        promoCodeInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const code = promoCodeInput.value.trim().toUpperCase();
+            if (code) {
+              // ✅ VALIDATE dari DATABASE
+              validateAndApplyPromo(code, 'ongkir');
+            } else {
+              showNotification('⚠️ Masukkan kode promo terlebih dahulu', 'error');
+            }
+          }
+        });
+      }
+    }
+
+    // Modal Functions
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Payment Modal Functions
+    // Process Payment - UPDATED: Ambil payment method dari dropdown
+    function processPayment() {
+      // Ambil metode pembayaran dari dropdown
+      const paymentSelect = document.getElementById('payment-method-select');
+      const selectedPayment = paymentSelect ? paymentSelect.value : null;
+
+      if (!selectedPayment) {
+        showNotification('⚠️ Pilih metode pembayaran terlebih dahulu', 'error');
+        return;
+      }
+
+      // Ambil semua cart ID dari product items (semua yang tampil di halaman)
+      const checkedCartIds = [];
+      document.querySelectorAll('.product-item').forEach(item => {
+        const cartId = item.getAttribute('data-id-cart');
+        if (cartId) {
+          checkedCartIds.push(cartId);
         }
+      });
 
-        const btnConfirm = document.getElementById('btn-pay-now');
-        const originalText = btnConfirm.innerHTML;
-        btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...';
-        btnConfirm.disabled = true;
-        btnConfirm.disabled = true;
+      // Validasi: harus ada minimal 1 item
+      if (checkedCartIds.length === 0) {
+        showNotification('⚠️ Keranjang kosong', 'error');
+        return;
+      }
 
-        // Hitung total pembayaran
-        const totalPembayaran = calculateTotal();
-        const ongkir = state.shipping - state.shippingDiscount;
+      const btnConfirm = document.getElementById('btn-pay-now');
+      const originalText = btnConfirm.innerHTML;
+      btnConfirm.innerHTML = '<span class="spinner"></span> Memproses...';
+      btnConfirm.disabled = true;
+      btnConfirm.disabled = true;
 
-        // Map metode pembayaran ke format database
-        const metodePembayaranMap = {
-          'bca': 'Rekening',
-          'mandiri': 'Rekening',
-          'bni': 'Rekening',
-          'bri': 'Rekening'
-        };
+      // Hitung total pembayaran
+      const totalPembayaran = calculateTotal();
+      const ongkir = state.shipping - state.shippingDiscount;
 
-        const metodePembayaran = metodePembayaranMap[selectedPayment] || 'Rekening';
+      // Map metode pembayaran ke format database
+      const metodePembayaranMap = {
+        'bca': 'Rekening',
+        'mandiri': 'Rekening',
+        'bni': 'Rekening',
+        'bri': 'Rekening'
+      };
 
-        // Prepare data untuk dikirim
-        const dataTransaksi = {
-          total: totalPembayaran,
-          metode_pembayaran: metodePembayaran,
-          bayar: totalPembayaran,
-          kembali: 0,
-          ongkir: ongkir,
-          cart_ids: checkedCartIds.join(',') // Kirim ID cart yang checked
-        };
+      const metodePembayaran = metodePembayaranMap[selectedPayment] || 'Rekening';
 
-        console.log('📤 Data transaksi:', dataTransaksi);
+      // Prepare data untuk dikirim
+      const dataTransaksi = {
+        total: totalPembayaran,
+        metode_pembayaran: metodePembayaran,
+        bayar: totalPembayaran,
+        kembali: 0,
+        ongkir: ongkir,
+        cart_ids: checkedCartIds.join(','),
+        kode_promo_item: state.voucherCode || '',
+        kode_promo_ongkir: state.shippingVoucherCode || '',
+        diskon_voucher: state.voucherDiscount || 0, // ✅ Nilai diskon voucher
+        diskon_ongkir: state.shippingDiscount || 0 // ✅ Nilai diskon ongkir
+      };
 
-        // Kirim ke server
-        fetch("<?= base_url('index.php/transaksi/simpan') ?>", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(dataTransaksi)
-          })
-          .then(response => response.json())
-          .then(result => {
-            console.log('📥 Response dari server:', result);
+      console.log('📤 Data transaksi:', dataTransaksi);
 
-            if (result.success) {
-              // Simpan ID transaksi yang baru dibuat
-              const idTransaksi = result.id_transaksi || result.data?.id_transaksi;
+      // Kirim ke server
+      fetch("<?= base_url('index.php/transaksi/simpan') ?>", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams(dataTransaksi)
+        })
+        .then(response => {
+          console.log('📡 Response status:', response.status);
+          console.log('📡 Response OK:', response.ok);
 
-              showPaymentSuccess(idTransaksi, selectedPayment);
-              showNotification('✅ Pembayaran berhasil!', 'success');
-              
-              // REDIRECT KE HALAMAN HOME SETELAH 2 DETIK
+          // ✅ Clone response untuk log raw text
+          return response.clone().text().then(rawText => {
+            console.log('📄 Raw response:', rawText.substring(0, 500)); // First 500 chars
+
+            // Try parse JSON
+            try {
+              const data = JSON.parse(rawText);
+              return data;
+            } catch (e) {
+              console.error('❌ JSON Parse Error:', e);
+              console.error('📄 Full response:', rawText);
+              throw new Error('Server returned invalid JSON. Check console for details.');
+            }
+          });
+        })
+        .then(result => {
+          console.log('📥 Response dari server:', result);
+
+          if (result.success) {
+            // ✅ REDIRECT KE HALAMAN PEMBAYARAN (bukan modal)
+            if (result.redirect_url) {
+              showNotification('✅ Pesanan berhasil! Redirecting...', 'success');
+
+              setTimeout(() => {
+                window.location.href = result.redirect_url;
+              }, 1000);
+            } else {
+              // Fallback kalau ga ada redirect_url
+              showNotification('✅ Pesanan berhasil!', 'success');
               setTimeout(() => {
                 window.location.href = "<?= base_url('') ?>";
               }, 2000);
-            } else {
-              btnConfirm.innerHTML = originalText;
-              btnConfirm.disabled = false;
-              showNotification('❌ ' + (result.message || 'Gagal memproses pembayaran'), 'error');
             }
-          })
-          .catch(error => {
-            console.error('❌ Error:', error);
+          } else {
             btnConfirm.innerHTML = originalText;
             btnConfirm.disabled = false;
-            showNotification('❌ Terjadi kesalahan saat memproses pembayaran', 'error');
-          });
-      }
-
-      // Show Payment Success
-      function showPaymentSuccess(idTransaksi, selectedPayment) {
-        // Gunakan ID transaksi dari database atau generate fallback
-        const orderId = idTransaksi || 'ORDER-' + new Date().getFullYear() + '-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-        document.getElementById('generated-order-id').textContent = orderId;
-
-        const paymentMethods = {
-          'bca': 'Bank BCA',
-          'mandiri': 'Bank Mandiri',
-          'bni': 'Bank BNI',
-          'bri': 'Bank BRI'
-        };
-
-        document.getElementById('selected-payment-method').textContent = paymentMethods[selectedPayment] || selectedPayment;
-        document.getElementById('paid-amount').textContent = formatRupiah(calculateTotal());
-
-        const now = new Date();
-        const options = {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        };
-        document.getElementById('payment-time').textContent = now.toLocaleDateString('id-ID', options) + ' WIB';
-
-        openModal('success-modal');
-      }
-
-      // Track Order
-      function trackOrder() {
-        closeModal('success-modal');
-        showNotification('📦 Membuka halaman pelacakan pesanan...', 'info');
-      }
-
-      // Continue Shopping
-      function continueShopping() {
-        closeModal('success-modal');
-        showNotification('🛍️ Kembali ke halaman belanja...', 'info');
-      }
-
-      // ✅ GLOBAL FUNCTION - Recalculate & Update All Totals
-      function updateCheckoutTotals() {
-        // Calculate from items
-        let total = 0;
-        let count = 0;
-        
-        document.querySelectorAll('.product-item').forEach(item => {
-          const price = parseFloat(item.getAttribute('data-price'));
-          if (!isNaN(price) && price > 0) {
-            total += price;
-            count++;
+            showNotification('❌ ' + (result.message || 'Gagal memproses pembayaran'), 'error');
           }
+        })
+        .catch(error => {
+          console.error('❌ Error:', error);
+          console.error('❌ Error message:', error.message);
+          console.error('❌ Error stack:', error.stack);
+
+          btnConfirm.innerHTML = originalText;
+          btnConfirm.disabled = false;
+
+          // Show more helpful error
+          let errorMsg = 'Terjadi kesalahan saat memproses pembayaran';
+          if (error.message) {
+            errorMsg += ': ' + error.message;
+          }
+
+          showNotification('❌ ' + errorMsg, 'error');
         });
-        
-        // Update state
-        state.totalBefore = total;
-        state.subtotal = total;
-        
-        // Update displays
-        const finalTotal = calculateTotal();
-        
-        // Item counts
-        document.querySelectorAll('#checked-items-count, #total-items-count').forEach(el => {
-          if (el) el.textContent = count;
-        });
-        
-        // Subtotal produk
-        const subtotalEl = document.getElementById('subtotal-produk-display');
-        if (subtotalEl) {
-          subtotalEl.textContent = formatRupiah(Math.max(0, total - state.voucherDiscount));
+    }
+
+    // Show Payment Success
+    function showPaymentSuccess(idTransaksi, selectedPayment) {
+      // Gunakan ID transaksi dari database atau generate fallback
+      const orderId = idTransaksi || 'ORDER-' + new Date().getFullYear() + '-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+      document.getElementById('generated-order-id').textContent = orderId;
+
+      const paymentMethods = {
+        'bca': 'Bank BCA',
+        'mandiri': 'Bank Mandiri',
+        'bni': 'Bank BNI',
+        'bri': 'Bank BRI'
+      };
+
+      document.getElementById('selected-payment-method').textContent = paymentMethods[selectedPayment] || selectedPayment;
+      document.getElementById('paid-amount').textContent = formatRupiah(calculateTotal());
+
+      const now = new Date();
+      const options = {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      document.getElementById('payment-time').textContent = now.toLocaleDateString('id-ID', options) + ' WIB';
+
+      openModal('success-modal');
+    }
+
+    // Track Order
+    function trackOrder() {
+      closeModal('success-modal');
+      showNotification('📦 Membuka halaman pelacakan pesanan...', 'info');
+    }
+
+    // Continue Shopping
+    function continueShopping() {
+      closeModal('success-modal');
+      showNotification('🛍️ Kembali ke halaman belanja...', 'info');
+    }
+
+    // ✅ GLOBAL FUNCTION - Recalculate & Update All Totals
+    function updateCheckoutTotals() {
+      // Calculate from items
+      let total = 0;
+      let count = 0;
+
+      document.querySelectorAll('.product-item').forEach(item => {
+        const price = parseFloat(item.getAttribute('data-price'));
+        if (!isNaN(price) && price > 0) {
+          total += price;
+          count++;
         }
-        
-        // Total before
-        const totalBeforeEl = document.getElementById('total-before-detail');
-        if (totalBeforeEl) totalBeforeEl.textContent = formatRupiah(total);
-        
-        // Voucher row
-        const voucherRow = document.getElementById('voucher-product-row');
-        const voucherLabel = document.getElementById('voucher-product-label');
-        const voucherDetail = document.getElementById('voucher-product-detail');
-        if (voucherRow && state.voucherDiscount > 0 && state.voucherDesc) {
-          voucherRow.style.display = 'flex';
-          if (voucherLabel) voucherLabel.textContent = `🎁 ${state.voucherDesc}`;
-          if (voucherDetail) voucherDetail.textContent = '- ' + formatRupiah(state.voucherDiscount);
-        } else if (voucherRow) {
-          voucherRow.style.display = 'none';
-        }
-        
-        // Shipping discount row
-        const shippingRow = document.getElementById('shipping-discount-row');
-        const shippingLabel = document.getElementById('shipping-discount-label');
-        const shippingDetail = document.getElementById('shipping-discount-detail');
-        if (shippingRow && state.shippingDiscount > 0 && state.shippingDesc) {
-          shippingRow.style.display = 'flex';
-          if (shippingLabel) shippingLabel.textContent = `🎁 ${state.shippingDesc}`;
-          if (shippingDetail) shippingDetail.textContent = '- ' + formatRupiah(state.shippingDiscount);
-        } else if (shippingRow) {
-          shippingRow.style.display = 'none';
-        }
-        
-        // Total final
-        const totalFinalEl = document.getElementById('total-final');
-        if (totalFinalEl) totalFinalEl.textContent = formatRupiah(finalTotal);
-        
-        // Payment modal
-        const paymentEl = document.getElementById('payment-amount-display');
-        if (paymentEl) paymentEl.textContent = formatRupiah(finalTotal);
-        
-        // Button state
-        const btnPayNow = document.getElementById('btn-pay-now');
-        if (btnPayNow) {
-          btnPayNow.disabled = (count === 0);
-          btnPayNow.style.opacity = (count === 0) ? '0.5' : '1';
-        }
-        
-        console.log('✅ Totals updated:', {total, count, finalTotal});
+      });
+
+      // Update state
+      state.totalBefore = total;
+      state.subtotal = total;
+
+      // Update displays
+      const finalTotal = calculateTotal();
+
+      // Item counts
+      document.querySelectorAll('#checked-items-count, #total-items-count').forEach(el => {
+        if (el) el.textContent = count;
+      });
+
+      // Subtotal produk
+      const subtotalEl = document.getElementById('subtotal-produk-display');
+      if (subtotalEl) {
+        subtotalEl.textContent = formatRupiah(Math.max(0, total - state.voucherDiscount));
       }
 
-      // Event Listeners
-      document.addEventListener('DOMContentLoaded', function() {
-        
-        console.log('🚀 DOM Loaded - Initializing checkout...');
-        
-        // ✅ Calculate totals on page load
-        updateCheckoutTotals();
-        
-        // ✨ BOTTOM SHEET - Swipe & Click Handler (Mobile Only)
-        if (window.innerWidth <= 768) {
-          const summaryBox = document.querySelector('.box:has(.summary-section)');
-          const summaryTotal = document.querySelector('.summary-total-section');
-          
-          if (!summaryBox || !summaryTotal) return;
-          
-          // Create overlay
-          const summaryOverlay = document.createElement('div');
-          summaryOverlay.className = 'summary-overlay';
-          document.body.appendChild(summaryOverlay);
-          
-          // Create visible drag handle bar
-          const dragHandleBar = document.createElement('div');
-          dragHandleBar.style.cssText = `
+      // Total before
+      const totalBeforeEl = document.getElementById('total-before-detail');
+      if (totalBeforeEl) totalBeforeEl.textContent = formatRupiah(total);
+
+      // Voucher row
+      const voucherRow = document.getElementById('voucher-product-row');
+      const voucherLabel = document.getElementById('voucher-product-label');
+      const voucherDetail = document.getElementById('voucher-product-detail');
+      if (voucherRow && state.voucherDiscount > 0 && state.voucherDesc) {
+        voucherRow.style.display = 'flex';
+        if (voucherLabel) voucherLabel.textContent = `🎁 ${state.voucherDesc}`;
+        if (voucherDetail) voucherDetail.textContent = '- ' + formatRupiah(state.voucherDiscount);
+      } else if (voucherRow) {
+        voucherRow.style.display = 'none';
+      }
+
+      // Shipping discount row
+      const shippingRow = document.getElementById('shipping-discount-row');
+      const shippingLabel = document.getElementById('shipping-discount-label');
+      const shippingDetail = document.getElementById('shipping-discount-detail');
+      if (shippingRow && state.shippingDiscount > 0 && state.shippingDesc) {
+        shippingRow.style.display = 'flex';
+        if (shippingLabel) shippingLabel.textContent = `🎁 ${state.shippingDesc}`;
+        if (shippingDetail) shippingDetail.textContent = '- ' + formatRupiah(state.shippingDiscount);
+      } else if (shippingRow) {
+        shippingRow.style.display = 'none';
+      }
+
+      // Total final
+      const totalFinalEl = document.getElementById('total-final');
+      if (totalFinalEl) totalFinalEl.textContent = formatRupiah(finalTotal);
+
+      // Payment modal
+      const paymentEl = document.getElementById('payment-amount-display');
+      if (paymentEl) paymentEl.textContent = formatRupiah(finalTotal);
+
+      // Button state
+      const btnPayNow = document.getElementById('btn-pay-now');
+      if (btnPayNow) {
+        btnPayNow.disabled = (count === 0);
+        btnPayNow.style.opacity = (count === 0) ? '0.5' : '1';
+      }
+
+      console.log('✅ Totals updated:', {
+        total,
+        count,
+        finalTotal
+      });
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+
+      console.log('🚀 DOM Loaded - Initializing checkout...');
+
+      // ✅ Calculate totals on page load
+      updateCheckoutTotals();
+
+      // ✨ BOTTOM SHEET - Swipe & Click Handler (Mobile Only)
+      if (window.innerWidth <= 768) {
+        const summaryBox = document.querySelector('.box:has(.summary-section)');
+        const summaryTotal = document.querySelector('.summary-total-section');
+
+        if (!summaryBox || !summaryTotal) return;
+
+        // Create overlay
+        const summaryOverlay = document.createElement('div');
+        summaryOverlay.className = 'summary-overlay';
+        document.body.appendChild(summaryOverlay);
+
+        // Create visible drag handle bar
+        const dragHandleBar = document.createElement('div');
+        dragHandleBar.style.cssText = `
             position: absolute;
             top: 8px;
             left: 50%;
@@ -4034,12 +4231,12 @@
             border-radius: 2px;
             z-index: 1;
           `;
-          summaryBox.insertBefore(dragHandleBar, summaryBox.firstChild);
-          
-          // Create invisible drag area (larger touch target)
-          const dragHandle = document.createElement('div');
-          dragHandle.className = 'summary-drag-handle';
-          dragHandle.style.cssText = `
+        summaryBox.insertBefore(dragHandleBar, summaryBox.firstChild);
+
+        // Create invisible drag area (larger touch target)
+        const dragHandle = document.createElement('div');
+        dragHandle.className = 'summary-drag-handle';
+        dragHandle.style.cssText = `
             position: absolute;
             top: 0;
             left: 0;
@@ -4051,293 +4248,301 @@
             -webkit-user-select: none;
             user-select: none;
           `;
-          summaryBox.insertBefore(dragHandle, summaryBox.firstChild);
-          
-          let startY = 0;
-          let currentY = 0;
-          let isDragging = false;
-          let startTime = 0;
-          let isExpanded = false;
-          
-          // Click total section to toggle
-          summaryTotal.addEventListener('click', function(e) {
-            if (e.target.closest('.btn-checkout')) return;
-            
-            isExpanded = !isExpanded;
-            summaryBox.classList.toggle('expanded', isExpanded);
-            summaryOverlay.classList.toggle('active', isExpanded);
-          });
-          
-          // Drag handle - touch events
-          dragHandle.addEventListener('touchstart', function(e) {
-            startY = e.touches[0].clientY;
-            currentY = startY;
-            isDragging = true;
-            startTime = Date.now();
-            dragHandle.style.cursor = 'grabbing';
+        summaryBox.insertBefore(dragHandle, summaryBox.firstChild);
+
+        let startY = 0;
+        let currentY = 0;
+        let isDragging = false;
+        let startTime = 0;
+        let isExpanded = false;
+
+        // Click total section to toggle
+        summaryTotal.addEventListener('click', function(e) {
+          if (e.target.closest('.btn-checkout')) return;
+
+          isExpanded = !isExpanded;
+          summaryBox.classList.toggle('expanded', isExpanded);
+          summaryOverlay.classList.toggle('active', isExpanded);
+        });
+
+        // Drag handle - touch events
+        dragHandle.addEventListener('touchstart', function(e) {
+          startY = e.touches[0].clientY;
+          currentY = startY;
+          isDragging = true;
+          startTime = Date.now();
+          dragHandle.style.cursor = 'grabbing';
+          e.stopPropagation();
+        }, {
+          passive: false
+        });
+
+        dragHandle.addEventListener('touchmove', function(e) {
+          if (!isDragging) return;
+
+          currentY = e.touches[0].clientY;
+          const diff = currentY - startY;
+
+          // Visual feedback
+          if (!isExpanded && diff < 0) {
+            const translateY = Math.max(diff, -200);
+            summaryBox.style.transform = `translateY(${translateY}px)`;
+          } else if (isExpanded && diff > 0) {
+            const translateY = Math.min(diff, 200);
+            summaryBox.style.transform = `translateY(${translateY}px)`;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+        }, {
+          passive: false
+        });
+
+        dragHandle.addEventListener('touchend', function(e) {
+          if (!isDragging) return;
+
+          const diff = currentY - startY;
+          const duration = Date.now() - startTime;
+          const velocity = Math.abs(diff) / duration;
+
+          dragHandle.style.cursor = 'grab';
+          summaryBox.style.transform = '';
+          summaryBox.style.transition = 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+
+          const threshold = velocity > 0.5 ? 30 : 50;
+
+          if (diff > threshold) {
+            isExpanded = false;
+            summaryBox.classList.remove('expanded');
+            summaryOverlay.classList.remove('active');
+          } else if (diff < -threshold) {
+            isExpanded = true;
+            summaryBox.classList.add('expanded');
+            summaryOverlay.classList.add('active');
+          }
+
+          isDragging = false;
+
+          setTimeout(() => {
+            summaryBox.style.transition = '';
+          }, 300);
+
+          e.stopPropagation();
+        });
+
+        // Click overlay to collapse
+        summaryOverlay.addEventListener('click', function(e) {
+          isExpanded = false;
+          summaryBox.classList.remove('expanded');
+          summaryOverlay.classList.remove('active');
+        });
+
+        // Prevent sheet collapse saat buka promo offcanvas
+        const btnPromoItem = document.getElementById('btn-open-promo-item');
+        const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
+
+        if (btnPromoItem) {
+          btnPromoItem.addEventListener('click', function(e) {
             e.stopPropagation();
-          }, { passive: false });
-          
-          dragHandle.addEventListener('touchmove', function(e) {
-            if (!isDragging) return;
-            
-            currentY = e.touches[0].clientY;
-            const diff = currentY - startY;
-            
-            // Visual feedback
-            if (!isExpanded && diff < 0) {
-              const translateY = Math.max(diff, -200);
-              summaryBox.style.transform = `translateY(${translateY}px)`;
-            } else if (isExpanded && diff > 0) {
-              const translateY = Math.min(diff, 200);
-              summaryBox.style.transform = `translateY(${translateY}px)`;
-            }
-            
-            e.preventDefault();
-            e.stopPropagation();
-          }, { passive: false });
-          
-          dragHandle.addEventListener('touchend', function(e) {
-            if (!isDragging) return;
-            
-            const diff = currentY - startY;
-            const duration = Date.now() - startTime;
-            const velocity = Math.abs(diff) / duration;
-            
-            dragHandle.style.cursor = 'grab';
-            summaryBox.style.transform = '';
-            summaryBox.style.transition = 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            
-            const threshold = velocity > 0.5 ? 30 : 50;
-            
-            if (diff > threshold) {
-              isExpanded = false;
-              summaryBox.classList.remove('expanded');
-              summaryOverlay.classList.remove('active');
-            } else if (diff < -threshold) {
-              isExpanded = true;
-              summaryBox.classList.add('expanded');
-              summaryOverlay.classList.add('active');
-            }
-            
-            isDragging = false;
-            
-            setTimeout(() => {
-              summaryBox.style.transition = '';
-            }, 300);
-            
-            e.stopPropagation();
-          });
-          
-          // Click overlay to collapse
-          summaryOverlay.addEventListener('click', function(e) {
+            // ✅ AUTO CLOSE sheet pas buka promo modal
             isExpanded = false;
             summaryBox.classList.remove('expanded');
             summaryOverlay.classList.remove('active');
           });
-          
-          // Prevent sheet collapse saat buka promo offcanvas
-          const btnPromoItem = document.getElementById('btn-open-promo-item');
-          const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
-          
-          if (btnPromoItem) {
-            btnPromoItem.addEventListener('click', function(e) {
-              e.stopPropagation();
-              // ✅ AUTO CLOSE sheet pas buka promo modal
-              isExpanded = false;
-              summaryBox.classList.remove('expanded');
-              summaryOverlay.classList.remove('active');
-            });
-          }
-          
-          if (btnPromoShipping) {
-            btnPromoShipping.addEventListener('click', function(e) {
-              e.stopPropagation();
-              // ✅ AUTO CLOSE sheet pas buka promo modal
-              isExpanded = false;
-              summaryBox.classList.remove('expanded');
-              summaryOverlay.classList.remove('active');
-            });
-          }
-          
-          // Auto close sheet saat buka payment modal
-          const btnPayNow = document.getElementById('btn-pay-now');
-          if (btnPayNow) {
-            btnPayNow.addEventListener('click', function(e) {
-              e.stopPropagation();
-              // ✅ AUTO CLOSE sheet pas buka payment modal
-              isExpanded = false;
-              summaryBox.classList.remove('expanded');
-              summaryOverlay.classList.remove('active');
-            });
-          }
         }
 
-        // OPTIMASI: Modal event listeners - passive untuk scroll performance
-        const offcanvasOverlayItem = document.getElementById('offcanvas-overlay-item');
-        if (offcanvasOverlayItem) {
-          offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem, { passive: true });
-        }
-
-        const offcanvasOverlayShipping = document.getElementById('offcanvas-overlay-shipping');
-        if (offcanvasOverlayShipping) {
-          offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping, { passive: true });
-        }
-
-        // Off-canvas triggers
-        const btnOpenPromoItem = document.getElementById('btn-open-promo-item');
-        if (btnOpenPromoItem) {
-          btnOpenPromoItem.addEventListener('click', openOffcanvasItem);
-        }
-
-        const btnOpenPromoShipping = document.getElementById('btn-open-promo-shipping');
-        if (btnOpenPromoShipping) {
-          btnOpenPromoShipping.addEventListener('click', openOffcanvasShipping);
-        }
-
-        // Close offcanvas item
-        const offcanvasCloseItem = document.getElementById('offcanvas-close-item');
-        if (offcanvasCloseItem) {
-          offcanvasCloseItem.addEventListener('click', closeOffcanvasItem);
-        }
-
-        // (offcanvasOverlayItem sudah di-declare di atas)
-        // if (offcanvasOverlayItem) {
-        //   offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem);
-        // }
-
-        // Close offcanvas shipping
-        const offcanvasCloseShipping = document.getElementById('offcanvas-close-shipping');
-        if (offcanvasCloseShipping) {
-          offcanvasCloseShipping.addEventListener('click', closeOffcanvasShipping);
-        }
-
-        // (offcanvasOverlayShipping sudah di-declare di atas)
-        // if (offcanvasOverlayShipping) {
-        //   offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping);
-        // }
-
-        // Promo events
-        attachPromoItemEvents();
-        attachPromoShippingEvents();
-
-        // Open address modal
-        const btnOpenModal = document.getElementById('btn-open-modal');
-        if (btnOpenModal) {
-          btnOpenModal.addEventListener('click', function(e) {
-            e.preventDefault();
-            openModal('alamat-modal');
+        if (btnPromoShipping) {
+          btnPromoShipping.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // ✅ AUTO CLOSE sheet pas buka promo modal
+            isExpanded = false;
+            summaryBox.classList.remove('expanded');
+            summaryOverlay.classList.remove('active');
           });
         }
 
-        // Close address modal
-        const modalClose = document.getElementById('modal-close');
-        if (modalClose) {
-          modalClose.addEventListener('click', function() {
-            closeModal('alamat-modal');
+        // Auto close sheet saat buka payment modal
+        const btnPayNow = document.getElementById('btn-pay-now');
+        if (btnPayNow) {
+          btnPayNow.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // ✅ AUTO CLOSE sheet pas buka payment modal
+            isExpanded = false;
+            summaryBox.classList.remove('expanded');
+            summaryOverlay.classList.remove('active');
           });
         }
-
-        const modalOverlay = document.getElementById('modal-overlay');
-        if (modalOverlay) {
-          modalOverlay.addEventListener('click', function() {
-            closeModal('alamat-modal');
-          });
-        }
-
-        // Address buttons
-        const addressListContainer = document.getElementById('address-list-container');
-        if (addressListContainer) {
-          addressListContainer.addEventListener('click', function(e) {
-            if (e.target.classList.contains('btn-use-address') && !e.target.disabled) {
-              const alamatId = e.target.getAttribute('data-id');
-              setAlamat(alamatId, e.target);
-            }
-          });
-        }
-
-        // Checkout button - UPDATED: Langsung process payment (ga buka modal)
-        const btnCheckout = document.getElementById('btn-pay-now');
-        if (btnCheckout) {
-          btnCheckout.addEventListener('click', function() {
-            processPayment(); // Langsung proses payment
-          });
-        }
-
-        // Keyboard
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            closeModal('alamat-modal');
-            closeModal('modalAlamat');
-            closeOffcanvasItem();
-            closeOffcanvasShipping();
-          }
-        });
-
-        // Init
-        updatePriceDisplay();
-      });
-
-      // DATABASE FUNCTIONS
-      function setAlamat(id_alamat, button) {
-        const originalText = button.innerHTML;
-
-        button.innerHTML = '<span class="spinner"></span> Memproses...';
-        button.disabled = true;
-
-        const url = "<?= base_url('index.php/checkout/set_alamat') ?>";
-
-        fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "X-Requested-With": "XMLHttpRequest"
-            },
-            body: "id_alamat=" + encodeURIComponent(id_alamat)
-          })
-          .then(res => {
-            if (!res.ok) {
-              throw new Error(`HTTP ${res.status}`);
-            }
-            return res.json();
-          })
-          .then(data => {
-            if (data.status === 'ok') {
-              showNotification('✅ ' + data.message, 'success');
-
-              if (data.alamat) {
-                updateAddressDisplay(data.alamat);
-                updateModalAddressList(id_alamat);
-                updateCheckoutButtonState(); // TAMBAHAN: Update button state
-              }
-
-              setTimeout(() => {
-                closeModal('alamat-modal');
-              }, 500);
-            } else {
-              showNotification('❌ ' + data.message, 'error');
-              button.innerHTML = originalText;
-              button.disabled = false;
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            showNotification('❌ Terjadi kesalahan', 'error');
-            button.innerHTML = originalText;
-            button.disabled = false;
-          });
       }
 
-      function updateAddressDisplay(alamat) {
-        const addressDisplay = document.getElementById('address-display-main');
-        if (!addressDisplay) return;
+      // OPTIMASI: Modal event listeners - passive untuk scroll performance
+      const offcanvasOverlayItem = document.getElementById('offcanvas-overlay-item');
+      if (offcanvasOverlayItem) {
+        offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem, {
+          passive: true
+        });
+      }
 
-        let wilayahText = '';
-        if (alamat.nama_kelurahan) {
-          wilayahText = `, ${escapeHtml(alamat.nama_kelurahan)}, ${escapeHtml(alamat.nama_kecamatan)}, ${escapeHtml(alamat.nama_kabupaten)}, ${escapeHtml(alamat.nama_provinsi)} ${escapeHtml(alamat.kode_pos)}`;
+      const offcanvasOverlayShipping = document.getElementById('offcanvas-overlay-shipping');
+      if (offcanvasOverlayShipping) {
+        offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping, {
+          passive: true
+        });
+      }
+
+      // Off-canvas triggers
+      const btnOpenPromoItem = document.getElementById('btn-open-promo-item');
+      if (btnOpenPromoItem) {
+        btnOpenPromoItem.addEventListener('click', openOffcanvasItem);
+      }
+
+      const btnOpenPromoShipping = document.getElementById('btn-open-promo-shipping');
+      if (btnOpenPromoShipping) {
+        btnOpenPromoShipping.addEventListener('click', openOffcanvasShipping);
+      }
+
+      // Close offcanvas item
+      const offcanvasCloseItem = document.getElementById('offcanvas-close-item');
+      if (offcanvasCloseItem) {
+        offcanvasCloseItem.addEventListener('click', closeOffcanvasItem);
+      }
+
+      // (offcanvasOverlayItem sudah di-declare di atas)
+      // if (offcanvasOverlayItem) {
+      //   offcanvasOverlayItem.addEventListener('click', closeOffcanvasItem);
+      // }
+
+      // Close offcanvas shipping
+      const offcanvasCloseShipping = document.getElementById('offcanvas-close-shipping');
+      if (offcanvasCloseShipping) {
+        offcanvasCloseShipping.addEventListener('click', closeOffcanvasShipping);
+      }
+
+      // (offcanvasOverlayShipping sudah di-declare di atas)
+      // if (offcanvasOverlayShipping) {
+      //   offcanvasOverlayShipping.addEventListener('click', closeOffcanvasShipping);
+      // }
+
+      // Promo events
+      attachPromoItemEvents();
+      attachPromoShippingEvents();
+
+      // Open address modal
+      const btnOpenModal = document.getElementById('btn-open-modal');
+      if (btnOpenModal) {
+        btnOpenModal.addEventListener('click', function(e) {
+          e.preventDefault();
+          openModal('alamat-modal');
+        });
+      }
+
+      // Close address modal
+      const modalClose = document.getElementById('modal-close');
+      if (modalClose) {
+        modalClose.addEventListener('click', function() {
+          closeModal('alamat-modal');
+        });
+      }
+
+      const modalOverlay = document.getElementById('modal-overlay');
+      if (modalOverlay) {
+        modalOverlay.addEventListener('click', function() {
+          closeModal('alamat-modal');
+        });
+      }
+
+      // Address buttons
+      const addressListContainer = document.getElementById('address-list-container');
+      if (addressListContainer) {
+        addressListContainer.addEventListener('click', function(e) {
+          if (e.target.classList.contains('btn-use-address') && !e.target.disabled) {
+            const alamatId = e.target.getAttribute('data-id');
+            setAlamat(alamatId, e.target);
+          }
+        });
+      }
+
+      // Checkout button - UPDATED: Langsung process payment (ga buka modal)
+      const btnCheckout = document.getElementById('btn-pay-now');
+      if (btnCheckout) {
+        btnCheckout.addEventListener('click', function() {
+          processPayment(); // Langsung proses payment
+        });
+      }
+
+      // Keyboard
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeModal('alamat-modal');
+          closeModal('modalAlamat');
+          closeOffcanvasItem();
+          closeOffcanvasShipping();
         }
+      });
 
-        addressDisplay.innerHTML = `
+      // Init
+      updatePriceDisplay();
+    });
+
+    // DATABASE FUNCTIONS
+    function setAlamat(id_alamat, button) {
+      const originalText = button.innerHTML;
+
+      button.innerHTML = '<span class="spinner"></span> Memproses...';
+      button.disabled = true;
+
+      const url = "<?= base_url('index.php/checkout/set_alamat') ?>";
+
+      fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          body: "id_alamat=" + encodeURIComponent(id_alamat)
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data.status === 'ok') {
+            showNotification('✅ ' + data.message, 'success');
+
+            if (data.alamat) {
+              updateAddressDisplay(data.alamat);
+              updateModalAddressList(id_alamat);
+              updateCheckoutButtonState(); // TAMBAHAN: Update button state
+            }
+
+            setTimeout(() => {
+              closeModal('alamat-modal');
+            }, 500);
+          } else {
+            showNotification('❌ ' + data.message, 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification('❌ Terjadi kesalahan', 'error');
+          button.innerHTML = originalText;
+          button.disabled = false;
+        });
+    }
+
+    function updateAddressDisplay(alamat) {
+      const addressDisplay = document.getElementById('address-display-main');
+      if (!addressDisplay) return;
+
+      let wilayahText = '';
+      if (alamat.nama_kelurahan) {
+        wilayahText = `, ${escapeHtml(alamat.nama_kelurahan)}, ${escapeHtml(alamat.nama_kecamatan)}, ${escapeHtml(alamat.nama_kabupaten)}, ${escapeHtml(alamat.nama_provinsi)} ${escapeHtml(alamat.kode_pos)}`;
+      }
+
+      addressDisplay.innerHTML = `
     <div class="address-content">
       <h4 class="address-name">${escapeHtml(alamat.nama_alamat || '-')}</h4>
       <div class="address-recipient">
@@ -4348,84 +4553,84 @@
       <p class="address-detail">${escapeHtml(alamat.detail)}${wilayahText}</p>
     </div>
   `;
-      }
+    }
 
-      function updateModalAddressList(selected_id) {
-        const addressCards = document.querySelectorAll('.address-card');
+    function updateModalAddressList(selected_id) {
+      const addressCards = document.querySelectorAll('.address-card');
 
-        addressCards.forEach(card => {
+      addressCards.forEach(card => {
+        const button = card.querySelector('.btn-use-address');
+        const addressInfo = card.querySelector('.address-info strong');
+
+        const badges = addressInfo.querySelectorAll('span');
+        badges.forEach(badge => {
+          const text = badge.textContent;
+          if (text.includes('Dipilih') || text.includes('✓') || text.includes('Terpilih')) {
+            badge.remove();
+          }
+        });
+
+        card.classList.remove('active');
+
+        if (button) {
+          button.disabled = false;
+          button.textContent = 'Pilih';
+        }
+      });
+
+      addressCards.forEach(card => {
+        const cardId = card.getAttribute('data-id');
+
+        if (cardId == selected_id) {
           const button = card.querySelector('.btn-use-address');
           const addressInfo = card.querySelector('.address-info strong');
 
-          const badges = addressInfo.querySelectorAll('span');
-          badges.forEach(badge => {
-            const text = badge.textContent;
-            if (text.includes('Dipilih') || text.includes('✓') || text.includes('Terpilih')) {
-              badge.remove();
-            }
-          });
-
-          card.classList.remove('active');
+          card.classList.add('active');
 
           if (button) {
-            button.disabled = false;
-            button.textContent = 'Pilih';
+            button.disabled = true;
+            button.textContent = 'Terpilih';
           }
-        });
 
-        addressCards.forEach(card => {
-          const cardId = card.getAttribute('data-id');
+          const remainingBadges = addressInfo.querySelectorAll('span');
+          const hasUtamaBadge = Array.from(remainingBadges).some(b =>
+            b.textContent.includes('Utama') || b.textContent.includes('⭐')
+          );
 
-          if (cardId == selected_id) {
-            const button = card.querySelector('.btn-use-address');
-            const addressInfo = card.querySelector('.address-info strong');
-
-            card.classList.add('active');
-
-            if (button) {
-              button.disabled = true;
-              button.textContent = 'Terpilih';
-            }
-
-            const remainingBadges = addressInfo.querySelectorAll('span');
-            const hasUtamaBadge = Array.from(remainingBadges).some(b =>
-              b.textContent.includes('Utama') || b.textContent.includes('⭐')
-            );
-
-            if (!hasUtamaBadge) {
-              const badge = document.createElement('span');
-              badge.style.cssText = 'color: var(--primary); font-size: 0.875rem;';
-              badge.textContent = ' ✓ Dipilih';
-              addressInfo.appendChild(badge);
-            }
+          if (!hasUtamaBadge) {
+            const badge = document.createElement('span');
+            badge.style.cssText = 'color: var(--primary); font-size: 0.875rem;';
+            badge.textContent = ' ✓ Dipilih';
+            addressInfo.appendChild(badge);
           }
-        });
-      }
+        }
+      });
+    }
 
-      function escapeHtml(text) {
-        if (!text) return '';
-        const map = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        };
-        return String(text).replace(/[&<>"']/g, m => map[m]);
-      }
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
 
-      function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.textContent = message;
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.textContent = message;
 
-        const colors = {
-          'success': '#10b981',
-          'error': '#ef4444',
-          'info': '#6366f1',
-          'warning': '#f59e0b' // TAMBAHAN
-        };
+      const colors = {
+        'success': '#10b981',
+        'error': '#ef4444',
+        'info': '#6366f1',
+        'warning': '#f59e0b' // TAMBAHAN
+      };
 
-        notification.style.cssText = `
+      notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
@@ -4440,159 +4645,180 @@
         max-width: 350px;
     `;
 
-        document.body.appendChild(notification);
+      document.body.appendChild(notification);
 
-        setTimeout(() => {
-          notification.remove();
-        }, 3500);
-      }
+      setTimeout(() => {
+        notification.remove();
+      }, 3500);
+    }
 
-      // ========== MODAL TAMBAH ALAMAT ==========
-      let selectedProvinsi = null;
-      let selectedKabupaten = null;
-      let selectedKecamatan = null;
-      let selectedKelurahan = null;
+    // ========== MODAL TAMBAH ALAMAT ==========
+    let selectedProvinsi = null;
+    let selectedKabupaten = null;
+    let selectedKecamatan = null;
+    let selectedKelurahan = null;
 
-      function openModalTambahAlamat() {
-        closeModal('alamat-modal');
-        openModal('modalAlamat');
-        loadProvinsi();
-        resetFormAlamat();
-      }
+    function openModalTambahAlamat() {
+      closeModal('alamat-modal');
+      openModal('modalAlamat');
+      loadProvinsi();
+      resetFormAlamat();
+    }
 
-      function closeModalAlamat() {
-        closeModal('modalAlamat');
-        resetFormAlamat();
-      }
+    function closeModalAlamat() {
+      closeModal('modalAlamat');
+      resetFormAlamat();
+    }
 
-      function resetFormAlamat() {
-        document.getElementById('formAlamat').reset();
-        selectedProvinsi = null;
-        selectedKabupaten = null;
-        selectedKecamatan = null;
-        selectedKelurahan = null;
+    function resetFormAlamat() {
+      document.getElementById('formAlamat').reset();
+      selectedProvinsi = null;
+      selectedKabupaten = null;
+      selectedKecamatan = null;
+      selectedKelurahan = null;
 
-        document.getElementById('provinsiSelected').textContent = 'Pilih Provinsi';
-        document.getElementById('kabupatenSelected').textContent = 'Pilih Kabupaten';
-        document.getElementById('kecamatanSelected').textContent = 'Pilih Kecamatan';
-        document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
+      document.getElementById('provinsiSelected').textContent = 'Pilih Provinsi';
+      document.getElementById('kabupatenSelected').textContent = 'Pilih Kabupaten';
+      document.getElementById('kecamatanSelected').textContent = 'Pilih Kecamatan';
+      document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
 
-        document.getElementById('kabupatenItems').innerHTML = '';
-        document.getElementById('kecamatanItems').innerHTML = '';
-        document.getElementById('kelurahanItems').innerHTML = '';
-      }
+      document.getElementById('kabupatenItems').innerHTML = '';
+      document.getElementById('kecamatanItems').innerHTML = '';
+      document.getElementById('kelurahanItems').innerHTML = '';
+    }
 
-      // Toggle Dropdown
-      function toggleDropdown(type) {
-        const dropdown = document.getElementById(type + 'List');
+    // Toggle Dropdown
+    function toggleDropdown(type) {
+      const dropdown = document.getElementById(type + 'List');
 
-        document.querySelectorAll('.dropdown-list').forEach(list => {
-          if (list.id !== type + 'List') {
-            list.classList.remove('active');
-          }
-        });
+      document.querySelectorAll('.dropdown-list').forEach(list => {
+        if (list.id !== type + 'List') {
+          list.classList.remove('active');
+        }
+      });
 
-        dropdown.classList.toggle('active');
-      }
+      dropdown.classList.toggle('active');
+    }
 
-      // Filter Dropdown
-      function filterDropdown(input, type) {
-        const filter = input.value.toUpperCase();
-        const items = document.getElementById(type + 'Items');
-        const divs = items.getElementsByClassName('dropdown-item');
+    // Filter Dropdown
+    function filterDropdown(input, type) {
+      const filter = input.value.toUpperCase();
+      const items = document.getElementById(type + 'Items');
+      const divs = items.getElementsByClassName('dropdown-item');
 
-        for (let i = 0; i < divs.length; i++) {
-          const txtValue = divs[i].textContent || divs[i].innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            divs[i].style.display = "";
-          } else {
-            divs[i].style.display = "none";
-          }
+      for (let i = 0; i < divs.length; i++) {
+        const txtValue = divs[i].textContent || divs[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          divs[i].style.display = "";
+        } else {
+          divs[i].style.display = "none";
         }
       }
+    }
 
-      // Load Provinsi
-      function loadProvinsi() {
-        fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
-          .then(response => response.json())
-          .then(data => {
-            const container = document.getElementById('provinsiItems');
-            container.innerHTML = '';
+    // Load Provinsi dari DATABASE
+    function loadProvinsi() {
+      fetch('<?= site_url("alamat/provinsi") ?>') // ✅ FIX: provinsi bukan get_provinsi
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('provinsiItems');
+          container.innerHTML = '';
 
+          // ✅ FIX: Direct array bukan data.data
+          if (data && data.length > 0) {
             data.forEach(prov => {
               const div = document.createElement('div');
               div.className = 'dropdown-item';
-              div.textContent = prov.name;
+              div.textContent = prov.name; // ✅ FIX: name bukan nama_provinsi
               div.onclick = () => selectProvinsi(prov);
               container.appendChild(div);
             });
-          })
-          .catch(error => {
-            console.error('Error loading provinsi:', error);
+          } else {
             showNotification('❌ Gagal memuat data provinsi', 'error');
-          });
-      }
+          }
+        })
+        .catch(error => {
+          console.error('Error loading provinsi:', error);
+          showNotification('❌ Gagal memuat data provinsi', 'error');
+        });
+    }
 
-      // Select Provinsi
-      function selectProvinsi(prov) {
-        selectedProvinsi = prov;
-        document.getElementById('provinsiSelected').textContent = prov.name;
-        document.getElementById('provinsiList').classList.remove('active');
+    // Select Provinsi
+    function selectProvinsi(prov) {
+      // ✅ FIX: Konversi object API jadi format database
+      selectedProvinsi = {
+        id_provinsi: prov.id,
+        nama: prov.name
+      };
 
-        selectedKabupaten = null;
-        selectedKecamatan = null;
-        selectedKelurahan = null;
-        document.getElementById('kabupatenSelected').textContent = 'Pilih Kabupaten';
-        document.getElementById('kecamatanSelected').textContent = 'Pilih Kecamatan';
-        document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
+      document.getElementById('provinsiSelected').textContent = prov.name;
+      document.getElementById('provinsiList').classList.remove('active');
 
-        loadKabupaten(prov.id);
-      }
+      selectedKabupaten = null;
+      selectedKecamatan = null;
+      selectedKelurahan = null;
+      document.getElementById('kabupatenSelected').textContent = 'Pilih Kabupaten';
+      document.getElementById('kecamatanSelected').textContent = 'Pilih Kecamatan';
+      document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
 
-      // Load Kabupaten
-      function loadKabupaten(provinsiId) {
-        fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinsiId}.json`)
-          .then(response => response.json())
-          .then(data => {
-            const container = document.getElementById('kabupatenItems');
-            container.innerHTML = '';
+      loadKabupaten(prov.id);
+    }
+    // Load Kabupaten dari DATABASE
+    function loadKabupaten(provinsiId) {
+      fetch(`<?= site_url("alamat/kabupaten") ?>/${provinsiId}`) // ✅ FIX: kabupaten bukan get_kabupaten
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('kabupatenItems');
+          container.innerHTML = '';
 
+          // ✅ FIX: Direct array
+          if (data && data.length > 0) {
             data.forEach(kab => {
               const div = document.createElement('div');
               div.className = 'dropdown-item';
-              div.textContent = kab.name;
+              div.textContent = kab.name; // ✅ FIX
               div.onclick = () => selectKabupaten(kab);
               container.appendChild(div);
             });
-          })
-          .catch(error => {
-            console.error('Error loading kabupaten:', error);
+          } else {
             showNotification('❌ Gagal memuat data kabupaten', 'error');
-          });
-      }
+          }
+        })
+        .catch(error => {
+          console.error('Error loading kabupaten:', error);
+          showNotification('❌ Gagal memuat data kabupaten', 'error');
+        });
+    }
 
-      // Select Kabupaten
-      function selectKabupaten(kab) {
-        selectedKabupaten = kab;
-        document.getElementById('kabupatenSelected').textContent = kab.name;
-        document.getElementById('kabupatenList').classList.remove('active');
+    // Select Kabupaten
+    function selectKabupaten(kab) {
+      // ✅ FIX: Konversi
+      selectedKabupaten = {
+        id_kabupaten: kab.id,
+        nama: kab.name
+      };
 
-        selectedKecamatan = null;
-        selectedKelurahan = null;
-        document.getElementById('kecamatanSelected').textContent = 'Pilih Kecamatan';
-        document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
+      document.getElementById('kabupatenSelected').textContent = kab.name;
+      document.getElementById('kabupatenList').classList.remove('active');
 
-        loadKecamatan(kab.id);
-      }
+      selectedKecamatan = null;
+      selectedKelurahan = null;
+      document.getElementById('kecamatanSelected').textContent = 'Pilih Kecamatan';
+      document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
 
-      // Load Kecamatan
-      function loadKecamatan(kabupatenId) {
-        fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${kabupatenId}.json`)
-          .then(response => response.json())
-          .then(data => {
-            const container = document.getElementById('kecamatanItems');
-            container.innerHTML = '';
+      loadKecamatan(kab.id);
+    }
 
+
+    // Load Kecamatan dari DATABASE
+    function loadKecamatan(kabupatenId) {
+      fetch(`<?= site_url("alamat/kecamatan") ?>/${kabupatenId}`)
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('kecamatanItems');
+          container.innerHTML = '';
+
+          if (data && data.length > 0) {
             data.forEach(kec => {
               const div = document.createElement('div');
               div.className = 'dropdown-item';
@@ -4600,33 +4826,42 @@
               div.onclick = () => selectKecamatan(kec);
               container.appendChild(div);
             });
-          })
-          .catch(error => {
-            console.error('Error loading kecamatan:', error);
+          } else {
             showNotification('❌ Gagal memuat data kecamatan', 'error');
-          });
-      }
+          }
+        })
+        .catch(error => {
+          console.error('Error loading kecamatan:', error);
+          showNotification('❌ Gagal memuat data kecamatan', 'error');
+        });
+    }
 
-      // Select Kecamatan
-      function selectKecamatan(kec) {
-        selectedKecamatan = kec;
-        document.getElementById('kecamatanSelected').textContent = kec.name;
-        document.getElementById('kecamatanList').classList.remove('active');
+    // Select Kecamatan
+    function selectKecamatan(kec) {
+      // ✅ FIX: Konversi
+      selectedKecamatan = {
+        id_kecamatan: kec.id,
+        nama: kec.name
+      };
 
-        selectedKelurahan = null;
-        document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
+      document.getElementById('kecamatanSelected').textContent = kec.name;
+      document.getElementById('kecamatanList').classList.remove('active');
 
-        loadKelurahan(kec.id);
-      }
+      selectedKelurahan = null;
+      document.getElementById('kelurahanSelected').textContent = 'Pilih Kelurahan';
 
-      // Load Kelurahan
-      function loadKelurahan(kecamatanId) {
-        fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${kecamatanId}.json`)
-          .then(response => response.json())
-          .then(data => {
-            const container = document.getElementById('kelurahanItems');
-            container.innerHTML = '';
+      loadKelurahan(kec.id);
+    }
 
+    // Load Kelurahan dari DATABASE
+    function loadKelurahan(kecamatanId) {
+      fetch(`<?= site_url("alamat/kelurahan") ?>/${kecamatanId}`)
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('kelurahanItems');
+          container.innerHTML = '';
+
+          if (data && data.length > 0) {
             data.forEach(kel => {
               const div = document.createElement('div');
               div.className = 'dropdown-item';
@@ -4634,214 +4869,222 @@
               div.onclick = () => selectKelurahan(kel);
               container.appendChild(div);
             });
-          })
-          .catch(error => {
-            console.error('Error loading kelurahan:', error);
+          } else {
             showNotification('❌ Gagal memuat data kelurahan', 'error');
-          });
-      }
-
-      // Select Kelurahan
-      function selectKelurahan(kel) {
-        selectedKelurahan = kel;
-        document.getElementById('kelurahanSelected').textContent = kel.name;
-        document.getElementById('kelurahanList').classList.remove('active');
-      }
-
-      // Simpan Alamat - FIXED VERSION
-      function simpanAlamat() {
-        // Validasi
-        const namaAlamat = document.getElementById('nama_alamat').value.trim();
-        const namaPenerima = document.getElementById('nama_penerima').value.trim();
-        const nomorTelp = document.getElementById('nomor_telp_penerima').value.trim();
-        const detail = document.getElementById('detail').value.trim();
-        const kodePos = document.getElementById('kode_pos').value.trim();
-
-        if (!namaAlamat) {
-          showNotification('❌ Nama alamat harus diisi!', 'error');
-          return;
-        }
-
-        if (!namaPenerima) {
-          showNotification('❌ Nama penerima harus diisi!', 'error');
-          return;
-        }
-
-        if (!nomorTelp) {
-          showNotification('❌ Nomor telepon harus diisi!', 'error');
-          return;
-        }
-
-        if (!detail) {
-          showNotification('❌ Detail alamat harus diisi!', 'error');
-          return;
-        }
-
-        if (!kodePos) {
-          showNotification('❌ Kode pos harus diisi!', 'error');
-          return;
-        }
-
-        if (!selectedProvinsi) {
-          showNotification('❌ Pilih provinsi terlebih dahulu!', 'error');
-          return;
-        }
-
-        if (!selectedKabupaten) {
-          showNotification('❌ Pilih kabupaten terlebih dahulu!', 'error');
-          return;
-        }
-
-        if (!selectedKecamatan) {
-          showNotification('❌ Pilih kecamatan terlebih dahulu!', 'error');
-          return;
-        }
-
-        if (!selectedKelurahan) {
-          showNotification('❌ Pilih kelurahan terlebih dahulu!', 'error');
-          return;
-        }
-
-        // Prepare data - PERBAIKAN NAMA PARAMETER
-        const data = {
-          nama_alamat: namaAlamat,
-          nama_penerima: namaPenerima,
-          nomor_telp_penerima: nomorTelp,
-          provinsi_id: selectedProvinsi.id, // FIXED: provinsi_id (bukan id_provinsi)
-          kabupaten_id: selectedKabupaten.id, // FIXED: kabupaten_id (bukan id_kabupaten)
-          kecamatan_id: selectedKecamatan.id, // FIXED: kecamatan_id (bukan id_kecamatan)
-          kelurahan_id: selectedKelurahan.id, // FIXED: kelurahan_id (bukan id_kelurahan)
-          detail: detail,
-          kode_pos: kodePos,
-          is_default: document.getElementById('is_default').checked ? 1 : 0
-        };
-
-        console.log('📤 Data yang dikirim:', data);
-
-        // Show loading
-        const btnSimpan = document.getElementById('btnSimpanAlamat');
-        const originalText = btnSimpan.innerHTML;
-        btnSimpan.innerHTML = '<span class="spinner"></span> Menyimpan...';
-        btnSimpan.disabled = true;
-
-        // Send to server
-        fetch("<?= base_url('index.php/alamat/simpan') ?>", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(data)
-          })
-          .then(response => response.json())
-          .then(result => {
-            console.log('📥 Response dari server:', result);
-
-            btnSimpan.innerHTML = originalText;
-            btnSimpan.disabled = false;
-
-            // FIXED: Controller menggunakan 'success' bukan 'status'
-            if (result.success) {
-              showNotification('✅ Alamat berhasil disimpan!', 'success');
-              closeModalAlamat();
-
-              // Reload halaman untuk update list alamat
-              setTimeout(() => {
-                location.reload();
-              }, 1000);
-            } else {
-              showNotification('❌ ' + (result.message || 'Gagal menyimpan alamat'), 'error');
-            }
-          })
-          .catch(error => {
-            console.error('❌ Error:', error);
-            btnSimpan.innerHTML = originalText;
-            btnSimpan.disabled = false;
-            showNotification('❌ Terjadi kesalahan saat menyimpan', 'error');
-          });
-      }
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown-box')) {
-          document.querySelectorAll('.dropdown-list').forEach(list => {
-            list.classList.remove('active');
-          });
-        }
-      });
-
-
-      // ========== UPDATE CHECKOUT BUTTON STATE ==========
-      function updateCheckoutButtonState() {
-        const btnCheckout = document.getElementById('btn-pay-now');
-        const addressDisplay = document.getElementById('address-display-main');
-
-        // Cek apakah ada alamat (cek dari content, bukan dari alert warning)
-        const hasAddress = !addressDisplay.querySelector('.alert-warning');
-
-        if (btnCheckout) {
-          if (hasAddress) {
-            btnCheckout.disabled = false;
-            btnCheckout.style.cursor = 'pointer';
-          } else {
-            btnCheckout.disabled = true;
-            btnCheckout.style.cursor = 'not-allowed';
           }
-        }
-        
-        // Update tombol Ganti Alamat juga
-        updateGantiAlamatButton(hasAddress);
+        })
+        .catch(error => {
+          console.error('Error loading kelurahan:', error);
+          showNotification('❌ Gagal memuat data kelurahan', 'error');
+        });
+    }
+
+    // Select Kelurahan
+    function selectKelurahan(kel) {
+      // ✅ FIX: Konversi
+      selectedKelurahan = {
+        id_kelurahan: kel.id,
+        nama: kel.name
+      };
+
+      document.getElementById('kelurahanSelected').textContent = kel.name;
+      document.getElementById('kelurahanList').classList.remove('active');
+    }
+
+    // Simpan Alamat - FIXED VERSION
+    function simpanAlamat() {
+      // Validasi
+      const namaAlamat = document.getElementById('nama_alamat').value.trim();
+      const namaPenerima = document.getElementById('nama_penerima').value.trim();
+      const nomorTelp = document.getElementById('nomor_telp_penerima').value.trim();
+      const detail = document.getElementById('detail').value.trim();
+      const kodePos = document.getElementById('kode_pos').value.trim();
+
+      if (!namaAlamat) {
+        showNotification('❌ Nama alamat harus diisi!', 'error');
+        return;
       }
 
-      // ========== UPDATE GANTI ALAMAT BUTTON ==========
-      function updateGantiAlamatButton(hasAddress) {
-        const btnContainer = document.getElementById('btn-ganti-alamat-container');
-        
-        console.log('🔍 Debug Ganti Alamat Button:');
-        console.log('- hasAddress:', hasAddress);
-        console.log('- btnContainer:', btnContainer);
-        
-        if (!btnContainer) {
-          console.log('❌ btnContainer tidak ditemukan!');
-          return;
-        }
-        
-        const existingBtn = document.getElementById('btn-open-modal');
-        console.log('- existingBtn:', existingBtn);
-        
-        if (hasAddress) {
-          // Jika ada alamat dan tombol belum ada, buat tombol baru
-          if (!existingBtn) {
-            console.log('✅ Membuat tombol Ganti Alamat baru');
-            btnContainer.innerHTML = '<button class="btn btn-link" id="btn-open-modal">Ganti Alamat</button>';
-            
-            // Attach event listener ke tombol yang baru dibuat
-            const newBtn = document.getElementById('btn-open-modal');
-            if (newBtn) {
-              newBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                openModal('alamat-modal');
-              });
-              console.log('✅ Event listener attached');
-            }
+      if (!namaPenerima) {
+        showNotification('❌ Nama penerima harus diisi!', 'error');
+        return;
+      }
+
+      if (!nomorTelp) {
+        showNotification('❌ Nomor telepon harus diisi!', 'error');
+        return;
+      }
+
+      if (!detail) {
+        showNotification('❌ Detail alamat harus diisi!', 'error');
+        return;
+      }
+
+      if (!kodePos) {
+        showNotification('❌ Kode pos harus diisi!', 'error');
+        return;
+      }
+
+      if (!selectedProvinsi) {
+        showNotification('❌ Pilih provinsi terlebih dahulu!', 'error');
+        return;
+      }
+
+      if (!selectedKabupaten) {
+        showNotification('❌ Pilih kabupaten terlebih dahulu!', 'error');
+        return;
+      }
+
+      if (!selectedKecamatan) {
+        showNotification('❌ Pilih kecamatan terlebih dahulu!', 'error');
+        return;
+      }
+
+      if (!selectedKelurahan) {
+        showNotification('❌ Pilih kelurahan terlebih dahulu!', 'error');
+        return;
+      }
+
+      // Prepare data - USE DATABASE IDs
+      const data = {
+        nama_alamat: namaAlamat,
+        nama_penerima: namaPenerima,
+        nomor_telp_penerima: nomorTelp,
+        provinsi_id: selectedProvinsi.id_provinsi, // ✅ dari database
+        kabupaten_id: selectedKabupaten.id_kabupaten, // ✅ dari database
+        kecamatan_id: selectedKecamatan.id_kecamatan, // ✅ dari database
+        kelurahan_id: selectedKelurahan.id_kelurahan, // ✅ dari database
+        detail: detail,
+        kode_pos: kodePos,
+        is_default: document.getElementById('is_default').checked ? 1 : 0
+      };
+
+      console.log('📤 Data yang dikirim:', data);
+
+      // Show loading
+      const btnSimpan = document.getElementById('btnSimpanAlamat');
+      const originalText = btnSimpan.innerHTML;
+      btnSimpan.innerHTML = '<span class="spinner"></span> Menyimpan...';
+      btnSimpan.disabled = true;
+
+      // Send to server
+      fetch("<?= base_url('index.php/alamat/simpan') ?>", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          console.log('📥 Response dari server:', result);
+
+          btnSimpan.innerHTML = originalText;
+          btnSimpan.disabled = false;
+
+          // FIXED: Controller menggunakan 'success' bukan 'status'
+          if (result.success) {
+            showNotification('✅ Alamat berhasil disimpan!', 'success');
+            closeModalAlamat();
+
+            // Reload halaman untuk update list alamat
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
           } else {
-            console.log('ℹ️ Tombol sudah ada dari PHP');
+            showNotification('❌ ' + (result.message || 'Gagal menyimpan alamat'), 'error');
+          }
+        })
+        .catch(error => {
+          console.error('❌ Error:', error);
+          btnSimpan.innerHTML = originalText;
+          btnSimpan.disabled = false;
+          showNotification('❌ Terjadi kesalahan saat menyimpan', 'error');
+        });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown-box')) {
+        document.querySelectorAll('.dropdown-list').forEach(list => {
+          list.classList.remove('active');
+        });
+      }
+    });
+
+
+    // ========== UPDATE CHECKOUT BUTTON STATE ==========
+    function updateCheckoutButtonState() {
+      const btnCheckout = document.getElementById('btn-pay-now');
+      const addressDisplay = document.getElementById('address-display-main');
+
+      // Cek apakah ada alamat (cek dari content, bukan dari alert warning)
+      const hasAddress = !addressDisplay.querySelector('.alert-warning');
+
+      if (btnCheckout) {
+        if (hasAddress) {
+          btnCheckout.disabled = false;
+          btnCheckout.style.cursor = 'pointer';
+        } else {
+          btnCheckout.disabled = true;
+          btnCheckout.style.cursor = 'not-allowed';
+        }
+      }
+
+      // Update tombol Ganti Alamat juga
+      updateGantiAlamatButton(hasAddress);
+    }
+
+    // ========== UPDATE GANTI ALAMAT BUTTON ==========
+    function updateGantiAlamatButton(hasAddress) {
+      const btnContainer = document.getElementById('btn-ganti-alamat-container');
+
+      console.log('🔍 Debug Ganti Alamat Button:');
+      console.log('- hasAddress:', hasAddress);
+      console.log('- btnContainer:', btnContainer);
+
+      if (!btnContainer) {
+        console.log('❌ btnContainer tidak ditemukan!');
+        return;
+      }
+
+      const existingBtn = document.getElementById('btn-open-modal');
+      console.log('- existingBtn:', existingBtn);
+
+      if (hasAddress) {
+        // Jika ada alamat dan tombol belum ada, buat tombol baru
+        if (!existingBtn) {
+          console.log('✅ Membuat tombol Ganti Alamat baru');
+          btnContainer.innerHTML = '<button class="btn btn-link" id="btn-open-modal">Ganti Alamat</button>';
+
+          // Attach event listener ke tombol yang baru dibuat
+          const newBtn = document.getElementById('btn-open-modal');
+          if (newBtn) {
+            newBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              openModal('alamat-modal');
+            });
+            console.log('✅ Event listener attached');
           }
         } else {
-          // Jika tidak ada alamat, hapus tombol jika ada
-          if (existingBtn) {
-            console.log('🗑️ Menghapus tombol Ganti Alamat');
-            btnContainer.innerHTML = '';
-          }
+          console.log('ℹ️ Tombol sudah ada dari PHP');
+        }
+      } else {
+        // Jika tidak ada alamat, hapus tombol jika ada
+        if (existingBtn) {
+          console.log('🗑️ Menghapus tombol Ganti Alamat');
+          btnContainer.innerHTML = '';
         }
       }
+    }
 
-      // Panggil saat halaman load
-      document.addEventListener('DOMContentLoaded', function() {
-        updateCheckoutButtonState(); // Ini sudah memanggil updateGantiAlamatButton di dalamnya
+    // Panggil saat halaman load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCheckoutButtonState(); // Ini sudah memanggil updateGantiAlamatButton di dalamnya
 
-        // ... kode lainnya tetap sama
-      });
-    </script>
+      // ... kode lainnya tetap sama
+    });
+  </script>
 
 </body>
 

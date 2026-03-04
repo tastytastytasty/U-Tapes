@@ -7,209 +7,244 @@ class Transaksi extends CI_Controller {
         parent::__construct();
         $this->load->model('Transaksi_model');
         $this->load->model('M_pembayaran');
-        $this->load->model('Checkout_model'); // ✅ TAMBAHAN: Load Checkout_model
+        $this->load->model('Checkout_model');
+        $this->load->model('Promo_model');
         $this->load->library('session');
         
-        // Pastikan user sudah login
         if (!$this->session->userdata('id_customer')) {
             redirect('login');
         }
     }
 
-    /**
-     * Simpan transaksi baru
-     * Menerima data dari AJAX POST
-     */
     public function simpan() {
-        // Set header JSON
         header('Content-Type: application/json');
+        ob_clean();
 
-        // ✅ START DATABASE TRANSACTION
         $this->db->trans_start();
 
         try {
-            // Ambil data dari POST
-            $total             = $this->input->post('total');
+            $total = $this->input->post('total');
             $metode_pembayaran = $this->input->post('metode_pembayaran');
-            $bayar             = $this->input->post('bayar');
-            $ongkir            = $this->input->post('ongkir');
+            $bayar = $this->input->post('bayar');
+            $ongkir = $this->input->post('ongkir');
+            $kode_promo_item = $this->input->post('kode_promo_item');
+            $kode_promo_ongkir = $this->input->post('kode_promo_ongkir');
+            $diskon_voucher = $this->input->post('diskon_voucher');
+            $diskon_ongkir = $this->input->post('diskon_ongkir');
 
-            // Validasi data
             if (empty($total) || empty($metode_pembayaran)) {
                 $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Data tidak lengkap'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Data tidak lengkap']);
+                exit;
             }
 
-            // Validasi metode pembayaran
             $valid_methods = ['Tunai', 'E-wallet', 'Rekening'];
             if (!in_array($metode_pembayaran, $valid_methods)) {
                 $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Metode pembayaran tidak valid'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Metode pembayaran tidak valid']);
+                exit;
             }
 
-            // Ambil ID Customer dari session
             $id_customer = $this->session->userdata('id_customer');
+            
+            if (empty($id_customer)) {
+                $this->db->trans_rollback();
+                echo json_encode(['success' => false, 'message' => 'Anda harus login terlebih dahulu']);
+                exit;
+            }
 
-            // ===== 1. AMBIL CART ITEMS (CHECKLIST YES) =====
             $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
 
             if (empty($checkout_items)) {
                 $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Keranjang kosong atau tidak ada item yang dipilih'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Keranjang kosong']);
+                exit;
             }
 
-            // Generate ID Transaksi
-            $id_transaksi = $this->generate_id_transaksi();
+            $diskon_item_total = 0;
+            foreach ($checkout_items as $item) {
+                if (isset($item->is_sale) && $item->is_sale == 1) {
+                    $harga_asli = $item->harga * $item->qty;
+                    $harga_final = $this->Checkout_model->get_item_final_price($item) * $item->qty;
+                    $diskon_item_total += ($harga_asli - $harga_final);
+                }
+            }
 
-            // Generate No Nota (Invoice)
             $no_nota = $this->generate_no_nota();
 
-            // Prepare data untuk insert
             $data_transaksi = [
-                'id_transaksi'      => $id_transaksi,
-                'no_nota'           => $no_nota,
-                'tanggal'           => date('Y-m-d'),
-                'id_customer'       => $id_customer,
-                'total'             => intval($total),
+                'no_nota' => $no_nota,
+                'tanggal' => date('Y-m-d'),
+                'id_customer' => $id_customer,
+                'diskon_item' => floatval($diskon_item_total),
+                'diskon_voucher' => floatval($diskon_voucher ?? 0),
+                'diskon_ongkir' => floatval($diskon_ongkir ?? 0),
+                'total' => intval($total),
                 'metode_pembayaran' => $metode_pembayaran,
-                'bayar'             => intval($bayar),
-                'ongkir'            => intval($ongkir),
-                'status_transaksi'  => 'dikemas'
+                'bayar' => intval($bayar),
+                'ongkir' => intval($ongkir),
+                'status_transaksi' => 'dikemas'
             ];
 
-            // ===== 2. INSERT TRANSAKSI =====
             $insert = $this->Transaksi_model->insert($data_transaksi);
 
             if (!$insert) {
                 $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Gagal menyimpan transaksi'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Gagal menyimpan transaksi']);
+                exit;
             }
 
-            // ===== 3. INSERT PEMBAYARAN =====
+            $id_transaksi = $this->db->insert_id();
+
             $insert_payment = $this->M_pembayaran->insert([
-                'tanggal'      => date('Y-m-d H:i:s'),
+                'tanggal' => date('Y-m-d H:i:s'),
                 'id_transaksi' => $id_transaksi,
-                'status'       => 'Menunggu'
+                'status' => 'Menunggu'
             ]);
 
             if (!$insert_payment) {
                 $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Gagal membuat pembayaran'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Gagal membuat pembayaran']);
+                exit;
             }
 
-            // ===== 4. KURANGI STOK ITEM =====
             $reduce_stock = $this->Checkout_model->reduce_stock($checkout_items);
 
             if (!$reduce_stock) {
                 $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Gagal mengurangi stok. Mungkin stok tidak cukup.'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Gagal mengurangi stok']);
+                exit;
             }
 
-            // ===== 5. HAPUS ITEM DARI CART (CHECKLIST YES) =====
-            $clear_cart = $this->Checkout_model->clear_checkout_items($id_customer);
-
-            if (!$clear_cart) {
-                $this->db->trans_rollback();
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Gagal menghapus item dari keranjang'
+            foreach ($checkout_items as $item) {
+                // ✅ INSERT transaksi_item
+                $this->db->insert('transaksi_item', [
+                    'id_transaksi' => $id_transaksi,  // ✅ INT auto increment!
+                    'id_item_detail' => $item->id_item_detail,
+                    'qty' => $item->qty,
+                    'Total' => $item->harga * $item->qty  // ✅ Huruf T besar!
                 ]);
-                return;
+                
+                $id_transaksi_item = $this->db->insert_id();
+                
+                // ✅ INSERT transaksi_promo_item (cuma yang ada promo dari toko)
+                if (isset($item->is_sale) && $item->is_sale == 1) {
+                    $promo_detail = $this->db
+                        ->select('id_promo_detail')
+                        ->where('id_item_detail', $item->id_item_detail)
+                        ->get('promo_detail')
+                        ->row();
+                    
+                    if ($promo_detail) {
+                        $harga_asli = $item->harga * $item->qty;
+                        $harga_promo = $this->Checkout_model->get_item_final_price($item) * $item->qty;
+                        $nilai_diskon = $harga_asli - $harga_promo;
+                        
+                        $this->db->insert('transaksi_promo_item', [
+                            'id_transaksi_item' => $id_transaksi_item,
+                            'id_promo_detail' => $promo_detail->id_promo_detail,
+                            'nilai' => $nilai_diskon
+                        ]);
+                    }
+                }
+                
+                // ✅ LOG STOK
+                $id_stok = $this->generate_id_stok();
+                
+                $current_stock = $this->db
+                    ->select('stok')
+                    ->where('id_item_detail', $item->id_item_detail)
+                    ->get('item_detail')
+                    ->row();
+                
+                $stok_tersedia = $current_stock ? $current_stock->stok : 0;
+                
+                $data_log_stok = [
+                    'id_stok' => $id_stok,
+                    'id_item_detail' => $item->id_item_detail,
+                    'keterangan' => 'Pembelian oleh customer - Transaksi ' . $no_nota,
+                    'stok_terpakai' => -1 * intval($item->qty),
+                    'stok_tersedia' => $stok_tersedia,
+                    'tanggal' => date('Y-m-d H:i:s'),
+                    'id_user' => $id_customer
+                ];
+                
+                $this->db->insert('stok', $data_log_stok);
             }
 
-            // ✅ COMMIT TRANSACTION
+            $promo_used = [];
+            
+            // ✅ INSERT transaksi_promo (voucher item)
+            if (!empty($kode_promo_item)) {
+                $promo_item = $this->db
+                    ->where('kode_promo', strtoupper($kode_promo_item))
+                    ->get('promo')
+                    ->row();
+                
+                if ($promo_item && $promo_item->kuota > 0) {
+                    $this->db->insert('transaksi_promo', [
+                        'id_promo' => $promo_item->id_promo,
+                        'id_transaksi' => $id_transaksi,  // ✅ INT!
+                        'id_customer' => $id_customer
+                    ]);
+                    
+                    $this->Promo_model->use_promo($promo_item->id_promo);
+                    $promo_used[] = $kode_promo_item;
+                }
+            }
+            
+            // ✅ INSERT transaksi_promo (voucher ongkir)
+            if (!empty($kode_promo_ongkir)) {
+                $promo_ongkir = $this->db
+                    ->where('kode_promo', strtoupper($kode_promo_ongkir))
+                    ->get('promo')
+                    ->row();
+                
+                if ($promo_ongkir && $promo_ongkir->kuota > 0) {
+                    $this->db->insert('transaksi_promo', [
+                        'id_promo' => $promo_ongkir->id_promo,
+                        'id_transaksi' => $id_transaksi,  // ✅ INT!
+                        'id_customer' => $id_customer
+                    ]);
+                    
+                    $this->Promo_model->use_promo($promo_ongkir->id_promo);
+                    $promo_used[] = $kode_promo_ongkir;
+                }
+            }
+
+            $this->Checkout_model->clear_checkout_items($id_customer);
+
             $this->db->trans_complete();
 
             if ($this->db->trans_status() === FALSE) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Transaksi gagal. Silakan coba lagi.'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Transaksi gagal']);
+                exit;
             }
 
-            // ✅ SUCCESS
             echo json_encode([
-                'success'      => true,
-                'message'      => 'Transaksi berhasil! Item sudah dihapus dari keranjang.',
+                'success' => true,
+                'message' => 'Pesanan berhasil dibuat!',
                 'id_transaksi' => $id_transaksi,
-                'no_nota'      => $no_nota,
-                'data'         => $data_transaksi
+                'no_nota' => $no_nota,
+                'promo_used' => $promo_used,
+                'redirect_url' => site_url('pembayaran/' . $no_nota)
             ]);
+            exit;
 
         } catch (Exception $e) {
             $this->db->trans_rollback();
-            echo json_encode([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ]);
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            exit;
         }
     }
 
-
-    /**
-     * Generate ID Transaksi unik
-     * Format: TRX-YYYYMMDD-XXXXXX
-     */
     private function generate_id_transaksi() {
-        $prefix = 'TRX-' . date('Ymd') . '-';
-        
-        // Cek transaksi terakhir hari ini
-        $last_trx = $this->db
-            ->select('id_transaksi')
-            ->from('transaksi')
-            ->like('id_transaksi', $prefix, 'after')
-            ->order_by('id_transaksi', 'DESC')
-            ->limit(1)
-            ->get()
-            ->row();
-
-        if ($last_trx) {
-            // Ambil nomor urut terakhir
-            $last_number = intval(substr($last_trx->id_transaksi, -6));
-            $new_number = $last_number + 1;
-        } else {
-            $new_number = 1;
-        }
-
-        // Format dengan leading zeros (6 digit)
-        $id_transaksi = $prefix . str_pad($new_number, 6, '0', STR_PAD_LEFT);
-
-        return $id_transaksi;
+        return null;
     }
 
-    /**
-     * Generate No Nota (Invoice)
-     * Format: INV/YYYY/MM/XXXX
-     */
     private function generate_no_nota() {
-        $prefix = 'INV/' . date('Y') . '/' . date('m') . '/';
+        $prefix = 'INV-' . date('Ym') . '-';
         
-        // Cek nota terakhir bulan ini
         $last_nota = $this->db
             ->select('no_nota')
             ->from('transaksi')
@@ -220,22 +255,35 @@ class Transaksi extends CI_Controller {
             ->row();
 
         if ($last_nota) {
-            // Ambil nomor urut terakhir
             $last_number = intval(substr($last_nota->no_nota, -4));
             $new_number = $last_number + 1;
         } else {
             $new_number = 1;
         }
 
-        // Format dengan leading zeros (4 digit)
-        $no_nota = $prefix . str_pad($new_number, 4, '0', STR_PAD_LEFT);
-
-        return $no_nota;
+        return $prefix . str_pad($new_number, 4, '0', STR_PAD_LEFT);
     }
 
-    /**
-     * Update status transaksi
-     */
+    private function generate_id_stok() {
+        $last_stok = $this->db
+            ->select('id_stok')
+            ->from('stok')
+            ->like('id_stok', 'STK', 'after')
+            ->order_by('id_stok', 'DESC')
+            ->limit(1)
+            ->get()
+            ->row();
+
+        if ($last_stok) {
+            $last_number = intval(substr($last_stok->id_stok, 3));
+            $new_number = $last_number + 1;
+        } else {
+            $new_number = 1;
+        }
+
+        return 'STK' . str_pad($new_number, 4, '0', STR_PAD_LEFT);
+    }
+
     public function update_status() {
         header('Content-Type: application/json');
 
@@ -243,53 +291,32 @@ class Transaksi extends CI_Controller {
             $id_transaksi = $this->input->post('id_transaksi');
             $status = $this->input->post('status');
 
-            // Validasi
             if (empty($id_transaksi) || empty($status)) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Data tidak lengkap'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Data tidak lengkap']);
+                exit;
             }
 
-            // Validasi status
             $valid_status = ['dikemas', 'dikirim', 'diterima', 'dibatalkan'];
             if (!in_array($status, $valid_status)) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Status tidak valid'
-                ]);
-                return;
+                echo json_encode(['success' => false, 'message' => 'Status tidak valid']);
+                exit;
             }
 
-            // Update status
-            $update = $this->Transaksi_model->update($id_transaksi, [
-                'status_transaksi' => $status
-            ]);
+            $update = $this->Transaksi_model->update($id_transaksi, ['status_transaksi' => $status]);
 
             if ($update) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Status berhasil diupdate'
-                ]);
+                echo json_encode(['success' => true, 'message' => 'Status berhasil diupdate']);
             } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Gagal update status'
-                ]);
+                echo json_encode(['success' => false, 'message' => 'Gagal update status']);
             }
+            exit;
 
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ]);
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            exit;
         }
     }
 
-    /**
-     * Get detail transaksi (opsional)
-     */
     public function detail($id_transaksi) {
         $data['transaksi'] = $this->Transaksi_model->get_by_id($id_transaksi);
         
@@ -300,9 +327,6 @@ class Transaksi extends CI_Controller {
         $this->load->view('transaksi/detail', $data);
     }
 
-    /**
-     * Get riwayat transaksi customer
-     */
     public function riwayat() {
         $id_customer = $this->session->userdata('id_customer');
         $data['transaksi_list'] = $this->Transaksi_model->get_by_customer($id_customer);

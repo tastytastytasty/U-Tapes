@@ -49,6 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+
 $route['default_controller'] = 'homepage';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
@@ -65,6 +66,14 @@ $route['login'] = 'login/index';
 $route['login/auth'] = 'login/auth';
 $route['checkout/proses_pembayaran'] = 'checkout/proses_pembayaran';
 
+// ✅ PEMBAYARAN ROUTES - Specific routes FIRST!
+$route['pembayaran/test'] = 'pembayaran/test';                      // Test endpoint
+$route['pembayaran/debug/(.+)'] = 'pembayaran/debug/$1';           // Debug with param
+$route['pembayaran/upload_bukti/(.+)'] = 'pembayaran/upload_bukti/$1';
+$route['pembayaran/(.+)'] = 'pembayaran/index/$1';                 // Catch-all LAST!
+
+$route['promo'] = 'promo/index';
+$route['promo/(:num)'] = 'promo/index/$1';
 
 
 

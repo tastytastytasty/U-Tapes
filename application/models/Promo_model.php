@@ -15,7 +15,7 @@ class Promo_model extends CI_Model
             ->where('jenis_promo', $jenis)
             ->where('kuota >', 0)
             ->where('CURDATE() BETWEEN `dari` AND `hingga`', NULL, FALSE)
-            ->order_by('minimal_pembelian', 'ASC')
+            ->order_by('harga_minimal', 'ASC') // ✅ Fixed column name
             ->get('promo')
             ->result();
     }
@@ -30,9 +30,9 @@ class Promo_model extends CI_Model
      */
     public function validate_promo($kode_promo, $jenis = 'item', $total_belanja = 0)
     {
+        // ✅ STEP 1: Cari promo by code aja dulu (tanpa filter jenis)
         $promo = $this->db
             ->where('kode_promo', strtoupper($kode_promo))
-            ->where('jenis_promo', $jenis)
             ->get('promo')
             ->row();
 
@@ -41,7 +41,49 @@ class Promo_model extends CI_Model
             return [
                 'valid' => false,
                 'message' => 'Kode promo tidak ditemukan',
-                'promo' => null
+                'promo' => null,
+                'debug' => [
+                    'searched_code' => strtoupper($kode_promo),
+                    'searched_jenis' => $jenis
+                ]
+            ];
+        }
+        
+        // ✅ STEP 2: Validasi jenis promo (flexible matching)
+        $valid_jenis = false;
+        
+        if ($jenis === 'item') {
+            // Accept: 'item', 'Item', 'produk', 'Produk', 'barang', 'Barang', 'Diskon Biasa', 'diskon biasa'
+            $valid_jenis = in_array(strtolower($promo->jenis_promo), [
+                'item', 
+                'produk', 
+                'barang',
+                'diskon biasa',
+                'diskon',
+                'potongan harga'
+            ]);
+        } elseif ($jenis === 'ongkir') {
+            // Accept: 'ongkir', 'Ongkir', 'shipping', 'Shipping', 'pengiriman', 'Gratis Ongkir', 'gratis ongkir'
+            $valid_jenis = in_array(strtolower($promo->jenis_promo), [
+                'ongkir', 
+                'shipping', 
+                'pengiriman',
+                'gratis ongkir',
+                'free shipping',
+                'ongkos kirim'
+            ]);
+        }
+        
+        if (!$valid_jenis) {
+            return [
+                'valid' => false,
+                'message' => "Kode promo ini untuk {$promo->jenis_promo}, bukan untuk $jenis",
+                'promo' => null,
+                'debug' => [
+                    'promo_jenis_from_db' => $promo->jenis_promo,
+                    'requested_jenis' => $jenis,
+                    'hint' => 'Gunakan promo ini di bagian ' . ($jenis === 'item' ? 'ongkir' : 'item')
+                ]
             ];
         }
 
@@ -65,10 +107,11 @@ class Promo_model extends CI_Model
         }
 
         // Cek minimal pembelian
-        if ($total_belanja < $promo->minimal_pembelian) {
+        $min_pembelian = $promo->harga_minimal ?? $promo->minimal_pembelian ?? 0;
+        if ($total_belanja < $min_pembelian) {
             return [
                 'valid' => false,
-                'message' => 'Minimal pembelian Rp ' . number_format($promo->minimal_pembelian, 0, ',', '.'),
+                'message' => 'Minimal pembelian Rp ' . number_format($min_pembelian, 0, ',', '.'),
                 'promo' => null
             ];
         }
@@ -108,14 +151,15 @@ class Promo_model extends CI_Model
     }
 
     /**
-     * Kurangi kuota promo setelah digunakan
+     * Kurangi sisa kuota promo setelah digunakan
      * 
      * @param string $id_promo
      * @return bool
      */
     public function use_promo($id_promo)
     {
-        $this->db->set('kuota', 'kuota - 1', FALSE);
+        // ✅ FIX: Update sisa_kouta (bukan kuota)
+        $this->db->set('sisa_kouta', 'sisa_kouta - 1', FALSE);
         $this->db->where('id_promo', $id_promo);
         return $this->db->update('promo');
     }
