@@ -209,13 +209,170 @@
 		.discount-price {
 			font-size: 10px;
 		}
+	}
 
-		.text-danger {
-			font-size: 10px;
+	@media (max-width: 991px) {
+		.hero-slider .single-slider .content {
+			padding-right: 15px !important;
+		}
+
+		.hero-slider .single-slider .content img {
+			height: 350px !important;
+		}
+	}
+
+	@media (max-width: 767px) {
+		.slider-head {
+			min-height: 350px;
+		}
+
+		.hero-slider .single-slider {
+			min-height: 350px !important;
+		}
+
+		.hero-slider .single-slider .content {
+			flex-direction: row !important;
+			padding: 16px !important;
+			align-items: center !important;
+		}
+
+		.hero-slider .single-slider .content>div:first-child {
+			padding-right: 10px !important;
+		}
+
+		.hero-slider .single-slider .content img {
+			height: 300px !important;
+			width: 300px !important;
+			max-width: 300px !important;
+			object-fit: contain !important;
+		}
+
+		.hero-slider .single-slider h2 {
+			font-size: 1.2rem;
+		}
+
+		.hero-slider .single-slider p {
+			font-size: 0.85rem;
+		}
+
+		.col-lg-4 .row>.col-lg-12 {
+			flex: 0 0 50% !important;
+			max-width: 50% !important;
+		}
+
+		.col-lg-4 .row>.col-lg-12.mt-2 {
+			margin-top: 0 !important;
+		}
+
+		.hero-small-banner {
+			flex-direction: column !important;
+			align-items: flex-end !important;
+			justify-content: center !important;
+			padding: 14px !important;
+			min-height: 180px !important;
+		}
+
+		.hero-small-banner>a {
+			flex-direction: column !important;
+			align-items: flex-end !important;
+			justify-content: center !important;
+			gap: 8px !important;
+		}
+
+		.hero-small-banner img {
+			max-height: 120px !important;
+			width: 100% !important;
+			max-width: 100% !important;
+			margin-right: 0 !important;
+			object-fit: contain !important;
+			align-self: center !important;
+		}
+
+		.hero-small-banner .content h3 {
+			font-size: 1rem !important;
+		}
+
+		.hero-small-banner .content .title {
+			font-size: 0.85rem !important;
+		}
+
+		.hero-small-banner .content .btn {
+			padding: 6px 14px !important;
+			font-size: 0.8rem !important;
+		}
+	}
+
+	@media (max-width: 480px) {
+
+		.slider-head {
+			max-height: 340px !important;
+			overflow: hidden !important;
+		}
+
+		.hero-slider .single-slider {
+			min-height: 0 !important;
+			max-height: 340px !important;
+		}
+
+		.hero-slider .single-slider .content {
+			flex-direction: row !important;
+			padding: 16px !important;
+			align-items: center !important;
+		}
+
+		.hero-slider .single-slider .content>div:first-child {
+			padding-right: 12px 14px 0 14px !important;
+		}
+
+		.hero-slider .single-slider .content img {
+			height: 150px !important;
+			width: 150px !important;
+			max-width: 150px !important;
+			object-fit: contain !important;
+		}
+
+		.hero-slider .single-slider h2 {
+			font-size: 1rem !important;
+		}
+
+		.hero-slider .single-slider p {
+			font-size: 0.78rem !important;
+			margin-bottom: 10px !important;
+		}
+
+		.hero-slider .single-slider .btn {
+			padding: 7px 16px !important;
+			font-size: 0.8rem !important;
+		}
+
+		.col-lg-4 .row>.col-lg-12 {
+			flex: 0 0 100% !important;
+			max-width: 100% !important;
+		}
+
+		.col-lg-4 .row>.col-lg-12.mt-2 {
+			margin-top: 10px !important;
+		}
+
+		.hero-small-banner {
+			flex-direction: row !important;
+			align-items: center !important;
+		}
+
+		.hero-small-banner>a {
+			flex-direction: row !important;
+			align-items: center !important;
+		}
+
+		.hero-small-banner img {
+			width: 150px !important;
+			max-width: 150px !important;
+			height: 150px !important;
+			max-height: 150px !important;
+			object-fit: contain !important;
 		}
 	}
 </style>
-<!-- Start Hero Area -->
 <section class="hero-area">
 	<div class="container-fluid px-4">
 		<div class="row">
@@ -241,7 +398,7 @@
 									<div style="flex-shrink:0; align-self:stretch; display:flex; align-items:flex-end;">
 										<img src="<?= base_url('assets/images/item/' . $banner->gambar_item) ?>"
 											alt="<?= $banner->nama_item ?>"
-											style="height:450px; object-fit:cover; border-top-left-radius:12px; border-bottom-left-radius:12px; border: 1px solid #0d6efd;">
+											style="height:450px; object-fit:cover; border-radius:12px; border: 1px solid #0d6efd;">
 									</div>
 								</div>
 							</div>
@@ -252,7 +409,6 @@
 			<div class="col-lg-4 col-12">
 				<div class="row">
 					<div class="col-lg-12 col-md-6 col-12 md-custom-padding">
-						<!-- Start Small Banner -->
 						<?php $new = isset($new_items[0]) ? $new_items[0] : null; ?>
 						<?php if ($new): ?>
 							<div class="hero-small-banner"
@@ -272,16 +428,16 @@
 												href="<?= site_url('detailproduct/' . $new->id_item) ?>">Lihat</a>
 										</div>
 									</div>
-									<img src="<?= base_url('assets/images/item/' . $new->gambar_item) ?>"
-										alt="<?= $new->nama_item ?>"
-										style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border: 1px solid #0d6efd; border-radius: 8px;">
+									<div style="flex-shrink:0;">
+										<img src="<?= base_url('assets/images/item/' . $new->gambar_item) ?>"
+											alt="<?= $new->nama_item ?>"
+											style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border: 1px solid #0d6efd; border-radius: 8px;">
+									</div>
 								</a>
 							</div>
 						<?php endif; ?>
-						<!-- End Small Banner -->
 					</div>
 					<div class="col-lg-12 col-md-6 col-12 mt-2">
-						<!-- Start Small Banner -->
 						<?php $promo = isset($promo_items[0]) ? $promo_items[0] : null; ?>
 						<?php if ($promo): ?>
 							<div class="hero-small-banner"
@@ -329,15 +485,12 @@
 								</a>
 							</div>
 						<?php endif; ?>
-						<!-- Start Small Banner -->
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
-<!-- End Hero Area -->
-
 <!-- Start Trending Product Area -->
 <section class="trending-product section">
 	<div class="container-fluid px-4">
