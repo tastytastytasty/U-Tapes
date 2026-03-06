@@ -3943,9 +3943,18 @@
       }
     }
 
+    // ✅ GLOBAL FLAG - PREVENT DOUBLE SUBMIT
+    let isProcessingPayment = false;
+
     // Payment Modal Functions
     // Process Payment - UPDATED: Ambil payment method dari dropdown
     function processPayment() {
+      // ✅ CHECK FLAG - Prevent double submit
+      if (isProcessingPayment) {
+        console.log('⚠️ Pembayaran sedang diproses, harap tunggu...');
+        return;
+      }
+
       // Ambil metode pembayaran dari dropdown
       const paymentSelect = document.getElementById('payment-method-select');
       const selectedPayment = paymentSelect ? paymentSelect.value : null;
@@ -3969,6 +3978,9 @@
         showNotification('⚠️ Keranjang kosong', 'error');
         return;
       }
+
+      // ✅ SET FLAG - Lock submit
+      isProcessingPayment = true;
 
       const btnConfirm = document.getElementById('btn-pay-now');
       const originalText = btnConfirm.innerHTML;
@@ -4052,6 +4064,8 @@
               }, 2000);
             }
           } else {
+            // ✅ RESET FLAG - Error, allow retry
+            isProcessingPayment = false;
             btnConfirm.innerHTML = originalText;
             btnConfirm.disabled = false;
             showNotification('❌ ' + (result.message || 'Gagal memproses pembayaran'), 'error');
@@ -4062,6 +4076,8 @@
           console.error('❌ Error message:', error.message);
           console.error('❌ Error stack:', error.stack);
 
+          // ✅ RESET FLAG - Error, allow retry
+          isProcessingPayment = false;
           btnConfirm.innerHTML = originalText;
           btnConfirm.disabled = false;
 

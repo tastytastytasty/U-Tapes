@@ -14,7 +14,6 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
             background: #f5f6f8;
             overflow-x: hidden;
             width: 100%;
@@ -65,81 +64,63 @@
         }
 
         /* Sidebar */
-        .profile-sidebar {
-            width: 260px;
-            background: #ffffff;
-            border-right: 1px solid #e5e5e5;
-            padding: 20px;
-        }
+       
+    .profile-sidebar {
+        width: 260px;
+        background: #ffffff;
+        border-right: 1px solid #e5e5e5;
+        padding: 20px;
+    }
 
-        .profile-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
+    .profile-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
 
-        .profile-user img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+    .profile-user img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
 
-        .profile-user strong {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-        }
+    .profile-user h6 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+    }
 
-        .profile-user span {
-            font-size: 12px;
-            color: #777;
-        }
+    .profile-user span {
+        font-size: 12px;
+        color: #777;
+    }
 
-        .profile-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .profile-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-        .profile-menu li {
-            margin-bottom: 8px;
-        }
+    .profile-menu li {
+        margin-bottom: 8px;
+    }
 
-        .profile-menu .menu-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .profile-menu a {
+        display: block;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #333;
+    }
 
-        .profile-menu a {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #333;
-            transition: all 0.2s;
-        }
-
-        .profile-menu a.active,
-        .profile-menu a:hover {
-            background-color: #eef2ff;
-            color: #0d6efd;
-            font-weight: 500;
-        }
-
-        .profile-menu hr {
-            margin: 15px 0;
-            border: none;
-            border-top: 1px solid #e5e5e5;
-        }
+    .profile-menu a.active,
+    .profile-menu a:hover {
+        background-color: #eef2ff;
+        color: #0d6efd;
+        font-weight: 500;
+    }
 
         /* Content */
         .profile-content {
@@ -638,8 +619,6 @@
             }
         }
     </style>
-</head>
-
 <body>
     <!-- BREADCRUMBS -->
     <div class="breadcrumbs">
@@ -649,7 +628,7 @@
             </div>
             <div class="col-md-6 text-end">
                 <ul class="breadcrumb-nav">
-                    <li><a href="#"><i class="lni lni-home"></i> Home</a></li>
+                    <li><a href="<?= site_url('') ?>">🏠 Home</a></li>
                     <li>Pesanan</li>
                 </ul>
             </div>
@@ -658,263 +637,160 @@
 
     <div class="profile-wrapper">
         <!-- SIDEBAR -->
-        <div class="col-lg-3 col-md-4 profile-sidebar">
-            <div class="profile-user">
-                <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
-                <div>
-                    <strong><strong><?= $logged_in && !empty($user['nama'])
-                                        ? htmlspecialchars($user['nama'])
-                                        : 'Guest' ?>
-                        </strong></strong><br>
-                    <span>Ubah Profil</span>
+            <div class="col-lg-3 col-md-4 profile-sidebar">
+                <div class="profile-user">
+                    <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
+                    <div>
+                        <strong><strong><?= $logged_in && !empty($user['nama'])
+                            ? htmlspecialchars($user['nama'])
+                            : 'Guest' ?>
+                            </strong></strong><br>
+                        <span>Ubah Profil</span>
+                    </div>
                 </div>
+
+                <ul class="profile-menu">
+                    <li class="menu-title">
+                        <i class="bi bi-person"></i> Akun Saya
+                    </li>
+                    <li><a href="<?= site_url('profile') ?>">Profil</a></li>
+                    <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
+                    <li><a href="#">Ubah Kata sandi</a></li>
+
+                    <hr>
+
+                    <li class="menu-link">
+                        <a href="<?= site_url('pesanan') ?>" class="active"><i class="bi bi-receipt"></i> Pesanan Saya</a>
+                    </li>
+                    <li class="menu-link">
+                        <a href="#"><i class="bi bi-bell"></i> Notifikasi</a>
+                    </li>
+                </ul>
             </div>
-
-            <ul class="profile-menu">
-                <li class="menu-title">
-                    <i class="bi bi-person"></i> Akun Saya
-                </li>
-                <li><a href="#" class="active">Profil</a></li>
-                <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
-                <li><a href="#">Ubah Kata sandi</a></li>
-
-                <hr>
-
-                <li class="menu-link">
-                    <a href="<?= site_url('pesanan') ?>"><i class="bi bi-receipt"></i> Pesanan Saya</a>
-                </li>
-                <li class="menu-link">
-                    <a href="#"><i class="bi bi-bell"></i> Notifikasi</a>
-                </li>
-            </ul>
-        </div>
-
         <!-- CONTENT -->
         <div class="profile-content">
             <div class="ps-container">
-                <div class="ps-title"><i class="bi bi-bag-check"></i> Pesanan Saya</div>
+                <div class="ps-title">🛍️ Pesanan Saya</div>
 
                 <div class="ps-tabs">
                     <div class="ps-tab active" onclick="showTab('all')">
-                        <i class="bi bi-list-ul"></i> Semua
+                        📋 Semua
+                    </div>
+                    <div class="ps-tab" onclick="showTab('pending')">
+                        ⏳ Menunggu
                     </div>
                     <div class="ps-tab" onclick="showTab('process')">
-                        <i class="bi bi-clock-history"></i> Diproses
+                        📦 Dikemas
                     </div>
                     <div class="ps-tab" onclick="showTab('send')">
-                        <i class="bi bi-truck"></i> Dikirim
+                        🚚 Dikirim
                     </div>
                     <div class="ps-tab" onclick="showTab('done')">
-                        <i class="bi bi-check-circle"></i> Selesai
-                    </div>
-                    <div class="ps-tab" onclick="showTab('cancelled')">
-                        <i class="bi bi-x-circle"></i> Dibatalkan
+                        ✅ Selesai
                     </div>
                 </div>
 
                 <!-- SEMUA -->
                 <div id="all" class="ps-content active">
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-001</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 15 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-process">Diproses</div>
-                            </div>
+                    <?php if (empty($transaksi_list)): ?>
+                        <div style="text-align: center; padding: 64px 24px; background: #fff; border-radius: 12px;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+                            <h3 style="font-size: 20px; margin-bottom: 8px;">Belum Ada Pesanan</h3>
+                            <p style="color: #666; margin-bottom: 24px;">Anda belum memiliki riwayat pesanan</p>
+                            <a href="<?= site_url('') ?>" class="ps-btn">Mulai Belanja</a>
                         </div>
+                    <?php else: ?>
+                        <?php foreach ($transaksi_list as $transaksi): ?>
+                            <div class="ps-card">
+                                <div class="ps-header">
+                                    <div class="ps-header-left">
+                                        <div class="ps-invoice">📄 <?= htmlspecialchars($transaksi->no_nota) ?></div>
+                                        <div class="ps-date">📅 <?= date('d M Y', strtotime($transaksi->tanggal)) ?></div>
+                                    </div>
+                                    <div class="ps-header-right">
+                                        <?php 
+                                        $status_class = 'status-process';
+                                        if ($transaksi->payment_status == 'Berhasil') $status_class = 'status-success';
+                                        elseif ($transaksi->payment_status == 'Ditolak') $status_class = 'status-cancelled';
+                                        elseif ($transaksi->payment_status == 'Menunggu') $status_class = 'status-pending';
+                                        ?>
+                                        <div class="ps-status <?= $status_class ?>"><?= $transaksi->payment_status ?></div>
+                                    </div>
+                                </div>
 
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Keyboard Mechanical RGB</div>
-                                <div class="ps-item-price">Rp 750.000</div>
-                            </div>
-                        </div>
+                                <?php
+                                $items = $this->db
+                                    ->select('item.nama_item, item.gambar_item, item_detail.ukuran, item_detail.warna, transaksi_item.qty, transaksi_item.Total as subtotal')
+                                    ->from('transaksi_item')
+                                    ->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail')
+                                    ->join('item', 'item_detail.id_item = item.id_item')
+                                    ->where('transaksi_item.id_transaksi', $transaksi->id_transaksi)
+                                    ->get()
+                                    ->result();
+                                
+                                $total_items = count($items);
+                                $first_items = array_slice($items, 0, 1);
+                                $other_items = array_slice($items, 1);
+                                ?>
+                                
+                                <?php foreach ($first_items as $item): ?>
+                                    <div class="ps-item">
+                                        <img src="<?= base_url('uploads/items/' . $item->gambar_item) ?>" alt="<?= htmlspecialchars($item->nama_item) ?>">
+                                        <div class="ps-item-info">
+                                            <div class="ps-item-name"><?= htmlspecialchars($item->nama_item) ?> <span style="color: #999; font-size: 12px;">(<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)</span></div>
+                                            <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
 
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 750.000</span></div>
-                            <a class="ps-btn" href="<?= site_url('invoice/view/INV-001') ?>">
-                                <i class="bi bi-eye"></i> Invoice
-                            </a>
-                        </div>
-                    </div>
+                                <?php if ($total_items > 1): ?>
+                                    <div class="ps-more-items" id="items-<?= $transaksi->id_transaksi ?>">
+                                        <?php foreach ($other_items as $item): ?>
+                                            <div class="ps-item">
+                                                <img src="<?= base_url('uploads/items/' . $item->gambar_item) ?>" alt="<?= htmlspecialchars($item->nama_item) ?>">
+                                                <div class="ps-item-info">
+                                                    <div class="ps-item-name"><?= htmlspecialchars($item->nama_item) ?> <span style="color: #999; font-size: 12px;">(<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)</span></div>
+                                                    <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    
+                                    <button class="ps-more-btn" onclick="toggleItems('items-<?= $transaksi->id_transaksi ?>', this)">
+                                        <span>Lihat <?= $total_items - 1 ?> barang lainnya</span> ▼
+                                    </button>
+                                <?php endif; ?>
 
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-006</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 8 Jan 2026</div>
+                                <div class="ps-footer">
+                                    <div class="ps-total">Total: <span>Rp <?= number_format($transaksi->total, 0, ',', '.') ?></span></div>
+                                    
+                                    <?php if ($transaksi->has_paid): ?>
+                                        <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
+                                            📄 Lihat Invoice
+                                        </a>
+                                    <?php else: ?>
+                                        <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
+                                            💳 Bayar Sekarang
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-cancelled">Dibatalkan</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Laptop Gaming RTX 4060</div>
-                                <div class="ps-item-price">Rp 15.000.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 15.000.000</span></div>
-                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-006') ?>">
-                                <i class="bi bi-cart-plus"></i> Beli Lagi
-                            </a>
-                        </div>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
-                <!-- DIPROSES -->
-                <div id="process" class="ps-content">
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-002</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 18 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-process">Diproses</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Mouse Gaming Pro X</div>
-                                <div class="ps-item-price">Rp 350.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 350.000</span></div>
-                            <a class="ps-btn" href="<?= site_url('invoice/view/INV-002') ?>">
-                                <i class="bi bi-eye"></i> Invoice
-                            </a>
-                        </div>
-                    </div>
+                <!-- MENUNGGU -->
+                <div id="pending" class="ps-content">
+                    <?php 
+                    $pending = array_filter($transaksi_list, function($t) { return $t->payment_status == 'Menunggu'; });
+                    if (empty($pending)): ?>
+                        <p style="text-align: center; padding: 32px; color: #666;">Tidak ada pesanan yang menunggu pembayaran</p>
+                    <?php else: foreach ($pending as $transaksi): ?>
+                        <!-- Same card structure as above -->
+                    <?php endforeach; endif; ?>
                 </div>
 
-                <!-- DIKIRIM -->
-                <div id="send" class="ps-content">
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-003</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 12 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-send">Dikirim</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Headset Gaming 7.1 Surround</div>
-                                <div class="ps-item-price">Rp 500.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 500.000</span></div>
-                            <a class="ps-btn" href="<?= site_url('invoice/view/INV-003') ?>">
-                                <i class="bi bi-geo-alt"></i> Invoice
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SELESAI -->
-                <div id="done" class="ps-content">
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-004</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 5 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-done">Selesai</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Monitor LED 24 inch Full HD</div>
-                                <div class="ps-item-price">Rp 2.000.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span>Rp 2.000.000</span></div>
-                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-004') ?>">
-                                <i class="bi bi-cart-plus"></i> Beli Lagi
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- DIBATALKAN -->
-                <div id="cancelled" class="ps-content">
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-006</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 8 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-cancelled">Dibatalkan</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Laptop Gaming RTX 4060</div>
-                                <div class="ps-item-price">Rp 15.000.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span style="text-decoration: line-through; color: #94a3b8;">Rp 15.000.000</span></div>
-                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-006') ?>">
-                                <i class="bi bi-cart-plus"></i> Beli Lagi
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="ps-card">
-                        <div class="ps-header">
-                            <div class="ps-header-left">
-                                <div class="ps-invoice"><i class="bi bi-receipt"></i> INV-007</div>
-                                <div class="ps-date"><i class="bi bi-calendar3"></i> 3 Jan 2026</div>
-                            </div>
-                            <div class="ps-header-right">
-                                <div class="ps-status status-cancelled">Dibatalkan</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-item">
-                            <img src="https://via.placeholder.com/70" alt="Product">
-                            <div class="ps-item-info">
-                                <div class="ps-item-name">Smartphone Android Flagship</div>
-                                <div class="ps-item-price">Rp 8.500.000</div>
-                            </div>
-                        </div>
-
-                        <div class="ps-footer">
-                            <div class="ps-total">Total: <span style="text-decoration: line-through; color: #94a3b8;">Rp 8.500.000</span></div>
-                            <a class="ps-btn ps-btn-success" href="<?= site_url('invoice/view/INV-007') ?>">
-                                <i class="bi bi-cart-plus"></i> Beli Lagi
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <!-- Other tabs (process, send, done) similar structure -->
             </div>
         </div>
     </div>
@@ -931,18 +807,21 @@
         function toggleItems(id, btn) {
             const box = document.getElementById(id);
             const span = btn.querySelector('span');
+            const arrow = btn.childNodes[btn.childNodes.length - 1];
 
             if (box.classList.contains('active')) {
                 box.classList.remove('active');
                 btn.classList.remove('active');
-                span.textContent = 'Lihat 2 barang lainnya';
+                const count = box.querySelectorAll('.ps-item').length;
+                span.textContent = 'Lihat ' + count + ' barang lainnya';
+                btn.innerHTML = '<span>' + span.textContent + '</span> ▼';
             } else {
                 box.classList.add('active');
                 btn.classList.add('active');
                 span.textContent = 'Sembunyikan barang';
+                btn.innerHTML = '<span>Sembunyikan barang</span> ▲';
             }
         }
     </script>
 </body>
-
 </html>
