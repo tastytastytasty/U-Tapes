@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <title>U-taps</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/favicon.svg') ?>" />
+    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/logo/logo2.png') ?>" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css') ?>">
@@ -137,7 +137,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     .login-modal-accent {
         height: 5px;
-        background: linear-gradient(90deg, #0d397b, #0d6efd, #72aaff);
+        background: linear-gradient(90deg, #154899, #0d6efd, #72aaff);
     }
 
     .btn-close-custom {
@@ -156,7 +156,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     .btn-close-custom:hover {
         background: #d4d6db;
-        color: #0d397b;
+        color: #154899;
         transform: rotate(90deg);
     }
 
@@ -192,7 +192,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: linear-gradient(135deg, #0d6efd, #0d397b);
+        background: linear-gradient(135deg, #0d6efd, #154899);
         color: #fff !important;
         border: none;
         border-radius: 12px;
@@ -401,7 +401,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="container-fluid px-4">
                 <nav class="navbar navbar-expand-lg position-relative">
                     <a class="navbar-brand" href="<?= site_url('homepage') ?>">
-                        <img src="<?= base_url('assets/images/logo/logo.svg') ?>" alt="Logo" style="height:40px;">
+                        <img src="<?= base_url('assets/images/logo/logo1.png') ?>" alt="Logo" style="height:60px; width: 200px;">
                     </a>
                     <button class="navbar-toggler border-0 my-3" type="button" data-bs-toggle="collapse"
                         data-bs-target="#mainNavbar">
@@ -792,7 +792,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="col-lg-3 col-md-4 col-12">
                             <div class="footer-logo">
                                 <a href="<?= site_url('homepage') ?>">
-                                    <img src="<?= base_url('assets/images/logo/white-logo.svg') ?>" alt="#">
+                                    <img src="<?= base_url('assets/images/logo/logo3.png') ?>" alt="#">
                                 </a>
                             </div>
                         </div>

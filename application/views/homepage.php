@@ -381,7 +381,7 @@
 					<div class="hero-slider">
 						<?php foreach ($banners as $banner): ?>
 							<div class="single-slider"
-								style="background-image: url('<?= base_url('assets/images/hero/slider2.jpg') ?>');">
+								style="background-image: url('<?= base_url('assets/images/hero/' . $banner->background_banner) ?>');">
 								<div class="content"
 									style="display:flex; align-items:center; justify-content:space-between; width:100%; padding-right:25px;">
 									<div style="flex:1; min-width:0; padding-right:15px;">
@@ -389,7 +389,7 @@
 											<span><?= $banner->subtitle ?></span>
 											<?= $banner->nama_item ?>
 										</h2>
-										<p><?= $banner->deskripsi ?></p>
+										<p><?= $banner->deskripsi_banner ?></p>
 										<div class="button">
 											<a href="<?= site_url('detailproduct/' . $banner->id_item) ?>" class="btn">Beli
 												Sekarang</a>
