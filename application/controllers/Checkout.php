@@ -50,7 +50,19 @@ class Checkout extends MY_Controller
         $has_no_address = empty($alamat_list);
 
         // ========== CART ITEMS ==========
-        $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
+        $direct = $this->session->userdata('direct_checkout');
+
+        if ($direct) {
+            $this->session->unset_userdata('direct_checkout');
+            // Ambil data item_detail langsung dari DB
+            $checkout_items = $this->Checkout_model->get_direct_item(
+                $direct['id_item_detail'],
+                $direct['qty']
+            );
+        } else {
+            // Normal: dari keranjang yang di-checklist
+            $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
+        }
         $summary = $this->Checkout_model->calculate_summary($checkout_items);
 
         // ========== NAVBAR CART ==========
@@ -111,7 +123,7 @@ class Checkout extends MY_Controller
     {
         $id_customer = $this->session->userdata('id_customer');
         $id_alamat_checkout = $this->session->userdata('id_alamat_checkout');
-        
+
         if (!$id_alamat_checkout) {
             $alamat = $this->AlamatModel->getDefaultAddress($id_customer);
         } else {
@@ -160,7 +172,7 @@ class Checkout extends MY_Controller
     public function apply_promo()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $kode_promo = $this->input->post('kode_promo');
             $jenis = $this->input->post('jenis');
@@ -187,7 +199,7 @@ class Checkout extends MY_Controller
             ];
 
             echo json_encode($result);
-            
+
         } catch (Exception $e) {
             echo json_encode([
                 'valid' => false,
@@ -196,5 +208,29 @@ class Checkout extends MY_Controller
                 'trace' => ENVIRONMENT === 'development' ? $e->getTraceAsString() : null
             ]);
         }
+    }
+    public function direct()
+    {
+        $id_customer = $this->session->userdata('id_customer');
+
+        $id_item_detail = $this->input->post('id_item_detail');
+        $qty = (int) $this->input->post('qty');
+        $warna = $this->input->post('warna');
+        $ukuran = $this->input->post('ukuran');
+
+        if (!$id_item_detail || $qty <= 0) {
+            redirect('produk'); // atau halaman error
+            return;
+        }
+
+        // Simpan ke session sebagai direct checkout
+        $this->session->set_userdata('direct_checkout', [
+            'id_item_detail' => $id_item_detail,
+            'qty' => $qty,
+            'warna' => $warna,
+            'ukuran' => $ukuran,
+        ]);
+
+        redirect('checkout');
     }
 }

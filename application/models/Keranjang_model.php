@@ -79,6 +79,12 @@ class Keranjang_model extends CI_Model
             ->get('cart')
             ->row();
     }
+    public function update_qty($id_cart, $qty)
+    {
+        return $this->db
+            ->where('id_cart', $id_cart)
+            ->update('cart', ['qty' => $qty]);
+    }
 
     public function remove($id_customer, $id_item_detail)
     {

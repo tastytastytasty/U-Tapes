@@ -1341,7 +1341,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 const warna = $('input[name="warna"]:checked').val();
 
                 $('#ukuran').val(ukuran);
-
+                $('#id_item_detail').val($(this).data('id-item-detail'));
                 $('#discount-badge').hide().text('');
                 updateHargaStok(warna, ukuran);
             });
@@ -1397,11 +1397,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $('#stok-tersedia').text(currentStok);
                             if (currentStok <= 0) {
                                 $('#qty').val(0).prop('disabled', true);
+                            } else if (data.is_in_cart && data.qty_in_cart > 0) {
+                                $('#qty').val(data.qty_in_cart).prop('disabled', false);
                             } else {
                                 $('#qty').val(1).prop('disabled', false);
-                            }
-                            if (data.is_in_cart) {
-                                console.log('Item sudah ada di keranjang');
                             }
 
                             $('.price').css('opacity', '1');
@@ -1618,6 +1617,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     }
                 });
             });
+        });
+        document.getElementById('btn-checkout-direct').addEventListener('click', function () {
+            const warna = document.querySelector('input[name="warna"]:checked')?.value;
+            const ukuran = document.getElementById('ukuran')?.value;
+            const qty = parseInt(document.getElementById('qty')?.value) || 0;
+            if (!warna) {
+                alert('Silakan pilih warna terlebih dahulu.');
+                return;
+            }
+            if (!ukuran) {
+                alert('Silakan pilih ukuran terlebih dahulu.');
+                return;
+            }
+            if (qty <= 0) {
+                alert('Jumlah harus lebih dari 0.');
+                return;
+            }
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= site_url('checkout/direct') ?>';
+            const fields = {
+                id_item_detail: document.getElementById('id_item_detail')?.value ?? '',
+                warna: warna,
+                ukuran: ukuran,
+                qty: qty
+            };
+            for (const [key, val] of Object.entries(fields)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = val;
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
         });
     </script>
     <script>

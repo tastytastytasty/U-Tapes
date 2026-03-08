@@ -252,6 +252,7 @@
                                     <label>Pilih Ukuran</label>
                                     <div id="ukuran-wrapper" class="size-wrapper d-flex gap-2 flex-wrap"></div>
                                     <input type="hidden" id="ukuran" name="ukuran">
+                                    <input type="hidden" id="id_item_detail" name="id_item_detail">
                                 </div>
                             </div>
                         </div>
@@ -272,9 +273,9 @@
                             <div class="row align-items-end">
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="button mt-2">
-                                        <a href="<?= site_url('checkout') ?>" class="btn btn-sm btn-primary w-100">
+                                        <button type="button" class="btn btn-sm btn-primary w-100" id="btn-checkout-direct">
                                             <i class="lni lni-wallet"></i> Checkout
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-12">

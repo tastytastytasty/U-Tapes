@@ -42,11 +42,11 @@ class Ajax extends MY_Controller
                 }
             }
             echo '<div class="card d-flex justify-content-center align-items-center size-box position-relative ' . $disabled . '" 
-                   data-ukuran="' . $u->ukuran . '">';
+            data-ukuran="' . $u->ukuran . '"data-id-item-detail="' . ($detail ? $detail->id_item_detail : '') . '">';
             if ($ada_diskon && $badge_text) {
                 echo '<span style="position: absolute; top: -12px; right: -12px; background: #dc3545; color: #fff; border-radius: 50%; width: 25px; height: 25px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">
                     ' . $badge_text . '
-                  </span>';
+                </span>';
             }
             echo '<span style="font-size:14px;font-weight:500;" class="' . ($disabled ? 'text-muted' : '') . '">' . $u->ukuran . '</span>';
             echo '</div>';
@@ -100,9 +100,15 @@ class Ajax extends MY_Controller
 
         $this->load->model('Keranjang_model');
         $is_in_cart = false;
+        $qty_in_cart = 0;
         if ($id_customer) {
-            $is_in_cart = $this->Keranjang_model
-                ->is_in_cart($id_customer, $detail->id_item_detail);
+            $cart_item = $this->Keranjang_model->is_in_cart($id_customer, $detail->id_item_detail);
+            $is_in_cart = $cart_item ? true : false;
+            $qty_in_cart = $cart_item ? (int) $cart_item->qty : 0;
+            if ($cart_item && $detail->stok > 0 && $qty_in_cart > $detail->stok) {
+                $qty_in_cart = (int) $detail->stok;
+                $this->Keranjang_model->update_qty($cart_item->id_cart, $qty_in_cart);
+            }
         }
 
         echo json_encode([
@@ -115,7 +121,8 @@ class Ajax extends MY_Controller
             'persen_promo' => $persen_promo,
             'harga_promo' => $harga_promo,
             'stok' => (int) $detail->stok,
-            'is_in_cart' => $is_in_cart
+            'is_in_cart' => $is_in_cart,
+            'qty_in_cart' => $qty_in_cart
         ]);
     }
 

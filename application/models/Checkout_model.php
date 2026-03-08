@@ -79,7 +79,7 @@ class Checkout_model extends CI_Model
     public function get_item_final_price($item)
     {
         $base_price = (int) $item->harga;
-        
+
         // Cek apakah ada promo aktif
         if ($item->is_sale == 1) {
             // Promo persentase
@@ -87,17 +87,17 @@ class Checkout_model extends CI_Model
                 $discount = floor($base_price * ($item->persen_promo / 100));
                 return $base_price - $discount;
             }
-            
+
             // Promo fixed (harga promo per item)
             if ($item->harga_promo > 0) {
                 return max(0, $base_price - $item->harga_promo);
             }
         }
-        
+
         // No promo
         return $base_price;
     }
-    
+
     /**
      * Get ONLY checked items (checklist = Yes) untuk payment
      * 
@@ -123,7 +123,7 @@ class Checkout_model extends CI_Model
             ->get()
             ->result();
     }
-    
+
     /**
      * Reduce stock after payment
      * 
@@ -133,19 +133,19 @@ class Checkout_model extends CI_Model
     public function reduce_stock($cart_items)
     {
         foreach ($cart_items as $item) {
-            $this->db->set('stok', 'stok - ' . (int)$item->qty, FALSE);
+            $this->db->set('stok', 'stok - ' . (int) $item->qty, FALSE);
             $this->db->where('id_item_detail', $item->id_item_detail);
             $this->db->update('item_detail');
-            
+
             // Check if update failed
             if ($this->db->affected_rows() == 0) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Delete ONLY checked items (checklist = Yes) after successful checkout
      * Items yang ga di-check tetap ada di keranjang
@@ -159,5 +159,47 @@ class Checkout_model extends CI_Model
             ->where('id_customer', $id_customer)
             ->where('checklist', 'Yes') // ✅ Cuma hapus yang dipilih!
             ->delete('cart');
+    }
+    public function get_direct_item($id_item_detail, $qty)
+    {
+        $row = $this->db->select('
+            item_detail.id_item_detail,
+            item_detail.warna,
+            item_detail.ukuran,
+            item_detail.harga,
+            item_detail.stok,
+            item.id_item,
+            item.nama_item,
+            item.gambar_item,
+            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
+            MAX(promo.persen_promo) AS persen_promo,
+            MAX(promo.harga_promo)  AS harga_promo,
+            MAX(
+                CASE 
+                    WHEN promo.id_promo IS NOT NULL 
+                    AND CURDATE() BETWEEN promo.dari AND promo.hingga
+                    AND promo.kuota > 0 
+                    THEN 1 ELSE 0 
+                END
+            ) AS is_sale
+        ')
+            ->from('item_detail')
+            ->join('item', 'item.id_item = item_detail.id_item')
+            ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
+            ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
+            ->where('item_detail.id_item_detail', $id_item_detail)
+            ->group_by('item_detail.id_item_detail')
+            ->get()
+            ->row();
+
+        if (!$row)
+            return [];
+
+        // Buat format sama seperti get_checkout_items agar view tidak perlu berubah
+        $row->qty = $qty;
+        $row->id_cart = null;   // tidak ada cart
+        $row->checklist = 'Yes';
+
+        return [$row];
     }
 }
