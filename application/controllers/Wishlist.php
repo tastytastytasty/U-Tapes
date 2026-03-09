@@ -71,6 +71,25 @@ class Wishlist extends MY_Controller
 			echo json_encode(['status' => 'added']);
 		}
 	}
+	public function navbar_data()
+	{
+		$id_customer = $this->session->userdata('id_customer');
+
+		$wishlist_items = $this->db
+			->select('wishlist.id_wishlist, wishlist.id_item, item.nama_item, item.gambar_item,
+                MIN(item_detail.harga) AS harga_termurah')
+			->from('wishlist')
+			->join('item', 'item.id_item = wishlist.id_item')
+			->join('item_detail', 'item_detail.id_item = wishlist.id_item')
+			->where('wishlist.id_customer', $id_customer)
+			->group_by('wishlist.id_wishlist')
+			->get()->result();
+
+		echo json_encode([
+			'count' => count($wishlist_items),
+			'items' => $wishlist_items
+		]);
+	}
 }
 
 

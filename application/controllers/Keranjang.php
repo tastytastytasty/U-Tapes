@@ -266,4 +266,42 @@ class Keranjang extends MY_Controller
             'message' => 'Berhasil'
         ]);
     }
+    public function navbar_data()
+    {
+        $id_customer = $this->session->userdata('id_customer');
+
+        $cart_items = $this->db
+            ->select(' cart.id_cart,cart.qty,cart.checklist,item.id_item,item.merk,item.nama_item,item.jenis_kelamin,item.usia_min,item.usia_max,item.gambar_item,
+            kategori.nama_kategori,item_detail.id_item_detail,item_detail.warna,item_detail.kode_hex,item_detail.ukuran,item_detail.harga,item_detail.stok,item_detail.gambar,
+            COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END),
+            MIN(item_detail.harga)) AS harga_termurah,MAX(promo.persen_promo) AS persen_promo,MAX(promo.harga_promo) AS harga_promo,
+            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new, MAX(item_detail.harga * cart.qty) AS total,
+            MAX(
+                CASE 
+                    WHEN promo.id_promo IS NOT NULL 
+                    AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
+                    AND promo.kuota > 0 
+                    THEN 1 ELSE 0 
+                END
+            ) AS is_sale
+        ')
+            ->from('cart')
+            ->join('item_detail', 'cart.id_item_detail = item_detail.id_item_detail')
+            ->join('item', 'item_detail.id_item = item.id_item')
+            ->join('kategori', 'item.id_kategori = kategori.id_kategori')
+            ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
+            ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
+            ->where('cart.id_customer', $id_customer)
+            ->group_by('cart.id_cart')
+            ->order_by('MIN(item_detail.stok) = 0 ASC, cart.id_cart DESC')
+            ->get() ->result();
+
+        $total = array_sum(array_column($cart_items, 'subtotal'));
+
+        echo json_encode([
+            'count' => count($cart_items),
+            'items' => $cart_items,
+            'total' => $total
+        ]);
+    }
 }

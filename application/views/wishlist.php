@@ -187,6 +187,20 @@
         .text-danger {
             font-size: 10px;
         }
+        .stok-overlay {
+			position: absolute;
+			inset: 0;
+			background: rgba(255, 255, 255, 0.6);
+			display: flex;
+			text-align: center;
+			align-items: center;
+			justify-content: center;
+			font-size: 20px;
+			font-weight: 700;
+			color: red;
+			letter-spacing: 3px;
+			z-index: 5;
+		}
     }
 </style>
 <!-- Start Breadcrumbs -->

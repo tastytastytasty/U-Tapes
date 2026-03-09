@@ -459,12 +459,14 @@
                         btn.addClass('in-cart')
                             .html('<i class="lni lni-cart-full"></i> Keranjang');
                         showAlert('Masuk ke keranjang!', 'success');
+                        updateCartNavbar();
                     }
 
                     if (res.status === 'removed') {
                         btn.removeClass('in-cart')
                             .html('<i class="lni lni-cart"></i> Keranjang');
                         showAlert('Dihapus dari keranjang', 'info');
+                        updateCartNavbar();
                     }
                 },
                 error: function (xhr) {
@@ -472,7 +474,107 @@
                 }
             });
         });
+        function updateCartNavbar() {
+            $.ajax({
+                url: "<?= site_url('keranjang/navbar_data') ?>",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $('.total-carts').text(data.count);
+                    $('#cart-count').text(data.count + ' Item');
+                    $('#cart-list').empty();
 
+                    if (data.items.length > 0) {
+                        $.each(data.items, function (i, c) {
+                            let isEmpty   = parseInt(c.stok) <= 0;
+                            let harga     = Number(c.harga);
+                            let qty       = Number(c.qty);
+                            let hargaAsli = harga * qty;
+                            let hargaDiskon = hargaAsli;
+
+                            if (!isEmpty && parseInt(c.is_sale)) {
+                                if (parseFloat(c.persen_promo) > 0) {
+                                    hargaDiskon = hargaAsli - (hargaAsli * parseFloat(c.persen_promo) / 100);
+                                } else if (parseFloat(c.harga_promo) > 0) {
+                                    hargaDiskon = hargaAsli - (parseFloat(c.harga_promo) * qty);
+                                }
+                            }
+
+                            let subtotalFmt = Number(hargaDiskon).toLocaleString('id-ID');
+                            let isChecked   = (!isEmpty && c.checklist === 'Yes') ? 'checked' : '';
+                            let isDisabled  = isEmpty ? 'disabled' : '';
+                            let opacity     = isEmpty ? 'opacity:0.5;' : '';
+                            let grayscale   = isEmpty ? 'filter:grayscale(60%);' : '';
+                            let cursor      = isEmpty ? 'not-allowed' : 'pointer';
+
+                            let stokInfo = isEmpty
+                                ? `<small class="text-danger fw-semibold"><i class="lni lni-ban"></i> Produk tidak tersedia</small>`
+                                : `<small class="text-muted">Stok: ${c.stok}</small>`;
+
+                            let amountHtml = isEmpty
+                                ? `<h6 class="amount text-muted mb-0 mt-4 ms-2" id="item-total-${c.id_cart}">-</h6>`
+                                : `<h6 class="amount text-dark mb-0 mt-2 ms-2 fw-bold" id="item-total-${c.id_cart}">Rp ${subtotalFmt}</h6>`;
+
+                            $('#cart-list').append(`
+                                <li id="nav-cart-${c.id_cart}" class="${isEmpty ? 'nav-cart-item-empty' : ''}">
+                                    <a href="javascript:void(0)" class="remove btn-remove-cart" data-cart="${c.id_cart}">
+                                        <i class="lni lni-close"></i>
+                                    </a>
+                                    <div class="d-flex align-items-start gap-3" style="${opacity}">
+                                        <div class="cart-img-head" style="position:relative;display:block;width:110px;flex-shrink:0;">
+                                            <a class="cart-img" href="<?= site_url('detailproduct/') ?>${c.id_item}">
+                                                <img src="<?= base_url('assets/images/item/') ?>${c.gambar}"
+                                                    style="width:110px;height:110px;object-fit:cover;border-radius:8px;display:block;${grayscale}">
+                                            </a>
+                                            <input type="checkbox" class="item-checkbox form-check-input mt-0"
+                                                id="item-${c.id_cart}"
+                                                data-id-cart="${c.id_cart}"
+                                                data-price="${hargaDiskon}"
+                                                style="width:20px;height:20px;cursor:${cursor};position:absolute;top:6px;left:6px;z-index:10;"
+                                                ${isDisabled} ${isChecked}>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h4 class="mb-1" style="font-size:0.9rem;">
+                                                <a href="<?= site_url('detailproduct/') ?>${c.id_item}">
+                                                    ${c.nama_item} (${c.ukuran})
+                                                </a>
+                                            </h4>
+                                            ${stokInfo}
+                                            <div class="mt-2">
+                                                <div class="input-group input-group-sm mb-1" style="max-width:95px;">
+                                                    <button class="btn btn-outline-primary cart-qty-minus"
+                                                        data-cart="${c.id_cart}" data-price="${harga}"
+                                                        data-stok="${c.stok}" type="button" ${isDisabled}>−</button>
+                                                    <input type="number" class="form-control cart-qty-input text-center"
+                                                        id="cart-qty-${c.id_cart}"
+                                                        data-cart="${c.id_cart}" data-price="${harga}"
+                                                        data-stok="${c.stok}" data-persen="${c.persen_promo}"
+                                                        data-promo="${c.harga_promo}" data-issale="${isEmpty ? 0 : c.is_sale}"
+                                                        min="1" max="${c.stok}" value="${c.qty}" ${isDisabled}>
+                                                    <button class="btn btn-outline-primary cart-qty-plus"
+                                                        data-cart="${c.id_cart}" data-price="${harga}"
+                                                        data-stok="${c.stok}" type="button" ${isDisabled}>+</button>
+                                                </div>
+                                                ${amountHtml}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            `);
+                        });
+
+                        $('#cart-total').text('Rp ' + Number(data.total).toLocaleString('id-ID'));
+                        $('#cart-empty').hide();
+                        $('#cart-list').show();
+
+                    } else {
+                        $('#cart-list').hide();
+                        $('#cart-empty').show();
+                        $('#cart-total').text('Rp 0');
+                    }
+                }
+            });
+        }
     });
 </script>
 
