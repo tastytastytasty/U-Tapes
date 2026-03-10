@@ -11,19 +11,15 @@ class Pesanan extends MY_Controller {
 		}
 		$this->load->library(['email']);
 		$this->load->database();
-		$this->load->model('Transaksi_model');  // ✅ Load model
-		$this->load->model('M_pembayaran');     // ✅ Load model
+		$this->load->model('Transaksi_model');
+		$this->load->model('M_pembayaran');
 	}
 
    public function index()
 {
     $id_customer = $this->session->userdata('id_customer');
     
-    // ✅ Load models
-    $this->load->model('Transaksi_model');
-    $this->load->model('M_pembayaran');
-    
-    // ✅ Get all transaksi customer
+    // ✅ Get all transaksi customer, sorted by terbaru
     $transaksi_list = $this->Transaksi_model->get_by_customer($id_customer, 50, 0);
     
     // ✅ Get payment status untuk setiap transaksi
@@ -35,13 +31,11 @@ class Pesanan extends MY_Controller {
     
     $viewData = [
         'logged_in' => $this->session->userdata('logged_in'),
-        'transaksi_list' => $transaksi_list  // ✅ Pass ke view
+        'transaksi_list' => $transaksi_list
     ];
 
-    // ✅ Load view pesanan.php ke $contents
     $data['contents'] = $this->load->view('pesanan', $viewData, TRUE);
 
-    // ✅ Load navbar wrapper (main template)
     $this->load->view('navbar', array_merge($this->global_data, $data));
 }
 
@@ -83,13 +77,27 @@ public function invoice($no_nota = null)
             item.gambar_item,
             item_detail.ukuran,
             item_detail.warna,
+            item_detail.harga,
             transaksi_item.qty,
-            transaksi_item.Total as subtotal
+            transaksi_item.Total as subtotal,
+            MAX(promo.persen_promo) AS persen_promo,
+            MAX(promo.harga_promo) AS harga_promo,
+            MAX(
+                CASE 
+                    WHEN promo.id_promo IS NOT NULL 
+                    AND CURDATE() BETWEEN promo.dari AND promo.hingga
+                    AND promo.kuota > 0 
+                    THEN 1 ELSE 0 
+                END
+            ) AS is_sale
         ')
         ->from('transaksi_item')
         ->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail')
         ->join('item', 'item_detail.id_item = item.id_item')
+        ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
+        ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
         ->where('transaksi_item.id_transaksi', $transaksi->id_transaksi)
+        ->group_by('transaksi_item.id_transaksi_item')
         ->get()
         ->result();
     

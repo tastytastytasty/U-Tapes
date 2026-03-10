@@ -440,13 +440,13 @@
     
     <!-- Header -->
     <div class="payment-header">
-      <h1>💳 Selesaikan Pembayaran</h1>
+      <h1>Selesaikan Pembayaran</h1>
       <p class="order-number">No. Pesanan: <span><?= $transaksi->no_nota ?></span></p>
     </div>
 
     <!-- Alert -->
     <div class="alert alert-warning">
-      <span class="alert-icon">⚠️</span>
+      <span class="alert-icon">⚠</span>
       <div>
         <strong>Selesaikan pembayaran dalam 24 jam</strong><br>
         Transfer sesuai nominal dan upload bukti transfer untuk verifikasi
@@ -456,39 +456,19 @@
     <!-- Content Grid -->
     <div class="payment-content">
       
-      <!-- Bank Accounts -->
+      <!-- Bank Account -->
       <div class="card">
-        <h2 class="card-title">💰 Transfer ke Rekening</h2>
+        <h2 class="card-title">Transfer ke Rekening</h2>
         <div class="bank-list">
           
           <div class="bank-item">
             <div class="bank-name">
-              <span class="bank-icon">🏦</span>
-              Bank BCA
+              <span class="bank-icon">BCA</span>
+              Bank Central Asia
             </div>
             <div class="account-number">1234567890</div>
-            <div class="account-name">PT. Toko Sepatu Indonesia</div>
-            <button class="copy-btn" onclick="copyToClipboard('1234567890')">📋 Salin Nomor</button>
-          </div>
-
-          <div class="bank-item">
-            <div class="bank-name">
-              <span class="bank-icon">🏧</span>
-              Bank Mandiri
-            </div>
-            <div class="account-number">9876543210</div>
-            <div class="account-name">PT. Toko Sepatu Indonesia</div>
-            <button class="copy-btn" onclick="copyToClipboard('9876543210')">📋 Salin Nomor</button>
-          </div>
-
-          <div class="bank-item">
-            <div class="bank-name">
-              <span class="bank-icon">🏦</span>
-              Bank BNI
-            </div>
-            <div class="account-number">1122334455</div>
-            <div class="account-name">PT. Toko Sepatu Indonesia</div>
-            <button class="copy-btn" onclick="copyToClipboard('1122334455')">📋 Salin Nomor</button>
+            <div class="account-name">a.n. UTaps Indonesia</div>
+            <button class="copy-btn" onclick="copyToClipboard('1234567890')">Salin Nomor Rekening</button>
           </div>
 
         </div>
@@ -496,7 +476,7 @@
 
       <!-- Order Summary -->
       <div class="card">
-        <h2 class="card-title">📦 Ringkasan Pesanan</h2>
+        <h2 class="card-title">Ringkasan Pesanan</h2>
         
         <?php foreach ($items as $item): ?>
         <div class="order-item">
@@ -509,7 +489,44 @@
             <div class="item-variant">
               <?= $item->ukuran ?> • <?= $item->warna ?> • Qty: <?= $item->qty ?>
             </div>
-            <div class="item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+            
+            <?php 
+            // Calculate prices
+            $harga_asli = $item->harga;
+            $harga_final = $harga_asli;
+            
+            // Check if item has promo
+            if ($item->is_sale == 1) {
+                if ($item->persen_promo > 0) {
+                    $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
+                } elseif ($item->harga_promo > 0) {
+                    $harga_final = max(0, $harga_asli - $item->harga_promo);
+                }
+            }
+            
+            $subtotal_asli = $harga_asli * $item->qty;
+            $subtotal_final = $harga_final * $item->qty;
+            ?>
+            
+            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+              <!-- Item WITH Discount -->
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                <div style="text-decoration: line-through; color: #999; font-size: 13px;">
+                  Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                </div>
+                <div style="background: #fee; color: #e11d48; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">
+                  <?php if ($item->persen_promo > 0): ?>
+                    -<?= $item->persen_promo ?>%
+                  <?php else: ?>
+                    -Rp <?= number_format($item->harga_promo, 0, ',', '.') ?>
+                  <?php endif; ?>
+                </div>
+              </div>
+              <div class="item-price">Rp <?= number_format($subtotal_final, 0, ',', '.') ?></div>
+            <?php else: ?>
+              <!-- Item NO Discount -->
+              <div class="item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+            <?php endif; ?>
           </div>
         </div>
         <?php endforeach; ?>
@@ -550,11 +567,17 @@
 
       <!-- Upload Section -->
       <div class="card upload-section">
-        <h2 class="card-title">📤 Upload Bukti Transfer</h2>
+        <h2 class="card-title">Upload Bukti Transfer</h2>
         
         <form id="upload-form" method="POST" enctype="multipart/form-data">
           <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
-            <div class="upload-icon">📁</div>
+            <div class="upload-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
             <div class="upload-text">Klik atau drag & drop bukti transfer</div>
             <div class="upload-hint">Format: JPG, PNG, PDF (Max 5MB)</div>
             <input type="file" 
@@ -569,7 +592,7 @@
           </div>
 
           <button type="submit" class="submit-btn" id="submit-btn" disabled>
-            🚀 Kirim Bukti Transfer
+            Kirim Bukti Transfer
           </button>
         </form>
       </div>
@@ -582,7 +605,7 @@
     // Copy to clipboard
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
-        alert('✅ Nomor rekening berhasil disalin!');
+        alert('Nomor rekening berhasil disalin!');
       });
     }
 
@@ -620,7 +643,7 @@
 
       // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('❌ File terlalu besar! Maksimal 5MB');
+        alert('File terlalu besar! Maksimal 5MB');
         return;
       }
 
@@ -636,7 +659,7 @@
       } else if (file.type === 'application/pdf') {
         previewContainer.classList.remove('active');
         submitBtn.disabled = false;
-        alert('✅ File PDF berhasil dipilih: ' + file.name);
+        alert('File PDF berhasil dipilih: ' + file.name);
       }
     }
 
@@ -648,7 +671,7 @@
       const originalText = submitBtn.innerHTML;
       
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '⏳ Mengirim...<span class="spinner"></span>';
+      submitBtn.innerHTML = 'Mengirim...<span class="spinner"></span>';
 
       fetch('<?= site_url('pembayaran/upload_bukti/' . $transaksi->id_transaksi) ?>', {
         method: 'POST',
@@ -664,25 +687,25 @@
                 <circle cx="26" cy="26" r="25"/>
                 <path fill="none" d="M14 27l7.5 7.5L38 18"/>
               </svg>
-              <h1 style="color: var(--success);">✅ Bukti Transfer Berhasil Dikirim!</h1>
+              <h1 style="color: var(--success);">Bukti Transfer Berhasil Dikirim!</h1>
               <p style="margin-top: 1rem; color: #666;">
                 Terima kasih! Kami akan memverifikasi pembayaran Anda dalam 1x24 jam.
               </p>
-              <button onclick="window.location.href='<?= site_url('') ?>'" 
+              <button onclick="window.location.href='<?= site_url('pesanan') ?>'" 
                       style="margin-top: 2rem; padding: 1rem 2rem; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 600;">
-                🏠 Kembali ke Beranda
+                Lihat Status Pesanan
               </button>
             </div>
           `;
         } else {
-          alert('❌ ' + result.message);
+          alert(result.message);
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        alert('❌ Terjadi kesalahan. Silakan coba lagi.');
+        alert('Terjadi kesalahan. Silakan coba lagi.');
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
       });

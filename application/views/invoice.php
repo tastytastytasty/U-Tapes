@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <title>Invoice #INV-001</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Invoice - <?= $transaksi->no_nota ?></title>
     <style>
         * {
             margin: 0;
@@ -14,623 +12,329 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            color: #1e293b;
-            padding: 20px 16px;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6f8;
+            padding: 40px 20px;
         }
 
-        /* Container */
         .invoice-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        /* Header */
         .invoice-header {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: #fff;
-            padding: 32px 28px;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
         }
 
-        .invoice-header::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .invoice-header::after {
-            content: '';
-            position: absolute;
-            bottom: -30px;
-            left: -30px;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 50%;
-        }
-
-        .invoice-header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            position: relative;
-            z-index: 1;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .invoice-title-section {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .invoice-title {
+        .invoice-header h1 {
             font-size: 32px;
-            font-weight: 700;
             margin-bottom: 8px;
+        }
+
+        .invoice-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .invoice-body {
+            padding: 40px;
+        }
+
+        .invoice-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .info-block h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .invoice-number {
-            font-size: 16px;
-            opacity: 0.9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .info-block p {
+            margin-bottom: 6px;
+            color: #333;
         }
 
-        .invoice-meta {
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        .invoice-date {
-            font-size: 15px;
-            margin-bottom: 10px;
-            opacity: 0.95;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 6px;
-        }
-
-        .badge-status {
+        .status-badge {
             display: inline-block;
-            padding: 8px 16px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 8px;
         }
 
-        /* Content */
-        .invoice-content {
-            padding: 32px 28px;
+        .status-success {
+            background: #d4edda;
+            color: #155724;
         }
 
-        /* Info Grid */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .info-box {
-            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-            border-radius: 16px;
-            padding: 20px;
-            border: 2px solid #e2e8f0;
-            transition: all 0.3s;
-        }
-
-        .info-box:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .info-box-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .info-box-title i {
-            color: #3b82f6;
-            font-size: 16px;
-        }
-
-        .info-list {
-            list-style: none;
-            font-size: 15px;
-            color: #475569;
-            line-height: 1.8;
-        }
-
-        .info-list li {
-            margin-bottom: 6px;
-        }
-
-        .info-list li strong {
-            color: #1e293b;
-            font-weight: 600;
-        }
-
-        /* Table */
-        .invoice-section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 24px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            border-radius: 4px;
-        }
-
-        .invoice-table {
+        table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-bottom: 24px;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
+            border-collapse: collapse;
+            margin-bottom: 30px;
         }
 
-        .invoice-table thead {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        thead {
+            background: #f8f9fa;
         }
 
-        .invoice-table th {
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 14px;
-            font-weight: 700;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .invoice-table td {
+        th {
             padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 15px;
-            color: #475569;
-            vertical-align: top;
-        }
-
-        .invoice-table tbody tr {
-            transition: all 0.2s;
-        }
-
-        .invoice-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .invoice-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .product-name {
+            text-align: left;
             font-weight: 600;
-            color: #1e293b;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
             margin-bottom: 4px;
         }
 
-        .product-variant {
-            color: #94a3b8;
+        .item-detail {
             font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            color: #666;
         }
 
-        .price-cell {
-            font-weight: 600;
-            color: #3b82f6;
-            white-space: nowrap;
-        }
-
-        /* Summary */
-        .invoice-summary {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 16px;
-            padding: 24px;
-            border: 2px solid #e2e8f0;
+        .summary {
             max-width: 400px;
             margin-left: auto;
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 8px;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
+            margin-bottom: 12px;
             font-size: 15px;
-            color: #475569;
         }
 
-        .summary-row:not(:last-child) {
-            border-bottom: 1px dashed #cbd5e1;
-        }
-
-        .summary-row.total {
+        .summary-total {
             font-size: 20px;
             font-weight: 700;
-            color: #1e293b;
+            color: #333;
             padding-top: 16px;
-            margin-top: 8px;
-            border-top: 2px solid #cbd5e1;
-            border-bottom: none;
+            border-top: 2px solid #dee2e6;
+            margin-top: 12px;
         }
 
-        .summary-row.total .amount {
-            color: #3b82f6;
-        }
-
-        .payment-method {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px dashed #cbd5e1;
-            font-size: 14px;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .payment-method i {
-            color: #3b82f6;
-        }
-
-        /* Action Buttons */
-        .invoice-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 2px dashed #e2e8f0;
-            flex-wrap: wrap;
+        .actions {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
         }
 
         .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
+            display: inline-block;
+            padding: 14px 32px;
+            margin: 0 8px;
+            border-radius: 8px;
             font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        .btn-print {
+            background: #28a745;
+            color: white;
         }
 
-        .btn-primary:hover {
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        .btn-print:hover {
+            background: #218838;
             transform: translateY(-2px);
         }
 
-        .btn-secondary {
-            background: #fff;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
+        .btn-back {
+            background: #6c757d;
+            color: white;
         }
 
-        .btn-secondary:hover {
-            border-color: #cbd5e1;
-            background: #f8fafc;
+        .btn-back:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 12px 8px;
-            }
-
-            .invoice-container {
-                border-radius: 16px;
-            }
-
-            .invoice-header {
-                padding: 24px 20px;
-            }
-
-            .invoice-header-content {
-                flex-direction: column;
-            }
-
-            .invoice-title {
-                font-size: 26px;
-            }
-
-            .invoice-meta {
-                text-align: left;
-                width: 100%;
-            }
-
-            .invoice-date {
-                justify-content: flex-start;
-            }
-
-            .invoice-content {
-                padding: 24px 20px;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .section-title {
-                font-size: 16px;
-            }
-
-            .invoice-table {
-                font-size: 14px;
-            }
-
-            .invoice-table th,
-            .invoice-table td {
-                padding: 12px;
-            }
-
-            .invoice-table th:nth-child(2),
-            .invoice-table td:nth-child(2) {
-                display: none;
-            }
-
-            .invoice-summary {
-                max-width: 100%;
-            }
-
-            .summary-row {
-                font-size: 14px;
-            }
-
-            .summary-row.total {
-                font-size: 18px;
-            }
-
-            .invoice-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .invoice-header {
-                padding: 20px 16px;
-            }
-
-            .invoice-title {
-                font-size: 22px;
-            }
-
-            .invoice-content {
-                padding: 20px 16px;
-            }
-
-            .info-box {
-                padding: 16px;
-            }
-
-            .invoice-table th,
-            .invoice-table td {
-                padding: 10px 8px;
-                font-size: 13px;
-            }
-
-            .invoice-table th:nth-child(3),
-            .invoice-table td:nth-child(3) {
-                display: none;
-            }
-
-            .product-name {
-                font-size: 14px;
-            }
-        }
-
-        /* Print Styles */
         @media print {
             body {
-                background: #fff;
+                background: white;
                 padding: 0;
             }
-
-            .invoice-container {
-                box-shadow: none;
-                border-radius: 0;
-            }
-
-            .invoice-actions {
+            .actions {
                 display: none;
-            }
-
-            .invoice-header {
-                background: #3b82f6;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="invoice-container">
         <!-- Header -->
         <div class="invoice-header">
-            <div class="invoice-header-content">
-                <div class="invoice-title-section">
-                    <div class="invoice-title">INVOICE</div>
-                    <div class="invoice-number"><i class="bi bi-hash"></i> INV-001</div>
-                </div>
-                <div class="invoice-meta">
-                    <div class="invoice-date"><i class="bi bi-calendar-event"></i> 15 Januari 2025</div>
-                    <div class="badge-status"><i class="bi bi-clock-history"></i> Menunggu Pembayaran</div>
-                </div>
-            </div>
+            <h1>📄 INVOICE</h1>
+            <p>Terima kasih atas pesanan Anda!</p>
         </div>
 
-        <!-- Content -->
-        <div class="invoice-content">
-            <!-- Info Grid -->
-            <div class="info-grid">
-                <div class="info-box">
-                    <div class="info-box-title"><i class="bi bi-person-circle"></i> Customer</div>
-                    <ul class="info-list">
-                        <li><strong>John Doe</strong></li>
-                        <li><i class="bi bi-envelope"></i> john.doe@email.com</li>
-                        <li><i class="bi bi-telephone"></i> +62 812 3456 7890</li>
-                    </ul>
+        <!-- Body -->
+        <div class="invoice-body">
+            <!-- Invoice Info -->
+            <div class="invoice-info">
+                <div class="info-block">
+                    <h3>Invoice Details</h3>
+                    <p><strong>No. Invoice:</strong> <?= $transaksi->no_nota ?></p>
+                    <p><strong>Tanggal:</strong> <?= date('d M Y', strtotime($transaksi->tanggal)) ?></p>
+                    <p><strong>Metode Pembayaran:</strong> <?= $transaksi->metode_pembayaran ?></p>
+                    <div class="status-badge status-success">
+                        ✅ Pembayaran Berhasil
+                    </div>
                 </div>
 
-                <div class="info-box">
-                    <div class="info-box-title"><i class="bi bi-truck"></i> Pengiriman</div>
-                    <ul class="info-list">
-                        <li><strong>Jl. Merdeka No. 123, RT 01 RW 05</strong></li>
-                        <li>Cicendo, Bandung</li>
-                        <li>Kota Bandung, Jawa Barat, 40123</li>
-                        <li><i class="bi bi-box-seam"></i> <strong>JNE</strong> - REG</li>
-                    </ul>
+                <div class="info-block">
+                    <h3>Alamat Pengiriman</h3>
+                    <?php if ($alamat): ?>
+                        <p><strong><?= $alamat->nama_penerima ?></strong></p>
+                        <p><?= $alamat->nomor_telp_penerima ?></p>
+                        <p><?= $alamat->detail ?></p>
+                        <p><?= $alamat->nama_kelurahan ?>, <?= $alamat->nama_kecamatan ?></p>
+                        <p><?= $alamat->nama_kabupaten ?>, <?= $alamat->nama_provinsi ?> <?= $alamat->kode_pos ?></p>
+                    <?php else: ?>
+                        <p style="color: #999;">Alamat tidak tersedia</p>
+                    <?php endif; ?>
                 </div>
             </div>
 
-            <!-- Products -->
-            <div class="invoice-section">
-                <div class="section-title">Detail Produk</div>
-                <table class="invoice-table">
-                    <thead>
-                        <tr>
-                            <th>Produk</th>
-                            <th style="width: 80px;">Qty</th>
-                            <th style="width: 130px;">Harga</th>
-                            <th style="width: 150px; text-align: right;">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="product-name">Keyboard Mechanical RGB</div>
-                                <div class="product-variant"><i class="bi bi-tag"></i> Gateron Brown Switch</div>
-                            </td>
-                            <td>1</td>
-                            <td class="price-cell">Rp 750.000</td>
-                            <td class="price-cell" style="text-align: right;">Rp 750.000</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-name">Mouse Gaming Wireless</div>
-                                <div class="product-variant"><i class="bi bi-tag"></i> Black Edition</div>
-                            </td>
-                            <td>2</td>
-                            <td class="price-cell">Rp 450.000</td>
-                            <td class="price-cell" style="text-align: right;">Rp 900.000</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-name">Headset Gaming 7.1 Surround</div>
-                            </td>
-                            <td>1</td>
-                            <td class="price-cell">Rp 500.000</td>
-                            <td class="price-cell" style="text-align: right;">Rp 500.000</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- Items Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Harga</th>
+                        <th style="text-align: right;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($items as $item): ?>
+                    <?php 
+                    // Calculate prices
+                    $harga_asli = $item->harga;
+                    $harga_final = $harga_asli;
+                    
+                    // Check if item has promo
+                    if ($item->is_sale == 1) {
+                        if ($item->persen_promo > 0) {
+                            $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
+                        } elseif ($item->harga_promo > 0) {
+                            $harga_final = max(0, $harga_asli - $item->harga_promo);
+                        }
+                    }
+                    
+                    $subtotal_final = $harga_final * $item->qty;
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="item-name">
+                                <?= $item->nama_item ?>
+                                <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                                    <span style="background: #fee; color: #e11d48; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px;">
+                                        <?php if ($item->persen_promo > 0): ?>
+                                            DISKON <?= $item->persen_promo ?>%
+                                        <?php else: ?>
+                                            DISKON Rp <?= number_format($item->harga_promo, 0, ',', '.') ?>
+                                        <?php endif; ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="item-detail">
+                                <?= $item->warna ?> • Ukuran <?= $item->ukuran ?>
+                            </div>
+                        </td>
+                        <td style="text-align: center;"><?= $item->qty ?></td>
+                        <td style="text-align: right;">
+                            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                                <div style="text-decoration: line-through; color: #999; font-size: 13px;">
+                                    Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                                </div>
+                                <div style="color: #e11d48; font-weight: 600;">
+                                    Rp <?= number_format($harga_final, 0, ',', '.') ?>
+                                </div>
+                            <?php else: ?>
+                                Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                            <?php endif; ?>
+                        </td>
+                        <td style="text-align: right;">
+                            <strong>Rp <?= number_format($subtotal_final, 0, ',', '.') ?></strong>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
 
             <!-- Summary -->
-            <div class="invoice-summary">
+            <div class="summary">
                 <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span class="amount">Rp 2.150.000</span>
+                    <span>Subtotal:</span>
+                    <span>Rp <?= number_format($transaksi->total - $transaksi->ongkir, 0, ',', '.') ?></span>
                 </div>
                 <div class="summary-row">
-                    <span>Ongkos Kirim</span>
-                    <span class="amount">Rp 25.000</span>
+                    <span>Ongkir:</span>
+                    <span>Rp <?= number_format($transaksi->ongkir, 0, ',', '.') ?></span>
                 </div>
-                <div class="summary-row total">
-                    <span>Total Pembayaran</span>
-                    <span class="amount">Rp 2.175.000</span>
+                <?php if ($transaksi->diskon_item > 0): ?>
+                <div class="summary-row" style="color: #28a745;">
+                    <span>Diskon Item:</span>
+                    <span>- Rp <?= number_format($transaksi->diskon_item, 0, ',', '.') ?></span>
                 </div>
-                <div class="payment-method">
-                    <i class="bi bi-credit-card"></i>
-                    <span><strong>Metode:</strong> Transfer Bank BCA</span>
+                <?php endif; ?>
+                <?php if ($transaksi->diskon_voucher > 0): ?>
+                <div class="summary-row" style="color: #28a745;">
+                    <span>Diskon Voucher:</span>
+                    <span>- Rp <?= number_format($transaksi->diskon_voucher, 0, ',', '.') ?></span>
+                </div>
+                <?php endif; ?>
+                <?php if ($transaksi->diskon_ongkir > 0): ?>
+                <div class="summary-row" style="color: #28a745;">
+                    <span>Diskon Ongkir:</span>
+                    <span>- Rp <?= number_format($transaksi->diskon_ongkir, 0, ',', '.') ?></span>
+                </div>
+                <?php endif; ?>
+                <div class="summary-row summary-total">
+                    <span>TOTAL:</span>
+                    <span>Rp <?= number_format($transaksi->total, 0, ',', '.') ?></span>
                 </div>
             </div>
 
             <!-- Actions -->
-            <div class="invoice-actions">
-                <a href="<?= site_url('pesanan') ?>" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Kembali ke Pesanan
+            <div class="actions">
+                <a href="javascript:window.print()" class="btn btn-print">
+                    🖨️ Print Invoice
                 </a>
-                <a href="https://wa.me/6281234567890?text=Halo,%20saya%20butuh%20bantuan%20untuk%20pesanan%20INV-001"
-                    class="btn btn-primary" target="_blank">
-                    <i class="bi bi-whatsapp"></i> Hubungi Penjual
+                <a href="<?= base_url('index.php/pesanan') ?>" class="btn btn-back">
+                    ← Kembali ke Pesanan
                 </a>
             </div>
         </div>
     </div>
 </body>
-
 </html>

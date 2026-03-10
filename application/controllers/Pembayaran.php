@@ -105,20 +105,34 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             return;
         }
         
-        // ✅ Ambil items dari transaksi_item
+        // ✅ Ambil items dari transaksi_item WITH PROMO DATA
         $items = $this->db
             ->select('
                 item.nama_item,
                 item.gambar_item,
                 item_detail.ukuran,
                 item_detail.warna,
+                item_detail.harga,
                 transaksi_item.qty,
-                transaksi_item.Total as subtotal
+                transaksi_item.Total as subtotal,
+                MAX(promo.persen_promo) AS persen_promo,
+                MAX(promo.harga_promo) AS harga_promo,
+                MAX(
+                    CASE 
+                        WHEN promo.id_promo IS NOT NULL 
+                        AND CURDATE() BETWEEN promo.dari AND promo.hingga
+                        AND promo.kuota > 0 
+                        THEN 1 ELSE 0 
+                    END
+                ) AS is_sale
             ')
             ->from('transaksi_item')
             ->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail')
             ->join('item', 'item_detail.id_item = item.id_item')
+            ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
+            ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
             ->where('transaksi_item.id_transaksi', $transaksi->id_transaksi)
+            ->group_by('transaksi_item.id_transaksi_item')
             ->get()
             ->result();
         

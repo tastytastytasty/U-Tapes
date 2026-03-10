@@ -4051,7 +4051,7 @@
           if (result.success) {
             // ✅ REDIRECT KE HALAMAN PEMBAYARAN (bukan modal)
             if (result.redirect_url) {
-              showNotification('✅ Pesanan berhasil! Redirecting...', 'success');
+              showNotification('✅ Pesanan berhasil !...', 'success');
 
               setTimeout(() => {
                 window.location.href = result.redirect_url;

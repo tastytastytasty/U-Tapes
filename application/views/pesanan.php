@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +13,7 @@
         }
 
         body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             background: #f5f6f8;
             overflow-x: hidden;
             width: 100%;
@@ -64,63 +64,81 @@
         }
 
         /* Sidebar */
-       
-    .profile-sidebar {
-        width: 260px;
-        background: #ffffff;
-        border-right: 1px solid #e5e5e5;
-        padding: 20px;
-    }
+        .profile-sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid #e5e5e5;
+            padding: 20px;
+        }
 
-    .profile-user {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 25px;
-    }
+        .profile-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
 
-    .profile-user img {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
+        .profile-user img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-    .profile-user h6 {
-        margin: 0;
-        font-size: 14px;
-        font-weight: 600;
-    }
+        .profile-user h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-    .profile-user span {
-        font-size: 12px;
-        color: #777;
-    }
+        .profile-user span {
+            font-size: 12px;
+            color: #777;
+        }
 
-    .profile-menu {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+        .profile-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    .profile-menu li {
-        margin-bottom: 8px;
-    }
+        .profile-menu li {
+            margin-bottom: 8px;
+        }
 
-    .profile-menu a {
-        display: block;
-        padding: 10px 12px;
-        border-radius: 6px;
-        font-size: 14px;
-        color: #333;
-    }
+        .profile-menu .menu-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .profile-menu a.active,
-    .profile-menu a:hover {
-        background-color: #eef2ff;
-        color: #0d6efd;
-        font-weight: 500;
-    }
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .profile-menu a.active,
+        .profile-menu a:hover {
+            background-color: #eef2ff;
+            color: #0d6efd;
+            font-weight: 500;
+        }
+
+        .profile-menu hr {
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #e5e5e5;
+        }
 
         /* Content */
         .profile-content {
@@ -228,6 +246,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         .ps-header-right {
@@ -268,17 +287,12 @@
             border-radius: 20px;
         }
 
-        .status-process {
+        .status-pending {
             background: #fff7ed;
             color: #ea580c;
         }
 
-        .status-send {
-            background: #eff6ff;
-            color: #2563eb;
-        }
-
-        .status-done {
+        .status-success {
             background: #f0fdf4;
             color: #16a34a;
         }
@@ -286,6 +300,11 @@
         .status-cancelled {
             background: #fef2f2;
             color: #dc2626;
+        }
+
+        .status-process {
+            background: #eff6ff;
+            color: #2563eb;
         }
 
         /* Item */
@@ -353,13 +372,12 @@
             from {
                 opacity: 0;
             }
-
             to {
                 opacity: 1;
             }
         }
 
-        /* Toggle Button */
+        /* Toggle Button - FIXED! */
         .ps-toggle {
             background: #f1f5f9;
             border: none;
@@ -423,9 +441,10 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
 
         .ps-btn:hover {
@@ -468,7 +487,6 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -480,6 +498,8 @@
             text-align: center;
             padding: 60px 20px;
             color: #94a3b8;
+            background: #fff;
+            border-radius: 12px;
         }
 
         .ps-empty i {
@@ -491,6 +511,7 @@
         .ps-empty p {
             font-size: 16px;
             margin-top: 8px;
+            color: #666;
         }
 
         /* Responsive */
@@ -619,16 +640,17 @@
             }
         }
     </style>
+</head>
 <body>
     <!-- BREADCRUMBS -->
     <div class="breadcrumbs">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="page-title"></h1>
+                <h1 class="page-title">Pesanan Saya</h1>
             </div>
             <div class="col-md-6 text-end">
                 <ul class="breadcrumb-nav">
-                    <li><a href="<?= site_url('') ?>">🏠 Home</a></li>
+                    <li><a href="<?= site_url('') ?>"><i class="bi bi-house"></i> Home</a></li>
                     <li>Pesanan</li>
                 </ul>
             </div>
@@ -637,66 +659,61 @@
 
     <div class="profile-wrapper">
         <!-- SIDEBAR -->
-            <div class="col-lg-3 col-md-4 profile-sidebar">
-                <div class="profile-user">
-                    <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
-                    <div>
-                        <strong><strong><?= $logged_in && !empty($user['nama'])
-                            ? htmlspecialchars($user['nama'])
-                            : 'Guest' ?>
-                            </strong></strong><br>
-                        <span>Ubah Profil</span>
-                    </div>
+        <div class="profile-sidebar">
+            <div class="profile-user">
+                <img src="<?= base_url('assets/images/user-default.jpg') ?>" alt="user" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22 viewBox=%220 0 24 24%22 fill=%22%23ccc%22%3E%3Cpath d=%22M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z%22/%3E%3C/svg%3E'">
+                <div>
+                    <strong><?= isset($logged_in) && $logged_in && !empty($user['nama']) ? htmlspecialchars($user['nama']) : 'Guest' ?></strong><br>
+                    <span>Ubah Profil</span>
                 </div>
-
-                <ul class="profile-menu">
-                    <li class="menu-title">
-                        <i class="bi bi-person"></i> Akun Saya
-                    </li>
-                    <li><a href="<?= site_url('profile') ?>">Profil</a></li>
-                    <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
-                    <li><a href="#">Ubah Kata sandi</a></li>
-
-                    <hr>
-
-                    <li class="menu-link">
-                        <a href="<?= site_url('pesanan') ?>" class="active"><i class="bi bi-receipt"></i> Pesanan Saya</a>
-                    </li>
-                    <li class="menu-link">
-                        <a href="#"><i class="bi bi-bell"></i> Notifikasi</a>
-                    </li>
-                </ul>
             </div>
+
+            <ul class="profile-menu">
+                <li class="menu-title">
+                    <i class="bi bi-person"></i> Akun Saya
+                </li>
+                <li><a href="<?= site_url('profile') ?>">Profil</a></li>
+                <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
+                <li><a href="#">Ubah Kata Sandi</a></li>
+
+                <hr>
+
+                <li><a href="<?= site_url('pesanan') ?>" class="active"><i class="bi bi-receipt"></i> Pesanan Saya</a></li>
+                <li><a href="#"><i class="bi bi-bell"></i> Notifikasi</a></li>
+            </ul>
+        </div>
+
         <!-- CONTENT -->
         <div class="profile-content">
             <div class="ps-container">
-                <div class="ps-title">🛍️ Pesanan Saya</div>
+                <div class="ps-title"><i class="bi bi-bag-check"></i> Pesanan Saya</div>
 
                 <div class="ps-tabs">
                     <div class="ps-tab active" onclick="showTab('all')">
-                        📋 Semua
+                        <i class="bi bi-list-ul"></i> Semua
                     </div>
                     <div class="ps-tab" onclick="showTab('pending')">
-                        ⏳ Menunggu
+                        <i class="bi bi-hourglass-split"></i> Menunggu
                     </div>
                     <div class="ps-tab" onclick="showTab('process')">
-                        📦 Dikemas
+                        <i class="bi bi-box-seam"></i> Dikemas
                     </div>
                     <div class="ps-tab" onclick="showTab('send')">
-                        🚚 Dikirim
+                        <i class="bi bi-truck"></i> Dikirim
                     </div>
                     <div class="ps-tab" onclick="showTab('done')">
-                        ✅ Selesai
+                        <i class="bi bi-check-circle"></i> Selesai
                     </div>
                 </div>
 
                 <!-- SEMUA -->
                 <div id="all" class="ps-content active">
                     <?php if (empty($transaksi_list)): ?>
-                        <div style="text-align: center; padding: 64px 24px; background: #fff; border-radius: 12px;">
-                            <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
-                            <h3 style="font-size: 20px; margin-bottom: 8px;">Belum Ada Pesanan</h3>
-                            <p style="color: #666; margin-bottom: 24px;">Anda belum memiliki riwayat pesanan</p>
+                        <div class="ps-empty">
+                            <i class="bi bi-inbox"></i>
+                            <h3 style="font-size: 20px; margin-bottom: 8px; color: #333;">Belum Ada Pesanan</h3>
+                            <p>Anda belum memiliki riwayat pesanan</p>
+                            <br>
                             <a href="<?= site_url('') ?>" class="ps-btn">Mulai Belanja</a>
                         </div>
                     <?php else: ?>
@@ -704,21 +721,21 @@
                             <div class="ps-card">
                                 <div class="ps-header">
                                     <div class="ps-header-left">
-                                        <div class="ps-invoice">📄 <?= htmlspecialchars($transaksi->no_nota) ?></div>
-                                        <div class="ps-date">📅 <?= date('d M Y', strtotime($transaksi->tanggal)) ?></div>
+                                        <div class="ps-invoice"><i class="bi bi-file-earmark-text"></i> <?= htmlspecialchars($transaksi->no_nota) ?></div>
+                                        <div class="ps-date"><i class="bi bi-calendar3"></i> <?= date('d M Y', strtotime($transaksi->tanggal)) ?></div>
                                     </div>
                                     <div class="ps-header-right">
                                         <?php 
-                                        $status_class = 'status-process';
+                                        $status_class = 'status-pending';
                                         if ($transaksi->payment_status == 'Berhasil') $status_class = 'status-success';
                                         elseif ($transaksi->payment_status == 'Ditolak') $status_class = 'status-cancelled';
-                                        elseif ($transaksi->payment_status == 'Menunggu') $status_class = 'status-pending';
                                         ?>
                                         <div class="ps-status <?= $status_class ?>"><?= $transaksi->payment_status ?></div>
                                     </div>
                                 </div>
 
                                 <?php
+                                // ✅ FIX: Path gambar yang benar!
                                 $items = $this->db
                                     ->select('item.nama_item, item.gambar_item, item_detail.ukuran, item_detail.warna, transaksi_item.qty, transaksi_item.Total as subtotal')
                                     ->from('transaksi_item')
@@ -735,9 +752,17 @@
                                 
                                 <?php foreach ($first_items as $item): ?>
                                     <div class="ps-item">
-                                        <img src="<?= base_url('uploads/items/' . $item->gambar_item) ?>" alt="<?= htmlspecialchars($item->nama_item) ?>">
+                                        <!-- ✅ FIX: Path konsisten! -->
+                                        <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                                             alt="<?= htmlspecialchars($item->nama_item) ?>"
+                                             onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
                                         <div class="ps-item-info">
-                                            <div class="ps-item-name"><?= htmlspecialchars($item->nama_item) ?> <span style="color: #999; font-size: 12px;">(<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)</span></div>
+                                            <div class="ps-item-name">
+                                                <?= htmlspecialchars($item->nama_item) ?> 
+                                                <span style="color: #999; font-size: 12px; font-weight: 400;">
+                                                    (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
+                                                </span>
+                                            </div>
                                             <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
                                         </div>
                                     </div>
@@ -747,17 +772,26 @@
                                     <div class="ps-more-items" id="items-<?= $transaksi->id_transaksi ?>">
                                         <?php foreach ($other_items as $item): ?>
                                             <div class="ps-item">
-                                                <img src="<?= base_url('uploads/items/' . $item->gambar_item) ?>" alt="<?= htmlspecialchars($item->nama_item) ?>">
+                                                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                                                     alt="<?= htmlspecialchars($item->nama_item) ?>"
+                                                     onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
                                                 <div class="ps-item-info">
-                                                    <div class="ps-item-name"><?= htmlspecialchars($item->nama_item) ?> <span style="color: #999; font-size: 12px;">(<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)</span></div>
+                                                    <div class="ps-item-name">
+                                                        <?= htmlspecialchars($item->nama_item) ?> 
+                                                        <span style="color: #999; font-size: 12px; font-weight: 400;">
+                                                            (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
+                                                        </span>
+                                                    </div>
                                                     <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
                                                 </div>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
                                     
-                                    <button class="ps-more-btn" onclick="toggleItems('items-<?= $transaksi->id_transaksi ?>', this)">
-                                        <span>Lihat <?= $total_items - 1 ?> barang lainnya</span> ▼
+                                    <!-- ✅ FIX: Button pakai class ps-toggle! -->
+                                    <button class="ps-toggle" onclick="toggleItems('items-<?= $transaksi->id_transaksi ?>', this)">
+                                        <span>Lihat <?= $total_items - 1 ?> barang lainnya</span>
+                                        <i class="bi bi-chevron-down"></i>
                                     </button>
                                 <?php endif; ?>
 
@@ -766,11 +800,11 @@
                                     
                                     <?php if ($transaksi->has_paid): ?>
                                         <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
-                                            📄 Lihat Invoice
+                                            <i class="bi bi-file-earmark-pdf"></i> Lihat Invoice
                                         </a>
                                     <?php else: ?>
                                         <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
-                                            💳 Bayar Sekarang
+                                            <i class="bi bi-credit-card"></i> Bayar Sekarang
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -779,27 +813,53 @@
                     <?php endif; ?>
                 </div>
 
-                <!-- MENUNGGU -->
+                <!-- MENUNGGU PEMBAYARAN -->
                 <div id="pending" class="ps-content">
                     <?php 
-                    $pending = array_filter($transaksi_list, function($t) { return $t->payment_status == 'Menunggu'; });
+                    $pending = array_filter($transaksi_list ?? [], function($t) { return $t->payment_status == 'Menunggu'; });
                     if (empty($pending)): ?>
-                        <p style="text-align: center; padding: 32px; color: #666;">Tidak ada pesanan yang menunggu pembayaran</p>
-                    <?php else: foreach ($pending as $transaksi): ?>
-                        <!-- Same card structure as above -->
-                    <?php endforeach; endif; ?>
+                        <div class="ps-empty">
+                            <i class="bi bi-hourglass-split"></i>
+                            <p>Tidak ada pesanan yang menunggu pembayaran</p>
+                        </div>
+                    <?php else: ?>
+                        <!-- Same structure as "Semua" tab -->
+                        <p style="text-align: center; padding: 32px; color: #666;">Feature coming soon</p>
+                    <?php endif; ?>
                 </div>
 
-                <!-- Other tabs (process, send, done) similar structure -->
+                <!-- Other tabs -->
+                <div id="process" class="ps-content">
+                    <div class="ps-empty">
+                        <i class="bi bi-box-seam"></i>
+                        <p>Tidak ada pesanan yang sedang dikemas</p>
+                    </div>
+                </div>
+
+                <div id="send" class="ps-content">
+                    <div class="ps-empty">
+                        <i class="bi bi-truck"></i>
+                        <p>Tidak ada pesanan yang sedang dikirim</p>
+                    </div>
+                </div>
+
+                <div id="done" class="ps-content">
+                    <div class="ps-empty">
+                        <i class="bi bi-check-circle"></i>
+                        <p>Tidak ada pesanan yang telah selesai</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         function showTab(id) {
+            // Remove active dari semua
             document.querySelectorAll('.ps-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.ps-tab').forEach(el => el.classList.remove('active'));
 
+            // Set active
             document.getElementById(id).classList.add('active');
             event.target.closest('.ps-tab').classList.add('active');
         }
@@ -807,19 +867,23 @@
         function toggleItems(id, btn) {
             const box = document.getElementById(id);
             const span = btn.querySelector('span');
-            const arrow = btn.childNodes[btn.childNodes.length - 1];
+            const icon = btn.querySelector('i');
 
             if (box.classList.contains('active')) {
+                // Collapse
                 box.classList.remove('active');
                 btn.classList.remove('active');
+                
                 const count = box.querySelectorAll('.ps-item').length;
                 span.textContent = 'Lihat ' + count + ' barang lainnya';
-                btn.innerHTML = '<span>' + span.textContent + '</span> ▼';
+                icon.className = 'bi bi-chevron-down';
             } else {
+                // Expand
                 box.classList.add('active');
                 btn.classList.add('active');
+                
                 span.textContent = 'Sembunyikan barang';
-                btn.innerHTML = '<span>Sembunyikan barang</span> ▲';
+                icon.className = 'bi bi-chevron-up';
             }
         }
     </script>
