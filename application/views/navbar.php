@@ -285,21 +285,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         cursor: not-allowed;
     }
 
-    @media (max-width: 991px) {
-        .navbar-nav {
-            padding: 15px 0;
-        }
-    }
-
+    
     html,
     body {
         overflow-x: hidden;
     }
-
+    
     .cart-items {
         position: relative;
     }
-
+    
     .cart-items .shopping-item {
         position: absolute;
         top: 100%;
@@ -309,21 +304,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         z-index: 9999;
         min-width: 280px;
     }
-    #wishlist-list {
-    max-height: 300px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #ccc transparent;
+    
+    .shopping-item {
+        width: 360px !important;
     }
-
+    
+    .shopping-list li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        padding: 10px;
+    }
+    #wishlist-list {
+        max-height: 300px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #ccc transparent;
+    }
+    
     #wishlist-list::-webkit-scrollbar {
         width: 4px;
     }
-
+    
     #wishlist-list::-webkit-scrollbar-track {
         background: transparent;
     }
-
+    
     #wishlist-list::-webkit-scrollbar-thumb {
         background-color: #ccc;
         border-radius: 10px;
@@ -347,19 +354,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         background-color: #ccc;
         border-radius: 10px;
     }
-    .shopping-item {
-    width: 360px !important;
-    }
-
-    .shopping-list li {
-        padding: 10px;
-    }
-
+    
     .cart-img-head {
-        position: relative;
-        display: block;
+        flex: 0 0 110px;
         width: 110px;
-        flex-shrink: 0;
     }
 
     .cart-img {
@@ -367,7 +365,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         width: 110px !important;
         height: 110px !important;
     }
-
+    
     .cart-img img {
         width: 110px;
         height: 110px;
@@ -375,6 +373,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         border-radius: 8px;
         display: block;
     }
+    
+    @media (max-width: 991px) {
+        .navbar-nav {
+            padding: 15px 0;
+        }
+        .navbar-brand{
+            margin-bottom: 20px !important;
+        }
+        .shopping-item {
+            width: 300px !important;
+        }
+    }
+    
 </style>
 
 <body>
@@ -385,7 +396,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         your experience and security.
     </p>
     <![endif]-->
-
+    
     <!-- Preloader -->
     <div class="preloader">
         <div class="preloader-inner">
@@ -458,7 +469,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <?php foreach ($wishlist_items as $w): ?>
                                                     <li id="nav-wishlist-<?= $w->id_wishlist ?>">
                                                         <a href="javascript:void(0)" class="remove btn-remove-wishlist"
-                                                            data-wishlist="<?= $w->id_wishlist ?>">
+                                                            data-wishlist="<?= $w->id_wishlist ?>" data-item="<?= $w->id_item ?>">
                                                             <i class="lni lni-close"></i>
                                                         </a>
 
@@ -476,9 +487,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                 </a>
                                                             </h4>
                                                             <p class="quantity">
-                                                                <span class="amount">
+                                                                <h6 class="amount">
                                                                     Rp <?= number_format($w->harga_termurah, 0, ',', '.') ?>
-                                                                </span>
+                                                                </h6>
                                                             </p>
                                                         </div>
                                                     </li>
@@ -536,7 +547,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     $total_akhir += $subtotal;
                                                     ?>
                                                     <li id="nav-cart-<?= $c->id_cart ?>" class="<?= $is_empty ? 'nav-cart-item-empty' : '' ?>">
-                                                        <a href="javascript:void(0)" class="remove btn-remove-cart" data-cart="<?= $c->id_cart ?>">
+                                                        <a href="javascript:void(0)" class="remove btn-remove-cart" data-cart="<?= $c->id_cart ?>" data-item="<?= $c->id_item_detail ?>">
                                                             <i class="lni lni-close"></i>
                                                         </a>
                                                         <div class="d-flex align-items-start gap-3" style="<?= $is_empty ? 'opacity: 0.5;' : '' ?>">
@@ -1479,16 +1490,65 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         icon.removeClass('lni-heart')
                             .addClass('lni-heart-filled');
                         showAlert('Masuk ke wishlist!', 'success');
+                        $.ajax({
+                            url: "<?= site_url('wishlist/navbar_data') ?>",
+                            type: "GET",
+                            dataType: "json",
+                            success: function (data) {
+                                updateWishlistNavbar(data);
+                            }
+                        });
                     }
 
                     if (res.status === 'removed') {
                         icon.removeClass('lni-heart-filled')
                             .addClass('lni-heart');
                         showAlert('Dihapus dari wishlist', 'info');
+                        $.ajax({
+                            url: "<?= site_url('wishlist/navbar_data') ?>",
+                            type: "GET",
+                            dataType: "json",
+                            success: function (data) {
+                                updateWishlistNavbar(data);
+                            }
+                        });
                     }
                 }
             });
         });
+        function updateWishlistNavbar(data) {
+            $('.total-wishes').text(data.count);
+            $('#wishlist-count').text(data.count + ' Item');
+            $('#wishlist-list').empty();
+            if (data.items.length > 0) {
+                $.each(data.items, function (i, w) {
+                    $('#wishlist-list').append(`
+                        <li id="nav-wishlist-${w.id_wishlist}">
+                            <a href="javascript:void(0)" class="remove btn-remove-wishlist"
+                                data-wishlist="${w.id_wishlist}">
+                                <i class="lni lni-close"></i>
+                            </a>
+                            <div class="cart-img-head">
+                                <a class="cart-img" href="/detailproduct/${w.id_item}">
+                                    <img src="/assets/images/item/${w.gambar_item}">
+                                </a>
+                            </div>
+                            <div class="content">
+                                <h4>
+                                    <a href="/detailproduct/${w.id_item}">${w.nama_item}</a>
+                                </h4>
+                                <p class="quantity">
+                                    <h6 class="amount">Rp ${Number(w.harga_termurah).toLocaleString('id-ID')}</h6>
+                                </p>
+                            </div>
+                        </li>
+                    `);
+                });
+                $('#wishlist-empty').hide();
+            } else {
+                $('#wishlist-empty').show();
+            }
+        }
         $(document).ready(function () {
             let sisa = $('#wishlist-container .wishlist-item').length;
 
@@ -1547,6 +1607,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 }
                             });
                         }
+                        let id_item = $('[data-wishlist="' + id + '"]').data('item');
+                        $('.btn-wishlist[data-id="' + id_item + '"]').each(function () {
+                            $(this).find('i')
+                                .removeClass('lni-heart-filled')
+                                .addClass('lni-heart');
+                            $(this).closest('.product-actions')
+                                .removeClass('in-wishlist')
+                                .addClass('not-in-wishlist');
+                        });
                     }
                 });
             });
@@ -1563,6 +1632,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     dataType: "json",
                     success: function (res) {
                         if (res.status === 'success') {
+                            let id_item_detail = $('[data-cart="' + id + '"]').data('item');
                             $('#nav-cart-' + id).fadeOut(300, function () {
                                 $(this).remove();
                                 let sisa = $('#cart-list li').length;
@@ -1573,6 +1643,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     $('#cart-empty').show();
                                 }
                             });
+                            let btnCart = $('#btn-cart-toggle[data-id-detail="' + id_item_detail + '"]');
+                            if (btnCart.length) {
+                                btnCart.removeClass('in-cart')
+                                    .find('i')
+                                    .removeClass('lni-cart-full')
+                                    .addClass('lni-cart');
+                            }
                         }
                     }
                 });
