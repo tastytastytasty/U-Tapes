@@ -7,7 +7,7 @@ class Wishlist_model extends CI_Model
             ->select('MAX(wishlist.id_wishlist) AS id_wishlist, item.id_item, item.merk, item.nama_item, item.gambar_item, item.usia_min, item.usia_max, kategori.nama_kategori,
             MAX(promo.persen_promo) AS persen_promo,MAX(promo.harga_promo) AS harga_promo,COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END),
             MIN(item_detail.harga)) AS harga_termurah, item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
-            SUM(item_detail.stok) AS total_stok,item.created_at,
+            SUM(item_detail.stok) AS total_stok,item.created_at,MAX(promo.kode_promo) AS kode_promo,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
             AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale')
             ->from('wishlist')
@@ -18,6 +18,7 @@ class Wishlist_model extends CI_Model
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
             ->where('wishlist.id_customer', $id_customer)
             ->group_by('item.id_item')
+            ->order_by('id_wishlist', 'DESC')
             ->get()
             ->result();
     }
@@ -85,6 +86,7 @@ class Wishlist_model extends CI_Model
             ->join('item_detail', 'item.id_item = item_detail.id_item')
             ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
+            ->where('promo.kode_promo =', '')
             ->group_by('item.id_item')
             ->having('is_sale', 1)
             ->get()

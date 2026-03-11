@@ -536,7 +536,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     $is_empty = ($c->stok <= 0);
                                                     $harga_asli = $c->harga * $c->qty;
                                                     $harga_diskon = $harga_asli;
-                                                    if (!$is_empty && $c->is_sale) {
+                                                    if (!$is_empty && $c->is_sale && empty($c->kode_promo)) {
                                                         if ($c->persen_promo > 0) {
                                                             $harga_diskon = $harga_asli - ($harga_asli * $c->persen_promo / 100);
                                                         } elseif ($c->harga_promo > 0) {
@@ -587,6 +587,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                             data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?>"
                                                                             data-promo="<?= $c->harga_promo ?>"
                                                                             data-issale="<?= $is_empty ? 0 : $c->is_sale ?>"
+                                                                            data-kodepromo="<?= $c->kode_promo ?>"
                                                                             min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>"
                                                                             <?= $is_empty ? 'disabled' : '' ?>>
                                                                         <button class="btn btn-outline-primary cart-qty-plus"
@@ -810,14 +811,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="col-lg-9 col-md-8 col-12">
                             <div class="footer-newsletter">
                                 <h4 class="title">
-                                    Subscribe to our Newsletter
-                                    <span>Get all the latest information, Sales and Offers.</span>
+                                    Daftarkan email Anda 
+                                    <span>Untuk mendapatkan informasi terbaru, penjualan, dan penawaran.</span>
                                 </h4>
                                 <div class="newsletter-form-head">
                                     <form action="#" method="get" target="_blank" class="newsletter-form">
-                                        <input name="EMAIL" placeholder="Email address here..." type="email">
+                                        <input name="EMAIL" placeholder="Masukkan email Anda..." type="email">
                                         <div class="button">
-                                            <button class="btn">Subscribe<span class="dir-part"></span></button>
+                                            <button class="btn">Daftar<span class="dir-part"></span></button>
                                         </div>
                                     </form>
                                 </div>
@@ -833,68 +834,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="container-fluid px-4">
                 <div class="bottom-inner">
                     <div class="row">
-                        <div class="col-lg-3 col-md-6 col-12">
+                        <div class="col-lg-4 col-md-6 col-12">
                             <!-- Single Widget -->
                             <div class="single-footer f-contact">
-                                <h3>Get In Touch With Us</h3>
-                                <p class="phone">Phone: +1 (900) 33 169 7720</p>
+                                <h3>Hubungi Kami :</h3>
+                                <p class="phone">No HP: +62 821 2174 4168</p>
                                 <ul>
-                                    <li><span>Monday-Friday: </span> 9.00 am - 8.00 pm</li>
-                                    <li><span>Saturday: </span> 10.00 am - 6.00 pm</li>
+                                    <li><span>Senin, Rabu, Kamis: </span> 8.30 am - 5.00 pm</li>
+                                    <li><span>Selasa, Jum'at: </span> 8.30 am - 1.00 pm</li>
                                 </ul>
                                 <p class="mail">
-                                    <a href="mailto:support@shopgrids.com">support@shopgrids.com</a>
+                                    <a href="mailto:utaps.store@gmail.com">utaps.store@gmail.com</a>
                                 </p>
                             </div>
                             <!-- End Single Widget -->
                         </div>
-                        <div class="col-lg-3 col-md-6 col-12">
+                        <div class="col-lg-4 col-md-6 col-12">
                             <!-- Single Widget -->
-                            <div class="single-footer our-app">
-                                <h3>Our Mobile App</h3>
-                                <ul class="app-btn">
-                                    <li>
-                                        <a href="javascript:void(0)">
-                                            <i class="lni lni-apple"></i>
-                                            <span class="small-title">Download on the</span>
-                                            <span class="big-title">App Store</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)">
-                                            <i class="lni lni-play-store"></i>
-                                            <span class="small-title">Download on the</span>
-                                            <span class="big-title">Google Play</span>
-                                        </a>
-                                    </li>
+                            <div class="single-footer f-link">
+                                <h3>Informasi</h3>
+                                <ul>
+                                    <li><a href="<?= site_url('homepage') ?>">Beranda</a></li>
+                                    <li><a href="<?= site_url('katalog') ?>">Katalog Produk</a></li>
+                                    <li><a href="<?= site_url('tentang-kami') ?>">Tentang Kami</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->
                         </div>
-                        <div class="col-lg-3 col-md-6 col-12">
+                        <div class="col-lg-4 col-md-6 col-12">
                             <!-- Single Widget -->
                             <div class="single-footer f-link">
-                                <h3>Information</h3>
+                                <h3>Produk Toko</h3>
                                 <ul>
-                                    <li><a href="javascript:void(0)">About Us</a></li>
-                                    <li><a href="javascript:void(0)">Contact Us</a></li>
-                                    <li><a href="javascript:void(0)">Downloads</a></li>
-                                    <li><a href="javascript:void(0)">Sitemap</a></li>
-                                    <li><a href="javascript:void(0)">FAQs Page</a></li>
-                                </ul>
-                            </div>
-                            <!-- End Single Widget -->
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-12">
-                            <!-- Single Widget -->
-                            <div class="single-footer f-link">
-                                <h3>Shop Departments</h3>
-                                <ul>
-                                    <li><a href="javascript:void(0)">Computers & Accessories</a></li>
-                                    <li><a href="javascript:void(0)">Smartphones & Tablets</a></li>
-                                    <li><a href="javascript:void(0)">TV, Video & Audio</a></li>
-                                    <li><a href="javascript:void(0)">Cameras, Photo & Video</a></li>
-                                    <li><a href="javascript:void(0)">Headphones</a></li>
+                                    <li><a href="<?= site_url('katalog') ?>">Sepatu Olahraga</a></li>
+                                    <li><a href="<?= site_url('katalog') ?>">Sepatu Formal</a></li>
+                                    <li><a href="<?= site_url('katalog') ?>">Sepatu Kasual</a></li>
+                                    <li><a href="<?= site_url('katalog') ?>">Sepatu Anak-anak</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->
@@ -911,24 +886,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="row align-items-center">
                         <div class="col-lg-4 col-12">
                             <div class="payment-gateway">
-                                <span>We Accept:</span>
-                                <img src="<?= base_url('assets/images/footer/credit-cards-footer.png') ?>" alt="#">
+                                <span>Menerima Pembayaran :</span>
+                                <p class="text-light">BCA, Mandiri,BNI, BRI </p>
                             </div>
                         </div>
                         <div class="col-lg-4 col-12">
                             <div class="copyright">
-                                <p>Designed and Developed by<a href="https://graygrids.com/" rel="nofollow"
-                                        target="_blank">GrayGrids</a></p>
+                                <p>U-Taps | E-commerce-shoes</p>
                             </div>
                         </div>
                         <div class="col-lg-4 col-12">
                             <ul class="socila">
                                 <li>
-                                    <span>Follow Us On:</span>
+                                    <span>Ikuti Kami:</span>
                                 </li>
                                 <li><a href="javascript:void(0)"><i class="lni lni-facebook-filled"></i></a></li>
                                 <li><a href="javascript:void(0)"><i class="lni lni-twitter-original"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="lni lni-instagram"></i></a></li>
+                                <li><a href="https://www.instagram.com/zal.fzi?igsh=ZGhnbmo5aHA5dnc1"><i class="lni lni-instagram"></i></a></li>
                                 <li><a href="javascript:void(0)"><i class="lni lni-google"></i></a></li>
                             </ul>
                         </div>
@@ -1027,6 +1001,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 var diskonPersen = parseFloat(qtyInput.attr('data-persen')) || 0;
                 var diskonRp = parseFloat(qtyInput.attr('data-promo')) || 0;
                 var isSale = qtyInput.attr('data-issale') == '1';
+                var kodePromo = qtyInput.attr('data-kodepromo') || '';
                 $.ajax({
                     url: '<?= site_url("keranjang/update_quantity") ?>',
                     type: 'POST',
@@ -1046,7 +1021,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $('.cart-qty-input[data-cart="' + cartId + '"]').val(qty);
                             var hargaAsli = hargaSatuan * qty;
                             var hargaDiskon = hargaAsli;
-                            if (isSale) {
+                            if (isSale && !kodePromo) {
                                 if (diskonPersen > 0) {
                                     hargaDiskon = hargaAsli - (hargaAsli * diskonPersen / 100);
                                 } else if (diskonRp > 0) {
@@ -1071,10 +1046,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 var itemHarga = parseFloat($(this).attr('data-price')) || 0;
                                 var itemPersen = parseFloat($(this).attr('data-persen')) || 0;
                                 var itemPromo = parseFloat($(this).attr('data-promo')) || 0;
+                                var kodePromo = $(this).attr('data-kodepromo') || '';
                                 var itemIsSale = $(this).attr('data-issale') == '1';
                                 var itemAsli = itemHarga * itemQty;
                                 var itemDiskon = itemAsli;
-                                if (itemIsSale) {
+                                if (itemIsSale && !kodePromo) {
                                     if (itemPersen > 0) {
                                         itemDiskon = itemAsli - (itemAsli * itemPersen / 100);
                                     } else if (itemPromo > 0) {
@@ -1213,10 +1189,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 var itemHarga = parseFloat(input.attr('data-price')) || 0;
                 var itemPersen = parseFloat(input.attr('data-persen')) || 0;
                 var itemPromo = parseFloat(input.attr('data-promo')) || 0;
+                var kodePromo = input.attr('data-kodepromo') || '';
                 var itemIsSale = input.attr('data-issale') == '1';
                 var itemAsli = itemHarga * itemQty;
                 var itemDiskon = itemAsli;
-                if (itemIsSale) {
+                if (itemIsSale && !kodePromo) {
                     if (itemPersen > 0) {
                         itemDiskon = itemAsli - (itemAsli * itemPersen / 100);
                     } else if (itemPromo > 0) {
@@ -1384,7 +1361,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     success: function (data) {
                         console.log('Response dari server:', data);
                         if (data.success) {
-                            if (data.is_sale && data.harga_diskon < data.harga_asli) {
+                            if (data.is_sale && !data.kode_promo && data.harga_diskon < data.harga_asli) {
                                 $('.price').html(`
                                     <div class="d-flex justify-content-start align-items-center gap-2">
                                         <h4 class="mb-0">Rp ${new Intl.NumberFormat('id-ID').format(data.harga_diskon)}</h4>

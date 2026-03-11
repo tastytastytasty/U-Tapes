@@ -225,7 +225,7 @@
 <div class="shopping-cart section py-5">
     <div class="container-fluid px-4">
         <?php if ($this->session->userdata('logged_in')): ?>
-            <div class="product-grid-topbar d-flex align-items-center mb-4">
+            <div class="product-grid-topbar d-flex align-items-center">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0">
@@ -274,7 +274,7 @@
                                             <?php if ($w->is_new): ?>
                                                 <span class="new-tag">Baru</span>
                                             <?php endif; ?>
-                                            <?php if ($w->is_sale): ?>
+                                            <?php if ($w->is_sale && empty($w->kode_promo)): ?>
                                                 <?php if ($w->persen_promo > 0): ?>
                                                     <span class="sale-tag">-<?= $w->persen_promo ?>%</span>
                                                 <?php elseif ($w->harga_promo > 0): ?>
@@ -288,7 +288,7 @@
                                     <?php if ($w->is_new): ?>
                                         <span class="new-tag">Baru</span>
                                     <?php endif; ?>
-                                    <?php if ($w->is_sale): ?>
+                                    <?php if ($w->is_sale && empty($w->kode_promo)): ?>
                                         <?php if ($w->persen_promo > 0): ?>
                                             <span class="sale-tag">-<?= $w->persen_promo ?>%</span>
                                         <?php elseif ($w->harga_promo > 0): ?>
@@ -329,7 +329,7 @@
                                             <?php
                                             $harga_asli = $w->harga_termurah;
                                             $harga_diskon = $harga_asli;
-                                            if ($w->is_sale) {
+                                            if ($w->is_sale && empty($w->kode_promo)) {
                                                 if ($w->persen_promo > 0) {
                                                     $harga_diskon = $harga_asli - ($harga_asli * $w->persen_promo / 100);
                                                 } elseif ($w->harga_promo > 0) {
@@ -338,7 +338,7 @@
                                             }
                                             ?>
                                             <div class="price d-flex flex-column">
-                                                <?php if ($w->is_sale && $harga_diskon < $harga_asli): ?>
+                                                <?php if ($w->is_sale && empty($w->kode_promo) && $harga_diskon < $harga_asli): ?>
                                                     <div class="d-flex-md gap-1">
                                                         <span class="text-secondary">
                                                             Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
@@ -386,7 +386,7 @@
                                             <?php
                                             $harga_asli = $w->harga_termurah;
                                             $harga_diskon = $harga_asli;
-                                            if ($w->is_sale) {
+                                            if ($w->is_sale && empty($w->kode_promo)) {
                                                 if ($w->persen_promo > 0) {
                                                     $harga_diskon = $harga_asli - ($harga_asli * $w->persen_promo / 100);
                                                 } elseif ($w->harga_promo > 0) {
@@ -395,7 +395,7 @@
                                             }
                                             ?>
                                             <div class="price d-flex flex-column">
-                                                <?php if ($w->is_sale && $harga_diskon < $harga_asli): ?>
+                                                <?php if ($w->is_sale && empty($w->kode_promo) && $harga_diskon < $harga_asli): ?>
                                                     <div class="d-flex-md gap-1">
                                                         <span>
                                                             Rp <?= number_format($harga_diskon, 0, ',', '.') ?>

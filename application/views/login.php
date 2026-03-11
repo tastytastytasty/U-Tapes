@@ -6,8 +6,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/images/favicon.svg') ?>">
-  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/favicon.svg') ?>" />
+  <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/images/logo/logo2.png') ?>">
+  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/logo/logo2.png') ?>" />
   <title>
     U-tapes
   </title>
@@ -117,7 +117,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                       <div class="input-group">
                         <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
                           placeholder="Kata sandi" autocomplete="off" value="<?= set_value('password') ?>">
-                        <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword">
+                        <button class="btn btn-primary m-0" type="button" id="togglePassword">
                           <i class="fa fa-eye" id="eyeIcon"></i>
                         </button>
                       </div>

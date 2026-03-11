@@ -5,6 +5,7 @@ class Item_model extends CI_Model
     {
         $this->db->select('item.*,
                             kategori.nama_kategori,
+                            MAX(promo.kode_promo) AS kode_promo,
                             MAX(promo.persen_promo) AS persen_promo,
                             MAX(promo.harga_promo) AS harga_promo,
                             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,MAX(item_detail.stok) AS stok,
@@ -78,6 +79,7 @@ class Item_model extends CI_Model
         item.usia_min,
         item.usia_max,
         kategori.nama_kategori,
+        MAX(promo.kode_promo) AS kode_promo,
         MAX(promo.persen_promo) AS persen_promo,
         MAX(promo.harga_promo) AS harga_promo,
         COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah,
@@ -85,7 +87,7 @@ class Item_model extends CI_Model
         MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
         item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
         MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-             AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale
+            AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale
         ");
         $this->db->from('item');
         $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
@@ -96,7 +98,7 @@ class Item_model extends CI_Model
             $this->db->join(
                 'wishlist',
                 'wishlist.id_item = item.id_item 
-             AND wishlist.id_customer = ' . $this->db->escape($id_customer),
+                AND wishlist.id_customer = ' . $this->db->escape($id_customer),
                 'left'
             );
         } else {

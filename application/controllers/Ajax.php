@@ -27,7 +27,7 @@ class Ajax extends MY_Controller
             $badge_text = '';
             if ($detail) {
                 $promo = $this->db
-                    ->select('promo.id_promo, promo.persen_promo, promo.harga_promo')
+                    ->select('promo.id_promo, promo.persen_promo, promo.harga_promo, promo.kode_promo')
                     ->from('promo_detail')
                     ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
                     ->where('promo_detail.id_item_detail', $detail->id_item_detail)
@@ -43,7 +43,7 @@ class Ajax extends MY_Controller
             }
             echo '<div class="card d-flex justify-content-center align-items-center size-box position-relative ' . $disabled . '" 
             data-ukuran="' . $u->ukuran . '"data-id-item-detail="' . ($detail ? $detail->id_item_detail : '') . '">';
-            if ($ada_diskon && $badge_text) {
+            if ($ada_diskon && $badge_text && empty($promo->kode_promo)) {
                 echo '<span style="position: absolute; top: -12px; right: -12px; background: #dc3545; color: #fff; border-radius: 50%; width: 25px; height: 25px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">
                     ' . $badge_text . '
                 </span>';
@@ -69,7 +69,7 @@ class Ajax extends MY_Controller
                 ->row();
         }
         $promo = $this->db
-            ->select('promo.persen_promo, promo.harga_promo')
+            ->select('promo.persen_promo, promo.harga_promo,promo.kode_promo')
             ->from('promo_detail')
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
             ->where('promo_detail.id_item_detail', $detail->id_item_detail)
@@ -85,11 +85,13 @@ class Ajax extends MY_Controller
         $is_sale = false;
         $persen_promo = 0;
         $harga_promo = 0;
+        $kode_promo = '';
 
         if ($promo) {
             $is_sale = true;
             $persen_promo = (int) $promo->persen_promo;
             $harga_promo = (int) $promo->harga_promo;
+            $kode_promo = $promo->kode_promo;
 
             if ($persen_promo > 0) {
                 $harga_diskon = $harga_asli - ($harga_asli * $persen_promo / 100);
@@ -120,6 +122,7 @@ class Ajax extends MY_Controller
             'is_sale' => $is_sale,
             'persen_promo' => $persen_promo,
             'harga_promo' => $harga_promo,
+            'kode_promo' => $kode_promo,
             'stok' => (int) $detail->stok,
             'is_in_cart' => $is_in_cart,
             'qty_in_cart' => $qty_in_cart

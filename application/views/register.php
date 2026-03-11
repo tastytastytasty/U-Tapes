@@ -6,8 +6,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/images/favicon.svg') ?>">
-    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/favicon.svg') ?>" />
+    <link rel="apple-touch-icon" sizes="76x76" href="<?= base_url('assets/images/logo/logo2.png') ?>">
+    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('assets/images/logo/logo2.png') ?>" />
     <title>
         U-tapes
     </title>
@@ -134,7 +134,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <input type="password" class="form-control form-control-lg" name="password" id="passwordInput"
                                                 min="8" placeholder="Kata sandi" value="<?= set_value('password') ?>"
                                                 autocomplete="off">
-                                                <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword">
+                                                <button class="btn btn-primary m-0" type="button" id="togglePassword">
                                                     <i class="fa fa-eye" id="eyeIcon"></i>
                                                 </button>   
                                             </div>
@@ -145,7 +145,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <input type="password" class="form-control form-control-lg" name="password2" id="passwordInput2"
                                                     placeholder="Konfirmasi Kata sandi" value="<?= set_value('password2') ?>"
                                                     autocomplete="off">
-                                                <button class="btn btn-primary m-0 w-15" type="button" id="togglePassword2">
+                                                <button class="btn btn-primary m-0" type="button" id="togglePassword2">
                                                     <i class="fa fa-eye" id="eyeIcon2"></i>
                                                 </button>
                                             </div>

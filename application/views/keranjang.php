@@ -136,6 +136,13 @@
         min-width: 150px !important;
         overflow: hidden;
     }
+    input[type="checkbox"].item-checkbox {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        flex-shrink: 0 !important;
+    }
     @media (max-width: 575.98px) {
         .single-product.product-card {
             align-items: stretch;
@@ -205,56 +212,16 @@
 <div class="shopping-cart section py-5">
     <div class="container-fluid px-4">
         <div class="row">
-            <?php if ($this->session->userdata('logged_in') && !empty($cart)): ?>
-                <div class="col-12 col-lg-4">
-                    <div style="position: sticky; top: 80px;">
-                        <div class="card border-0 shadow-sm rounded-3 mb-3">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center gap-2 mb-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0">
-                                            <i class="lni lni-search-alt text-muted"></i>
-                                        </span>
-                                        <input type="text" id="cart-search-input" class="form-control border-start-0 ps-0" 
-                                        placeholder="Cari produk di keranjang..." style="font-size: 0.95rem; padding: 10px 12px;">
-                                    </div>
-                                </div>
-                                <div class="form-check mb-0 d-flex align-items-center gap-2">
-                                    <input class="form-check-input" type="checkbox" id="selectAll" style="width: 22px; height: 22px; cursor: pointer; margin-top: 0;">
-                                    <label class="form-check-label" for="selectAll">Pilih semua</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card border-0 shadow-sm rounded-3">
-                            <div class="card-body">
-                                <ul class="list-unstyled mb-0">
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-dark">Total harga barang</span>
-                                        <span class="text-primary" id="summary-harga-asli">Rp <?= number_format($total_harga_asli, 0, ',', '.') ?></span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-dark">Potongan</span>
-                                        <span class="text-primary" id="summary-potongan">
-                                            <?= $total_potongan > 0 ? '- Rp ' . number_format($total_potongan, 0, ',', '.') : '-' ?>
-                                        </span>
-                                    </li>
-                                    <hr>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="fw-bold text-dark">Total Akhir</span>
-                                        <span class="fw-bold text-primary" id="summary-total-akhir">Rp <?= number_format($total_akhir, 0, ',', '.') ?></span>
-                                    </li>
-                                    <li>
-                                        <div class="button">
-                                            <a href="<?= site_url('checkout') ?>" class="btn animate w-100">Checkout</a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+            <div class="col-12 <?= ($this->session->userdata('logged_in') && !empty($cart)) ? 'col-lg-8' : '' ?> p-0">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="input-group w-100" style="border: 1.5px solid #d0d0d0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
+                        <span class="input-group-text bg-white border-0">
+                            <i class="lni lni-search-alt text-muted"></i>
+                        </span>
+                        <input type="text" id="cart-search-input" class="form-control border-0 ps-0" 
+                        placeholder="Cari produk di keranjang..." style="font-size: 0.95rem; padding: 10px 12px;">
                     </div>
                 </div>
-            <?php endif; ?>
-            <div class="col-12 <?= ($this->session->userdata('logged_in') && !empty($cart)) ? 'col-lg-8' : '' ?>">
                 <?php if ($this->session->userdata('logged_in')): ?>
                     <?php if (!empty($cart)): ?>
                         <div class="row" id="cart-items-wrapper">
@@ -265,7 +232,7 @@
                             foreach ($cart as $index => $c):
                                 $harga_asli = $c->harga * $c->qty;
                                 $harga_diskon = $harga_asli;
-                                if ($c->is_sale) {
+                                if ($c->is_sale && empty($c->kode_promo)) {
                                     if ($c->persen_promo > 0) {
                                         $harga_diskon = $harga_asli - ($harga_asli * $c->persen_promo / 100);
                                     } elseif ($c->harga_promo > 0) {
@@ -278,8 +245,8 @@
                                 $total_potongan = $total_harga_asli - $total_akhir;
                                 $is_empty = ($c->stok <= 0);
                                 ?>
-                                <div class="col-12 p-0 cart-item <?= $is_empty ? 'cart-empty' : '' ?>" id="cart-<?= $c->id_cart ?>">
-                                    <div class="single-product product-card position-relative"
+                                <div class="col-12 cart-item <?= $is_empty ? 'cart-empty' : '' ?>" id="cart-<?= $c->id_cart ?>">
+                                    <div class="single-product product-card position-relative mt-0 mb-2"
                                         style="border: 1.5px solid <?= $is_empty ? '#e5e7eb' : '#d0d0d0' ?>; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; <?= $is_empty ? 'opacity: 0.55;' : '' ?>; display: flex; flex-direction: row; align-items: stretch;">
                                         <?php if ($is_empty): ?>
                                             <div class="out-of-stock-overlay">
@@ -303,7 +270,7 @@
                                                     <?php if ($c->is_new ?? false): ?>
                                                         <span class="new-tag">Baru</span>
                                                     <?php endif; ?>
-                                                    <?php if ($c->is_sale): ?>
+                                                    <?php if ($c->is_sale && empty($c->kode_promo)): ?>
                                                         <?php if ($c->persen_promo > 0): ?>
                                                             <span class="sale-tag">-<?= $c->persen_promo ?>%</span>
                                                         <?php elseif ($c->harga_promo > 0): ?>
@@ -329,13 +296,6 @@
                                                     </h4>
                                                 </div>
                                                 <div class="flex-shrink-0 d-flex align-items-center gap-1 ms-1">
-                                                    <input type="checkbox" class="item-checkbox form-check-input mt-0"
-                                                        id="item-<?= $c->id_cart ?>" data-id-cart="<?= $c->id_cart ?>"
-                                                        data-price="<?= $subtotal ?>" data-debug-price="<?= $subtotal ?>"
-                                                        style="width: 20px; height: 20px; cursor: <?= $is_empty ? 'not-allowed' : 'pointer' ?>;"
-                                                        <?= $is_empty ? 'disabled' : '' ?>
-                                                        <?= (!$is_empty && $c->checklist === 'Yes') ? 'checked' : '' ?>>
-                                                    <label for="item-<?= $c->id_cart ?>"></label>
                                                     <button class="btn btn-sm btn-danger btn-hapus-item"
                                                         data-id-cart="<?= $c->id_cart ?>" title="Hapus item"
                                                         style="width: 28px; height: 28px; padding: 0; line-height: 1; position: relative; z-index: 3;">
@@ -356,41 +316,52 @@
                                                 <span class="badge bg-light text-dark border" style="font-size: 0.85rem;"><?= htmlspecialchars($c->ukuran) ?></span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mt-auto pt-2 flex-wrap gap-2">
-                                                <div class="input-group input-group-sm" style="max-width: 95px;">
-                                                    <button class="btn btn-outline-primary cart-qty-minus"
-                                                        data-cart="<?= $c->id_cart ?>"
-                                                        data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
-                                                        data-persen="<?= $c->persen_promo ?? 0 ?>"
-                                                        data-promo="<?= $c->harga_promo ?? 0 ?>"
-                                                        data-issale="<?= $c->is_sale ? 1 : 0 ?>"
-                                                        type="button" <?= $is_empty ? 'disabled' : '' ?>>−
-                                                    </button>
-                                                    <input type="number" class="form-control cart-qty-input text-center"
-                                                        id="cart-qty-<?= $c->id_cart ?>"
-                                                        data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
-                                                        data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?>"
-                                                        data-promo="<?= $c->harga_promo ?>" data-issale="<?= $c->is_sale ?>"
-                                                        min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>"
-                                                        style="font-size: 0.85rem;"
-                                                        <?= $is_empty ? 'disabled' : '' ?>>
-                                                    <button class="btn btn-outline-primary cart-qty-plus"
-                                                        data-cart="<?= $c->id_cart ?>"
-                                                        data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
-                                                        data-persen="<?= $c->persen_promo ?? 0 ?>"
-                                                        data-promo="<?= $c->harga_promo ?? 0 ?>"
-                                                        data-issale="<?= $c->is_sale ? 1 : 0 ?>"
-                                                        type="button" <?= $is_empty ? 'disabled' : '' ?>>+
-                                                    </button>
+                                                <div class="d-flex align-items-center gap-2">  
+                                                    <div class="input-group input-group-sm" style="max-width: 95px;">
+                                                        <button class="btn btn-outline-primary cart-qty-minus"
+                                                            data-cart="<?= $c->id_cart ?>"
+                                                            data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
+                                                            data-persen="<?= $c->persen_promo ?? 0 ?>"
+                                                            data-promo="<?= $c->harga_promo ?? 0 ?>"
+                                                            data-issale="<?= $c->is_sale ? 1 : 0 ?>"
+                                                            type="button" <?= $is_empty ? 'disabled' : '' ?>>−
+                                                        </button>
+                                                        <input type="number" class="form-control cart-qty-input text-center"
+                                                            id="cart-qty-<?= $c->id_cart ?>"
+                                                            data-cart="<?= $c->id_cart ?>" data-price="<?= $c->harga ?>"
+                                                            data-stok="<?= $c->stok ?>" data-persen="<?= $c->persen_promo ?>"
+                                                            data-promo="<?= $c->harga_promo ?>" data-issale="<?= $c->is_sale ?>"
+                                                            min="1" max="<?= $c->stok ?>" value="<?= $c->qty ?>"
+                                                            style="font-size: 0.85rem;"
+                                                            <?= $is_empty ? 'disabled' : '' ?>>
+                                                        <button class="btn btn-outline-primary cart-qty-plus"
+                                                            data-cart="<?= $c->id_cart ?>"
+                                                            data-price="<?= $c->harga ?>" data-stok="<?= $c->stok ?>"
+                                                            data-persen="<?= $c->persen_promo ?? 0 ?>"
+                                                            data-promo="<?= $c->harga_promo ?? 0 ?>"
+                                                            data-issale="<?= $c->is_sale ? 1 : 0 ?>"
+                                                            type="button" <?= $is_empty ? 'disabled' : '' ?>>+
+                                                        </button>
+                                                    </div>
+                                                    <input type="checkbox" class="item-checkbox mt-0"
+    id="item-<?= $c->id_cart ?>" data-id-cart="<?= $c->id_cart ?>"
+    data-price="<?= $subtotal ?>" data-debug-price="<?= $subtotal ?>"
+    style="width: 20px; height: 20px; cursor: <?= $is_empty ? 'not-allowed' : 'pointer' ?>; accent-color: #0d6efd; border-radius: 4px;"
+    <?= $is_empty ? 'disabled' : '' ?>
+    <?= (!$is_empty && $c->checklist === 'Yes') ? 'checked' : '' ?>>
+                                                    <label for="item-<?= $c->id_cart ?>" class="text primary">Pilih</label>
                                                 </div>
                                                 <div class="text-end">
-                                                    <?php if ($c->is_sale && $harga_diskon < $harga_asli): ?>
-                                                        <div class="text-muted text-decoration-line-through" style="font-size: 0.85rem;"
-                                                            id="item-harga-asli-<?= $c->id_cart ?>">
-                                                            Rp <?= number_format($harga_asli, 0, ',', '.') ?>
-                                                        </div>
-                                                        <div class="fw-bold <?= $is_empty ? 'text-muted' : 'text-primary' ?>" style="font-size: 0.95rem;"
-                                                            id="item-harga-diskon-<?= $c->id_cart ?>">
-                                                            Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+                                                    <?php if ($c->is_sale && empty($c->kode_promo) && $harga_diskon < $harga_asli): ?>
+                                                        <div class="d-flex">
+                                                            <div class="text-muted text-decoration-line-through me-3" style="font-size: 0.85rem;"
+                                                                id="item-harga-asli-<?= $c->id_cart ?>">
+                                                                Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+                                                            </div>
+                                                            <div class="fw-bold <?= $is_empty ? 'text-muted' : 'text-primary' ?>" style="font-size: 0.95rem;"
+                                                                id="item-harga-diskon-<?= $c->id_cart ?>">
+                                                                Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+                                                            </div>
                                                         </div>
                                                     <?php else: ?>
                                                         <div class="fw-bold <?= $is_empty ? 'text-muted' : 'text-primary' ?>" style="font-size: 0.95rem;"
@@ -429,6 +400,46 @@
                     </div>
                 <?php endif; ?>
             </div>
+            <?php if ($this->session->userdata('logged_in') && !empty($cart)): ?>
+                <div class="col-12 col-lg-4">
+                    <div style="position: sticky; top: 80px;">
+                        <div class="card shadow-sm rounded-3 mb-2" style="border: 1.5px solid #d0d0d0;">
+                            <div class="card-body" style="padding: 0.6rem 1rem;">
+                                <div class="form-check mb-0 d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="checkbox" id="selectAll" style="width: 22px; height: 22px; cursor: pointer; margin-top: 0;">
+                                    <label class="form-check-label" for="selectAll">Pilih semua</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card shadow-sm rounded-3" style="border: 1.5px solid #d0d0d0;">
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="d-flex justify-content-between mb-2">
+                                        <span class="text-dark">Total harga barang</span>
+                                        <span class="text-primary" id="summary-harga-asli">Rp <?= number_format($total_harga_asli, 0, ',', '.') ?></span>
+                                    </li>
+                                    <li class="d-flex justify-content-between mb-2">
+                                        <span class="text-dark">Potongan</span>
+                                        <span class="text-primary" id="summary-potongan">
+                                            <?= $total_potongan > 0 ? '- Rp ' . number_format($total_potongan, 0, ',', '.') : '-' ?>
+                                        </span>
+                                    </li>
+                                    <hr>
+                                    <li class="d-flex justify-content-between mb-2">
+                                        <span class="fw-bold text-dark">Total Akhir</span>
+                                        <span class="fw-bold text-primary" id="summary-total-akhir">Rp <?= number_format($total_akhir, 0, ',', '.') ?></span>
+                                    </li>
+                                    <li>
+                                        <div class="button">
+                                            <a href="<?= site_url('checkout') ?>" class="btn animate w-100">Checkout</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

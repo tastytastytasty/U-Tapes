@@ -259,7 +259,7 @@
 <!-- End Breadcrumbs -->
 <div class="shopping-cart section py-5">
     <div class="container-fluid px-4">
-        <div class="product-grid-topbar d-flex align-items-center mb-4">
+        <div class="product-grid-topbar d-flex align-items-center">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0">

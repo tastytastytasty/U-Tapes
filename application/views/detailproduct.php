@@ -144,7 +144,7 @@
                                             Baru
                                         </span>
                                     <?php endif; ?>
-                                    <?php if ($item->is_sale): ?>
+                                    <?php if ($item->is_sale && empty($item->kode_promo)): ?>
                                         <span id="discount-badge" style="display: none; padding: 4px 10px; font-size: 13px; font-weight: 600;
                                             color: #fff; background: #dc3545; border-radius: 4px;">
                                         </span>
@@ -166,7 +166,7 @@
                         <?php
                         $harga_asli = $item->harga_termurah;
                         $harga_diskon = $harga_asli;
-                        if ($item->is_sale) {
+                        if ($item->is_sale && empty($item->kode_promo)) {
                             if ($item->persen_promo > 0) {
                                 $harga_diskon = $harga_asli - ($harga_asli * $item->persen_promo / 100);
                             } elseif ($item->harga_promo > 0) {
@@ -175,7 +175,7 @@
                         }
                         ?>
                         <div class="price d-flex flex-column">
-                            <?php if ($item->is_sale && $harga_diskon < $harga_asli): ?>
+                            <?php if ($item->is_sale && empty($item->kode_promo) && $harga_diskon < $harga_asli): ?>
                                 <h4>
                                     Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
                                 </h4>
@@ -197,7 +197,7 @@
                                         <?php foreach ($warna as $w): ?>
                                             <?php
                                             $promo_warna = $this->db
-                                                ->select('MAX(promo.persen_promo) as persen_promo, MAX(promo.harga_promo) as harga_promo')
+                                                ->select('MAX(promo.persen_promo) as persen_promo, MAX(promo.harga_promo) as harga_promo, MAX(promo.kode_promo) as kode_promo')
                                                 ->from('promo_detail')
                                                 ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
                                                 ->join('item_detail', 'item_detail.id_item_detail = promo_detail.id_item_detail', 'inner')
@@ -209,7 +209,7 @@
                                                 ->row();
                                             $ada_diskon_warna = false;
                                             $badge_text_warna = '';
-                                            if ($promo_warna && ($promo_warna->persen_promo > 0 || $promo_warna->harga_promo > 0)) {
+                                            if ($promo_warna && ($promo_warna->persen_promo > 0 || $promo_warna->harga_promo > 0) && empty($promo_warna->kode_promo)) {
                                                 $ada_diskon_warna = true;
                                                 $badge_text_warna = '%';
                                             }

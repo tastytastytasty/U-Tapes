@@ -261,7 +261,7 @@
                                 <?php if ($item->is_new): ?>
                                     <span class="new-tag">Baru</span>
                                 <?php endif; ?>
-                                <?php if ($item->is_sale): ?>
+                                <?php if ($item->is_sale && empty($item->kode_promo)): ?>
                                     <?php if ($item->persen_promo > 0): ?>
                                         <span class="sale-tag">-<?= $item->persen_promo ?>%</span>
                                     <?php elseif ($item->harga_promo > 0): ?>
@@ -275,7 +275,7 @@
                         <?php if ($item->is_new): ?>
                             <span class="new-tag">Baru</span>
                         <?php endif; ?>
-                        <?php if ($item->is_sale): ?>
+                        <?php if ($item->is_sale && empty($item->kode_promo)): ?>
                             <?php if ($item->persen_promo > 0): ?>
                                 <span class="sale-tag">-<?= $item->persen_promo ?>%</span>
                             <?php elseif ($item->harga_promo > 0): ?>
@@ -312,7 +312,7 @@
                                 <?php
                                 $harga_asli = $item->harga_termurah;
                                 $harga_diskon = $harga_asli;
-                                if ($item->is_sale) {
+                                if ($item->is_sale && empty($item->kode_promo)) {
                                     if ($item->persen_promo > 0) {
                                         $harga_diskon = $harga_asli - ($harga_asli * $item->persen_promo / 100);
                                     } elseif ($item->harga_promo > 0) {
@@ -321,7 +321,7 @@
                                 }
                                 ?>
                                 <div class="price d-flex flex-column">
-                                    <?php if ($item->is_sale && $harga_diskon < $harga_asli): ?>
+                                    <?php if ($item->is_sale && empty($item->kode_promo) && $harga_diskon < $harga_asli): ?>
                                         <div class="d-flex-md gap-1">
                                             <span class="text-secondary">
                                                 Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
@@ -370,7 +370,7 @@
                                 <?php
                                 $harga_asli = $item->harga_termurah;
                                 $harga_diskon = $harga_asli;
-                                if ($item->is_sale) {
+                                if ($item->is_sale && empty($item->kode_promo)) {
                                     if ($item->persen_promo > 0) {
                                         $harga_diskon = $harga_asli - ($harga_asli * $item->persen_promo / 100);
                                     } elseif ($item->harga_promo > 0) {
@@ -379,7 +379,7 @@
                                 }
                                 ?>
                                 <div class="price d-flex flex-column">
-                                    <?php if ($item->is_sale && $harga_diskon < $harga_asli): ?>
+                                    <?php if ($item->is_sale && empty($item->kode_promo) && $harga_diskon < $harga_asli): ?>
                                         <div class="d-flex-md gap-1">
                                             <span>
                                                 Rp <?= number_format($harga_diskon, 0, ',', '.') ?>

@@ -512,7 +512,7 @@
 		<div class="row align-items-center mb-3">
 			<div class="col-12">
 				<div class="section-title mb-0">
-					<h2 class="mb-0">Produk</h2>
+					<h2 class="mb-0 mt-4">Produk Baru</h2>
 				</div>
 			</div>
 			<div class="text-end">
@@ -524,7 +524,7 @@
 			</div>
 		</div>
 		<hr>
-		<?php $this->load->view('card', ['items' => $items]); ?>
+		<?php $this->load->view('card', ['items' => $new_items]); ?>
 	</div>
 	<div class="container-fluid px-4">
 		<div class="row align-items-center mb-3">
@@ -543,24 +543,6 @@
 		</div>
 		<hr>
 		<?php $this->load->view('card', ['items' => $promo_items]); ?>
-	</div>
-	<div class="container-fluid px-4">
-		<div class="row align-items-center mb-3">
-			<div class="col-12">
-				<div class="section-title mb-0">
-					<h2 class="mb-0 mt-4">Produk Baru</h2>
-				</div>
-			</div>
-			<div class="text-end">
-				<a href="<?= site_url('katalog') ?>"
-					class="btn btn-link fw-bold text-primary text-decoration-none d-inline-flex align-items-center gap-2">
-					Lihat Semua
-					<i class="lni lni-arrow-right" style="font-size: 18px;"></i>
-				</a>
-			</div>
-		</div>
-		<hr>
-		<?php $this->load->view('card', ['items' => $new_items]); ?>
 	</div>
 </section>
 <!-- End Trending Product Area -->

@@ -28,7 +28,7 @@ class Homepage extends MY_Controller
 			$item->warna = $this->Item_model->get_warna($item->id_item);
 		}
 		$data['items'] = $items;
-		$data['promo_items'] = array_values(array_filter($items, function($i) { return $i->is_sale == 1; }));
+		$data['promo_items'] = array_values(array_filter($items, function($i) { return $i->is_sale == 1 && empty($i->kode_promo); }));
     	$data['new_items']   = array_values(array_filter($items, function($i) { return $i->is_new == 1; }));
 		$data['kategori'] = $this->Item_model->get_kategori();
 		$data['banners'] = $this->Item_model->get_banners();
