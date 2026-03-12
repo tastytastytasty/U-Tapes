@@ -19,14 +19,52 @@ class Pesanan extends MY_Controller {
 {
     $id_customer = $this->session->userdata('id_customer');
     
-    // ✅ Get all transaksi customer, sorted by terbaru
+    // ✅ Get all transaksi customer
     $transaksi_list = $this->Transaksi_model->get_by_customer($id_customer, 50, 0);
     
-    // ✅ Get payment status untuk setiap transaksi
+    // ✅ Determine status display untuk setiap transaksi
     foreach ($transaksi_list as &$transaksi) {
+        // Get payment status
         $pembayaran = $this->M_pembayaran->get_by_transaksi($transaksi->id_transaksi);
         $transaksi->payment_status = $pembayaran ? $pembayaran->status : 'Menunggu';
         $transaksi->has_paid = ($pembayaran && $pembayaran->status == 'Berhasil');
+        
+        // ✅ LOGIC PRIORITY:
+        // 1. Cek transaksi.status_transaksi (Menunggu/Berhasil/Ditolak/Gagal)
+        // 2. Kalau Berhasil → cek pengiriman.status
+        
+        if ($transaksi->status_transaksi == 'Menunggu') {
+            // ❶ BELUM BAYAR - Show status dari transaksi
+            $transaksi->show_status = 'Menunggu Pembayaran';
+            $transaksi->can_pay = true;  // Show "Bayar Sekarang" button
+            $transaksi->can_view_invoice = false;
+            
+        } elseif ($transaksi->status_transaksi == 'Berhasil') {
+            // ❷ SUDAH BAYAR & ACC - Show status dari pengiriman
+            $pengiriman = $this->db
+                ->where('id_transaksi', $transaksi->id_transaksi)
+                ->get('pengiriman')
+                ->row();
+            
+            if ($pengiriman) {
+                // Ada data pengiriman - use shipping status
+                $transaksi->show_status = $pengiriman->status;
+                $transaksi->delivery_status = $pengiriman->status;
+            } else {
+                // Belum ada pengiriman (baru ACC) - default
+                $transaksi->show_status = 'Diproses';
+                $transaksi->delivery_status = null;
+            }
+            
+            $transaksi->can_pay = false;
+            $transaksi->can_view_invoice = true;  // Show "Lihat Invoice" button
+            
+        } elseif (in_array($transaksi->status_transaksi, ['Ditolak', 'Gagal'])) {
+            // ❸ DITOLAK/GAGAL
+            $transaksi->show_status = $transaksi->status_transaksi;
+            $transaksi->can_pay = false;
+            $transaksi->can_view_invoice = false;
+        }
     }
     
     $viewData = [

@@ -2934,16 +2934,16 @@
           </button>
         </div>
 
-        <!-- SUBTOTAL PRODUK - COLLAPSIBLE -->
+        <!-- SUBTOTAL PRODUK - COLLAPSIBLE (OPEN BY DEFAULT) -->
         <div class="summary-section">
-          <div class="summary-header" id="product-header" onclick="toggleSummary('product')">
+          <div class="summary-header active" id="product-header" onclick="toggleSummary('product')">
             <div class="summary-header-left">
               <span class="summary-header-icon">▼</span>
               <span class="summary-header-title">🛍️ Subtotal Produk</span>
             </div>
             <span class="summary-header-value" id="subtotal-produk-display">Rp 0</span>
           </div>
-          <div class="summary-body" id="product-body">
+          <div class="summary-body active" id="product-body">
             <div class="summary-body-content">
               <div class="summary-detail-row">
                 <span class="label">Total Harga (<span id="total-items-count">0</span> item)</span>
@@ -2963,16 +2963,16 @@
           </div>
         </div>
 
-        <!-- SUBTOTAL ONGKIR - COLLAPSIBLE -->
+        <!-- SUBTOTAL ONGKIR - COLLAPSIBLE (OPEN BY DEFAULT) -->
         <div class="summary-section">
-          <div class="summary-header" id="shipping-header" onclick="toggleSummary('shipping')">
+          <div class="summary-header active" id="shipping-header" onclick="toggleSummary('shipping')">
             <div class="summary-header-left">
               <span class="summary-header-icon">▼</span>
               <span class="summary-header-title">🚚 Subtotal Ongkir</span>
             </div>
             <span class="summary-header-value" id="subtotal-ongkir-display">Rp 25.000</span>
           </div>
-          <div class="summary-body" id="shipping-body">
+          <div class="summary-body active" id="shipping-body">
             <div class="summary-body-content">
               <div class="summary-detail-row">
                 <span class="label">Biaya Ongkir</span>
@@ -4002,8 +4002,12 @@
 
       const metodePembayaran = metodePembayaranMap[selectedPayment] || 'Rekening';
 
+      // ✅ Get alamat from PHP
+      const idAlamat = '<?= $alamat_checkout->id_alamat ?? "" ?>';
+
       // Prepare data untuk dikirim
       const dataTransaksi = {
+        id_alamat: idAlamat,  // ✅ TAMBAH INI!
         total: totalPembayaran,
         metode_pembayaran: metodePembayaran,
         bayar: totalPembayaran,

@@ -136,9 +136,20 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             ->get()
             ->result();
         
+        // ✅ Get payment status
+        $pembayaran = $this->db
+            ->where('id_transaksi', $transaksi->id_transaksi)
+            ->get('pembayaran')
+            ->row();
+        
+        // ✅ Check if bukti_transfer already exists
+        $has_bukti = !empty($transaksi->bukti_transfer);
+        
         $data = [
             'transaksi' => $transaksi,
-            'items' => $items
+            'items' => $items,
+            'pembayaran' => $pembayaran,
+            'has_bukti' => $has_bukti  // ✅ Flag untuk view
         ];
         
         // ✅ Load standalone view
@@ -152,12 +163,17 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
     public function upload_bukti($no_nota) {
         header('Content-Type: application/json');
         
+        // ✅ Debug log
+        error_log("📤 UPLOAD BUKTI - no_nota: " . $no_nota);
+        error_log("📤 FILES: " . print_r($_FILES, true));
+        
         $id_customer = $this->session->userdata('id_customer');
         
         // Get transaksi by no_nota
         $transaksi = $this->Transaksi_model->get_by_no_nota($no_nota);
         
         if (!$transaksi || $transaksi->id_customer != $id_customer) {
+            error_log("❌ Transaksi tidak valid");
             echo json_encode([
                 'success' => false,
                 'message' => 'Transaksi tidak valid'
@@ -165,9 +181,85 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             return;
         }
         
+        error_log("✅ Transaksi found: id_transaksi = " . $transaksi->id_transaksi);
+        
+        // Check status pembayaran
+        $pembayaran = $this->db
+            ->where('id_transaksi', $transaksi->id_transaksi)
+            ->get('pembayaran')
+            ->row();
+        
+        if (!$pembayaran) {
+            error_log("❌ Pembayaran tidak ditemukan");
+            echo json_encode([
+                'success' => false,
+                'message' => 'Data pembayaran tidak ditemukan'
+            ]);
+            return;
+        }
+        
+        error_log("✅ Pembayaran status: " . $pembayaran->status);
+        
+        // ✅ Cek status - hanya bisa upload kalau Menunggu
+        if ($pembayaran->status != 'Menunggu') {
+            error_log("❌ Status bukan Menunggu");
+            echo json_encode([
+                'success' => false,
+                'message' => 'Pembayaran sudah diproses, tidak dapat upload bukti lagi'
+            ]);
+            return;
+        }
+        
+        // ✅ Handle file upload
+        $config['upload_path'] = './assets/bukti_transfer/';  // ✅ Changed to assets
+        $config['allowed_types'] = 'jpg|jpeg|png|pdf';
+        $config['max_size'] = 2048; // 2MB
+        $config['encrypt_name'] = TRUE;
+        
+        // Create directory if not exists
+        if (!is_dir($config['upload_path'])) {
+            mkdir($config['upload_path'], 0777, true);
+        }
+        
+        $this->load->library('upload', $config);
+        
+        error_log("📁 Upload config: " . print_r($config, true));
+        
+        if (!$this->upload->do_upload('bukti_transfer')) {
+            $errors = $this->upload->display_errors('', '');
+            error_log("❌ Upload failed: " . $errors);
+            echo json_encode([
+                'success' => false,
+                'message' => $errors
+            ]);
+            return;
+        }
+        
+        $upload_data = $this->upload->data();
+        $filename = $upload_data['file_name'];
+        
+        error_log("✅ Upload success: " . $filename);
+        
+        // ✅ Update transaksi.bukti_transfer
+        $update_transaksi = $this->db->where('id_transaksi', $transaksi->id_transaksi)
+            ->update('transaksi', [
+                'bukti_transfer' => $filename
+            ]);
+        
+        error_log("✅ Update transaksi: " . ($update_transaksi ? 'SUCCESS' : 'FAILED'));
+        
+        // ✅ Update pembayaran status ke "Diproses"
+        $update_pembayaran = $this->db->where('id_transaksi', $transaksi->id_transaksi)
+            ->update('pembayaran', [
+                'status' => 'Diproses'
+            ]);
+        
+        error_log("✅ Update pembayaran: " . ($update_pembayaran ? 'SUCCESS' : 'FAILED'));
+        
         echo json_encode([
-            'success' => false,
-            'message' => 'Fitur upload belum tersedia'
+            'success' => true,
+            'message' => 'Bukti transfer berhasil diupload',
+            'filename' => $filename
         ]);
     }
 

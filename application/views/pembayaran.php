@@ -448,7 +448,7 @@
     <div class="alert alert-warning">
       <span class="alert-icon">⚠</span>
       <div>
-        <strong>Selesaikan pembayaran dalam 24 jam</strong><br>
+        <strong>Selesaikan pembayaran dalam 1 jam</strong><br>
         Transfer sesuai nominal dan upload bukti transfer untuk verifikasi
       </div>
     </div>
@@ -567,34 +567,105 @@
 
       <!-- Upload Section -->
       <div class="card upload-section">
-        <h2 class="card-title">Upload Bukti Transfer</h2>
+        <h2 class="card-title">Bukti Transfer</h2>
         
-        <form id="upload-form" method="POST" enctype="multipart/form-data">
-          <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
-            <div class="upload-icon">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-              </svg>
+        <?php if ($has_bukti): ?>
+          <!-- ✅ BUKTI SUDAH ADA - SHOW PREVIEW ONLY -->
+          <div class="alert alert-info" style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <strong>✓ Bukti Transfer Telah Diterima</strong><br>
+            <span style="color: #666;">
+              <?php if ($pembayaran->status == 'Diproses'): ?>
+                Pembayaran Anda sedang diproses oleh admin. Silakan tunggu konfirmasi.
+              <?php elseif ($pembayaran->status == 'Berhasil'): ?>
+                Pembayaran Anda telah dikonfirmasi!
+              <?php else: ?>
+                Status: <?= $pembayaran->status ?>
+              <?php endif; ?>
+            </span>
+          </div>
+          
+          <div style="text-align: center; padding: 20px;">
+            <div style="margin-bottom: 12px; font-weight: 600; color: #555;">Bukti Transfer Anda:</div>
+            <img src="<?= base_url('assets/bukti_transfer/' . $transaksi->bukti_transfer) ?>" 
+                 alt="Bukti Transfer" 
+                 style="max-width: 100%; max-height: 500px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          </div>
+        
+        <?php else: ?>
+          <!-- ✅ BELUM ADA BUKTI - SHOW COUNTDOWN + UPLOAD FORM -->
+          
+          <?php
+          // Calculate time remaining
+          $now = time();
+          $deadline = strtotime($transaksi->tenggat_pembayaran);
+          $time_left = $deadline - $now;
+          $is_expired = $time_left <= 0;
+          ?>
+          
+          <!-- ⏰ COUNTDOWN TIMER -->
+          <div id="countdown-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+            <div style="font-size: 14px; margin-bottom: 8px; opacity: 0.9;">
+              <?php if ($is_expired): ?>
+                ⚠️ Waktu Pembayaran Telah Berakhir
+              <?php else: ?>
+                ⏰ Selesaikan Pembayaran Dalam
+              <?php endif; ?>
             </div>
-            <div class="upload-text">Klik atau drag & drop bukti transfer</div>
-            <div class="upload-hint">Format: JPG, PNG, PDF (Max 5MB)</div>
-            <input type="file" 
-                   id="file-input" 
-                   name="bukti_transfer" 
-                   accept="image/*,application/pdf"
-                   onchange="handleFileSelect(event)">
+            
+            <?php if (!$is_expired): ?>
+              <div id="countdown" style="font-size: 32px; font-weight: 700; letter-spacing: 2px; font-family: 'Courier New', monospace;">
+                <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+              </div>
+              <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">
+                Batas: <?= date('d M Y, H:i', $deadline) ?> WIB
+              </div>
+            <?php else: ?>
+              <div style="font-size: 24px; font-weight: 700; margin: 8px 0;">
+                EXPIRED
+              </div>
+              <div style="font-size: 13px; opacity: 0.9;">
+                Batas waktu: <?= date('d M Y, H:i', $deadline) ?> WIB
+              </div>
+            <?php endif; ?>
           </div>
+          
+          <?php if ($is_expired): ?>
+            <!-- ❌ EXPIRED - Disable upload -->
+            <div class="alert alert-danger" style="background: #fee; border-left: 4px solid #e11d48; padding: 16px; border-radius: 8px; text-align: center;">
+              <strong>⚠️ Waktu Pembayaran Habis</strong><br>
+              <span style="color: #666;">Silakan hubungi customer service atau buat pesanan baru.</span>
+            </div>
+          <?php else: ?>
+            <!-- ✅ NOT EXPIRED - Show upload form -->
+            <form id="upload-form" method="POST" enctype="multipart/form-data">
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+              <div class="upload-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <div class="upload-text">Klik atau drag & drop bukti transfer</div>
+              <div class="upload-hint">Format: JPG, PNG, PDF (Max 2MB)</div>
+              <input type="file" 
+                     id="file-input" 
+                     name="bukti_transfer" 
+                     accept="image/*,application/pdf"
+                     onchange="handleFileSelect(event)">
+            </div>
 
-          <div class="preview-container" id="preview-container">
-            <img id="preview-image" class="preview-image" alt="Preview">
-          </div>
+            <div class="preview-container" id="preview-container">
+              <img id="preview-image" class="preview-image" alt="Preview">
+            </div>
 
-          <button type="submit" class="submit-btn" id="submit-btn" disabled>
-            Kirim Bukti Transfer
-          </button>
-        </form>
+            <button type="submit" class="submit-btn" id="submit-btn" disabled>
+              Kirim Bukti Transfer
+            </button>
+          </form>
+          <?php endif; // End NOT EXPIRED check ?>
+        <?php endif; // End has_bukti check ?>
+        
       </div>
 
     </div>
@@ -602,6 +673,45 @@
   </div>
 
   <script>
+    // ⏰ COUNTDOWN TIMER
+    <?php if (!$has_bukti && !$is_expired): ?>
+    const deadline = new Date('<?= date('Y-m-d H:i:s', strtotime($transaksi->tenggat_pembayaran)) ?>').getTime();
+    
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = deadline - now;
+      
+      if (distance < 0) {
+        // ❌ EXPIRED - Reload page
+        clearInterval(countdownInterval);
+        document.getElementById('countdown').innerHTML = '<span style="color: #fee;">EXPIRED</span>';
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+        return;
+      }
+      
+      // Calculate time
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Update display
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      
+      // ⚠️ Warning when < 1 hour
+      if (distance < 3600000) { // 1 hour
+        document.getElementById('countdown-box').style.background = 'linear-gradient(135deg, #f59e0b 0%, #dc2626 100%)';
+      }
+    }
+    
+    // Update every second
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    <?php endif; ?>
+    
     // Copy to clipboard
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
@@ -616,25 +726,28 @@
     const previewImage = document.getElementById('preview-image');
     const submitBtn = document.getElementById('submit-btn');
 
-    // Drag & drop
-    uploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadArea.classList.add('dragover');
-    });
+    // ✅ Only setup upload if elements exist (not expired)
+    if (uploadArea && fileInput) {
+      // Drag & drop
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
 
-    uploadArea.addEventListener('dragleave', () => {
-      uploadArea.classList.remove('dragover');
-    });
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
 
-    uploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadArea.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
-      if (file) {
-        fileInput.files = e.dataTransfer.files;
-        handleFileSelect({ target: { files: [file] } });
-      }
-    });
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          fileInput.files = e.dataTransfer.files;
+          handleFileSelect({ target: { files: [file] } });
+        }
+      });
+    }
 
     // File select
     function handleFileSelect(event) {
@@ -673,7 +786,7 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = 'Mengirim...<span class="spinner"></span>';
 
-      fetch('<?= site_url('pembayaran/upload_bukti/' . $transaksi->id_transaksi) ?>', {
+      fetch('<?= site_url('pembayaran/upload_bukti/' . $transaksi->no_nota) ?>', {
         method: 'POST',
         body: formData
       })

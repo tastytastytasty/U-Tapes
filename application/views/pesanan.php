@@ -5,6 +5,222 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <title>Pesanan Saya</title>
+
+<?php
+/**
+ * Function to render order card
+ * Avoid duplicate code in each tab
+ */
+function render_order_card($transaksi) {
+    $CI = &get_instance();
+    
+    // Get display status
+    $display_status = $transaksi->show_status;
+    
+    // Map status to CSS class
+    $status_class = 'status-pending';
+    if (in_array($display_status, ['Berhasil', 'Selesai', 'Diterima'])) {
+        $status_class = 'status-success';
+    } elseif (in_array($display_status, ['Ditolak', 'Gagal', 'Dibatalkan'])) {
+        $status_class = 'status-cancelled';
+    } elseif (in_array($display_status, ['Diproses', 'Dikemas', 'Menunggu Kurir'])) {
+        $status_class = 'status-process';
+    } elseif (in_array($display_status, ['Dalam Pengiriman', 'Dikirim'])) {
+        $status_class = 'status-send';
+    } elseif (in_array($display_status, ['Menunggu', 'Menunggu Pembayaran'])) {
+        $status_class = 'status-pending';
+    }
+    
+    // Get items WITH PROMO DATA
+    $items = $CI->db
+        ->select('
+            item.nama_item, 
+            item.gambar_item, 
+            item_detail.ukuran, 
+            item_detail.warna, 
+            item_detail.harga,
+            transaksi_item.qty, 
+            transaksi_item.Total as subtotal,
+            MAX(promo.persen_promo) AS persen_promo,
+            MAX(promo.harga_promo) AS harga_promo,
+            MAX(
+                CASE 
+                    WHEN promo.id_promo IS NOT NULL 
+                    AND CURDATE() BETWEEN promo.dari AND promo.hingga
+                    AND promo.kuota > 0 
+                    THEN 1 ELSE 0 
+                END
+            ) AS is_sale
+        ')
+        ->from('transaksi_item')
+        ->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail')
+        ->join('item', 'item_detail.id_item = item.id_item')
+        ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
+        ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
+        ->where('transaksi_item.id_transaksi', $transaksi->id_transaksi)
+        ->group_by('transaksi_item.id_transaksi_item')
+        ->get()
+        ->result();
+    
+    $total_items = count($items);
+    $first_items = array_slice($items, 0, 1);
+    $other_items = array_slice($items, 1);
+    ?>
+    
+    <div class="ps-card">
+        <div class="ps-header">
+            <div class="ps-header-left">
+                <div class="ps-invoice"><i class="bi bi-file-earmark-text"></i> <?= htmlspecialchars($transaksi->no_nota) ?></div>
+                <div class="ps-date"><i class="bi bi-calendar3"></i> <?= date('d M Y', strtotime($transaksi->tanggal)) ?></div>
+            </div>
+            <div class="ps-header-right">
+                <div class="ps-status <?= $status_class ?>"><?= $display_status ?></div>
+            </div>
+        </div>
+
+        <?php foreach ($first_items as $item): ?>
+            <?php
+            // Calculate prices
+            $harga_asli = $item->harga;
+            $harga_final = $harga_asli;
+            
+            if ($item->is_sale == 1) {
+                if ($item->persen_promo > 0) {
+                    $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
+                } elseif ($item->harga_promo > 0) {
+                    $harga_final = max(0, $harga_asli - $item->harga_promo);
+                }
+            }
+            
+            $subtotal_final = $harga_final * $item->qty;
+            ?>
+            
+            <div class="ps-item">
+                <div style="position: relative;">
+                    <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                         alt="<?= htmlspecialchars($item->nama_item) ?>"
+                         onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
+                    
+                    <!-- ✅ PROMO BADGE on image -->
+                    <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                        <div style="position: absolute; top: 4px; left: 4px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(255,107,107,0.4);">
+                            <?php if ($item->persen_promo > 0): ?>
+                                -<?= $item->persen_promo ?>%
+                            <?php else: ?>
+                                SALE
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="ps-item-info">
+                    <div class="ps-item-name">
+                        <?= htmlspecialchars($item->nama_item) ?> 
+                        <span style="color: #999; font-size: 12px; font-weight: 400;">
+                            (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
+                        </span>
+                    </div>
+                    
+                    <!-- ✅ PRICE with discount -->
+                    <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                            <span style="text-decoration: line-through; color: #999; font-size: 12px;">
+                                Rp <?= number_format($harga_asli * $item->qty, 0, ',', '.') ?>
+                            </span>
+                            <div class="ps-item-price">Rp <?= number_format($subtotal_final, 0, ',', '.') ?></div>
+                        </div>
+                    <?php else: ?>
+                        <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+        <?php if ($total_items > 1): ?>
+            <div class="ps-more-items" id="items-<?= $transaksi->id_transaksi ?>">
+                <?php foreach ($other_items as $item): ?>
+                    <?php
+                    // Calculate prices
+                    $harga_asli = $item->harga;
+                    $harga_final = $harga_asli;
+                    
+                    if ($item->is_sale == 1) {
+                        if ($item->persen_promo > 0) {
+                            $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
+                        } elseif ($item->harga_promo > 0) {
+                            $harga_final = max(0, $harga_asli - $item->harga_promo);
+                        }
+                    }
+                    
+                    $subtotal_final = $harga_final * $item->qty;
+                    ?>
+                    
+                    <div class="ps-item">
+                        <div style="position: relative;">
+                            <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                                 alt="<?= htmlspecialchars($item->nama_item) ?>"
+                                 onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
+                            
+                            <!-- ✅ PROMO BADGE -->
+                            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                                <div style="position: absolute; top: 4px; left: 4px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(255,107,107,0.4);">
+                                    <?php if ($item->persen_promo > 0): ?>
+                                        -<?= $item->persen_promo ?>%
+                                    <?php else: ?>
+                                        SALE
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <div class="ps-item-info">
+                            <div class="ps-item-name">
+                                <?= htmlspecialchars($item->nama_item) ?> 
+                                <span style="color: #999; font-size: 12px; font-weight: 400;">
+                                    (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
+                                </span>
+                            </div>
+                            
+                            <!-- ✅ PRICE with discount -->
+                            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                    <span style="text-decoration: line-through; color: #999; font-size: 12px;">
+                                        Rp <?= number_format($harga_asli * $item->qty, 0, ',', '.') ?>
+                                    </span>
+                                    <div class="ps-item-price">Rp <?= number_format($subtotal_final, 0, ',', '.') ?></div>
+                                </div>
+                            <?php else: ?>
+                                <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <button class="ps-more-btn" onclick="toggleItems('items-<?= $transaksi->id_transaksi ?>', this)">
+                <span>Lihat <?= $total_items - 1 ?> barang lainnya</span> <i class="bi bi-chevron-down"></i>
+            </button>
+        <?php endif; ?>
+
+        <div class="ps-footer">
+            <div class="ps-total">Total: <span>Rp <?= number_format($transaksi->total, 0, ',', '.') ?></span></div>
+            
+            <?php if (in_array($display_status, ['Menunggu', 'Menunggu Pembayaran'])): ?>
+                <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
+                    <i class="bi bi-credit-card"></i> Bayar Sekarang
+                </a>
+            <?php else: ?>
+                <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
+                    <i class="bi bi-file-text"></i> Lihat Invoice
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    
+<?php
+}
+?>
+
     <style>
         * {
             margin: 0;
@@ -718,97 +934,7 @@
                         </div>
                     <?php else: ?>
                         <?php foreach ($transaksi_list as $transaksi): ?>
-                            <div class="ps-card">
-                                <div class="ps-header">
-                                    <div class="ps-header-left">
-                                        <div class="ps-invoice"><i class="bi bi-file-earmark-text"></i> <?= htmlspecialchars($transaksi->no_nota) ?></div>
-                                        <div class="ps-date"><i class="bi bi-calendar3"></i> <?= date('d M Y', strtotime($transaksi->tanggal)) ?></div>
-                                    </div>
-                                    <div class="ps-header-right">
-                                        <?php 
-                                        $status_class = 'status-pending';
-                                        if ($transaksi->payment_status == 'Berhasil') $status_class = 'status-success';
-                                        elseif ($transaksi->payment_status == 'Ditolak') $status_class = 'status-cancelled';
-                                        ?>
-                                        <div class="ps-status <?= $status_class ?>"><?= $transaksi->payment_status ?></div>
-                                    </div>
-                                </div>
-
-                                <?php
-                                // ✅ FIX: Path gambar yang benar!
-                                $items = $this->db
-                                    ->select('item.nama_item, item.gambar_item, item_detail.ukuran, item_detail.warna, transaksi_item.qty, transaksi_item.Total as subtotal')
-                                    ->from('transaksi_item')
-                                    ->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail')
-                                    ->join('item', 'item_detail.id_item = item.id_item')
-                                    ->where('transaksi_item.id_transaksi', $transaksi->id_transaksi)
-                                    ->get()
-                                    ->result();
-                                
-                                $total_items = count($items);
-                                $first_items = array_slice($items, 0, 1);
-                                $other_items = array_slice($items, 1);
-                                ?>
-                                
-                                <?php foreach ($first_items as $item): ?>
-                                    <div class="ps-item">
-                                        <!-- ✅ FIX: Path konsisten! -->
-                                        <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
-                                             alt="<?= htmlspecialchars($item->nama_item) ?>"
-                                             onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
-                                        <div class="ps-item-info">
-                                            <div class="ps-item-name">
-                                                <?= htmlspecialchars($item->nama_item) ?> 
-                                                <span style="color: #999; font-size: 12px; font-weight: 400;">
-                                                    (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
-                                                </span>
-                                            </div>
-                                            <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-
-                                <?php if ($total_items > 1): ?>
-                                    <div class="ps-more-items" id="items-<?= $transaksi->id_transaksi ?>">
-                                        <?php foreach ($other_items as $item): ?>
-                                            <div class="ps-item">
-                                                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
-                                                     alt="<?= htmlspecialchars($item->nama_item) ?>"
-                                                     onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
-                                                <div class="ps-item-info">
-                                                    <div class="ps-item-name">
-                                                        <?= htmlspecialchars($item->nama_item) ?> 
-                                                        <span style="color: #999; font-size: 12px; font-weight: 400;">
-                                                            (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
-                                                        </span>
-                                                    </div>
-                                                    <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                    
-                                    <!-- ✅ FIX: Button pakai class ps-toggle! -->
-                                    <button class="ps-toggle" onclick="toggleItems('items-<?= $transaksi->id_transaksi ?>', this)">
-                                        <span>Lihat <?= $total_items - 1 ?> barang lainnya</span>
-                                        <i class="bi bi-chevron-down"></i>
-                                    </button>
-                                <?php endif; ?>
-
-                                <div class="ps-footer">
-                                    <div class="ps-total">Total: <span>Rp <?= number_format($transaksi->total, 0, ',', '.') ?></span></div>
-                                    
-                                    <?php if ($transaksi->has_paid): ?>
-                                        <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
-                                            <i class="bi bi-file-earmark-pdf"></i> Lihat Invoice
-                                        </a>
-                                    <?php else: ?>
-                                        <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
-                                            <i class="bi bi-credit-card"></i> Bayar Sekarang
-                                        </a>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
+                            <?php render_order_card($transaksi); ?>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
@@ -816,38 +942,77 @@
                 <!-- MENUNGGU PEMBAYARAN -->
                 <div id="pending" class="ps-content">
                     <?php 
-                    $pending = array_filter($transaksi_list ?? [], function($t) { return $t->payment_status == 'Menunggu'; });
-                    if (empty($pending)): ?>
+                    $pending = array_filter($transaksi_list ?? [], function($t) { 
+                        return $t->show_status == 'Menunggu'; 
+                    });
+                    ?>
+                    <?php if (empty($pending)): ?>
                         <div class="ps-empty">
                             <i class="bi bi-hourglass-split"></i>
                             <p>Tidak ada pesanan yang menunggu pembayaran</p>
                         </div>
                     <?php else: ?>
-                        <!-- Same structure as "Semua" tab -->
-                        <p style="text-align: center; padding: 32px; color: #666;">Feature coming soon</p>
+                        <?php foreach ($pending as $transaksi): ?>
+                            <?php render_order_card($transaksi); ?>
+                        <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
 
-                <!-- Other tabs -->
+                <!-- DIKEMAS -->
                 <div id="process" class="ps-content">
-                    <div class="ps-empty">
-                        <i class="bi bi-box-seam"></i>
-                        <p>Tidak ada pesanan yang sedang dikemas</p>
-                    </div>
+                    <?php 
+                    $process = array_filter($transaksi_list ?? [], function($t) { 
+                        return in_array($t->show_status, ['Diproses', 'Dikemas', 'Menunggu Kurir']); 
+                    });
+                    ?>
+                    <?php if (empty($process)): ?>
+                        <div class="ps-empty">
+                            <i class="bi bi-box-seam"></i>
+                            <p>Tidak ada pesanan yang sedang dikemas</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($process as $transaksi): ?>
+                            <?php render_order_card($transaksi); ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
+                <!-- DIKIRIM -->
                 <div id="send" class="ps-content">
-                    <div class="ps-empty">
-                        <i class="bi bi-truck"></i>
-                        <p>Tidak ada pesanan yang sedang dikirim</p>
-                    </div>
+                    <?php 
+                    $send = array_filter($transaksi_list ?? [], function($t) { 
+                        return in_array($t->show_status, ['Dalam Pengiriman', 'Dikirim']); 
+                    });
+                    ?>
+                    <?php if (empty($send)): ?>
+                        <div class="ps-empty">
+                            <i class="bi bi-truck"></i>
+                            <p>Tidak ada pesanan yang sedang dikirim</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($send as $transaksi): ?>
+                            <?php render_order_card($transaksi); ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
+                <!-- SELESAI -->
                 <div id="done" class="ps-content">
-                    <div class="ps-empty">
-                        <i class="bi bi-check-circle"></i>
-                        <p>Tidak ada pesanan yang telah selesai</p>
-                    </div>
+                    <?php 
+                    $done = array_filter($transaksi_list ?? [], function($t) { 
+                        return in_array($t->show_status, ['Selesai', 'Diterima', 'Berhasil']); 
+                    });
+                    ?>
+                    <?php if (empty($done)): ?>
+                        <div class="ps-empty">
+                            <i class="bi bi-check-circle"></i>
+                            <p>Tidak ada pesanan yang telah selesai</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($done as $transaksi): ?>
+                            <?php render_order_card($transaksi); ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

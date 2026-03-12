@@ -73,17 +73,20 @@ class Transaksi extends CI_Controller {
             $no_nota = $this->generate_no_nota();
 
             $data_transaksi = [
-                'no_nota' => $no_nota,
-                'tanggal' => date('Y-m-d'),
-                'id_customer' => $id_customer,
-                'diskon_item' => floatval($diskon_item_total),
-                'diskon_voucher' => floatval($diskon_voucher ?? 0),
-                'diskon_ongkir' => floatval($diskon_ongkir ?? 0),
-                'total' => intval($total),
-                'metode_pembayaran' => $metode_pembayaran,
-                'bayar' => intval($bayar),
-                'ongkir' => intval($ongkir),
-                'status_transaksi' => 'dikemas'
+                'no_nota'            => $no_nota,
+                'tanggal'            => date('Y-m-d'),
+                'id_customer'        => $id_customer,
+                'diskon_item'        => floatval($diskon_item_total),
+                'diskon_voucher'     => floatval($diskon_voucher ?? 0),
+                'diskon_ongkir'      => floatval($diskon_ongkir ?? 0),
+                'total'              => intval($total),
+                'metode_pembayaran'  => $metode_pembayaran,
+                'bayar'              => intval($bayar),
+                'ongkir'             => intval($ongkir),
+                'status_transaksi'   => 'Menunggu',
+
+                // ── Tenggat pembayaran: 1 jam dari sekarang ──────────
+                'tenggat_pembayaran' => date('Y-m-d H:i:s', strtotime('+1 hour')),
             ];
 
             $insert = $this->Transaksi_model->insert($data_transaksi);
@@ -97,9 +100,9 @@ class Transaksi extends CI_Controller {
             $id_transaksi = $this->db->insert_id();
 
             $insert_payment = $this->M_pembayaran->insert([
-                'tanggal' => date('Y-m-d H:i:s'),
+                'tanggal'      => date('Y-m-d H:i:s'),
                 'id_transaksi' => $id_transaksi,
-                'status' => 'Menunggu'
+                'status'       => 'Menunggu'
             ]);
 
             if (!$insert_payment) {
@@ -117,17 +120,17 @@ class Transaksi extends CI_Controller {
             }
 
             foreach ($checkout_items as $item) {
-                // ✅ INSERT transaksi_item
+                // INSERT transaksi_item
                 $this->db->insert('transaksi_item', [
-                    'id_transaksi' => $id_transaksi,  // ✅ INT auto increment!
+                    'id_transaksi'   => $id_transaksi,
                     'id_item_detail' => $item->id_item_detail,
-                    'qty' => $item->qty,
-                    'Total' => $item->harga * $item->qty  // ✅ Huruf T besar!
+                    'qty'            => $item->qty,
+                    'Total'          => $item->harga * $item->qty
                 ]);
                 
                 $id_transaksi_item = $this->db->insert_id();
                 
-                // ✅ INSERT transaksi_promo_item (cuma yang ada promo dari toko)
+                // INSERT transaksi_promo_item (cuma yang ada promo dari toko)
                 if (isset($item->is_sale) && $item->is_sale == 1) {
                     $promo_detail = $this->db
                         ->select('id_promo_detail')
@@ -136,19 +139,19 @@ class Transaksi extends CI_Controller {
                         ->row();
                     
                     if ($promo_detail) {
-                        $harga_asli = $item->harga * $item->qty;
+                        $harga_asli  = $item->harga * $item->qty;
                         $harga_promo = $this->Checkout_model->get_item_final_price($item) * $item->qty;
                         $nilai_diskon = $harga_asli - $harga_promo;
                         
                         $this->db->insert('transaksi_promo_item', [
                             'id_transaksi_item' => $id_transaksi_item,
-                            'id_promo_detail' => $promo_detail->id_promo_detail,
-                            'nilai' => $nilai_diskon
+                            'id_promo_detail'   => $promo_detail->id_promo_detail,
+                            'nilai'             => $nilai_diskon
                         ]);
                     }
                 }
                 
-                // ✅ LOG STOK
+                // LOG STOK
                 $id_stok = $this->generate_id_stok();
                 
                 $current_stock = $this->db
@@ -160,13 +163,13 @@ class Transaksi extends CI_Controller {
                 $stok_tersedia = $current_stock ? $current_stock->stok : 0;
                 
                 $data_log_stok = [
-                    'id_stok' => $id_stok,
+                    'id_stok'        => $id_stok,
                     'id_item_detail' => $item->id_item_detail,
-                    'keterangan' => 'Pembelian oleh customer - Transaksi ' . $no_nota,
-                    'stok_terpakai' => -1 * intval($item->qty),
-                    'stok_tersedia' => $stok_tersedia,
-                    'tanggal' => date('Y-m-d H:i:s'),
-                    'id_user' => $id_customer
+                    'keterangan'     => 'Pembelian oleh customer - Transaksi ' . $no_nota,
+                    'stok_terpakai'  => -1 * intval($item->qty),
+                    'stok_tersedia'  => $stok_tersedia,
+                    'tanggal'        => date('Y-m-d H:i:s'),
+                    'id_user'        => $id_customer
                 ];
                 
                 $this->db->insert('stok', $data_log_stok);
@@ -174,7 +177,7 @@ class Transaksi extends CI_Controller {
 
             $promo_used = [];
             
-            // ✅ INSERT transaksi_promo (voucher item)
+            // INSERT transaksi_promo (voucher item)
             if (!empty($kode_promo_item)) {
                 $promo_item = $this->db
                     ->where('kode_promo', strtoupper($kode_promo_item))
@@ -183,8 +186,8 @@ class Transaksi extends CI_Controller {
                 
                 if ($promo_item && $promo_item->kuota > 0) {
                     $this->db->insert('transaksi_promo', [
-                        'id_promo' => $promo_item->id_promo,
-                        'id_transaksi' => $id_transaksi,  // ✅ INT!
+                        'id_promo'    => $promo_item->id_promo,
+                        'id_transaksi' => $id_transaksi,
                         'id_customer' => $id_customer
                     ]);
                     
@@ -193,7 +196,7 @@ class Transaksi extends CI_Controller {
                 }
             }
             
-            // ✅ INSERT transaksi_promo (voucher ongkir)
+            // INSERT transaksi_promo (voucher ongkir)
             if (!empty($kode_promo_ongkir)) {
                 $promo_ongkir = $this->db
                     ->where('kode_promo', strtoupper($kode_promo_ongkir))
@@ -202,8 +205,8 @@ class Transaksi extends CI_Controller {
                 
                 if ($promo_ongkir && $promo_ongkir->kuota > 0) {
                     $this->db->insert('transaksi_promo', [
-                        'id_promo' => $promo_ongkir->id_promo,
-                        'id_transaksi' => $id_transaksi,  // ✅ INT!
+                        'id_promo'    => $promo_ongkir->id_promo,
+                        'id_transaksi' => $id_transaksi,
                         'id_customer' => $id_customer
                     ]);
                     
@@ -222,11 +225,11 @@ class Transaksi extends CI_Controller {
             }
 
             echo json_encode([
-                'success' => true,
-                'message' => 'Pesanan berhasil dibuat!',
+                'success'      => true,
+                'message'      => 'Pesanan berhasil dibuat!',
                 'id_transaksi' => $id_transaksi,
-                'no_nota' => $no_nota,
-                'promo_used' => $promo_used,
+                'no_nota'      => $no_nota,
+                'promo_used'   => $promo_used,
                 'redirect_url' => site_url('pembayaran/' . $no_nota)
             ]);
             exit;
@@ -256,7 +259,7 @@ class Transaksi extends CI_Controller {
 
         if ($last_nota) {
             $last_number = intval(substr($last_nota->no_nota, -4));
-            $new_number = $last_number + 1;
+            $new_number  = $last_number + 1;
         } else {
             $new_number = 1;
         }
@@ -276,7 +279,7 @@ class Transaksi extends CI_Controller {
 
         if ($last_stok) {
             $last_number = intval(substr($last_stok->id_stok, 3));
-            $new_number = $last_number + 1;
+            $new_number  = $last_number + 1;
         } else {
             $new_number = 1;
         }
@@ -289,7 +292,7 @@ class Transaksi extends CI_Controller {
 
         try {
             $id_transaksi = $this->input->post('id_transaksi');
-            $status = $this->input->post('status');
+            $status       = $this->input->post('status');
 
             if (empty($id_transaksi) || empty($status)) {
                 echo json_encode(['success' => false, 'message' => 'Data tidak lengkap']);
