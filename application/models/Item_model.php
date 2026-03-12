@@ -72,22 +72,14 @@ class Item_model extends CI_Model
     {
         $this->db->reset_query();
         $this->db->select("
-        item.id_item,
-        item.merk,
-        item.nama_item,
-        item.gambar_item,
-        item.usia_min,
-        item.usia_max,
-        kategori.nama_kategori,
-        MAX(promo.kode_promo) AS kode_promo,
-        MAX(promo.persen_promo) AS persen_promo,
-        MAX(promo.harga_promo) AS harga_promo,
-        COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah,
-        SUM(item_detail.stok) AS total_stok,
-        MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
-        item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
-        MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-            AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale
+            item.id_item, item.merk, item.nama_item, item.gambar_item, item.usia_min, item.usia_max, kategori.nama_kategori,
+            MAX(promo.kode_promo) AS kode_promo, MAX(promo.persen_promo) AS persen_promo, MAX(promo.harga_promo) AS harga_promo,
+            COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah,
+            SUM(item_detail.stok) AS total_stok, MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
+            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
+            MAX(promo_detail.id_promo_detail) AS latest_promo_detail,
+            MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
+                AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale
         ");
         $this->db->from('item');
         $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
@@ -133,6 +125,9 @@ class Item_model extends CI_Model
                 break;
             case 'harga_terendah':
                 $this->db->order_by('harga_termurah', 'ASC');
+                break;
+            case 'promo_terbaru':
+                $this->db->order_by('latest_promo_detail', 'DESC');
                 break;
             default:
                 $this->db->order_by('item.id_item', 'DESC');

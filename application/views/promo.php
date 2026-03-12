@@ -276,10 +276,10 @@
                         </span>
                         <select class="form-control sort-select border-start-0" data-item=".promo-item" data-container="#promo-container"
                             style="max-width:200px;">
-                            <option value="oldest" selected>Terbaru</option>
-                            <option value="newest">Terlama</option>
-                            <option value="low">Harga Tertinggi</option>
-                            <option value="high">Harga Terendah</option>
+                            <option value="newest" selected>Terbaru</option>
+                            <option value="oldest">Terlama</option>
+                            <option value="high">Harga Tertinggi</option>
+                            <option value="low">Harga Terendah</option>
                         </select>
                     </div>
                 </div>
@@ -298,7 +298,7 @@
                     $out_of_stock = $p->total_stok <= 0;
                     ?>
                     <div class="col-lg-2 col-md-6 col-6 mb-4 promo-item" id="promo-<?= $p->id_item ?>"
-                    data-price="<?= $p->harga_promo ?>" data-date="<?= $p->created_at ?>">
+                    data-price="<?= $harga_diskon ?>" data-date="<?= $p->latest_promo_detail ?>">
                         <div class="single-product product-card p-3 mb-3 h-100 mt-0">
                             <div class="product-image position-relative">
                                 <a href="<?= site_url('detailproduct/' . $p->id_item) ?>" class="detail-link">
@@ -329,7 +329,6 @@
                                     <span class="sale-tag">-Rp <?= number_format($p->harga_promo, 0, ',', '.') ?></span>
                                 <?php endif; ?>
                             </div>
-
                             <div class="product-info d-flex flex-column flex-grow-1">
                                 <span class="category <?= $out_of_stock ? 'text-secondary' : 'text-primary' ?>">
                                     <?= $p->nama_kategori ?> | <?= $p->merk ?>
@@ -387,7 +386,6 @@
                     </div>
                 <?php endforeach; ?>
             </div>
-
         <?php else: ?>
             <div class="row" id="promo-empty">
                 <div class="col-12 text-center d-flex flex-column justify-content-center align-items-center"

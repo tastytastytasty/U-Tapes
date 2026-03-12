@@ -284,11 +284,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         pointer-events: none;
         cursor: not-allowed;
     }
-
     
     html,
     body {
         overflow-x: hidden;
+        
     }
     
     .cart-items {
@@ -375,12 +375,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     }
     
     @media (max-width: 991px) {
+        .header-middle {
+            padding: 10px 0 !important;
+        }
         .navbar-nav {
             padding: 15px 0;
         }
         .navbar-brand{
-            margin-bottom: 20px !important;
+            margin-bottom: 13px !important;
         }
+        .navbar-brand img {
+            height: 40px !important;
+            width: 150px !important;
+        }   
         .shopping-item {
             width: 300px !important;
         }
@@ -684,9 +691,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                         <?php endif; ?>
                     </div>
+                </nav>
             </div>
-            </nav>
-        </div>
         </div>
     </header>
 
@@ -946,6 +952,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             });
         }
         $(document).ready(function () {
+            $('.navbar-area').addClass('sticky');
+            $(document).ready(function () {
+            $('.navbar-area').addClass('sticky');
+                var navbarHeight = $('.navbar-area').outerHeight();
+                $('body').css('padding-top', navbarHeight + 'px');
+            });
             updateSummaryByChecklist();
             $(document).on('click', '.cart-qty-plus', function (e) {
                 e.preventDefault();
@@ -1849,12 +1861,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             items.sort(function (a, b) {
                 var priceA = parseInt($(a).data('price')) || 0;
                 var priceB = parseInt($(b).data('price')) || 0;
-                var dateA = new Date($(a).data('date'));
-                var dateB = new Date($(b).data('date'));
+                var dateA = $(a).data('date').toString();
+                var dateB = $(b).data('date').toString();
+                var numA = parseInt(dateA.replace(/\D/g, '')) || 0;
+                var numB = parseInt(dateB.replace(/\D/g, '')) || 0;
                 if (sortType === 'high') return priceB - priceA;
                 if (sortType === 'low') return priceA - priceB;
-                if (sortType === 'newest') return dateB - dateA;
-                if (sortType === 'oldest') return dateA - dateB;
+                if (sortType === 'newest') return numB - numA;
+                if (sortType === 'oldest') return numA - numB;
                 return 0;
             });
             $.each(items, function (index, item) {
@@ -1862,7 +1876,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             });
         });
     </script>
-
 </body>
 
 </html>

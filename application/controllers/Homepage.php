@@ -28,8 +28,14 @@ class Homepage extends MY_Controller
 			$item->warna = $this->Item_model->get_warna($item->id_item);
 		}
 		$data['items'] = $items;
-		$data['promo_items'] = array_values(array_filter($items, function($i) { return $i->is_sale == 1 && empty($i->kode_promo); }));
-    	$data['new_items']   = array_values(array_filter($items, function($i) { return $i->is_new == 1; }));
+		$data['new_items'] = array_values(array_filter($items, function ($i) {
+			return $i->is_new == 1; }));
+		$promo_items = $this->Item_model->get_items_with_wishlist($id_customer, ['sort' => 'promo_terbaru'], null, 0);
+		foreach ($promo_items as &$item) {
+			$item->warna = $this->Item_model->get_warna($item->id_item);
+		}
+		$data['promo_items'] = array_values(array_filter($promo_items, function ($i) {
+			return $i->is_sale == 1 && empty($i->kode_promo); }));
 		$data['kategori'] = $this->Item_model->get_kategori();
 		$data['banners'] = $this->Item_model->get_banners();
 		$data['contents'] = $this->load->view('homepage', $data, TRUE);

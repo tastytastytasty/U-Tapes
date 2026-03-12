@@ -74,13 +74,15 @@ class Wishlist_model extends CI_Model
     {
         return $this->db
             ->select('item.id_item, item.merk, item.nama_item, item.gambar_item, item.usia_min, item.usia_max, kategori.nama_kategori,
-            MAX(promo.persen_promo) AS persen_promo, MAX(promo.harga_promo) AS harga_promo,
-            COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END),
-            MIN(item_detail.harga)) AS harga_termurah,MAX(promo.created_at) AS created_at,
-            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
-            SUM(item_detail.stok) AS total_stok,
-            MAX(CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-            AND promo.kuota > 0 THEN 1 ELSE 0 END) AS is_sale', FALSE)
+                MAX(promo.persen_promo) AS persen_promo, MAX(promo.harga_promo) AS harga_promo,
+                COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END),
+                MIN(item_detail.harga)) AS harga_termurah,
+                item.created_at,
+                MAX(promo_detail.id_promo_detail) AS latest_promo_detail,
+                item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
+                SUM(item_detail.stok) AS total_stok,
+                MAX(CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
+                AND promo.kuota > 0 THEN 1 ELSE 0 END) AS is_sale', FALSE)
             ->from('item')
             ->join('kategori', 'item.id_kategori = kategori.id_kategori')
             ->join('item_detail', 'item.id_item = item_detail.id_item')
@@ -88,6 +90,7 @@ class Wishlist_model extends CI_Model
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
             ->where('promo.kode_promo =', '')
             ->group_by('item.id_item')
+            ->order_by('latest_promo_detail', 'DESC')
             ->having('is_sale', 1)
             ->get()
             ->result();

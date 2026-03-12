@@ -20,6 +20,13 @@
 		border-radius: 6px;
 	}
 
+	.slider-head,
+	.hero-slider,
+	.hero-slider .slick-prev,
+	.hero-slider .slick-next {
+		z-index: 1 !important;
+	}
+
 	.product-actions {
 		transition: opacity 0.3s ease, transform 0.2s ease;
 		z-index: 6;
@@ -391,118 +398,127 @@
 <section class="hero-area">
 	<div class="container-fluid px-4">
 		<div class="row">
-			<div class="col-lg-8 col-12 custom-padding-right">
-				<div class="slider-head">
-					<div class="hero-slider">
-						<?php foreach ($banners as $banner): ?>
-							<div class="single-slider"
-								style="background-image: url('<?= base_url('assets/images/hero/' . $banner->background_banner) ?>');">
-								<div class="content"
-									style="display:flex; align-items:center; justify-content:space-between; width:100%; padding-right:25px;">
-									<div style="flex:1; min-width:0; padding-right:15px;">
-										<h2>
-											<span><?= $banner->subtitle ?></span>
-											<?= $banner->nama_item ?>
-										</h2>
-										<p><?= $banner->deskripsi_banner ?></p>
-										<div class="button">
-											<a href="<?= site_url('detailproduct/' . $banner->id_item) ?>" class="btn">Beli
-												Sekarang</a>
+			<?php
+			$has_main = !empty($banners);
+			$has_new = isset($new_items[0]);
+			$has_promo = isset($promo_items[0]);
+			$new = $has_new ? $new_items[0] : null;
+			$promo = $has_promo ? $promo_items[0] : null;
+			$has_small = $has_new || $has_promo;
+			?>
+			<?php if ($has_main): ?>
+				<div class="<?= $has_small ? 'col-lg-8' : 'col-12' ?> col-12 custom-padding-right">
+					<div class="slider-head">
+						<div class="hero-slider">
+							<?php foreach ($banners as $banner): ?>
+								<div class="single-slider"
+									style="background-image: url('<?= base_url('assets/images/hero/' . $banner->background_banner) ?>');">
+									<div class="content"
+										style="display:flex; align-items:center; justify-content:space-between; width:100%; padding-right:25px;">
+										<div style="flex:1; min-width:0; padding-right:15px;">
+											<h2>
+												<span><?= $banner->subtitle ?></span>
+												<?= $banner->nama_item ?>
+											</h2>
+											<p><?= $banner->deskripsi_banner ?></p>
+											<div class="button">
+												<a href="<?= site_url('detailproduct/' . $banner->id_item) ?>" class="btn">Beli
+													Sekarang</a>
+											</div>
 										</div>
-									</div>
-									<div style="flex-shrink:0; align-self:stretch; display:flex; align-items:flex-end;">
-										<img src="<?= base_url('assets/images/item/' . $banner->gambar_item) ?>"
-											alt="<?= $banner->nama_item ?>"
-											style="height:450px; object-fit:cover; border-radius:12px; border: 1px solid #0d6efd;">
+										<div style="flex-shrink:0; align-self:stretch; display:flex; align-items:flex-end;">
+											<img src="<?= base_url('assets/images/item/' . $banner->gambar_item) ?>"
+												alt="<?= $banner->nama_item ?>"
+												style="height:450px; object-fit:cover; border-radius:12px; border: 1px solid #0d6efd;">
+										</div>
 									</div>
 								</div>
-							</div>
-						<?php endforeach; ?>
+							<?php endforeach; ?>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-lg-4 col-12">
-				<div class="row">
-					<div class="col-lg-12 col-md-6 col-12 md-custom-padding">
-						<?php $new = isset($new_items[0]) ? $new_items[0] : null; ?>
+			<?php endif; ?>
+			<?php if ($has_small): ?>
+				<div class="<?= $has_main ? 'col-lg-4' : 'col-12' ?> col-12">
+					<div class="row h-100">
 						<?php if ($new): ?>
-							<div class="hero-small-banner"
-								style="background-image: url('<?= base_url('assets/images/hero/slider1.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0, 0, 0, 0.2);">
-								<a href="<?= site_url('detailproduct/' . $new->id_item) ?>"
-									style="display:flex; align-items:center; justify-content:space-between; width:100%; text-decoration:none;">
-									<div class="content">
-										<h5 class="fw-bold text-primary mb-4">Produk Baru</h5>
-										<h5 class="title fw-bold mb-2">
-											<a href="<?= site_url('detailproduct/' . $new->id_item) ?>">
-												<?= $new->nama_item ?>
-											</a>
-										</h5>
-										<h3>Rp <?= number_format($new->harga_termurah, 0, ',', '.') ?></h3>
-										<div class="mt-4">
-											<a class="btn btn-primary fw-bold"
-												href="<?= site_url('detailproduct/' . $new->id_item) ?>">Lihat</a>
+							<div
+								class="<?= ($has_main || $has_promo) ? 'col-lg-12 col-md-6' : 'col-12' ?> col-12 <?= $has_promo ? 'md-custom-padding' : '' ?>">
+								<div class="hero-small-banner h-100"
+									style="background-image: url('<?= base_url('assets/images/hero/slider1.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0,0,0,0.2); <?= !$has_main ? 'min-height:300px;' : '' ?>">
+									<a href="<?= site_url('detailproduct/' . $new->id_item) ?>"
+										style="display:flex; align-items:center; justify-content:space-between; width:100%; text-decoration:none;">
+										<div class="content">
+											<h5 class="fw-bold text-primary mb-4">Produk Baru</h5>
+											<h5 class="title fw-bold mb-2">
+												<a
+													href="<?= site_url('detailproduct/' . $new->id_item) ?>"><?= $new->nama_item ?></a>
+											</h5>
+											<h3>Rp <?= number_format($new->harga_termurah, 0, ',', '.') ?></h3>
+											<div class="mt-4">
+												<a class="btn btn-primary fw-bold"
+													href="<?= site_url('detailproduct/' . $new->id_item) ?>">Lihat</a>
+											</div>
 										</div>
-									</div>
-									<div style="flex-shrink:0;">
-										<img src="<?= base_url('assets/images/item/' . $new->gambar_item) ?>"
-											alt="<?= $new->nama_item ?>"
-											style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border: 1px solid #0d6efd; border-radius: 8px;">
-									</div>
-								</a>
+										<div style="flex-shrink:0;">
+											<img src="<?= base_url('assets/images/item/' . $new->gambar_item) ?>"
+												alt="<?= $new->nama_item ?>"
+												style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border:1px solid #0d6efd; border-radius:8px;">
+										</div>
+									</a>
+								</div>
 							</div>
 						<?php endif; ?>
-					</div>
-					<div class="col-lg-12 col-md-6 col-12 mt-2">
-						<?php $promo = isset($promo_items[0]) ? $promo_items[0] : null; ?>
 						<?php if ($promo): ?>
-							<div class="hero-small-banner"
-								style="background-image: url('<?= base_url('assets/images/hero/slider3.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0, 0, 0, 0.2);">
-								<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>"
-									style="display:flex; align-items:center; justify-content:space-between; width:100%; text-decoration:none;">
-									<div class="content" style="flex:1; min-width:0; padding-right:15px;">
-										<h5 class="fw-bold text-danger mb-4">Promo</h5>
-										<h5 class="title fw-bold mb-2">
-											<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>">
-												<?= $promo->nama_item ?>
-											</a>
-										</h5>
-										<?php
-										$harga_asli = $promo->harga_termurah;
-										$harga_diskon = $harga_asli;
-										if ($promo->is_sale) {
-											if ($promo->persen_promo > 0) {
-												$harga_diskon = $harga_asli - ($harga_asli * $promo->persen_promo / 100);
-											} elseif ($promo->harga_promo > 0) {
-												$harga_diskon = $harga_asli - $promo->harga_promo;
-											}
-										}
-										?>
-										<h3 class="text-danger mb-2">Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
-										</h3>
-										<del class="text-muted">Rp
-											<?= number_format($harga_asli, 0, ',', '.') ?></del>
-										<?php if ($promo->persen_promo > 0): ?>
-											<span class="text-danger ms-2 fw-bold"><?= $promo->persen_promo ?>%</span>
-										<?php elseif ($promo->harga_promo > 0): ?>
-											<span class="text-danger ms-2 fw-bold">Rp
-												<?= number_format($promo->harga_promo, 0, ',', '.') ?></span>
-										<?php endif; ?>
-										<div class="mt-4">
-											<a class="btn btn-danger fw-bold"
-												href="<?= site_url('detailproduct/' . $promo->id_item) ?>">Lihat</a>
+							<?php
+							$harga_asli = $promo->harga_termurah;
+							$harga_diskon = $harga_asli;
+							if ($promo->is_sale) {
+								if ($promo->persen_promo > 0) {
+									$harga_diskon = $harga_asli - ($harga_asli * $promo->persen_promo / 100);
+								} elseif ($promo->harga_promo > 0) {
+									$harga_diskon = $harga_asli - $promo->harga_promo;
+								}
+							}
+							?>
+							<div
+								class="<?= ($has_main || $has_new) ? 'col-lg-12 col-md-6' : 'col-12' ?> col-12 <?= $has_new ? 'mt-2' : '' ?>">
+								<div class="hero-small-banner h-100"
+									style="background-image: url('<?= base_url('assets/images/hero/slider3.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0,0,0,0.2); <?= !$has_main ? 'min-height:300px;' : '' ?>">
+									<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>"
+										style="display:flex; align-items:center; justify-content:space-between; width:100%; text-decoration:none;">
+										<div class="content" style="flex:1; min-width:0; padding-right:15px;">
+											<h5 class="fw-bold text-danger mb-4">Produk Promo</h5>
+											<h5 class="title fw-bold mb-2">
+												<a
+													href="<?= site_url('detailproduct/' . $promo->id_item) ?>"><?= $promo->nama_item ?></a>
+											</h5>
+											<h3 class="text-danger mb-2">Rp <?= number_format($harga_diskon, 0, ',', '.') ?>
+											</h3>
+											<del class="text-muted">Rp <?= number_format($harga_asli, 0, ',', '.') ?></del>
+											<?php if ($promo->persen_promo > 0): ?>
+												<span class="text-danger ms-2 fw-bold"><?= $promo->persen_promo ?>%</span>
+											<?php elseif ($promo->harga_promo > 0): ?>
+												<span class="text-danger ms-2 fw-bold">Rp
+													<?= number_format($promo->harga_promo, 0, ',', '.') ?></span>
+											<?php endif; ?>
+											<div class="mt-4">
+												<a class="btn btn-danger fw-bold"
+													href="<?= site_url('detailproduct/' . $promo->id_item) ?>">Lihat</a>
+											</div>
 										</div>
-									</div>
-									<div style="flex-shrink:0;">
-										<img src="<?= base_url('assets/images/item/' . $promo->gambar_item) ?>"
-											alt="<?= $promo->nama_item ?>"
-											style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border: 1px solid #dc3545; border-radius: 8px;">
-									</div>
-								</a>
+										<div style="flex-shrink:0;">
+											<img src="<?= base_url('assets/images/item/' . $promo->gambar_item) ?>"
+												alt="<?= $promo->nama_item ?>"
+												style="height:100%; max-height:200px; object-fit:contain; margin-right:20px; border:1px solid #dc3545; border-radius:8px;">
+										</div>
+									</a>
+								</div>
 							</div>
 						<?php endif; ?>
 					</div>
 				</div>
-			</div>
+			<?php endif; ?>
 		</div>
 	</div>
 </section>

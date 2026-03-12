@@ -143,6 +143,69 @@
         min-height: 20px !important;
         flex-shrink: 0 !important;
     }
+    @media (max-width: 991px) {
+        #summary-card-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            background: #fff;
+            border-top: 1.5px solid #d0d0d0;
+            padding: 10px 16px;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.10);
+        }
+        #summary-card-wrapper .card-body {
+            position: static;
+            bottom: unset;
+            left: unset;
+            right: unset;
+            z-index: unset;
+            background: unset;
+            border-top: unset;
+            padding: 0.4rem 0.75rem !important;
+            box-shadow: unset;
+        }
+
+        #summary-card-wrapper .card {
+            margin-bottom: 0.2rem !important;
+        }
+
+        #summary-card-wrapper ul li {
+            margin-bottom: 0.15rem !important;
+        }
+
+        #summary-card-wrapper ul li.d-flex span,
+        #summary-card-wrapper ul li.d-flex label {
+            font-size: 0.72rem !important;
+        }
+
+        #summary-card-wrapper .fw-bold {
+            font-size: 0.75rem !important;
+        }
+
+        #summary-card-wrapper hr {
+            margin: 0.2rem 0;
+        }
+
+        #summary-card-wrapper .btn {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.72rem !important;
+        }
+
+        #summary-card-wrapper .form-check-input {
+            width: 14px !important;
+            height: 14px !important;
+        }
+
+        #summary-card-wrapper .form-check-label {
+            font-size: 0.72rem !important;
+        }
+
+        #summary-card-wrapper .form-check {
+            gap: 0.4rem !important;
+        }
+    }
     @media (max-width: 575.98px) {
         .single-product.product-card {
             align-items: stretch;
@@ -402,43 +465,44 @@
             </div>
             <?php if ($this->session->userdata('logged_in') && !empty($cart)): ?>
                 <div class="col-12 col-lg-4">
-                    <div style="position: sticky; top: 80px;">
-                        <div class="card shadow-sm rounded-3 mb-2" style="border: 1.5px solid #d0d0d0;">
-                            <div class="card-body" style="padding: 0.6rem 1rem;">
-                                <div class="form-check mb-0 d-flex align-items-center gap-2">
-                                    <input class="form-check-input" type="checkbox" id="selectAll" style="width: 22px; height: 22px; cursor: pointer; margin-top: 0;">
-                                    <label class="form-check-label" for="selectAll">Pilih semua</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card shadow-sm rounded-3" style="border: 1.5px solid #d0d0d0;">
-                            <div class="card-body">
-                                <ul class="list-unstyled mb-0">
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-dark">Total harga barang</span>
-                                        <span class="text-primary" id="summary-harga-asli">Rp <?= number_format($total_harga_asli, 0, ',', '.') ?></span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-dark">Potongan</span>
-                                        <span class="text-primary" id="summary-potongan">
-                                            <?= $total_potongan > 0 ? '- Rp ' . number_format($total_potongan, 0, ',', '.') : '-' ?>
-                                        </span>
-                                    </li>
-                                    <hr>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="fw-bold text-dark">Total Akhir</span>
-                                        <span class="fw-bold text-primary" id="summary-total-akhir">Rp <?= number_format($total_akhir, 0, ',', '.') ?></span>
-                                    </li>
-                                    <li>
-                                        <div class="button">
-                                            <a href="<?= site_url('checkout') ?>" class="btn animate w-100">Checkout</a>
-                                        </div>
-                                    </li>
-                                </ul>
+                    <div class="d-none d-lg-block" id="summary-anchor" style="position: sticky; top: 80px;">
+                    </div>
+                </div>
+                <div id="summary-card-wrapper">
+                    <div class="card shadow-sm rounded-3 mb-2" style="border: 1.5px solid #d0d0d0;">
+                        <div class="card-body" style="padding: 0.6rem 1rem;">
+                            <div class="form-check mb-0 d-flex align-items-center gap-2">
+                                <input class="form-check-input" type="checkbox" id="selectAll" style="width: 22px; height: 22px; cursor: pointer; margin-top: 0;">
+                                <label class="form-check-label" for="selectAll">Pilih semua</label>
                             </div>
                         </div>
                     </div>
+                    <div class="card shadow-sm rounded-3" style="border: 1.5px solid #d0d0d0;">
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex justify-content-between mb-2">
+                                    <span class="text-dark">Total harga barang</span>
+                                    <span class="text-primary" id="summary-harga-asli">Rp 0</span>
+                                </li>
+                                <li class="d-flex justify-content-between mb-2">
+                                    <span class="text-dark">Potongan</span>
+                                    <span class="text-primary" id="summary-potongan">-</span>
+                                </li>
+                                <hr>
+                                <li class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold text-dark">Total Akhir</span>
+                                    <span class="fw-bold text-primary" id="summary-total-akhir">Rp 0</span>
+                                </li>
+                                <li>
+                                    <div class="button">
+                                        <a href="<?= site_url('checkout') ?>" class="btn animate w-100">Checkout</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+                <div class="d-lg-none" style="height: 110px;"></div>
             <?php endif; ?>
         </div>
     </div>
@@ -456,4 +520,19 @@
             }
         }
     });
+    
+    (function () {
+        const wrapper = document.getElementById('summary-card-wrapper');
+        const anchor = document.getElementById('summary-anchor');
+
+        function placeCard() {
+            if (window.innerWidth >= 992) {
+                anchor.appendChild(wrapper);
+            } else {
+                document.body.appendChild(wrapper);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', placeCard);
+        window.addEventListener('resize', placeCard);
+    })();
 </script>

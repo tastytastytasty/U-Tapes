@@ -254,7 +254,7 @@
                 <div class="row" id="wishlist-container">
                     <?php foreach ($wishlist as $w): ?>
                         <div class="col-lg-2 col-md-6 col-6 mb-4 wishlist-item" id="wishlist-<?= $w->id_wishlist ?>"
-                            data-price="<?= $w->harga_termurah ?>" data-date="<?= $w->created_at ?>">
+                            data-price="<?= $w->harga_termurah ?>" data-date="<?= $w->id_wishlist ?>">
                             <div class="single-product product-card p-3 mb-3 h-100 mt-0" data-selected-color="">
                                 <div class="product-image position-relative">
                                     <a href="<?= site_url('detailproduct/' . $w->id_item) ?>" class="detail-link">
