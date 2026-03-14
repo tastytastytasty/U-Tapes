@@ -31,34 +31,23 @@ function render_order_card($transaksi) {
         $status_class = 'status-pending';
     }
     
-    // Get items WITH PROMO DATA
+    // ✅ Get items WITH SNAPSHOT dari transaksi_promo_item
     $items = $CI->db
         ->select('
             item.nama_item, 
             item.gambar_item, 
             item_detail.ukuran, 
             item_detail.warna, 
-            item_detail.harga,
+            item_detail.harga AS harga_asli,
             transaksi_item.qty, 
-            transaksi_item.Total as subtotal,
-            MAX(promo.persen_promo) AS persen_promo,
-            MAX(promo.harga_promo) AS harga_promo,
-            MAX(
-                CASE 
-                    WHEN promo.id_promo IS NOT NULL 
-                    AND CURDATE() BETWEEN promo.dari AND promo.hingga
-                    AND promo.kuota > 0 
-                    THEN 1 ELSE 0 
-                END
-            ) AS is_sale
+            transaksi_item.Total as harga_final_total,
+            transaksi_promo_item.nilai AS diskon_snapshot
         ')
         ->from('transaksi_item')
         ->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail')
         ->join('item', 'item_detail.id_item = item.id_item')
-        ->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left')
-        ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left')
+        ->join('transaksi_promo_item', 'transaksi_promo_item.id_transaksi_item = transaksi_item.id_transaksi_item', 'left')
         ->where('transaksi_item.id_transaksi', $transaksi->id_transaksi)
-        ->group_by('transaksi_item.id_transaksi_item')
         ->get()
         ->result();
     
@@ -80,57 +69,58 @@ function render_order_card($transaksi) {
 
         <?php foreach ($first_items as $item): ?>
             <?php
-            // Calculate prices
-            $harga_asli = $item->harga;
-            $harga_final = $harga_asli;
+            // ✅ USE SNAPSHOT - KURANGIN DISKON!
+            $harga_asli = $item->harga_asli;           // Original price per item
+            $total_sebelum_diskon = $item->harga_final_total;  // From transaksi_item.Total (BELUM DIKURANGIN!)
+            $diskon_snapshot = $item->diskon_snapshot ?? 0;  // Discount from transaksi_promo_item.nilai
+            $qty = $item->qty;
             
-            if ($item->is_sale == 1) {
-                if ($item->persen_promo > 0) {
-                    $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
-                } elseif ($item->harga_promo > 0) {
-                    $harga_final = max(0, $harga_asli - $item->harga_promo);
-                }
+            // ✅ KURANGIN diskon
+            $harga_final_total = $total_sebelum_diskon - $diskon_snapshot;
+            
+            // Calculate
+            $total_asli = $harga_asli * $qty;          // Original subtotal
+            $has_discount = ($diskon_snapshot > 0);    // ✅ Check if has discount from snapshot
+            
+            // If has discount, use the snapshot value
+            if ($has_discount) {
+                $diskon_total = $diskon_snapshot;      // ✅ Use snapshot discount directly
+                $harga_final_per_item = $harga_final_total / $qty;
+                $diskon_per_item = $diskon_total / $qty;
             }
-            
-            $subtotal_final = $harga_final * $item->qty;
             ?>
             
             <div class="ps-item">
-                <div style="position: relative;">
-                    <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
-                         alt="<?= htmlspecialchars($item->nama_item) ?>"
-                         onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
-                    
-                    <!-- ✅ PROMO BADGE on image -->
-                    <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
-                        <div style="position: absolute; top: 4px; left: 4px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(255,107,107,0.4);">
-                            <?php if ($item->persen_promo > 0): ?>
-                                -<?= $item->persen_promo ?>%
-                            <?php else: ?>
-                                SALE
-                            <?php endif; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
+                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                     alt="<?= htmlspecialchars($item->nama_item) ?>"
+                     onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
                 
                 <div class="ps-item-info">
                     <div class="ps-item-name">
                         <?= htmlspecialchars($item->nama_item) ?> 
                         <span style="color: #999; font-size: 12px; font-weight: 400;">
-                            (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
+                            (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $qty ?>x)
                         </span>
                     </div>
                     
-                    <!-- ✅ PRICE with discount -->
-                    <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                            <span style="text-decoration: line-through; color: #999; font-size: 12px;">
-                                Rp <?= number_format($harga_asli * $item->qty, 0, ',', '.') ?>
-                            </span>
-                            <div class="ps-item-price">Rp <?= number_format($subtotal_final, 0, ',', '.') ?></div>
+                    <!-- ✅ PRICE with DISKON badge -->
+                    <?php if ($has_discount): ?>
+                        <div style="margin-top: 6px;">
+                            <!-- Harga asli -->
+                            <div style="text-decoration: line-through; color: #999; font-size: 12px;">
+                                Rp <?= number_format($total_asli, 0, ',', '.') ?>
+                            </div>
+                            
+                            <!-- Harga final + Badge DISKON -->
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                <div class="ps-item-price">Rp <?= number_format($harga_final_total, 0, ',', '.') ?></div>
+                                <span style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; box-shadow: 0 2px 6px rgba(255,107,107,0.3);">
+                                    DISKON Rp <?= number_format($diskon_total, 0, ',', '.') ?>
+                                </span>
+                            </div>
                         </div>
                     <?php else: ?>
-                        <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+                        <div class="ps-item-price" style="margin-top: 6px;">Rp <?= number_format($harga_final_total, 0, ',', '.') ?></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -140,57 +130,51 @@ function render_order_card($transaksi) {
             <div class="ps-more-items" id="items-<?= $transaksi->id_transaksi ?>">
                 <?php foreach ($other_items as $item): ?>
                     <?php
-                    // Calculate prices
-                    $harga_asli = $item->harga;
-                    $harga_final = $harga_asli;
+                    // ✅ USE SNAPSHOT - KURANGIN DISKON!
+                    $harga_asli = $item->harga_asli;
+                    $total_sebelum_diskon = $item->harga_final_total;
+                    $diskon_snapshot = $item->diskon_snapshot ?? 0;
+                    $qty = $item->qty;
                     
-                    if ($item->is_sale == 1) {
-                        if ($item->persen_promo > 0) {
-                            $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
-                        } elseif ($item->harga_promo > 0) {
-                            $harga_final = max(0, $harga_asli - $item->harga_promo);
-                        }
+                    // ✅ KURANGIN diskon
+                    $harga_final_total = $total_sebelum_diskon - $diskon_snapshot;
+                    
+                    $total_asli = $harga_asli * $qty;
+                    $has_discount = ($diskon_snapshot > 0);  // ✅ Check snapshot
+                    
+                    if ($has_discount) {
+                        $diskon_total = $diskon_snapshot;  // ✅ Use snapshot directly
                     }
-                    
-                    $subtotal_final = $harga_final * $item->qty;
                     ?>
                     
                     <div class="ps-item">
-                        <div style="position: relative;">
-                            <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
-                                 alt="<?= htmlspecialchars($item->nama_item) ?>"
-                                 onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
-                            
-                            <!-- ✅ PROMO BADGE -->
-                            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
-                                <div style="position: absolute; top: 4px; left: 4px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(255,107,107,0.4);">
-                                    <?php if ($item->persen_promo > 0): ?>
-                                        -<?= $item->persen_promo ?>%
-                                    <?php else: ?>
-                                        SALE
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
+                        <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" 
+                             alt="<?= htmlspecialchars($item->nama_item) ?>"
+                             onerror="this.src='<?= base_url('assets/images/no-image.jpg') ?>'">
                         
                         <div class="ps-item-info">
                             <div class="ps-item-name">
                                 <?= htmlspecialchars($item->nama_item) ?> 
                                 <span style="color: #999; font-size: 12px; font-weight: 400;">
-                                    (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $item->qty ?>x)
+                                    (<?= $item->warna ?>, <?= $item->ukuran ?>, <?= $qty ?>x)
                                 </span>
                             </div>
                             
-                            <!-- ✅ PRICE with discount -->
-                            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
-                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                                    <span style="text-decoration: line-through; color: #999; font-size: 12px;">
-                                        Rp <?= number_format($harga_asli * $item->qty, 0, ',', '.') ?>
-                                    </span>
-                                    <div class="ps-item-price">Rp <?= number_format($subtotal_final, 0, ',', '.') ?></div>
+                            <!-- ✅ PRICE with DISKON badge -->
+                            <?php if ($has_discount): ?>
+                                <div style="margin-top: 6px;">
+                                    <div style="text-decoration: line-through; color: #999; font-size: 12px;">
+                                        Rp <?= number_format($total_asli, 0, ',', '.') ?>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                        <div class="ps-item-price">Rp <?= number_format($harga_final_total, 0, ',', '.') ?></div>
+                                        <span style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; box-shadow: 0 2px 6px rgba(255,107,107,0.3);">
+                                            DISKON Rp <?= number_format($diskon_total, 0, ',', '.') ?>
+                                        </span>
+                                    </div>
                                 </div>
                             <?php else: ?>
-                                <div class="ps-item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+                                <div class="ps-item-price" style="margin-top: 6px;">Rp <?= number_format($harga_final_total, 0, ',', '.') ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -205,13 +189,13 @@ function render_order_card($transaksi) {
         <div class="ps-footer">
             <div class="ps-total">Total: <span>Rp <?= number_format($transaksi->total, 0, ',', '.') ?></span></div>
             
-            <?php if (in_array($display_status, ['Menunggu', 'Menunggu Pembayaran'])): ?>
-                <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
-                    <i class="bi bi-credit-card"></i> Bayar Sekarang
-                </a>
-            <?php else: ?>
+            <?php if ($transaksi->has_paid): ?>
                 <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
                     <i class="bi bi-file-text"></i> Lihat Invoice
+                </a>
+            <?php else: ?>
+                <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
+                    <i class="bi bi-credit-card"></i> Bayar Sekarang
                 </a>
             <?php endif; ?>
         </div>

@@ -24,7 +24,7 @@
 
     body {
       font-family: 'Work Sans', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #f5f6f8;
       min-height: 100vh;
       padding: 2rem 1rem;
       line-height: 1.6;
@@ -491,41 +491,59 @@
             </div>
             
             <?php 
+            // ✅ USE SNAPSHOT DATA - KURANGIN DISKON!
+            $harga_per_item = $item->harga;  // Original price per item
+            $subtotal_sebelum_diskon = $item->subtotal_final;  // From transaksi_item.Total (BELUM DIKURANGIN!)
+            $nilai_diskon = $item->nilai_diskon ?? 0;  // Discount from transaksi_promo_item.nilai
+            $qty = $item->qty;
+            
+            // ✅ KURANGIN diskon dari subtotal
+            $subtotal_final = $subtotal_sebelum_diskon - $nilai_diskon;
+            
             // Calculate prices
-            $harga_asli = $item->harga;
-            $harga_final = $harga_asli;
+            $subtotal_asli = $harga_per_item * $qty;  // Original subtotal
+            $harga_final_per_item = $subtotal_final / $qty;  // Discounted price per item
             
-            // Check if item has promo
-            if ($item->is_sale == 1) {
-                if ($item->persen_promo > 0) {
-                    $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
-                } elseif ($item->harga_promo > 0) {
-                    $harga_final = max(0, $harga_asli - $item->harga_promo);
-                }
-            }
-            
-            $subtotal_asli = $harga_asli * $item->qty;
-            $subtotal_final = $harga_final * $item->qty;
+            // Check if item had discount at checkout time
+            $has_discount = ($nilai_diskon > 0);  // ✅ Only check snapshot value
             ?>
             
-            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
-              <!-- Item WITH Discount -->
-              <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-                <div style="text-decoration: line-through; color: #999; font-size: 13px;">
-                  Rp <?= number_format($harga_asli, 0, ',', '.') ?>
+            <?php if ($has_discount): ?>
+              <!-- Item WITH Discount (SNAPSHOT) -->
+              
+              <!-- Show per-item prices -->
+              <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <!-- Original price per item (strikethrough) -->
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 12px; color: #999;">Harga satuan:</span>
+                  <span style="text-decoration: line-through; color: #999; font-size: 13px;">
+                    Rp <?= number_format($harga_per_item, 0, ',', '.') ?>
+                  </span>
                 </div>
-                <div style="background: #fee; color: #e11d48; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">
-                  <?php if ($item->persen_promo > 0): ?>
-                    -<?= $item->persen_promo ?>%
-                  <?php else: ?>
-                    -Rp <?= number_format($item->harga_promo, 0, ',', '.') ?>
-                  <?php endif; ?>
+                
+                <!-- Discount badge -->
+                <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 6px rgba(255,107,107,0.3);">
+                  -Rp <?= number_format($nilai_diskon / $qty, 0, ',', '.') ?>
                 </div>
+                
+                <!-- Final price per item -->
               </div>
-              <div class="item-price">Rp <?= number_format($subtotal_final, 0, ',', '.') ?></div>
+              
+              <!-- Subtotal -->
+              <div class="item-price" style="margin-top: 6px;">
+                Subtotal: Rp <?= number_format($subtotal_final, 0, ',', '.') ?>
+              </div>
+              
             <?php else: ?>
               <!-- Item NO Discount -->
-              <div class="item-price">Rp <?= number_format($item->subtotal, 0, ',', '.') ?></div>
+              <div style="margin-top: 8px;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
+                  Harga satuan: Rp <?= number_format($harga_per_item, 0, ',', '.') ?>
+                </div>
+                <div class="item-price">
+                  Subtotal: Rp <?= number_format($subtotal_final, 0, ',', '.') ?>
+                </div>
+              </div>
             <?php endif; ?>
           </div>
         </div>

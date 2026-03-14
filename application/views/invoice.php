@@ -237,32 +237,27 @@
                 <tbody>
                     <?php foreach ($items as $item): ?>
                     <?php 
-                    // Calculate prices
-                    $harga_asli = $item->harga;
-                    $harga_final = $harga_asli;
+                    // ✅ Calculate prices - KURANGIN DISKON!
+                    $harga_asli = $item->harga;  // Original price per item
+                    $diskon_snapshot = $item->diskon_snapshot ?? 0;  // Discount amount
+                    $subtotal_sebelum_diskon = $item->subtotal;  // From transaksi_item.Total (BELUM DIKURANGIN!)
                     
-                    // Check if item has promo
-                    if ($item->is_sale == 1) {
-                        if ($item->persen_promo > 0) {
-                            $harga_final = $harga_asli - floor($harga_asli * ($item->persen_promo / 100));
-                        } elseif ($item->harga_promo > 0) {
-                            $harga_final = max(0, $harga_asli - $item->harga_promo);
-                        }
-                    }
+                    // ✅ KURANGIN diskon dari subtotal
+                    $subtotal_final = $subtotal_sebelum_diskon - $diskon_snapshot;
                     
-                    $subtotal_final = $harga_final * $item->qty;
+                    // Calculate final price per item
+                    $harga_final = $subtotal_final / $item->qty;
+                    
+                    // Check if had discount at checkout
+                    $has_discount = ($diskon_snapshot > 0);
                     ?>
                     <tr>
                         <td>
                             <div class="item-name">
                                 <?= $item->nama_item ?>
-                                <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
-                                    <span style="background: #fee; color: #e11d48; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px;">
-                                        <?php if ($item->persen_promo > 0): ?>
-                                            DISKON <?= $item->persen_promo ?>%
-                                        <?php else: ?>
-                                            DISKON Rp <?= number_format($item->harga_promo, 0, ',', '.') ?>
-                                        <?php endif; ?>
+                                <?php if ($has_discount): ?>
+                                    <span style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-left: 8px; box-shadow: 0 2px 6px rgba(255,107,107,0.3);">
+                                        DISKON Rp <?= number_format($diskon_snapshot / $item->qty, 0, ',', '.') ?>
                                     </span>
                                 <?php endif; ?>
                             </div>
@@ -272,7 +267,7 @@
                         </td>
                         <td style="text-align: center;"><?= $item->qty ?></td>
                         <td style="text-align: right;">
-                            <?php if ($item->is_sale == 1 && $harga_final < $harga_asli): ?>
+                            <?php if ($has_discount): ?>
                                 <div style="text-decoration: line-through; color: #999; font-size: 13px;">
                                     Rp <?= number_format($harga_asli, 0, ',', '.') ?>
                                 </div>
@@ -330,7 +325,7 @@
                 <a href="javascript:window.print()" class="btn btn-print">
                     🖨️ Print Invoice
                 </a>
-                <a href="<?= base_url('index.php/pesanan') ?>" class="btn btn-back">
+                <a href="<?= base_url('pesanan') ?>" class="btn btn-back">
                     ← Kembali ke Pesanan
                 </a>
             </div>
