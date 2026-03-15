@@ -443,7 +443,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="#" style="font-size: 17px;">
+                                <a class="nav-link <?= ($controller == 'about_us') ? 'active' : '' ?>"
+                                    href="<?= site_url('about_us') ?>" style="font-size: 17px;">
                                     Tentang Kami
                                 </a>
                             </li>
@@ -862,7 +863,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <ul>
                                     <li><a href="<?= site_url('homepage') ?>">Beranda</a></li>
                                     <li><a href="<?= site_url('katalog') ?>">Katalog Produk</a></li>
-                                    <li><a href="<?= site_url('tentang-kami') ?>">Tentang Kami</a></li>
+                                    <li><a href="<?= site_url('about_us') ?>">Tentang Kami</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->
@@ -953,11 +954,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         }
         $(document).ready(function () {
             $('.navbar-area').addClass('sticky');
-            $(document).ready(function () {
-            $('.navbar-area').addClass('sticky');
-                var navbarHeight = $('.navbar-area').outerHeight();
-                $('body').css('padding-top', navbarHeight + 'px');
-            });
+            var navbarHeight = $('.navbar-area').outerHeight();
+            $('body').css('padding-top', navbarHeight + 'px');
             updateSummaryByChecklist();
             $(document).on('click', '.cart-qty-plus', function (e) {
                 e.preventDefault();

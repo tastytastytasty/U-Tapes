@@ -30,6 +30,8 @@ class Homepage extends MY_Controller
 		$data['items'] = $items;
 		$data['new_items'] = array_values(array_filter($items, function ($i) {
 			return $i->is_new == 1; }));
+		// $data['trend_items'] = array_values(array_filter($items, function ($i) {
+		// 	return $i->is_trend == 1; }));
 		$promo_items = $this->Item_model->get_items_with_wishlist($id_customer, ['sort' => 'promo_terbaru'], null, 0);
 		foreach ($promo_items as &$item) {
 			$item->warna = $this->Item_model->get_warna($item->id_item);
