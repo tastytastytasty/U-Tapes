@@ -461,15 +461,25 @@
         <h2 class="card-title">Transfer ke Rekening</h2>
         <div class="bank-list">
           
-          <div class="bank-item">
-            <div class="bank-name">
-              <span class="bank-icon">BCA</span>
-              Bank Central Asia
+          <?php if ($rekening): ?>
+            <!-- ✅ SHOW SELECTED BANK ONLY (Dynamic) -->
+            <div class="bank-item">
+              <div class="bank-name">
+                <span class="bank-icon"><?= strtoupper(substr($rekening->bank, 0, 3)) ?></span>
+              </div>
+              <div class="account-number"><?= $rekening->nomor_rekening ?></div>
+              <div class="account-name">a.n. <?= $rekening->atas_nama ?></div>
+              <button class="copy-btn" onclick="copyToClipboard('<?= $rekening->nomor_rekening ?>')">
+                Salin Nomor Rekening
+              </button>
             </div>
-            <div class="account-number">1234567890</div>
-            <div class="account-name">a.n. UTaps Indonesia</div>
-            <button class="copy-btn" onclick="copyToClipboard('1234567890')">Salin Nomor Rekening</button>
-          </div>
+          <?php else: ?>
+            <!-- ❌ NO REKENING DATA -->
+            <div style="padding: 1.25rem; background: #fee; border-radius: 12px; border: 2px solid #fca5a5; text-align: center; color: #991b1b;">
+              <strong>⚠️ Data Rekening Tidak Ditemukan</strong><br>
+              <span style="font-size: 0.9rem;">Silakan hubungi customer service</span>
+            </div>
+          <?php endif; ?>
 
         </div>
       </div>

@@ -3065,9 +3065,9 @@
         <?php if (!empty($rekening_list)): ?>
             <?php foreach ($rekening_list as $rek): ?>
                 <option 
-                    value="<?= $rek->id_rekeneing ?>"
+                    value="<?= $rek->id_rekening ?>"
                     data-bank="<?= htmlspecialchars($rek->bank) ?>"
-                    data-nomor="<?= htmlspecialchars($rek->nomor_rekeneing) ?>"
+                    data-nomor="<?= htmlspecialchars($rek->nomor_rekening) ?>"
                     data-nama="<?= htmlspecialchars($rek->atas_nama) ?>"
                 >
                     🏦 <?= htmlspecialchars($rek->bank) ?>

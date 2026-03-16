@@ -57,7 +57,7 @@ class Checkout extends MY_Controller
         // ========== REKENING LIST ==========
         // ✅ GET ALL REKENING from database
         $rekening_list = $this->db
-            ->select('id_rekeneing, bank, nomor_rekeneing, atas_nama, gambar')
+            ->select('id_rekening, bank, nomor_rekening, atas_nama, gambar')
             ->get('rekening')
             ->result();
 

@@ -135,7 +135,7 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
         $rekening = null;
         if ($transaksi->metode_pembayaran == 'Rekening' && !empty($transaksi->id_rekening)) {
             $rekening = $this->db
-                ->where('id_rekeneing', $transaksi->id_rekening)
+                ->where('id_rekening', $transaksi->id_rekening)  // ✅ Database field: id_rekening
                 ->get('rekening')
                 ->row();
         }
