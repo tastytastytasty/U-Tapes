@@ -388,6 +388,10 @@
             { id_item, warna, ukuran },
             function (res) {
                 const data = JSON.parse(res);
+                
+                // ✅ SET HIDDEN INPUT VALUE
+                $('#id_item_detail').val(data.id_item_detail);
+                
                 updateCartButton(data);
 
                 if (data.stok <= 0) {

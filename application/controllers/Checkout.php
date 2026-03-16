@@ -50,20 +50,16 @@ class Checkout extends MY_Controller
         $has_no_address = empty($alamat_list);
 
         // ========== CART ITEMS ==========
-        $direct = $this->session->userdata('direct_checkout');
-
-        if ($direct) {
-            $this->session->unset_userdata('direct_checkout');
-            // Ambil data item_detail langsung dari DB
-            $checkout_items = $this->Checkout_model->get_direct_item(
-                $direct['id_item_detail'],
-                $direct['qty']
-            );
-        } else {
-            // Normal: dari keranjang yang di-checklist
-            $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
-        }
+        // ✅ FIX: Always ambil dari database (direct checkout sudah di-insert ke cart)
+        $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
         $summary = $this->Checkout_model->calculate_summary($checkout_items);
+
+        // ========== REKENING LIST ==========
+        // ✅ GET ALL REKENING from database
+        $rekening_list = $this->db
+            ->select('id_rekeneing, bank, nomor_rekeneing, atas_nama, gambar')
+            ->get('rekening')
+            ->result();
 
         // ========== NAVBAR CART ==========
         $this->load->model('Keranjang_model');
@@ -77,7 +73,8 @@ class Checkout extends MY_Controller
             'checkout_items' => $checkout_items,
             'summary' => $summary,
             'checkout_model' => $this->Checkout_model,
-            'cart_items' => $all_cart_items
+            'cart_items' => $all_cart_items,
+            'rekening_list' => $rekening_list  // ✅ Pass to view
         ];
 
         $data['contents'] = $this->load->view('checkout', $data, TRUE);
@@ -219,18 +216,63 @@ class Checkout extends MY_Controller
         $ukuran = $this->input->post('ukuran');
 
         if (!$id_item_detail || $qty <= 0) {
-            redirect('produk'); // atau halaman error
+            redirect('produk');
             return;
         }
 
-        // Simpan ke session sebagai direct checkout
-        $this->session->set_userdata('direct_checkout', [
-            'id_item_detail' => $id_item_detail,
-            'qty' => $qty,
-            'warna' => $warna,
-            'ukuran' => $ukuran,
-        ]);
+        // ✅ FIX: INSERT ke keranjang dengan checklist='Yes' (permanent di database)
+        $this->load->model('Keranjang_model');
+        
+        // Cek apakah item sudah ada di keranjang
+        $existing = $this->db
+            ->where('id_customer', $id_customer)
+            ->where('id_item_detail', $id_item_detail)
+            ->get('cart')
+            ->row();
+
+        if ($existing) {
+            // Update qty jika sudah ada
+            $this->db->set('qty', $existing->qty + $qty);
+            $this->db->where('id_cart', $existing->id_cart);
+            $this->db->update('cart');
+        } else {
+            // ✅ GENERATE id_cart sebelum insert
+            $id_cart = $this->generate_id_cart();
+            
+            // Insert baru dengan checklist='Yes'
+            $this->db->insert('cart', [
+                'id_cart' => $id_cart,  // ✅ TAMBAH id_cart
+                'id_customer' => $id_customer,
+                'id_item_detail' => $id_item_detail,
+                'qty' => $qty,
+                'checklist' => 'Yes'
+            ]);
+        }
 
         redirect('checkout');
+    }
+
+    // ✅ GENERATE UNIQUE id_cart
+    private function generate_id_cart()
+    {
+        $prefix = 'CART-' . date('Ym') . '-';
+        
+        $last_cart = $this->db
+            ->select('id_cart')
+            ->from('cart')
+            ->like('id_cart', $prefix, 'after')
+            ->order_by('id_cart', 'DESC')
+            ->limit(1)
+            ->get()
+            ->row();
+
+        if ($last_cart) {
+            $last_number = intval(substr($last_cart->id_cart, -4));
+            $new_number  = $last_number + 1;
+        } else {
+            $new_number = 1;
+        }
+
+        return $prefix . str_pad($new_number, 4, '0', STR_PAD_LEFT);
     }
 }

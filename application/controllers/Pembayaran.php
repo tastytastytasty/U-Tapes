@@ -131,6 +131,15 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             ->get('pembayaran')
             ->row();
         
+        // ✅ Get rekening info (if metode = Rekening)
+        $rekening = null;
+        if ($transaksi->metode_pembayaran == 'Rekening' && !empty($transaksi->id_rekening)) {
+            $rekening = $this->db
+                ->where('id_rekeneing', $transaksi->id_rekening)
+                ->get('rekening')
+                ->row();
+        }
+        
         // ✅ Check if bukti_transfer already exists
         $has_bukti = !empty($transaksi->bukti_transfer);
         
@@ -138,7 +147,8 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             'transaksi' => $transaksi,
             'items' => $items,
             'pembayaran' => $pembayaran,
-            'has_bukti' => $has_bukti  // ✅ Flag untuk view
+            'rekening' => $rekening,  // ✅ Pass rekening info
+            'has_bukti' => $has_bukti
         ];
         
         // ✅ Load standalone view

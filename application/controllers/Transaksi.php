@@ -31,6 +31,7 @@ class Transaksi extends CI_Controller {
             $kode_promo_ongkir = $this->input->post('kode_promo_ongkir');
             $diskon_voucher = $this->input->post('diskon_voucher');
             $diskon_ongkir = $this->input->post('diskon_ongkir');
+            $id_rekening = $this->input->post('id_rekening');  // ✅ GET id_rekening
 
             if (empty($total) || empty($metode_pembayaran)) {
                 $this->db->trans_rollback();
@@ -42,6 +43,13 @@ class Transaksi extends CI_Controller {
             if (!in_array($metode_pembayaran, $valid_methods)) {
                 $this->db->trans_rollback();
                 echo json_encode(['success' => false, 'message' => 'Metode pembayaran tidak valid']);
+                exit;
+            }
+            
+            // ✅ VALIDASI: Kalo pilih Rekening, harus ada id_rekening
+            if ($metode_pembayaran == 'Rekening' && empty($id_rekening)) {
+                $this->db->trans_rollback();
+                echo json_encode(['success' => false, 'message' => 'Silakan pilih rekening tujuan transfer']);
                 exit;
             }
 
@@ -84,6 +92,7 @@ class Transaksi extends CI_Controller {
                 'bayar'              => intval($bayar),
                 'ongkir'             => intval($ongkir),
                 'status_transaksi'   => 'Menunggu',
+                'id_rekening'        => intval($id_rekening ?? 0),  // ✅ SAVE id_rekening
 
                 // ── Tenggat pembayaran: 1 jam dari sekarang ──────────
                 'tenggat_pembayaran' => date('Y-m-d H:i:s', strtotime('+1 hour')),
@@ -184,15 +193,28 @@ class Transaksi extends CI_Controller {
                     ->get('promo')
                     ->row();
                 
-                if ($promo_item && $promo_item->kuota > 0) {
-                    $this->db->insert('transaksi_promo', [
-                        'id_promo'    => $promo_item->id_promo,
+                // ✅ VALIDASI: Check sisa_kouta (bukan kuota)
+                if ($promo_item && isset($promo_item->sisa_kouta) && $promo_item->sisa_kouta > 0) {
+                    $insert_promo = $this->db->insert('transaksi_promo', [
+                        'id_promo'     => $promo_item->id_promo,
                         'id_transaksi' => $id_transaksi,
-                        'id_customer' => $id_customer
+                        'id_customer'  => $id_customer
                     ]);
                     
-                    $this->Promo_model->use_promo($promo_item->id_promo);
-                    $promo_used[] = $kode_promo_item;
+                    if ($insert_promo) {
+                        // ✅ KURANGI sisa_kouta
+                        $reduce_quota = $this->Promo_model->use_promo($promo_item->id_promo);
+                        if ($reduce_quota) {
+                            $promo_used[] = $kode_promo_item;
+                            error_log('✅ Promo item ' . $kode_promo_item . ' berhasil disimpan & kuota berkurang');
+                        } else {
+                            error_log('⚠️ Promo item ' . $kode_promo_item . ' disimpan tapi kuota gagal berkurang');
+                        }
+                    } else {
+                        error_log('❌ Gagal insert transaksi_promo item: ' . $kode_promo_item);
+                    }
+                } else {
+                    error_log('⚠️ Promo item ' . $kode_promo_item . ' tidak ditemukan atau kuota habis (sisa_kouta: ' . ($promo_item->sisa_kouta ?? 'NULL') . ')');
                 }
             }
             
@@ -203,15 +225,28 @@ class Transaksi extends CI_Controller {
                     ->get('promo')
                     ->row();
                 
-                if ($promo_ongkir && $promo_ongkir->kuota > 0) {
-                    $this->db->insert('transaksi_promo', [
-                        'id_promo'    => $promo_ongkir->id_promo,
+                // ✅ VALIDASI: Check sisa_kouta (bukan kuota)
+                if ($promo_ongkir && isset($promo_ongkir->sisa_kouta) && $promo_ongkir->sisa_kouta > 0) {
+                    $insert_promo = $this->db->insert('transaksi_promo', [
+                        'id_promo'     => $promo_ongkir->id_promo,
                         'id_transaksi' => $id_transaksi,
-                        'id_customer' => $id_customer
+                        'id_customer'  => $id_customer
                     ]);
                     
-                    $this->Promo_model->use_promo($promo_ongkir->id_promo);
-                    $promo_used[] = $kode_promo_ongkir;
+                    if ($insert_promo) {
+                        // ✅ KURANGI sisa_kouta
+                        $reduce_quota = $this->Promo_model->use_promo($promo_ongkir->id_promo);
+                        if ($reduce_quota) {
+                            $promo_used[] = $kode_promo_ongkir;
+                            error_log('✅ Promo ongkir ' . $kode_promo_ongkir . ' berhasil disimpan & kuota berkurang');
+                        } else {
+                            error_log('⚠️ Promo ongkir ' . $kode_promo_ongkir . ' disimpan tapi kuota gagal berkurang');
+                        }
+                    } else {
+                        error_log('❌ Gagal insert transaksi_promo ongkir: ' . $kode_promo_ongkir);
+                    }
+                } else {
+                    error_log('⚠️ Promo ongkir ' . $kode_promo_ongkir . ' tidak ditemukan atau kuota habis (sisa_kouta: ' . ($promo_ongkir->sisa_kouta ?? 'NULL') . ')');
                 }
             }
 

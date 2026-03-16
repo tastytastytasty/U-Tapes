@@ -361,6 +361,59 @@
       margin-top: 0.25rem;
     }
 
+    .payment-method-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .payment-method-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1f2937;
+    }
+
+    .payment-select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .payment-select:hover {
+      border-color: #3b82f6;
+    }
+
+    .payment-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .rekening-section {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .rekening-preview {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 4px solid #3b82f6;
+    }
+
     /* Off-Canvas Promo */
     .offcanvas-overlay {
       position: fixed;
@@ -2994,19 +3047,45 @@
           </div>
         </div>
 
-        <!-- METODE PEMBAYARAN DROPDOWN -->
-        <div class="payment-method-section" style="margin-top: 1.5rem; padding: 1.25rem; background: var(--bg); border-radius: var(--radius-sm); border: 2px solid var(--border);">
-          <label style="font-size: 0.875rem; font-weight: 700; color: var(--text); display: block; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            💳 Metode Pembayaran
-          </label>
-          <select id="payment-method-select" style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9375rem; font-weight: 600; color: var(--text); background: white; cursor: pointer; transition: all 0.3s; font-family: inherit;">
-            <option value="">Pilih metode pembayaran</option>
-            <option value="bca">🏦 Bank BCA</option>
-            <option value="mandiri">🏧 Bank Mandiri</option>
-            <option value="bni">🏦 Bank BNI</option>
-            <option value="bri">🏦 Bank BRI</option>
-          </select>
-        </div>
+        <!-- Payment Method Section -->
+<div class="payment-method-container">
+    <div class="payment-method-title">
+        🏦 Pilih Rekening Transfer
+    </div>
+    
+    <!-- Rekening Dropdown -->
+    <select 
+        id="id_rekening" 
+        name="id_rekening"
+        class="payment-select"
+        required
+        onchange="handleRekeningChange(this)"
+    >
+        <option value="">-- Pilih Rekening Tujuan Transfer --</option>
+        <?php if (!empty($rekening_list)): ?>
+            <?php foreach ($rekening_list as $rek): ?>
+                <option 
+                    value="<?= $rek->id_rekeneing ?>"
+                    data-bank="<?= htmlspecialchars($rek->bank) ?>"
+                    data-nomor="<?= htmlspecialchars($rek->nomor_rekeneing) ?>"
+                    data-nama="<?= htmlspecialchars($rek->atas_nama) ?>"
+                >
+                    🏦 <?= htmlspecialchars($rek->bank) ?>
+                </option>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <option value="" disabled style="color: #ef4444;">Tidak ada rekening tersedia</option>
+        <?php endif; ?>
+    </select>
+    
+    <!-- Preview Rekening -->
+    <div id="rekening_preview" class="rekening-preview">
+        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Transfer ke:</div>
+        <div style="font-weight: 600; color: #1f2937; font-size: 16px;" id="preview_bank"></div>
+        <div style="font-size: 14px; color: #374151; font-family: monospace; margin-top: 4px;" id="preview_nomor"></div>
+        <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">Atas Nama: <span style="font-weight: 600; color: #1f2937;" id="preview_nama"></span></div>
+    </div>
+</div>
 
         <button class="btn-checkout" id="btn-pay-now" <?php if (!$alamat_checkout): ?>disabled<?php endif; ?>>
           <span>💳</span>
@@ -3310,52 +3389,7 @@
       </div>
     </div>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal" aria-hidden="true">
-      <div class="modal-overlay"></div>
-      <div class="modal-content payment-modal-content">
-
-        <div class="success-icon-wrapper">
-          <div class="success-icon">✓</div>
-        </div>
-
-        <div class="success-content">
-          <h2>Pembayaran Berhasil!</h2>
-          <p>Terima kasih atas pesanan Anda</p>
-
-          <div class="order-id">
-            <span>📋</span>
-            <span id="generated-order-id">ORDER-2026-001234</span>
-          </div>
-
-          <div class="order-details">
-            <div class="order-detail-row">
-              <span class="order-detail-label">Metode Pembayaran</span>
-              <span class="order-detail-value" id="selected-payment-method">-</span>
-            </div>
-            <div class="order-detail-row">
-              <span class="order-detail-label">Total Pembayaran</span>
-              <span class="order-detail-value" id="paid-amount">Rp 0</span>
-            </div>
-            <div class="order-detail-row">
-              <span class="order-detail-label">Waktu Pembayaran</span>
-              <span class="order-detail-value" id="payment-time">-</span>
-            </div>
-            <div class="order-detail-row">
-              <span class="order-detail-label">Status</span>
-              <span class="order-detail-value" style="color: var(--success);">✓ Lunas</span>
-            </div>
-          </div>
-
-          <button class="btn-success-action" onclick="trackOrder()">
-            📦 Lacak Pesanan
-          </button>
-          <button class="btn-secondary-action" onclick="continueShopping()">
-            🛍️ Lanjut Belanja
-          </button>
-        </div>
-      </div>
-    </div>
+ 
   </div>
 
   <script>
@@ -3458,10 +3492,11 @@
         desc = `Diskon ${value}%`;
       } else if (type === 'fixed') {
         state.voucherDiscount = value;
-        desc = `Potongan Rp ${value.toLocaleString('id-ID')}`;
+        desc = `Potongan ${formatRupiah(value)}`;
       }
 
       state.promoCodeItem = code;
+      state.voucherCode = code;  // ✅ UNTUK TRANSAKSI
       state.voucherDesc = desc; // ✅ SIMPAN DESC KE STATE!
 
       // Update UI - tampilkan promo applied
@@ -3532,6 +3567,7 @@
       }
 
       state.promoCodeShipping = code;
+      state.shippingVoucherCode = code;  // ✅ UNTUK TRANSAKSI
       state.shippingDesc = desc; // ✅ SIMPAN DESC KE STATE!
 
       // Update UI - tampilkan promo applied
@@ -3636,6 +3672,7 @@
     function removePromoItem() {
       state.voucherDiscount = 0;
       state.promoCodeItem = null;
+      state.voucherCode = null;  // ✅ CLEAR UNTUK TRANSAKSI
       state.voucherDesc = null; // ✅ RESET DESC JUGA!
 
       const promoItemContainer = document.getElementById('promo-item-container');
@@ -3688,6 +3725,7 @@
     function removePromoShipping() {
       state.shippingDiscount = 0;
       state.promoCodeShipping = null;
+      state.shippingVoucherCode = null;  // ✅ CLEAR UNTUK TRANSAKSI
       state.shippingDesc = null; // ✅ RESET DESC JUGA!
 
       const promoShippingContainer = document.getElementById('promo-shipping-container');
@@ -3955,12 +3993,12 @@
         return;
       }
 
-      // Ambil metode pembayaran dari dropdown
-      const paymentSelect = document.getElementById('payment-method-select');
-      const selectedPayment = paymentSelect ? paymentSelect.value : null;
-
-      if (!selectedPayment) {
-        showNotification('⚠️ Pilih metode pembayaran terlebih dahulu', 'error');
+      // Validasi rekening (metode pembayaran always Rekening)
+      const idRekening = document.getElementById('id_rekening');
+      const selectedRekening = idRekening ? idRekening.value : null;
+ 
+      if (!selectedRekening) {
+        showNotification('⚠️ Silakan pilih rekening tujuan transfer', 'error');
         return;
       }
 
@@ -3993,31 +4031,44 @@
       const ongkir = state.shipping - state.shippingDiscount;
 
       // Map metode pembayaran ke format database
-      const metodePembayaranMap = {
-        'bca': 'Rekening',
-        'mandiri': 'Rekening',
-        'bni': 'Rekening',
-        'bri': 'Rekening'
-      };
-
-      const metodePembayaran = metodePembayaranMap[selectedPayment] || 'Rekening';
+      /**
+ * Handle rekening selection change
+ */
+function handleRekeningChange(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const preview = document.getElementById('rekening_preview');
+    
+    if (selectElement.value && selectedOption.dataset.bank) {
+        // Update preview
+        document.getElementById('preview_bank').textContent = selectedOption.dataset.bank;
+        document.getElementById('preview_nomor').textContent = selectedOption.dataset.nomor;
+        document.getElementById('preview_nama').textContent = selectedOption.dataset.nama;
+        
+        // Show preview
+        preview.style.display = 'block';
+    } else {
+        // Hide preview
+        preview.style.display = 'none';
+    }
+}
 
       // ✅ Get alamat from PHP
       const idAlamat = '<?= $alamat_checkout->id_alamat ?? "" ?>';
 
       // Prepare data untuk dikirim
       const dataTransaksi = {
-        id_alamat: idAlamat,  // ✅ TAMBAH INI!
+        id_alamat: idAlamat,
         total: totalPembayaran,
-        metode_pembayaran: metodePembayaran,
+        metode_pembayaran: 'Rekening',  // ✅ HARDCODE
         bayar: totalPembayaran,
         kembali: 0,
         ongkir: ongkir,
+        id_rekening: selectedRekening,  // ✅ ADD THIS
         cart_ids: checkedCartIds.join(','),
         kode_promo_item: state.voucherCode || '',
         kode_promo_ongkir: state.shippingVoucherCode || '',
-        diskon_voucher: state.voucherDiscount || 0, // ✅ Nilai diskon voucher
-        diskon_ongkir: state.shippingDiscount || 0 // ✅ Nilai diskon ongkir
+        diskon_voucher: state.voucherDiscount || 0,
+        diskon_ongkir: state.shippingDiscount || 0
       };
 
       console.log('📤 Data transaksi:', dataTransaksi);
@@ -4194,6 +4245,13 @@
         if (shippingDetail) shippingDetail.textContent = '- ' + formatRupiah(state.shippingDiscount);
       } else if (shippingRow) {
         shippingRow.style.display = 'none';
+      }
+
+      // ✅ UPDATE SUBTOTAL ONGKIR (blue header value)
+      const subtotalOngkirEl = document.getElementById('subtotal-ongkir-display');
+      const subtotalOngkir = state.shipping - state.shippingDiscount;
+      if (subtotalOngkirEl) {
+        subtotalOngkirEl.textContent = formatRupiah(subtotalOngkir);
       }
 
       // Total final

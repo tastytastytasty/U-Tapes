@@ -98,7 +98,7 @@ class Promo_model extends CI_Model
         }
 
         // Cek kuota
-        if ($promo->kuota <= 0) {
+        if (!isset($promo->sisa_kouta) || $promo->sisa_kouta <= 0) {
             return [
                 'valid' => false,
                 'message' => 'Kuota promo sudah habis',
