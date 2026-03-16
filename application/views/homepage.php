@@ -443,7 +443,7 @@
 					<div class="row h-100">
 						<?php if ($new): ?>
 							<div
-								class="<?= ($has_main || $has_promo) ? 'col-lg-12 col-md-6' : 'col-12' ?> col-12 <?= $has_promo ? 'md-custom-padding' : '' ?>">
+								class="<?= ($has_main || $has_promo) ? 'col-lg-6 col-md-6' : 'col-12' ?> col-12 <?= $has_promo ? 'md-custom-padding' : '' ?>">
 								<div class="hero-small-banner h-100"
 									style="background-image: url('<?= base_url('assets/images/hero/slider1.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0,0,0,0.2); <?= !$has_main ? 'min-height:300px;' : '' ?>">
 									<a href="<?= site_url('detailproduct/' . $new->id_item) ?>"
@@ -482,7 +482,7 @@
 							}
 							?>
 							<div
-								class="<?= ($has_main || $has_new) ? 'col-lg-12 col-md-6' : 'col-12' ?> col-12 <?= $has_new ? 'mt-2' : '' ?>">
+								class="<?= ($has_main || $has_new) ? 'col-lg-6 col-md-6' : 'col-12' ?> col-12 <?= $has_new ? 'mt-2' : '' ?>">
 								<div class="hero-small-banner h-100"
 									style="background-image: url('<?= base_url('assets/images/hero/slider3.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0,0,0,0.2); <?= !$has_main ? 'min-height:300px;' : '' ?>">
 									<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>"
@@ -523,7 +523,7 @@
 	</div>
 </section>
 <!-- Start Trending Product Area -->
-<section class="trending-product section">
+<section class="trending-product section pt-5">
 	<div class="container-fluid px-4">
 		<div class="row align-items-center mb-3">
 			<div class="col-12">
@@ -560,11 +560,29 @@
 		<hr>
 		<?php $this->load->view('card', ['items' => $promo_items]); ?>
 	</div>
+	<div class="container-fluid px-4">
+		<div class="row align-items-center mb-3">
+			<div class="col-12">
+				<div class="section-title mb-0">
+					<h2 class="mb-0  mt-4">Produk Populer</h2>
+				</div>
+			</div>
+			<div class="text-end">
+				<a href="<?= site_url('katalog') ?>"
+					class="btn btn-link fw-bold text-primary text-decoration-none d-inline-flex align-items-center gap-2">
+					Lihat Semua
+					<i class="lni lni-arrow-right" style="font-size: 18px;"></i>
+				</a>
+			</div>
+		</div>
+		<hr>
+		<?php $this->load->view('card', ['items' => $trend_items]); ?>
+	</div>
 </section>
 <!-- End Trending Product Area -->
 
 <!-- Start Banner Area -->
-<section class="banner section">
+<!-- <section class="banner section">
 	<div class="container-fluid px-4">
 		<div class="row">
 			<div class="col-12">
@@ -603,5 +621,5 @@
 			</div>
 		</div>
 	</div>
-</section>
+</section> -->
 <!-- End Banner Area -->
