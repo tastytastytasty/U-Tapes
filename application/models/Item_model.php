@@ -195,4 +195,37 @@ class Item_model extends CI_Model
             ->get('about_us')
             ->result();
     }
+    public function item_terpopuler($id_customer = null, $limit = 8)
+    {
+        $this->db
+        ->select('item.id_item, item.merk, item.nama_item, item.gambar_item, item.usia_min, item.usia_max,
+            item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
+            SUM(item_detail.stok) AS total_stok, MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
+            MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
+            AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale,MAX(promo.kode_promo) AS kode_promo,
+            MAX(promo.persen_promo) AS persen_promo, MAX(promo.harga_promo) AS harga_promo,kategori.nama_kategori,
+            COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah,
+            SUM(transaksi_item.qty) AS total_qty
+        ');
+        $this->db->from('transaksi_item');
+        $this->db->join('item_detail', 'transaksi_item.id_item_detail = item_detail.id_item_detail');
+        $this->db->join('item', 'item_detail.id_item = item.id_item');
+        $this->db->join('kategori', 'item.id_kategori = kategori.id_kategori');
+        $this->db->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left');
+        $this->db->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left');
+        if ($id_customer) {
+            $this->db->join(
+                'wishlist',
+                'wishlist.id_item = item.id_item 
+                AND wishlist.id_customer = ' . $this->db->escape($id_customer),
+                'left'
+            );
+        } else {
+            $this->db->join('wishlist', '1=0', 'left');
+        }
+        $this->db->group_by('item.id_item, item.nama_item');
+        $this->db->order_by('total_qty', 'DESC');
+        $this->db->limit($limit);
+        return $this->db->get()->result();
+    }
 }

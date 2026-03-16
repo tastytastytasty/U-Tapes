@@ -560,7 +560,7 @@
 		<hr>
 		<?php $this->load->view('card', ['items' => $promo_items]); ?>
 	</div>
-	<!-- <div class="container-fluid px-4">
+	<div class="container-fluid px-4">
 		<div class="row align-items-center mb-3">
 			<div class="col-12">
 				<div class="section-title mb-0">
@@ -577,7 +577,7 @@
 		</div>
 		<hr>
 		<?php $this->load->view('card', ['items' => $trend_items]); ?>
-	</div> -->
+	</div>
 </section>
 <!-- End Trending Product Area -->
 
