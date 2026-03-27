@@ -5,34 +5,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
-    <title>Document</title>
+    <title>Profile - Toko Sepatu</title>
 </head>
+
 <style>
     /* ======================
    GLOBAL
 ====================== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
-        background-color: #f5f6f8;
-        font-family: 'Segoe UI', sans-serif;
+        background: #f5f6f8;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        min-height: 100vh;
+        padding: 0;
         margin: 0;
     }
 
-    a {
+    /* ======================
+   BREADCRUMBS
+====================== */
+    .breadcrumbs {
+        background: #fff;
+        border-bottom: 1px solid #e5e5e5;
+        padding: 16px 24px;
+        margin-bottom: 0;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .breadcrumb-nav {
+        list-style: none;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        color: #777;
+        font-size: 13px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .breadcrumb-nav li {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .breadcrumb-nav a {
+        color: #0d6efd;
         text-decoration: none;
-        color: inherit;
+        transition: all 0.3s;
+    }
+
+    .breadcrumb-nav a:hover {
+        color: #0a58ca;
     }
 
     /* ======================
-   LAYOUT
+   MAIN CONTAINER
 ====================== */
+    .profile-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
     .profile-wrapper {
         display: flex;
         min-height: 100vh;
     }
 
     /* ======================
-   SIDEBAR
+   SIDEBAR CARD
 ====================== */
     .profile-sidebar {
         width: 260px;
@@ -66,6 +118,31 @@
         color: #777;
     }
 
+    .profile-user-card {
+        display: none;
+    }
+
+    .profile-avatar-wrapper {
+        display: none;
+    }
+
+    .profile-avatar {
+        display: none;
+    }
+
+    .profile-user-info {
+        display: none;
+    }
+
+    .profile-user-name {
+        display: none;
+    }
+
+    .profile-user-email {
+        display: none;
+    }
+
+    /* Menu */
     .profile-menu {
         list-style: none;
         padding: 0;
@@ -76,121 +153,269 @@
         margin-bottom: 8px;
     }
 
-    .profile-menu a {
-        display: block;
+    .profile-menu .menu-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .menu-section-title {
+        display: none;
+    }
+
+    .profile-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         padding: 10px 12px;
         border-radius: 6px;
         font-size: 14px;
         color: #333;
+        transition: all 0.2s;
     }
 
-    .profile-menu a.active,
-    .profile-menu a:hover {
-        background-color: #eef2ff;
+    .profile-menu li a i {
+        display: none;
+    }
+
+    .profile-menu li a:hover {
+        background: #eef2ff;
         color: #0d6efd;
         font-weight: 500;
     }
 
+    .profile-menu li a.active {
+        background: #eef2ff;
+        color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .profile-menu li a.active i {
+        display: none;
+    }
+
+    .profile-menu hr {
+        margin: 15px 0;
+        border: none;
+        border-top: 1px solid #e5e5e5;
+    }
+
     /* ======================
-   CONTENT
+   CONTENT CARD
 ====================== */
     .profile-content {
         flex: 1;
         padding: 40px;
-        background: #fff;
+        background: #f5f6f8;
     }
 
-    .profile-header h4 {
-        font-weight: 600;
+    .profile-header {
+        margin-bottom: 32px;
+    }
+
+    .profile-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
     }
 
     .profile-header p {
-        color: #777;
+        color: #888;
         font-size: 14px;
-        margin-bottom: 25px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .profile-divider {
+        height: 1px;
+        background: #e5e5e5;
+        margin: 24px 0 32px 0;
     }
 
     /* ======================
-   FORM
+   FORM LAYOUT
 ====================== */
-    .profile-form {
-        max-width: 900px;
+    .profile-form-wrapper {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
     }
 
-    .profile-row {
-        display: flex;
-        margin-bottom: 20px;
+    /* Form Fields */
+    .profile-field {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        align-items: start;
+        gap: 20px;
+        margin-bottom: 24px;
     }
 
-    .profile-row label {
-        width: 160px;
+    .profile-field label {
         font-size: 14px;
+        font-weight: 600;
         color: #555;
-        padding-top: 8px;
+        padding-top: 10px;
     }
 
-    .profile-row input,
-    .profile-row select {
+    .profile-field-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .profile-field-value {
         flex: 1;
-        border: 1px solid #ddd;
-        padding: 8px 10px;
-        border-radius: 4px;
+        padding: 10px 16px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border: 2px solid transparent;
         font-size: 14px;
+        color: #333;
+        transition: all 0.3s;
     }
 
-    .profile-row small {
-        margin-left: 10px;
-        font-size: 13px;
+    .profile-field-value:focus {
+        outline: none;
+        border-color: #0d6efd;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    }
+
+    .profile-field-value.readonly {
+        background: #f8f9fa;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .profile-field-value.empty {
+        color: #999;
+        font-style: italic;
+    }
+
+    .btn-edit {
+        padding: 8px 16px;
+        background: transparent;
+        border: 2px solid #0d6efd;
         color: #0d6efd;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
-    /* ======================
-   AVATAR
-====================== */
-    .profile-avatar {
-        text-align: center;
-        margin-left: 40px;
+    .btn-edit:hover {
+        background: #0d6efd;
+        color: white;
     }
 
-    .profile-avatar img {
-        width: 120px;
-        height: 120px;
+    /* Avatar Upload Section */
+    .profile-avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 2px dashed #ddd;
+    }
+
+    .profile-avatar-large {
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         object-fit: cover;
-        margin-bottom: 10px;
+        border: 5px solid white;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        margin-bottom: 20px;
+        transition: all 0.3s;
     }
 
-    .profile-avatar button {
-        font-size: 13px;
+    .profile-avatar-large:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(102, 126, 234, 0.3);
     }
 
-    .profile-avatar p {
-        font-size: 12px;
-        color: #777;
-    }
-
-    /* ======================
-   BUTTON
-====================== */
-    .btn-save {
-        background: #ee4d2d;
-        color: #fff;
-        padding: 10px 35px;
+    .avatar-upload-btn {
+        padding: 10px 24px;
+        background: #0d6efd;
+        color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 12px;
+    }
+
+    .avatar-upload-btn:hover {
+        background: #0a58ca;
+    }
+
+    .avatar-upload-info {
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    /* Save Button */
+    .profile-actions {
+        margin-top: 32px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-save {
+        padding: 12px 32px;
+        background: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
     }
 
     .btn-save:hover {
-        background: #ffffffff;
+        background: #0a58ca;
+    }
+
+    .btn-cancel {
+        padding: 12px 32px;
+        background: white;
+        color: #666;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
     }
 
     /* ======================
-   RESPONSIVE
+   RESPONSIVE ADJUSTMENTS
 ====================== */
+
     @media (max-width: 992px) {
         .profile-wrapper {
             flex-direction: column;
@@ -202,44 +427,68 @@
             border-bottom: 1px solid #e5e5e5;
         }
 
+        .profile-form-wrapper {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-avatar-section {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
         .profile-content {
-            padding: 25px;
+            padding: 24px;
         }
 
-        .profile-row {
-            flex-direction: column;
+        .profile-field {
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
 
-        .profile-row label {
+        .profile-field label {
+            padding-top: 0;
+        }
+
+        .btn-save,
+        .btn-cancel {
             width: 100%;
-            margin-bottom: 6px;
-        }
-
-        .profile-avatar {
-            margin-left: 0;
-            margin-top: 30px;
         }
     }
 
     @media (max-width: 576px) {
+        body {
+            padding: 10px 0;
+        }
+
+        .profile-container {
+            padding: 0 10px;
+        }
+
         .profile-content {
-            padding: 15px;
+            padding: 20px;
         }
 
-        .profile-header h4 {
-            font-size: 18px;
+        .profile-header h2 {
+            font-size: 22px;
         }
 
-        .btn-save {
+        .profile-field-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-edit {
             width: 100%;
+            justify-content: center;
         }
     }
 </style>
 
 <body>
-    <!-- Start Breadcrumbs -->
+    <!-- Breadcrumbs -->
     <div class="breadcrumbs">
-        <div class="container">
+        <div class="container-fluid px-4">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="breadcrumbs-content">
@@ -255,128 +504,200 @@
             </div>
         </div>
     </div>
-    <!-- End Breadcrumbs -->
-    <div class="container-fluid">
-        <div class="row min-vh-100">
+
+    <!-- Main Content -->
+    <div class="profile-container">
+        <div class="profile-wrapper">
 
             <!-- SIDEBAR -->
-            <div class="col-lg-3 col-md-4 profile-sidebar">
+            <div class="profile-sidebar">
                 <div class="profile-user">
-                    <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
+                    <?php 
+                    $avatar = $user['avatar'] ?? null;
+                    $nama = $user['nama'] ?? 'Guest';
+                    $inisial = strtoupper(substr($nama, 0, 1));
+                    $avatarFile = FCPATH . 'assets/images/avatar/' . $avatar;
+                    ?>
+                    <?php if (!empty($avatar) && file_exists($avatarFile)): ?>
+                        <img src="<?= base_url('assets/images/avatar/' . $avatar) ?>" alt="user" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                    <?php else: ?>
+                        <div style="width: 48px; height: 48px; background: #0d6efd; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+                            <?= $inisial ?>
+                        </div>
+                    <?php endif; ?>
                     <div>
-                        <strong><strong><?= $logged_in && !empty($user['nama'])
-                            ? htmlspecialchars($user['nama'])
-                            : 'Guest' ?>
-                            </strong></strong><br>
-                        <span>Ubah Profil</span>
+                        <strong><?= htmlspecialchars($nama) ?></strong><br>
                     </div>
                 </div>
 
                 <ul class="profile-menu">
-                    <li class="menu-title">
-                        <i class="bi bi-person"></i> Akun Saya
-                    </li>
-                    <li><a href="#" class="active">Profil</a></li>
+                    <li class="menu-title"><i class="bi bi-person"></i> Akun Saya</li>
+                    <li><a href="<?= site_url('profile') ?>" class="active">Profil</a></li>
                     <li><a href="<?= site_url('alamat') ?>">Alamat</a></li>
-                    <li><a href="#">Ubah Kata sandi</a></li>
+                    <li><a href="#">Ubah Kata Sandi</a></li>
 
                     <hr>
 
-                    <li class="menu-link">
-                        <a href="<?= site_url('pesanan') ?>"><i class="bi bi-receipt"></i> Pesanan Saya</a>
-                    </li>
-                    <li class="menu-link">
-                        <a href="#"><i class="bi bi-bell"></i> Notifikasi</a>
-                    </li>
+                    <li><a href="<?= site_url('pesanan') ?>"><i class="bi bi-receipt"></i> Pesanan Saya</a></li>
+                    <li><a href="#"><i class="bi bi-bell"></i> Notifikasi</a></li>
                 </ul>
             </div>
 
-
             <!-- CONTENT -->
-            <div class="col-lg-9 col-md-8 p-5 profile-content">
-                <h4>Profil Saya</h4>
-                <p class="text-muted">
-                    Kelola informasi profil Anda untuk mengontrol, melindungi dan mengamankan akun
-                </p>
-                <hr>
-
-                <form class="row">
-                    <!-- FORM KIRI -->
-                    <div class="col-lg-8">
-
-                        <div class="mb-3 row">
-                            <label class="col-sm-3 col-form-label">Nama</label>
-                            <div class="col-sm-9">
-                                <?= isset($user['nama']) ? htmlspecialchars($user['nama']) : 'Guest' ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row">
-                            <label class="col-sm-3 col-form-label">Email</label>
-                            <div class="col-sm-9 pt-2">
-                                <?= isset($user['email']) ? htmlspecialchars($user['email']) : 'email belum terdaftar' ?>
-                                <a href="#">Ubah</a>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 row">
-                            <label class="col-sm-3 col-form-label">Jenis Kelamin</label>
-                            <div class="col-sm-9 pt-2">
-                                <?php
-                                $jk = strtolower(trim($user['jenis_kelamin'] ?? ''));
-                                if ($jk === '') {
-                                    echo '<span class="text-muted">Belum diisi</span>';
-                                } else {
-                                    if (in_array($jk, ['p', 'pria', 'l', 'laki', 'laki-laki'], true)) {
-                                        echo 'Pria';
-                                    } elseif (in_array($jk, ['w', 'wanita', 'perempuan', 'wanita'], true)) {
-                                        echo 'Wanita';
-                                    } else {
-                                        echo htmlspecialchars(ucfirst($jk));
-                                    }
-                                }
-                                ?>
-                            </div>
-                        </div>
-
-
-                        <div class="mb-4 row">
-                            <label class="col-sm-3 col-form-label">Tanggal Lahir</label>
-                            <div class="col-sm-9 pt-2">
-                                <?php
-                                if (!empty($user['tanggal_lahir'])) {
-                                    echo date('d F Y', strtotime($user['tanggal_lahir']));
-                                } else {
-                                    echo '<span class="text-muted">Belum diisi</span>';
-                                }
-                                ?>
-                            </div>
-                        </div>
-
-
-                        <button class="btn btn-primary px-4">Simpan</button>
+            <main class="profile-content">
+                <!-- Alert Messages -->
+                <?php if ($this->session->flashdata('success')): ?>
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-check-circle"></i>
+                        <span><?= $this->session->flashdata('success') ?></span>
                     </div>
+                <?php endif; ?>
+                
+                <?php if ($this->session->flashdata('error')): ?>
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span><?= $this->session->flashdata('error') ?></span>
+                    </div>
+                <?php endif; ?>
 
-                    <!-- FOTO PROFILE -->
-                    <div class="col-lg-4 text-center mt-4 mt-lg-0">
-                        <img src="https://via.placeholder.com/150" class="rounded-circle mb-3"
-                            style="width:150px;height:150px;object-fit:cover">
+                <!-- Header -->
+                <div class="profile-header">
+                    <h2>Profil Saya</h2>
+                    <p>Kelola informasi profil Anda untuk mengontrol, melindungi dan mengamankan akun</p>
+                </div>
 
+                <div class="profile-divider"></div>
+
+                <!-- Form -->
+                <form method="POST" action="<?= site_url('profile/update_profile') ?>" enctype="multipart/form-data">
+                    <div class="profile-form-wrapper">
+                        
+                        <!-- Left: Form Fields -->
                         <div>
-                            <input type="file" class="form-control mb-2">
-                            <small class="text-muted">
-                                Ukuran maks. 1 MB<br>
-                                Format JPG, PNG
-                            </small>
-                        </div>
-                    </div>
+                            <!-- Nama -->
+                            <div class="profile-field">
+                                <label>Nama Lengkap</label>
+                                <div class="profile-field-content">
+                                    <input type="text" 
+                                           class="profile-field-value readonly" 
+                                           value="<?= isset($user['nama']) ? htmlspecialchars($user['nama']) : '' ?>"
+                                           readonly>
+                                </div>
+                            </div>
 
+                            <!-- Email -->
+                            <div class="profile-field">
+                                <label>Email</label>
+                                <div class="profile-field-content">
+                                    <input type="email" 
+                                           class="profile-field-value readonly" 
+                                           value="<?= isset($user['email']) ? htmlspecialchars($user['email']) : '' ?>"
+                                           readonly>
+                                    <a href="<?= site_url('profile/edit_email') ?>" class="btn-edit">
+                                        <i class="bi bi-pencil"></i> Ubah
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Nomor Telepon -->
+                            <div class="profile-field">
+                                <label>Nomor Telepon</label>
+                                <div class="profile-field-content">
+                                    <input type="tel" 
+                                           name="no_telp"
+                                           class="profile-field-value" 
+                                           placeholder="Masukkan nomor telepon"
+                                           value="<?= isset($user['no_telp']) ? htmlspecialchars($user['no_telp']) : '' ?>">
+                                </div>
+                            </div>
+
+
+
+                            <!-- Actions -->
+                            <div class="profile-actions">
+                                <button type="submit" class="btn-save">
+                                    <i class="bi bi-check-circle"></i> Simpan Perubahan
+                                </button>
+                                <button type="reset" class="btn-cancel">
+                                    Batal
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right: Avatar Upload -->
+                        <div class="profile-avatar-section">
+                            <?php 
+                            $avatar = $user['avatar'] ?? null;
+                            $nama = $user['nama'] ?? 'Guest';
+                            $inisial = strtoupper(substr($nama, 0, 1));
+                            $avatarFile = FCPATH . 'assets/images/avatar/' . $avatar;
+                            ?>
+                            <?php if (!empty($avatar) && file_exists($avatarFile)): ?>
+                                <img src="<?= base_url('assets/images/avatar/' . $avatar) ?>" 
+                                     alt="Profile" 
+                                     class="profile-avatar-large"
+                                     id="avatar-preview">
+                            <?php else: ?>
+                                <div style="width: 140px; height: 140px; background: #0d6efd; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);" id="avatar-preview">
+                                    <?= $inisial ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <label for="avatar-upload" class="avatar-upload-btn">
+                                <i class="bi bi-camera"></i> Pilih Foto
+                            </label>
+                            <input type="file" 
+                                   id="avatar-upload"
+                                   name="avatar"
+                                   accept="image/*"
+                                   onchange="previewAvatar(this)">
+                            
+                            <div class="avatar-upload-info">
+                                Ukuran maksimal: <strong>2 MB</strong><br>
+                                Format: <strong>JPG, PNG, JPEG, GIF, WEBP</strong>
+                            </div>
+                        </div>
+
+                    </div>
                 </form>
-            </div>
+            </main>
 
         </div>
     </div>
 
+    <script>
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Validate file size
+            if (file.size > 2 * 1024 * 1024) { // 2MB
+                alert('Ukuran file terlalu besar. Maksimal 2 MB');
+                input.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let previewEl = document.getElementById('avatar-preview');
+                
+                // If it's a div (initial), replace with img
+                if (previewEl.tagName === 'DIV') {
+                    const newImg = document.createElement('img');
+                    newImg.id = 'avatar-preview';
+                    newImg.className = 'profile-avatar-large';
+                    newImg.alt = 'Profile';
+                    newImg.src = e.target.result;
+                    previewEl.replaceWith(newImg);
+                    previewEl = document.getElementById('avatar-preview');
+                } else {
+                    previewEl.src = e.target.result;
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+    </script>
 </body>
 
 </html>

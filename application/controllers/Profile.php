@@ -32,6 +32,69 @@ class Profile extends MY_Controller
 		$this->load->view('navbar', $viewData);
 	}
 
+	/**
+	 * Handle profile update
+	 */
+	public function update_profile()
+	{
+		if ($this->input->server('REQUEST_METHOD') !== 'POST') {
+			redirect('profile');
+		}
+
+		$id_customer = $this->session->userdata('user')['id_customer'];
+		
+		$this->load->model('User_model');
+
+		// Validasi input
+		$this->form_validation->set_rules('no_telp', 'Nomor Telepon', 'trim');
+
+		if ($this->form_validation->run() == FALSE) {
+			$this->session->set_flashdata('error', validation_errors());
+			redirect('profile');
+			return;
+		}
+
+		// Prepare data untuk update
+		$update_data = [];
+
+		$no_telp = $this->input->post('no_telp', true);
+		if (!empty($no_telp)) {
+			$update_data['no_telp'] = $no_telp;
+		}
+
+		// Handle avatar upload
+		if (!empty($_FILES['avatar']['name'])) {
+			$upload_result = $this->User_model->upload_avatar();
+			
+			if (!$upload_result['status']) {
+				$this->session->set_flashdata('error', 'Gagal upload avatar: ' . $upload_result['message']);
+				redirect('profile');
+				return;
+			}
+
+			// Delete old avatar
+			$current_user = $this->User_model->get_by_id($id_customer);
+			if (!empty($current_user['avatar'])) {
+				$this->User_model->delete_avatar_file($current_user['avatar']);
+			}
+
+			$update_data['avatar'] = $upload_result['filename'];
+		}
+
+		// Update ke database
+		if ($this->User_model->update_profile($id_customer, $update_data)) {
+			// Update session dengan data terbaru
+			$updated_user = $this->User_model->get_by_id($id_customer);
+			$this->session->set_userdata('user', $updated_user);
+
+			$this->session->set_flashdata('success', 'Profil berhasil diperbarui');
+		} else {
+			$this->session->set_flashdata('error', 'Gagal memperbarui profil');
+		}
+
+		redirect('profile');
+	}
+
 	public function edit_email()
 	{
 		$this->load->view('profile/edit_email');

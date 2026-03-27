@@ -67,10 +67,10 @@ class Pesanan extends MY_Controller {
         }
     }
     
-    $viewData = [
+    $viewData = array_merge($this->global_data, [
         'logged_in' => $this->session->userdata('logged_in'),
         'transaksi_list' => $transaksi_list
-    ];
+    ]);
 
     $data['contents'] = $this->load->view('pesanan', $viewData, TRUE);
 

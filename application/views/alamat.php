@@ -92,12 +92,25 @@
             margin-bottom: 8px;
         }
 
+        .profile-menu .menu-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .profile-menu a {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             padding: 10px 12px;
             border-radius: 6px;
             font-size: 14px;
             color: #333;
+            transition: all 0.2s;
         }
 
         .profile-menu a.active,
@@ -944,11 +957,16 @@
 <body>
     <!-- BREADCRUMBS -->
     <div class="breadcrumbs">
-        <div class="container breadcrumbs-container">
+        <div class="container-fluid px-4">
             <div class="row align-items-center">
-                <div class="col-md-6 text-end">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Alamat</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12 text-end">
                     <ul class="breadcrumb-nav">
-                        <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Home</a></li>
+                        <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Beranda</a></li>
                         <li><a href="<?= site_url('profile') ?>">Profile</a></li>
                         <li>Alamat</li>
                     </ul>
@@ -962,13 +980,22 @@
             <!-- SIDEBAR -->
             <div class="col-lg-3 col-md-4 profile-sidebar">
                 <div class="profile-user">
-                    <img src="<?= base_url('assets/images/products/product-6.jpg') ?>" alt="user">
+                    <?php 
+                    $avatar = $user['avatar'] ?? null;
+                    $nama = $user['nama'] ?? 'Guest';
+                    $inisial = strtoupper(substr($nama, 0, 1));
+                    $avatarFile = FCPATH . 'assets/images/avatar/' . $avatar;
+                    ?>
+                    <?php if (!empty($avatar) && file_exists($avatarFile)): ?>
+                        <img src="<?= base_url('assets/images/avatar/' . $avatar) ?>" alt="user" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                    <?php else: ?>
+                        <div style="width: 48px; height: 48px; background: #0d6efd; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+                            <?= $inisial ?>
+                        </div>
+                    <?php endif; ?>
                     <div>
-                        <strong><strong><?= $logged_in && !empty($user['nama'])
-                            ? htmlspecialchars($user['nama'])
-                            : 'Guest' ?>
+                        <strong><strong><?= htmlspecialchars($nama) ?>
                             </strong></strong><br>
-                        <span>Ubah Profil</span>
                     </div>
                 </div>
 

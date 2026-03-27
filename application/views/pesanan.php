@@ -844,15 +844,20 @@ function render_order_card($transaksi) {
 <body>
     <!-- BREADCRUMBS -->
     <div class="breadcrumbs">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1 class="page-title">Pesanan Saya</h1>
-            </div>
-            <div class="col-md-6 text-end">
-                <ul class="breadcrumb-nav">
-                    <li><a href="<?= site_url('') ?>"><i class="bi bi-house"></i> Home</a></li>
-                    <li>Pesanan</li>
-                </ul>
+        <div class="container-fluid px-4">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Pesanan Saya</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12 text-end">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="<?= site_url('homepage') ?>"><i class="lni lni-home"></i> Beranda</a></li>
+                        <li><a href="<?= site_url('profile') ?>">Profile</a></li>
+                        <li>Pesanan Saya</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -861,10 +866,21 @@ function render_order_card($transaksi) {
         <!-- SIDEBAR -->
         <div class="profile-sidebar">
             <div class="profile-user">
-                <img src="<?= base_url('assets/images/user-default.jpg') ?>" alt="user" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22 viewBox=%220 0 24 24%22 fill=%22%23ccc%22%3E%3Cpath d=%22M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z%22/%3E%3C/svg%3E'">
+                <?php 
+                $avatar = $user['avatar'] ?? null;
+                $nama = $user['nama'] ?? 'Guest';
+                $inisial = strtoupper(substr($nama, 0, 1));
+                $avatarFile = FCPATH . 'assets/images/avatar/' . $avatar;
+                ?>
+                <?php if (!empty($avatar) && file_exists($avatarFile)): ?>
+                    <img src="<?= base_url('assets/images/avatar/' . $avatar) ?>" alt="user" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                <?php else: ?>
+                    <div style="width: 48px; height: 48px; background: #0d6efd; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">
+                        <?= $inisial ?>
+                    </div>
+                <?php endif; ?>
                 <div>
-                    <strong><?= isset($logged_in) && $logged_in && !empty($user['nama']) ? htmlspecialchars($user['nama']) : 'Guest' ?></strong><br>
-                    <span>Ubah Profil</span>
+                    <strong><?= htmlspecialchars($nama) ?></strong><br>
                 </div>
             </div>
 
