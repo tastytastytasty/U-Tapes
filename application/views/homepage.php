@@ -443,7 +443,7 @@
 					<div class="row h-100">
 						<?php if ($new): ?>
 							<div
-								class="<?= ($has_main || $has_promo) ? 'col-lg-6 col-md-6' : 'col-12' ?> col-12 <?= $has_promo ? 'md-custom-padding' : '' ?>">
+								class="<?= (!$has_main && !$has_promo) ? 'col-12' : (!$has_main ? 'col-lg-6 col-md-6' : 'col-lg-12 col-md-6') ?> col-12 <?= $has_promo ? 'mt-2' : '' ?>">
 								<div class="hero-small-banner h-100"
 									style="background-image: url('<?= base_url('assets/images/hero/slider1.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0,0,0,0.2); <?= !$has_main ? 'min-height:300px;' : '' ?>">
 									<a href="<?= site_url('detailproduct/' . $new->id_item) ?>"
@@ -482,7 +482,7 @@
 							}
 							?>
 							<div
-								class="<?= ($has_main || $has_new) ? 'col-lg-6 col-md-6' : 'col-12' ?> col-12 <?= $has_new ? 'mt-2' : '' ?>">
+								class="<?= (!$has_main && !$has_new) ? 'col-12' : (!$has_main ? 'col-lg-6 col-md-6' : 'col-lg-12 col-md-6') ?> col-12 <?= $has_new ? 'mt-2' : '' ?>">
 								<div class="hero-small-banner h-100"
 									style="background-image: url('<?= base_url('assets/images/hero/slider3.jpg') ?>'); display:flex; align-items:center; justify-content:space-between; box-shadow:0 5px 8px rgba(0,0,0,0.2); <?= !$has_main ? 'min-height:300px;' : '' ?>">
 									<a href="<?= site_url('detailproduct/' . $promo->id_item) ?>"
@@ -580,46 +580,3 @@
 	</div>
 </section>
 <!-- End Trending Product Area -->
-
-<!-- Start Banner Area -->
-<!-- <section class="banner section">
-	<div class="container-fluid px-4">
-		<div class="row">
-			<div class="col-12">
-				<div class="section-title">
-					<h2>Trending Product</h2>
-					<p>There are many variations of passages of Lorem Ipsum available, but the majority have
-						suffered alteration in some form.</p>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-6 col-md-6 col-12">
-				<div class="single-banner"
-					style="background-image:url('<?= base_url('assets/images/banner/banner-1-bg.jpg') ?>')">
-					<div class="content">
-						<h2>Smart Watch 2.0</h2>
-						<p>Space Gray Aluminum Case with <br>Black/Volt Real Sport Band </p>
-						<div class="button">
-							<a href="<?= site_url('detailproduct') ?>" class="btn">Lihat Detail</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-6 col-md-6 col-12">
-				<div class="single-banner custom-responsive-margin"
-					style="background-image:url('<?= base_url('assets/images/banner/banner-2-bg.jpg') ?>')">
-					<div class="content">
-						<h2>Smart Headphone</h2>
-						<p>Lorem ipsum dolor sit amet, <br>eiusmod tempor
-							incididunt ut labore.</p>
-						<div class="button">
-							<a href="<?= site_url('detailproduct') ?>" class="btn">Beli Sekarang</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section> -->
-<!-- End Banner Area -->

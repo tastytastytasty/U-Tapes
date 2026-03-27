@@ -31,6 +31,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script src="<?= base_url('assets/js/sweetalert2.all.min.js') ?>"></script>
 </head>
 <style>
+    .btn-primary,
+    .btn.bg-gradient-primary {
+        background-color: #0d6efd !important;
+        background-image: none !important;
+        border-color: #0d6efd !important;
+    }
+
+    .btn-primary:hover,
+    .btn.bg-gradient-primary:hover {
+        background-color: #0a58ca !important;
+        border-color: #0a58ca !important;
+    }
+
+    .btn-primary:focus,
+    .btn.bg-gradient-primary:focus {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5) !important;
+    }
+
+    #forgot-password-text {
+        color: #0d6efd !important;
+    }
+
+    .bg-gradient-primary {
+        background-image: linear-gradient(310deg, #3888ff 0%, #72aaff 100%);
+    }
     .preloader {
         position: fixed;
         top: 0;
@@ -173,15 +200,68 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div
                             class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
-                            <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
-                                style="background-image: url('<?= base_url('assets/') ?>images/item/item6.jpg');
-          background-size: cover;">
-                                <span class="mask bg-gradient-primary opacity-6"></span>
-                                <h4 class="mt-5 text-white font-weight-bolder position-relative">“Belanja Mudah, Langkah
-                                    Maksimal.”</h4>
-                                <p class="text-white position-relative">Temui sepatu yang terbaik untukmu disini!</p>
+                            <?php
+                            $default_image = 'images/item/item6.jpg';
+                            $has_images = !empty($gambar_slideshow);
+                            ?>
+                            <div
+                                class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
+                                id="slideshow-wrapper" style="background-size: cover;">
+                                <?php if ($has_images): ?>
+                                <?php foreach ($gambar_slideshow as $index => $item): ?>
+                                    <div class="slide-bg" style="
+                                        position: absolute;
+                                        inset: 0;
+                                        background-image: url('<?= base_url('assets/images/item/') . $item['gambar'] ?>');
+                                        background-size: cover;
+                                        background-position: center;
+                                        opacity: <?= $index === 0 ? '1' : '0' ?>;
+                                        transition: opacity 1s ease-in-out;
+                                        z-index: 0;
+                                    ">
+                                    </div>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                <div class="slide-bg" style="
+                                    position: absolute;
+                                    inset: 0;
+                                    background-image: url('<?= base_url('assets/') ?><?= $default_image ?>');
+                                    background-size: cover;
+                                    background-position: center;
+                                    opacity: 1;
+                                    z-index: 0;
+                                ">
+                                </div>
+                                <?php endif; ?>
+                                <span class="mask bg-gradient-primary opacity-5" style="z-index: 1;"></span>
+                                <h4 class="mt-5 text-white font-weight-bolder position-relative" style="z-index: 2;">
+                                "Belanja Mudah, Langkah Maksimal."
+                                </h4>
+                                <p class="text-white position-relative" style="z-index: 2;">
+                                Temui sepatu yang terbaik untukmu disini!
+                                </p>
                             </div>
-                        </div>
+                            </div>
+                            <?php if ($has_images && count($gambar_slideshow) > 1): ?>
+                            <script>
+                                (function () {
+                                const wrapper = document.getElementById('slideshow-wrapper');
+                                const slides = Array.from(wrapper.querySelectorAll('.slide-bg'));
+                                for (let i = slides.length - 1; i > 0; i--) {
+                                    const j = Math.floor(Math.random() * (i + 1));
+                                    wrapper.insertBefore(slides[j], slides[i]);
+                                }
+                                const shuffled = Array.from(wrapper.querySelectorAll('.slide-bg'));
+                                shuffled.forEach((s, i) => s.style.opacity = i === 0 ? '1' : '0');
+                                let current = 0;
+                                setInterval(function () {
+                                    shuffled[current].style.opacity = '0';
+                                    current = (current + 1) % shuffled.length;
+                                    shuffled[current].style.opacity = '1';
+                                }, 4000);
+                                })();
+                            </script>
+                            <?php endif; ?>
                     </div>
                 </div>
             </div>

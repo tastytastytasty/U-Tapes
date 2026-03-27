@@ -22,10 +22,17 @@ class Register extends MY_Controller
                 echo "Kamu berhasil!";
             }
         }
+		$this->db->select('gambar');
+        $this->db->from('item_detail');
+        $this->db->where('gambar !=', 'no_image.jpg');
+        $query = $this->db->get();
+        $gambar_list = $query->result_array();
+        shuffle($gambar_list);
 
         $data = array(
             'widget' => $this->recaptcha->getWidget(),
             'script' => $this->recaptcha->getScriptTag(),
+			'gambar_slideshow' => $gambar_list,
         );
 		$this->load->view('register', $data);
 	}
