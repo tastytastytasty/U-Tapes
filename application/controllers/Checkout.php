@@ -50,17 +50,31 @@ class Checkout extends MY_Controller
         $has_no_address = empty($alamat_list);
 
         // ========== CART ITEMS ==========
-        // ✅ FIX: Always ambil dari database (direct checkout sudah di-insert ke cart)
-        $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
-        $summary = $this->Checkout_model->calculate_summary($checkout_items);
+        $direct = $this->session->userdata('direct_checkout');
 
+        if ($direct) {
+            $this->session->unset_userdata('direct_checkout');
+            $checkout_items = $this->Checkout_model->get_direct_item(
+                $direct['id_item_detail'],
+                $direct['qty']
+            );
+
+            // ✅ Simpan ke session khusus agar simpan() bisa akses
+            $this->session->set_userdata('_direct_checkout_data', [
+                'id_item_detail' => $direct['id_item_detail'],
+                'qty' => $direct['qty'],
+            ]);
+        } else {
+            $this->session->unset_userdata('_direct_checkout_data'); // ✅ Bersihkan kalau normal
+            $checkout_items = $this->Checkout_model->get_checkout_items($id_customer);
+        }
+        $summary = $this->Checkout_model->calculate_summary($checkout_items);
         // ========== REKENING LIST ==========
         // ✅ GET ALL REKENING from database
         $rekening_list = $this->db
             ->select('id_rekening, bank, nomor_rekening, atas_nama, gambar')
             ->get('rekening')
             ->result();
-
         // ========== NAVBAR CART ==========
         $this->load->model('Keranjang_model');
         $all_cart_items = $this->Keranjang_model->get_by_customer($id_customer);
@@ -74,7 +88,7 @@ class Checkout extends MY_Controller
             'summary' => $summary,
             'checkout_model' => $this->Checkout_model,
             'cart_items' => $all_cart_items,
-            'rekening_list' => $rekening_list  // ✅ Pass to view
+            'rekening_list' => $rekening_list
         ];
 
         $data['contents'] = $this->load->view('checkout', $data, TRUE);
@@ -220,59 +234,14 @@ class Checkout extends MY_Controller
             return;
         }
 
-        // ✅ FIX: INSERT ke keranjang dengan checklist='Yes' (permanent di database)
-        $this->load->model('Keranjang_model');
-        
-        // Cek apakah item sudah ada di keranjang
-        $existing = $this->db
-            ->where('id_customer', $id_customer)
-            ->where('id_item_detail', $id_item_detail)
-            ->get('cart')
-            ->row();
-
-        if ($existing) {
-            // Update qty jika sudah ada
-            $this->db->set('qty', $existing->qty + $qty);
-            $this->db->where('id_cart', $existing->id_cart);
-            $this->db->update('cart');
-        } else {
-            // ✅ GENERATE id_cart sebelum insert
-            $id_cart = $this->generate_id_cart();
-            
-            // Insert baru dengan checklist='Yes'
-            $this->db->insert('cart', [
-                'id_cart' => $id_cart,  // ✅ TAMBAH id_cart
-                'id_customer' => $id_customer,
-                'id_item_detail' => $id_item_detail,
-                'qty' => $qty,
-                'checklist' => 'Yes'
-            ]);
-        }
+        // Simpan ke session sebagai direct checkout
+        $this->session->set_userdata('direct_checkout', [
+            'id_item_detail' => $id_item_detail,
+            'qty' => $qty,
+            'warna' => $warna,
+            'ukuran' => $ukuran,
+        ]);
 
         redirect('checkout');
-    }
-
-    // ✅ GENERATE UNIQUE id_cart
-    private function generate_id_cart()
-    {
-        $prefix = 'CART-' . date('Ym') . '-';
-        
-        $last_cart = $this->db
-            ->select('id_cart')
-            ->from('cart')
-            ->like('id_cart', $prefix, 'after')
-            ->order_by('id_cart', 'DESC')
-            ->limit(1)
-            ->get()
-            ->row();
-
-        if ($last_cart) {
-            $last_number = intval(substr($last_cart->id_cart, -4));
-            $new_number  = $last_number + 1;
-        } else {
-            $new_number = 1;
-        }
-
-        return $prefix . str_pad($new_number, 4, '0', STR_PAD_LEFT);
     }
 }

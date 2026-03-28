@@ -276,17 +276,17 @@
     <div class="container-fluid px-4">
         <div class="row">
             <div class="col-12 <?= ($this->session->userdata('logged_in') && !empty($cart)) ? 'col-lg-8' : '' ?> p-0">
-                <div class="d-flex align-items-center mb-2">
-                    <div class="input-group w-100" style="border: 1.5px solid #d0d0d0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
-                        <span class="input-group-text bg-white border-0">
-                            <i class="lni lni-search-alt text-muted"></i>
-                        </span>
-                        <input type="text" id="cart-search-input" class="form-control border-0 ps-0" 
-                        placeholder="Cari produk di keranjang..." style="font-size: 0.95rem; padding: 10px 12px;">
-                    </div>
-                </div>
                 <?php if ($this->session->userdata('logged_in')): ?>
                     <?php if (!empty($cart)): ?>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="input-group w-100" style="border: 1.5px solid #d0d0d0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
+                                <span class="input-group-text bg-white border-0">
+                                    <i class="lni lni-search-alt text-muted"></i>
+                                </span>
+                                <input type="text" id="cart-search-input" class="form-control border-0 ps-0" 
+                                placeholder="Cari produk di keranjang..." style="font-size: 0.95rem; padding: 10px 12px;">
+                            </div>
+                        </div>
                         <div class="row" id="cart-items-wrapper">
                             <?php
                             $total_harga_asli = 0;
