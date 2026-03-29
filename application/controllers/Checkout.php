@@ -220,10 +220,13 @@ class Checkout extends MY_Controller
             return;
         }
 
-        // ✅ FIX: INSERT ke keranjang dengan checklist='Yes' (permanent di database)
-        $this->load->model('Keranjang_model');
-        
-        // Cek apakah item sudah ada di keranjang
+        // ✅ STEP 1: UNCHECK semua item di keranjang customer ini
+        // (Biar direct checkout selalu "replace" bukan "append")
+        $this->db
+            ->where('id_customer', $id_customer)
+            ->update('cart', ['checklist' => 'No']);
+
+        // ✅ STEP 2: Cek apakah item ini sudah ada di keranjang
         $existing = $this->db
             ->where('id_customer', $id_customer)
             ->where('id_item_detail', $id_item_detail)
@@ -231,17 +234,19 @@ class Checkout extends MY_Controller
             ->row();
 
         if ($existing) {
-            // Update qty jika sudah ada
-            $this->db->set('qty', $existing->qty + $qty);
-            $this->db->where('id_cart', $existing->id_cart);
-            $this->db->update('cart');
+            // ✅ STEP 3a: Update qty + checklist='Yes' jika sudah ada
+            $this->db
+                ->where('id_cart', $existing->id_cart)
+                ->update('cart', [
+                    'qty' => $qty,           // Replace qty (bukan tambah)
+                    'checklist' => 'Yes'     // Check item ini
+                ]);
         } else {
-            // ✅ GENERATE id_cart sebelum insert
+            // ✅ STEP 3b: Insert baru dengan checklist='Yes'
             $id_cart = $this->generate_id_cart();
             
-            // Insert baru dengan checklist='Yes'
             $this->db->insert('cart', [
-                'id_cart' => $id_cart,  // ✅ TAMBAH id_cart
+                'id_cart' => $id_cart,
                 'id_customer' => $id_customer,
                 'id_item_detail' => $id_item_detail,
                 'qty' => $qty,
@@ -249,6 +254,7 @@ class Checkout extends MY_Controller
             ]);
         }
 
+        // ✅ STEP 4: Redirect ke checkout
         redirect('checkout');
     }
 

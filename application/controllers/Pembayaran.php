@@ -247,7 +247,7 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
         
         error_log("✅ Update transaksi: " . ($update_transaksi ? 'SUCCESS' : 'FAILED'));
         
-        // ✅ Update pembayaran status ke "Diproses"
+        // ✅ Update pembayaran status ke "Menunggu"
         $update_pembayaran = $this->db->where('id_transaksi', $transaksi->id_transaksi)
             ->update('pembayaran', [
                 'status' => 'Menunggu'

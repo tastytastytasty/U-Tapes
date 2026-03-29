@@ -325,7 +325,7 @@
                 <a href="javascript:window.print()" class="btn btn-print">
                     🖨️ Print Invoice
                 </a>
-                <a href="<?= base_url('pesanan') ?>" class="btn btn-back">
+                <a href="<?= base_url('index.php/pesanan') ?>" class="btn btn-back">
                     ← Kembali ke Pesanan
                 </a>
             </div>
