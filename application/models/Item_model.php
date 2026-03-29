@@ -79,11 +79,13 @@ class Item_model extends CI_Model
             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
             MAX(promo_detail.id_promo_detail) AS latest_promo_detail,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-                AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale
+                AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale,
+            COALESCE(SUM(transaksi_item.qty), 0) AS total_qty
         ");
         $this->db->from('item');
         $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
         $this->db->join('item_detail', 'item_detail.id_item = item.id_item');
+        $this->db->join('transaksi_item', 'transaksi_item.id_item_detail = item_detail.id_item_detail', 'left');
         $this->db->join('promo_detail', 'promo_detail.id_item_detail = item_detail.id_item_detail', 'left');
         $this->db->join('promo', 'promo.id_promo = promo_detail.id_promo', 'left');
         if ($id_customer) {
@@ -128,6 +130,10 @@ class Item_model extends CI_Model
                 break;
             case 'promo_terbaru':
                 $this->db->order_by('latest_promo_detail', 'DESC');
+                break;
+            case 'terpopuler':
+                $this->db->order_by('total_qty', 'DESC');
+                $this->db->order_by('item.id_item', 'DESC');
                 break;
             default:
                 $this->db->order_by('item.id_item', 'DESC');
@@ -198,7 +204,7 @@ class Item_model extends CI_Model
     public function item_terpopuler($id_customer = null, $limit = 8)
     {
         $this->db
-        ->select('item.id_item, item.merk, item.nama_item, item.gambar_item, item.usia_min, item.usia_max,
+            ->select('item.id_item, item.merk, item.nama_item, item.gambar_item, item.usia_min, item.usia_max,
             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
             SUM(item_detail.stok) AS total_stok, MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
@@ -225,6 +231,7 @@ class Item_model extends CI_Model
         }
         $this->db->group_by('item.id_item, item.nama_item');
         $this->db->order_by('total_qty', 'DESC');
+        $this->db->order_by('item.id_item', 'DESC');
         $this->db->limit($limit);
         return $this->db->get()->result();
     }
