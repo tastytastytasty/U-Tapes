@@ -2811,6 +2811,43 @@
       transform: none;
       box-shadow: none;
     }
+
+    .promo-auto-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #f0f9ff;
+    border-left: 3px solid #0ea5e9;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #0369a1;
+    display: flex;
+    align-items: start;
+    gap: 8px;
+}
+ 
+.promo-auto-note i {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+ 
+.promo-active-indicator {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse-promo 2s infinite;
+}
+ 
+@keyframes pulse-promo {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
   </style>
 </head>
 
@@ -2841,12 +2878,20 @@
                 <span class="phone">📱 <?= htmlspecialchars($alamat_checkout->nomor_telp_penerima ?? '-') ?></span>
               </div>
 
-              <p class="address-detail"><?= htmlspecialchars($alamat_checkout->detail) ?><?php if (!empty($alamat_checkout->nama_kelurahan)): ?>, <?= htmlspecialchars($alamat_checkout->nama_kelurahan) ?>, <?= htmlspecialchars($alamat_checkout->nama_kecamatan) ?>, <?= htmlspecialchars($alamat_checkout->nama_kabupaten) ?>, <?= htmlspecialchars($alamat_checkout->nama_provinsi) ?> <?= htmlspecialchars($alamat_checkout->kode_pos) ?><?php endif; ?></p>
+              <p class="address-detail">
+                <?= htmlspecialchars($alamat_checkout->detail) ?>   <?php if (!empty($alamat_checkout->nama_kelurahan)): ?>,
+                  <?= htmlspecialchars($alamat_checkout->nama_kelurahan) ?>,
+                  <?= htmlspecialchars($alamat_checkout->nama_kecamatan) ?>,
+                  <?= htmlspecialchars($alamat_checkout->nama_kabupaten) ?>,
+                  <?= htmlspecialchars($alamat_checkout->nama_provinsi) ?>
+                  <?= htmlspecialchars($alamat_checkout->kode_pos) ?>   <?php endif; ?>
+              </p>
             </div>
           <?php else: ?>
             <div class="alert alert-warning">
               ⚠️ Belum ada alamat pengiriman.
-              <a href="javascript:void(0)" onclick="openModalTambahAlamat()" style="color: var(--primary); font-weight: 700; text-decoration: underline;">
+              <a href="javascript:void(0)" onclick="openModalTambahAlamat()"
+                style="color: var(--primary); font-weight: 700; text-decoration: underline;">
                 Klik di sini untuk menambah alamat
               </a>
             </div>
@@ -2856,7 +2901,8 @@
 
       <!-- Produk - DARI DATABASE -->
       <div class="box">
-        <h3>🛍️ Pesanan Anda (<?= isset($summary) && isset($summary['total_items']) ? $summary['total_items'] : 0 ?> item)</h3>
+        <h3>🛍️ Pesanan Anda (<?= isset($summary) && isset($summary['total_items']) ? $summary['total_items'] : 0 ?>
+          item)</h3>
 
 
 
@@ -2876,11 +2922,17 @@
             $is_new = ($item->is_new == 1);
             ?>
 
-            <div class="product-item" data-id-cart="<?= $item->id_cart ?>" data-price="<?= $subtotal ?>">
+            <?php
+            $is_direct = is_null($item->id_cart);
+            $direct_session = $this->session->userdata('_direct_checkout_data'); // akan kita set di controller
+            ?>
+
+            <div class="product-item" data-id-cart="<?= $item->id_cart ?? '' ?>"
+              data-id-item-detail="<?= $item->id_item_detail ?>" data-qty="<?= $item->qty ?>"
+              data-is-direct="<?= $is_direct ? '1' : '0' ?>" data-price="<?= $subtotal ?>">
 
               <div class="product-img-wrapper">
-                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>"
-                  class="product-img"
+                <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" class="product-img"
                   alt="<?= htmlspecialchars($item->nama_item) ?>"
                   onerror="if(!this.dataset.errored){this.dataset.errored=1;this.src='<?= base_url('assets/images/no-image.jpg') ?>';}">
 
@@ -2921,7 +2973,8 @@
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <div class="alert alert-warning" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 1.5rem; text-align: center;">
+          <div class="alert alert-warning"
+            style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 1.5rem; text-align: center;">
             <div style="font-size: 3rem; margin-bottom: 1rem;">🛒</div>
             <h4 style="color: #856404; margin-bottom: 0.5rem;">Tidak ada item yang dipilih untuk checkout</h4>
             <p style="color: #856404; margin-bottom: 1rem;">
@@ -2933,35 +2986,35 @@
             </a>
 
             <?php /* DEBUG INFO - COMMENTED OUT
-            <?php if (ENVIRONMENT === 'development'): ?>
-              <div style="margin-top: 1.5rem; padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; font-size: 0.875rem; text-align: left;">
-                <strong>🐛 Debug Info - Kenapa Kosong?</strong><br><br>
+<?php if (ENVIRONMENT === 'development'): ?>
+<div style="margin-top: 1.5rem; padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; font-size: 0.875rem; text-align: left;">
+ <strong>🐛 Debug Info - Kenapa Kosong?</strong><br><br>
 
-                <strong>1. Session Info:</strong><br>
-                - ID Customer: <?= $this->session->userdata('id_customer') ?><br><br>
+ <strong>1. Session Info:</strong><br>
+ - ID Customer: <?= $this->session->userdata('id_customer') ?><br><br>
 
-                <strong>2. Database Query:</strong><br>
-                - Query: SELECT * FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>' AND checklist = 'Yes'<br>
-                - Result: 0 rows<br><br>
+ <strong>2. Database Query:</strong><br>
+ - Query: SELECT * FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>' AND checklist = 'Yes'<br>
+ - Result: 0 rows<br><br>
 
-                <strong>3. Kemungkinan Penyebab:</strong><br>
-                - ❌ Semua item di cart memiliki checklist = 'No'<br>
-                - ❌ Cart kosong (belum ada item)<br>
-                - ❌ User belum centang item di halaman keranjang<br><br>
+ <strong>3. Kemungkinan Penyebab:</strong><br>
+ - ❌ Semua item di cart memiliki checklist = 'No'<br>
+ - ❌ Cart kosong (belum ada item)<br>
+ - ❌ User belum centang item di halaman keranjang<br><br>
 
-                <strong>4. Solusi:</strong><br>
-                1. Buka halaman keranjang<br>
-                2. Centang checkbox item yang mau dibeli<br>
-                3. Klik "Checkout"<br>
-                4. Item yang dicentang akan muncul di sini<br><br>
+ <strong>4. Solusi:</strong><br>
+ 1. Buka halaman keranjang<br>
+ 2. Centang checkbox item yang mau dibeli<br>
+ 3. Klik "Checkout"<br>
+ 4. Item yang dicentang akan muncul di sini<br><br>
 
-                <strong>5. Check Database Manual:</strong><br>
-                <code style="background: #333; color: #0f0; padding: 0.5rem; display: block; border-radius: 4px; margin-top: 0.5rem;">
-                  SELECT id_cart, checklist FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>';
-                </code>
-              </div>
-            <?php endif; ?>
-            */ ?>
+ <strong>5. Check Database Manual:</strong><br>
+ <code style="background: #333; color: #0f0; padding: 0.5rem; display: block; border-radius: 4px; margin-top: 0.5rem;">
+   SELECT id_cart, checklist FROM cart WHERE id_customer = '<?= $this->session->userdata('id_customer') ?>';
+ </code>
+</div>
+<?php endif; ?>
+*/ ?>
           </div>
         <?php endif; ?>
       </div>
@@ -3005,7 +3058,8 @@
               <?php if (isset($summary) && $summary['total_discount'] > 0): ?>
                 <div class="summary-detail-row discount">
                   <span class="label">💸 Diskon Produk</span>
-                  <span class="value" id="product-discount-detail">- Rp <?= number_format($summary['total_discount'], 0, ',', '.') ?></span>
+                  <span class="value" id="product-discount-detail">- Rp
+                    <?= number_format($summary['total_discount'], 0, ',', '.') ?></span>
                 </div>
               <?php endif; ?>
               <div class="summary-detail-row voucher" id="voucher-product-row" style="display: none;">
@@ -3048,44 +3102,38 @@
         </div>
 
         <!-- Payment Method Section -->
-<div class="payment-method-container">
-    <div class="payment-method-title">
-        🏦 Pilih Rekening Transfer
-    </div>
-    
-    <!-- Rekening Dropdown -->
-    <select 
-        id="id_rekening" 
-        name="id_rekening"
-        class="payment-select"
-        required
-        onchange="handleRekeningChange(this)"
-    >
-        <option value="">-- Pilih Rekening Tujuan Transfer --</option>
-        <?php if (!empty($rekening_list)): ?>
-            <?php foreach ($rekening_list as $rek): ?>
-                <option 
-                    value="<?= $rek->id_rekening ?>"
-                    data-bank="<?= htmlspecialchars($rek->bank) ?>"
-                    data-nomor="<?= htmlspecialchars($rek->nomor_rekening) ?>"
-                    data-nama="<?= htmlspecialchars($rek->atas_nama) ?>"
-                >
-                    🏦 <?= htmlspecialchars($rek->bank) ?>
+        <div class="payment-method-container">
+          <div class="payment-method-title">
+            🏦 Pilih Rekening Transfer
+          </div>
+
+          <!-- Rekening Dropdown -->
+          <select id="id_rekening" name="id_rekening" class="payment-select" required
+            onchange="handleRekeningChange(this)">
+            <option value="">-- Pilih Rekening Tujuan Transfer --</option>
+            <?php if (!empty($rekening_list)): ?>
+              <?php foreach ($rekening_list as $rek): ?>
+                <option value="<?= $rek->id_rekening ?>" data-bank="<?= htmlspecialchars($rek->bank) ?>"
+                  data-nomor="<?= htmlspecialchars($rek->nomor_rekening) ?>"
+                  data-nama="<?= htmlspecialchars($rek->atas_nama) ?>">
+                  🏦 <?= htmlspecialchars($rek->bank) ?>
                 </option>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <option value="" disabled style="color: #ef4444;">Tidak ada rekening tersedia</option>
-        <?php endif; ?>
-    </select>
-    
-    <!-- Preview Rekening -->
-    <div id="rekening_preview" class="rekening-preview">
-        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Transfer ke:</div>
-        <div style="font-weight: 600; color: #1f2937; font-size: 16px;" id="preview_bank"></div>
-        <div style="font-size: 14px; color: #374151; font-family: monospace; margin-top: 4px;" id="preview_nomor"></div>
-        <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">Atas Nama: <span style="font-weight: 600; color: #1f2937;" id="preview_nama"></span></div>
-    </div>
-</div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <option value="" disabled style="color: #ef4444;">Tidak ada rekening tersedia</option>
+            <?php endif; ?>
+          </select>
+
+          <!-- Preview Rekening -->
+          <div id="rekening_preview" class="rekening-preview">
+            <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Transfer ke:</div>
+            <div style="font-weight: 600; color: #1f2937; font-size: 16px;" id="preview_bank"></div>
+            <div style="font-size: 14px; color: #374151; font-family: monospace; margin-top: 4px;" id="preview_nomor">
+            </div>
+            <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">Atas Nama: <span
+                style="font-weight: 600; color: #1f2937;" id="preview_nama"></span></div>
+          </div>
+        </div>
 
         <button class="btn-checkout" id="btn-pay-now" <?php if (!$alamat_checkout): ?>disabled<?php endif; ?>>
           <span>💳</span>
@@ -3109,38 +3157,50 @@
             <button class="btn-apply-promo" id="btn-apply-promo-item">Pakai</button>
           </div>
 
-          <!-- Available Vouchers ITEM -->
-          <div class="voucher-section-title">✨ Voucher Item Tersedia</div>
+          <!-- ✅ DYNAMIC Available Vouchers ITEM from PHP -->
+          <?php if (!empty($voucher_items)): ?>
+            <div class="voucher-section-title">✨ Voucher Item Tersedia</div>
 
-          <!-- Voucher 1 -->
-          <div class="voucher-card" data-code="DISKON10" data-type="percentage" data-value="10">
-            <div class="voucher-left">
-              <div class="voucher-icon">10%</div>
-              <div class="voucher-info">
-                <div class="voucher-title">Diskon 10%</div>
-                <div class="voucher-desc">Potongan 10% untuk semua produk</div>
-                <div class="voucher-valid">Berlaku hingga 31 Jan 2026</div>
-              </div>
-            </div>
-            <button class="btn-use-voucher" onclick="applyVoucherItem('DISKON10', 'percentage', 10)">
-              Pakai
-            </button>
-          </div>
+            <?php foreach ($voucher_items as $voucher): ?>
+              <?php
+              // Determine discount display
+              $discount_display = '';
+              $discount_desc = '';
+              if ($voucher->persen_promo > 0) {
+                $discount_display = $voucher->persen_promo . '%';
+                $discount_desc = 'Diskon ' . $voucher->persen_promo . '% untuk produk';
+              } elseif ($voucher->harga_promo > 0) {
+                $discount_display = number_format($voucher->harga_promo / 1000, 0) . 'K';
+                $discount_desc = 'Potongan Rp ' . number_format($voucher->harga_promo, 0, ',', '.');
+              }
 
-          <!-- Voucher 2 -->
-          <div class="voucher-card" data-code="GRATIS50" data-type="fixed" data-value="50000">
-            <div class="voucher-left">
-              <div class="voucher-icon">50K</div>
-              <div class="voucher-info">
-                <div class="voucher-title">Potongan Rp 50.000</div>
-                <div class="voucher-desc">Untuk pembelian min. Rp 500.000</div>
-                <div class="voucher-valid">Berlaku hingga 28 Feb 2026</div>
+              // Format validity period
+              $valid_until = date('d M Y', strtotime($voucher->hingga));
+              ?>
+
+              <div class="voucher-card" 
+                   data-code="<?= $voucher->kode_promo ?>" 
+                   data-id="<?= $voucher->id_promo ?>">
+                <div class="voucher-left">
+                  <div class="voucher-icon"><?= $discount_display ?></div>
+                  <div class="voucher-info">
+                    <div class="voucher-title"><?= $voucher->kode_promo ?></div>
+                    <div class="voucher-desc"><?= $discount_desc ?></div>
+                    <div class="voucher-valid">Berlaku hingga <?= $valid_until ?></div>
+                  </div>
+                </div>
+                <button class="btn-use-voucher" 
+                        onclick="applyManualVoucher('<?= $voucher->kode_promo ?>', 'item')">
+                  Pakai
+                </button>
               </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <div style="text-align: center; padding: 2rem; color: var(--muted);">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">🎁</div>
+              <p>Tidak ada voucher item tersedia saat ini</p>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucherItem('GRATIS50', 'fixed', 50000)">
-              Pakai
-            </button>
-          </div>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -3160,38 +3220,50 @@
             <button class="btn-apply-promo" id="btn-apply-promo-shipping">Pakai</button>
           </div>
 
-          <!-- Available Vouchers SHIPPING -->
-          <div class="voucher-section-title">✨ Voucher Gratis Ongkir Tersedia</div>
+          <!-- ✅ DYNAMIC Available Vouchers SHIPPING from PHP -->
+          <?php if (!empty($voucher_ongkir)): ?>
+            <div class="voucher-section-title">✨ Voucher Gratis Ongkir Tersedia</div>
 
-          <!-- Voucher 3 -->
-          <div class="voucher-card" data-code="FREEONGKIR" data-type="shipping" data-value="0">
-            <div class="voucher-left">
-              <div class="voucher-icon">🚚</div>
-              <div class="voucher-info">
-                <div class="voucher-title">Gratis Ongkir</div>
-                <div class="voucher-desc">Bebas biaya pengiriman</div>
-                <div class="voucher-valid">Berlaku hingga 15 Feb 2026</div>
-              </div>
-            </div>
-            <button class="btn-use-voucher" onclick="applyVoucherShipping('FREEONGKIR', 'shipping', 0)">
-              Pakai
-            </button>
-          </div>
+            <?php foreach ($voucher_ongkir as $voucher): ?>
+              <?php
+              // Determine discount display
+              $discount_display = '';
+              $discount_desc = '';
+              if ($voucher->persen_promo > 0) {
+                $discount_display = $voucher->persen_promo . '%';
+                $discount_desc = 'Diskon ongkir ' . $voucher->persen_promo . '%';
+              } else {
+                $discount_display = '🚚';
+                $discount_desc = 'Gratis biaya pengiriman';
+              }
 
-          <!-- Voucher Shipping 50% -->
-          <div class="voucher-card" data-code="ONGKIR50" data-type="shipping_percentage" data-value="50">
-            <div class="voucher-left">
-              <div class="voucher-icon">50%</div>
-              <div class="voucher-info">
-                <div class="voucher-title">Diskon Ongkir 50%</div>
-                <div class="voucher-desc">Potongan 50% biaya pengiriman</div>
-                <div class="voucher-valid">Berlaku hingga 20 Feb 2026</div>
+              // Format validity period
+              $valid_until = date('d M Y', strtotime($voucher->hingga));
+              ?>
+
+              <div class="voucher-card" 
+                   data-code="<?= $voucher->kode_promo ?>" 
+                   data-id="<?= $voucher->id_promo ?>">
+                <div class="voucher-left">
+                  <div class="voucher-icon"><?= $discount_display ?></div>
+                  <div class="voucher-info">
+                    <div class="voucher-title"><?= $voucher->kode_promo ?></div>
+                    <div class="voucher-desc"><?= $discount_desc ?></div>
+                    <div class="voucher-valid">Berlaku hingga <?= $valid_until ?></div>
+                  </div>
+                </div>
+                <button class="btn-use-voucher" 
+                        onclick="applyManualVoucher('<?= $voucher->kode_promo ?>', 'ongkir')">
+                  Pakai
+                </button>
               </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <div style="text-align: center; padding: 2rem; color: var(--muted);">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">🚚</div>
+              <p>Tidak ada voucher ongkir tersedia saat ini</p>
             </div>
-            <button class="btn-use-voucher" onclick="applyVoucherShipping('ONGKIR50', 'shipping_percentage', 50)">
-              Pakai
-            </button>
-          </div>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -3256,10 +3328,7 @@
                     <?php endif; ?>
                   </div>
                 </div>
-                <button
-                  class="btn-use-address"
-                  data-id="<?= $alamat->id_alamat ?>"
-                  <?= $is_selected ? 'disabled' : '' ?>>
+                <button class="btn-use-address" data-id="<?= $alamat->id_alamat ?>" <?= $is_selected ? 'disabled' : '' ?>>
                   <?= $is_selected ? 'Terpilih' : 'Pilih' ?>
                 </button>
               </div>
@@ -3389,7 +3458,7 @@
       </div>
     </div>
 
- 
+
   </div>
 
   <script>
@@ -3403,7 +3472,13 @@
       shippingDiscount: 0,
       promoCodeItem: null, // Promo untuk item
       promoCodeShipping: null, // Promo untuk shipping
-      selectedPayment: null
+      voucherCode: null, // ✅ Untuk transaksi
+      voucherDesc: null, // ✅ Deskripsi promo item
+      shippingVoucherCode: null, // ✅ Untuk transaksi
+      shippingDesc: null, // ✅ Deskripsi promo shipping
+      selectedPayment: null,
+      autoPromoItem: null, // ✅ Auto-applied item promo
+      autoPromoOngkir: null // ✅ Auto-applied shipping promo
     };
 
     // Format Rupiah
@@ -3813,13 +3888,13 @@
 
       // AJAX request ke backend
       fetch('<?= site_url("checkout/apply_promo") ?>', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest' // ✅ For AJAX detection
-          },
-          body: `kode_promo=${encodeURIComponent(code)}&jenis=${jenis}&total_belanja=${currentSubtotal}`
-        })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest' // ✅ For AJAX detection
+        },
+        body: `kode_promo=${encodeURIComponent(code)}&jenis=${jenis}&total_belanja=${currentSubtotal}`
+      })
         .then(response => {
           console.log('📡 Response status:', response.status);
           console.log('📡 Response headers:', response.headers);
@@ -3894,8 +3969,14 @@
             errorMsg += ' - Response bukan JSON valid';
           }
 
-          showNotification(`❌ ${errorMsg}`, 'error');
+            showNotification(`❌ ${errorMsg}`, 'error');
         });
+    }
+
+    // ✅ NEW: Wrapper for voucher card button clicks
+    function applyManualVoucher(code, jenis) {
+      console.log('🎫 Manual voucher clicked:', code, jenis);
+      validateAndApplyPromo(code, jenis);
     }
 
     // Attach Promo Events - UNTUK ITEM
@@ -3904,7 +3985,7 @@
       const promoCodeInput = document.getElementById('promo-code-item');
 
       if (btnApplyPromo) {
-        btnApplyPromo.addEventListener('click', function() {
+        btnApplyPromo.addEventListener('click', function () {
           const code = promoCodeInput.value.trim().toUpperCase();
           if (code) {
             // ✅ VALIDATE dari DATABASE
@@ -3916,7 +3997,7 @@
       }
 
       if (promoCodeInput) {
-        promoCodeInput.addEventListener('keypress', function(e) {
+        promoCodeInput.addEventListener('keypress', function (e) {
           if (e.key === 'Enter') {
             e.preventDefault();
             const code = promoCodeInput.value.trim().toUpperCase();
@@ -3937,7 +4018,7 @@
       const promoCodeInput = document.getElementById('promo-code-shipping');
 
       if (btnApplyPromo) {
-        btnApplyPromo.addEventListener('click', function() {
+        btnApplyPromo.addEventListener('click', function () {
           const code = promoCodeInput.value.trim().toUpperCase();
           if (code) {
             // ✅ VALIDATE dari DATABASE
@@ -3949,7 +4030,7 @@
       }
 
       if (promoCodeInput) {
-        promoCodeInput.addEventListener('keypress', function(e) {
+        promoCodeInput.addEventListener('keypress', function (e) {
           if (e.key === 'Enter') {
             e.preventDefault();
             const code = promoCodeInput.value.trim().toUpperCase();
@@ -3996,7 +4077,7 @@
       // Validasi rekening (metode pembayaran always Rekening)
       const idRekening = document.getElementById('id_rekening');
       const selectedRekening = idRekening ? idRekening.value : null;
- 
+
       if (!selectedRekening) {
         showNotification('⚠️ Silakan pilih rekening tujuan transfer', 'error');
         return;
@@ -4004,15 +4085,22 @@
 
       // Ambil semua cart ID dari product items (semua yang tampil di halaman)
       const checkedCartIds = [];
+      let isDirect = false;
+      let directItemDetail = null;
+      let directQty = null;
       document.querySelectorAll('.product-item').forEach(item => {
-        const cartId = item.getAttribute('data-id-cart');
-        if (cartId) {
-          checkedCartIds.push(cartId);
+        if (item.getAttribute('data-is-direct') === '1') {
+          isDirect = true;
+          directItemDetail = item.getAttribute('data-id-item-detail');
+          directQty = item.getAttribute('data-qty');
+        } else {
+          const cartId = item.getAttribute('data-id-cart');
+          if (cartId) checkedCartIds.push(cartId);
         }
       });
 
       // Validasi: harus ada minimal 1 item
-      if (checkedCartIds.length === 0) {
+      if (!isDirect && checkedCartIds.length === 0) {
         showNotification('⚠️ Keranjang kosong', 'error');
         return;
       }
@@ -4034,23 +4122,23 @@
       /**
  * Handle rekening selection change
  */
-function handleRekeningChange(selectElement) {
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    const preview = document.getElementById('rekening_preview');
-    
-    if (selectElement.value && selectedOption.dataset.bank) {
-        // Update preview
-        document.getElementById('preview_bank').textContent = selectedOption.dataset.bank;
-        document.getElementById('preview_nomor').textContent = selectedOption.dataset.nomor;
-        document.getElementById('preview_nama').textContent = selectedOption.dataset.nama;
-        
-        // Show preview
-        preview.style.display = 'block';
-    } else {
-        // Hide preview
-        preview.style.display = 'none';
-    }
-}
+      function handleRekeningChange(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const preview = document.getElementById('rekening_preview');
+
+        if (selectElement.value && selectedOption.dataset.bank) {
+          // Update preview
+          document.getElementById('preview_bank').textContent = selectedOption.dataset.bank;
+          document.getElementById('preview_nomor').textContent = selectedOption.dataset.nomor;
+          document.getElementById('preview_nama').textContent = selectedOption.dataset.nama;
+
+          // Show preview
+          preview.style.display = 'block';
+        } else {
+          // Hide preview
+          preview.style.display = 'none';
+        }
+      }
 
       // ✅ Get alamat from PHP
       const idAlamat = '<?= $alamat_checkout->id_alamat ?? "" ?>';
@@ -4059,12 +4147,13 @@ function handleRekeningChange(selectElement) {
       const dataTransaksi = {
         id_alamat: idAlamat,
         total: totalPembayaran,
-        metode_pembayaran: 'Rekening',  // ✅ HARDCODE
+        metode_pembayaran: 'Rekening',
         bayar: totalPembayaran,
         kembali: 0,
         ongkir: ongkir,
-        id_rekening: selectedRekening,  // ✅ ADD THIS
+        id_rekening: selectedRekening,
         cart_ids: checkedCartIds.join(','),
+        is_direct: isDirect ? '1' : '0',           // ✅ Flag
         kode_promo_item: state.voucherCode || '',
         kode_promo_ongkir: state.shippingVoucherCode || '',
         diskon_voucher: state.voucherDiscount || 0,
@@ -4075,12 +4164,12 @@ function handleRekeningChange(selectElement) {
 
       // Kirim ke server
       fetch("<?= base_url('index.php/transaksi/simpan') ?>", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams(dataTransaksi)
-        })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(dataTransaksi)
+      })
         .then(response => {
           console.log('📡 Response status:', response.status);
           console.log('📡 Response OK:', response.ok);
@@ -4277,7 +4366,7 @@ function handleRekeningChange(selectElement) {
     }
 
     // Event Listeners
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
 
       console.log('🚀 DOM Loaded - Initializing checkout...');
 
@@ -4335,7 +4424,7 @@ function handleRekeningChange(selectElement) {
         let isExpanded = false;
 
         // Click total section to toggle
-        summaryTotal.addEventListener('click', function(e) {
+        summaryTotal.addEventListener('click', function (e) {
           if (e.target.closest('.btn-checkout')) return;
 
           isExpanded = !isExpanded;
@@ -4344,7 +4433,7 @@ function handleRekeningChange(selectElement) {
         });
 
         // Drag handle - touch events
-        dragHandle.addEventListener('touchstart', function(e) {
+        dragHandle.addEventListener('touchstart', function (e) {
           startY = e.touches[0].clientY;
           currentY = startY;
           isDragging = true;
@@ -4355,7 +4444,7 @@ function handleRekeningChange(selectElement) {
           passive: false
         });
 
-        dragHandle.addEventListener('touchmove', function(e) {
+        dragHandle.addEventListener('touchmove', function (e) {
           if (!isDragging) return;
 
           currentY = e.touches[0].clientY;
@@ -4376,7 +4465,7 @@ function handleRekeningChange(selectElement) {
           passive: false
         });
 
-        dragHandle.addEventListener('touchend', function(e) {
+        dragHandle.addEventListener('touchend', function (e) {
           if (!isDragging) return;
 
           const diff = currentY - startY;
@@ -4409,7 +4498,7 @@ function handleRekeningChange(selectElement) {
         });
 
         // Click overlay to collapse
-        summaryOverlay.addEventListener('click', function(e) {
+        summaryOverlay.addEventListener('click', function (e) {
           isExpanded = false;
           summaryBox.classList.remove('expanded');
           summaryOverlay.classList.remove('active');
@@ -4420,7 +4509,7 @@ function handleRekeningChange(selectElement) {
         const btnPromoShipping = document.getElementById('btn-open-promo-shipping');
 
         if (btnPromoItem) {
-          btnPromoItem.addEventListener('click', function(e) {
+          btnPromoItem.addEventListener('click', function (e) {
             e.stopPropagation();
             // ✅ AUTO CLOSE sheet pas buka promo modal
             isExpanded = false;
@@ -4430,7 +4519,7 @@ function handleRekeningChange(selectElement) {
         }
 
         if (btnPromoShipping) {
-          btnPromoShipping.addEventListener('click', function(e) {
+          btnPromoShipping.addEventListener('click', function (e) {
             e.stopPropagation();
             // ✅ AUTO CLOSE sheet pas buka promo modal
             isExpanded = false;
@@ -4442,7 +4531,7 @@ function handleRekeningChange(selectElement) {
         // Auto close sheet saat buka payment modal
         const btnPayNow = document.getElementById('btn-pay-now');
         if (btnPayNow) {
-          btnPayNow.addEventListener('click', function(e) {
+          btnPayNow.addEventListener('click', function (e) {
             e.stopPropagation();
             // ✅ AUTO CLOSE sheet pas buka payment modal
             isExpanded = false;
@@ -4507,7 +4596,7 @@ function handleRekeningChange(selectElement) {
       // Open address modal
       const btnOpenModal = document.getElementById('btn-open-modal');
       if (btnOpenModal) {
-        btnOpenModal.addEventListener('click', function(e) {
+        btnOpenModal.addEventListener('click', function (e) {
           e.preventDefault();
           openModal('alamat-modal');
         });
@@ -4516,14 +4605,14 @@ function handleRekeningChange(selectElement) {
       // Close address modal
       const modalClose = document.getElementById('modal-close');
       if (modalClose) {
-        modalClose.addEventListener('click', function() {
+        modalClose.addEventListener('click', function () {
           closeModal('alamat-modal');
         });
       }
 
       const modalOverlay = document.getElementById('modal-overlay');
       if (modalOverlay) {
-        modalOverlay.addEventListener('click', function() {
+        modalOverlay.addEventListener('click', function () {
           closeModal('alamat-modal');
         });
       }
@@ -4531,7 +4620,7 @@ function handleRekeningChange(selectElement) {
       // Address buttons
       const addressListContainer = document.getElementById('address-list-container');
       if (addressListContainer) {
-        addressListContainer.addEventListener('click', function(e) {
+        addressListContainer.addEventListener('click', function (e) {
           if (e.target.classList.contains('btn-use-address') && !e.target.disabled) {
             const alamatId = e.target.getAttribute('data-id');
             setAlamat(alamatId, e.target);
@@ -4542,13 +4631,13 @@ function handleRekeningChange(selectElement) {
       // Checkout button - UPDATED: Langsung process payment (ga buka modal)
       const btnCheckout = document.getElementById('btn-pay-now');
       if (btnCheckout) {
-        btnCheckout.addEventListener('click', function() {
+        btnCheckout.addEventListener('click', function () {
           processPayment(); // Langsung proses payment
         });
       }
 
       // Keyboard
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
           closeModal('alamat-modal');
           closeModal('modalAlamat');
@@ -4561,6 +4650,8 @@ function handleRekeningChange(selectElement) {
       updatePriceDisplay();
     });
 
+    
+
     // DATABASE FUNCTIONS
     function setAlamat(id_alamat, button) {
       const originalText = button.innerHTML;
@@ -4571,13 +4662,13 @@ function handleRekeningChange(selectElement) {
       const url = "<?= base_url('index.php/checkout/set_alamat') ?>";
 
       fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-Requested-With": "XMLHttpRequest"
-          },
-          body: "id_alamat=" + encodeURIComponent(id_alamat)
-        })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: "id_alamat=" + encodeURIComponent(id_alamat)
+      })
         .then(res => {
           if (!res.ok) {
             throw new Error(`HTTP ${res.status}`);
@@ -4684,6 +4775,186 @@ function handleRekeningChange(selectElement) {
         }
       });
     }
+    // ✅ AUTO-APPLY PROMOS ON PAGE LOAD
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎁 Checking auto-apply promos...');
+    
+    // ✅ Auto-apply ITEM promo (if exists)
+    <?php if (isset($auto_promo_item) && $auto_promo_item): ?>
+    (function() {
+        const promo = <?= json_encode($auto_promo_item) ?>;
+        console.log('✅ Auto-applying item promo:', promo);
+        
+        const isPercentage = promo.persen_promo > 0;
+        const value = isPercentage ? promo.persen_promo : promo.harga_promo;
+        
+        // Apply promo without user interaction
+        if (isPercentage) {
+            applyVoucherItem(null, 'percentage', value, true); // true = auto-apply
+        } else {
+            applyVoucherItem(null, 'fixed', value, true);
+        }
+        
+        // Show notification
+        const desc = isPercentage 
+            ? `Diskon ${value}% otomatis diterapkan!`
+            : `Potongan ${formatRupiah(value)} otomatis diterapkan!`;
+        
+        showNotification('🎁 ' + desc, 'success');
+        
+        // Store promo info for backend
+        state.autoPromoItem = promo;
+    })();
+    <?php endif; ?>
+    
+    // ✅ Auto-apply ONGKIR promo (if exists)
+    <?php if (isset($auto_promo_ongkir) && $auto_promo_ongkir): ?>
+    (function() {
+        const promo = <?= json_encode($auto_promo_ongkir) ?>;
+        console.log('✅ Auto-applying ongkir promo:', promo);
+        
+        const isPercentage = promo.persen_promo > 0;
+        const value = isPercentage ? promo.persen_promo : 100; // 100 = free shipping
+        
+        // Apply shipping promo
+        if (isPercentage) {
+            applyVoucherShipping(null, 'shipping_percentage', value, true);
+        } else {
+            applyVoucherShipping(null, 'shipping', 100, true);
+        }
+        
+        // Show notification
+        const desc = isPercentage 
+            ? `Diskon ongkir ${value}% otomatis diterapkan!`
+            : `Gratis ongkir otomatis diterapkan!`;
+        
+        showNotification('🚚 ' + desc, 'success');
+        
+        // Store promo info
+        state.autoPromoOngkir = promo;
+    })();
+    <?php endif; ?>
+});
+ 
+// ✅ OLD applyVoucherItem - Works correctly
+function applyVoucherItem(code, type, value, isAutoApply = false) {
+    // Cek jika sudah ada promo item
+    if (state.promoCodeItem) {
+        if (!isAutoApply) {
+            showNotification('⚠️ Hanya bisa pakai 1 promo item! Hapus promo item yang aktif dulu.', 'error');
+        }
+        return;
+    }
+
+    let desc = '';
+    if (type === 'percentage') {
+        const discountAmount = Math.floor(state.subtotal * (value / 100));
+        state.voucherDiscount = discountAmount;
+        desc = `Diskon ${value}%`;
+    } else if (type === 'fixed') {
+        state.voucherDiscount = value;
+        desc = `Potongan ${formatRupiah(value)}`;
+    }
+
+    state.promoCodeItem = code;
+    state.voucherCode = code;  // ✅ UNTUK TRANSAKSI
+    state.voucherDesc = desc; // ✅ SIMPAN DESC KE STATE!
+
+    // Update UI - tampilkan promo applied
+    const promoItemContainer = document.getElementById('promo-item-container');
+    promoItemContainer.innerHTML = `
+        <div class="promo-applied">
+          <div class="promo-applied-info">
+            <div class="promo-icon">🎉</div>
+            <div class="promo-text">
+              <strong>${code}</strong>
+              <small>${desc} diterapkan</small>
+            </div>
+          </div>
+          <button class="btn-remove-promo" onclick="removePromoItem()">Hapus</button>
+        </div>
+      `;
+
+    // Update tombol promo item
+    updatePromoItemButton(code, desc);
+
+    // ✅ AUTO-EXPAND product section
+    const productHeader = document.getElementById('product-header');
+    const productBody = document.getElementById('product-body');
+    if (productHeader && productBody) {
+        productHeader.classList.add('active');
+        productBody.classList.add('active');
+    }
+
+    updateCheckoutTotals(); // Update all displays
+    if (!isAutoApply) {
+        showNotification('✅ Voucher item berhasil diterapkan!', 'success');
+        closeOffcanvasItem();
+    }
+}
+ 
+// ✅ OLD applyVoucherShipping - Works correctly
+function applyVoucherShipping(code, type, value, isAutoApply = false) {
+    // Cek jika sudah ada promo shipping
+    if (state.promoCodeShipping) {
+        if (!isAutoApply) {
+            showNotification('⚠️ Hanya bisa pakai 1 promo ongkir! Hapus promo ongkir yang aktif dulu.', 'error');
+        }
+        return;
+    }
+
+    let desc = '';
+    if (type === 'shipping') {
+        state.shippingDiscount = state.shipping; // GRATIS ONGKIR 100%
+        desc = 'Gratis Ongkir';
+    } else if (type === 'shipping_percentage') {
+        state.shippingDiscount = Math.floor(state.shipping * (value / 100));
+        desc = `Diskon Ongkir ${value}%`;
+    }
+
+    state.promoCodeShipping = code;
+    state.shippingVoucherCode = code;  // ✅ UNTUK TRANSAKSI
+    state.shippingDesc = desc; // ✅ SIMPAN DESC KE STATE!
+
+    // Update UI - tampilkan promo applied
+    const promoShippingContainer = document.getElementById('promo-shipping-container');
+    promoShippingContainer.innerHTML = `
+        <div class="promo-applied">
+          <div class="promo-applied-info">
+            <div class="promo-icon">🎉</div>
+            <div class="promo-text">
+              <strong>${code}</strong>
+              <small>${desc} diterapkan</small>
+            </div>
+          </div>
+          <button class="btn-remove-promo" onclick="removePromoShipping()">Hapus</button>
+        </div>
+      `;
+
+    // Update tombol promo shipping
+    updatePromoShippingButton(code, desc);
+
+    // ✅ AUTO-EXPAND shipping section
+    const shippingHeader = document.getElementById('shipping-header');
+    const shippingBody = document.getElementById('shipping-body');
+    if (shippingHeader && shippingBody) {
+        shippingHeader.classList.add('active');
+        shippingBody.classList.add('active');
+    }
+
+    updateCheckoutTotals(); // Update all displays
+    if (!isAutoApply) {
+        showNotification('✅ Voucher gratis ongkir berhasil diterapkan!', 'success');
+        closeOffcanvasShipping();
+    }
+}
+ 
+// Wrapper for updating promo button UI (kept for compatibility)
+function updatePromoButton(type, code, discount) {
+    // This is now handled by updatePromoItemButton and updatePromoShippingButton
+    // This function is kept for backward compatibility but may not be needed
+    return;
+}
 
     function escapeHtml(text) {
       if (!text) return '';
@@ -5047,12 +5318,12 @@ function handleRekeningChange(selectElement) {
 
       // Send to server
       fetch("<?= base_url('index.php/alamat/simpan') ?>", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams(data)
-        })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data)
+      })
         .then(response => response.json())
         .then(result => {
           console.log('📥 Response dari server:', result);
@@ -5082,7 +5353,7 @@ function handleRekeningChange(selectElement) {
     }
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
       if (!e.target.closest('.dropdown-box')) {
         document.querySelectorAll('.dropdown-list').forEach(list => {
           list.classList.remove('active');
@@ -5138,7 +5409,7 @@ function handleRekeningChange(selectElement) {
           // Attach event listener ke tombol yang baru dibuat
           const newBtn = document.getElementById('btn-open-modal');
           if (newBtn) {
-            newBtn.addEventListener('click', function(e) {
+            newBtn.addEventListener('click', function (e) {
               e.preventDefault();
               openModal('alamat-modal');
             });
@@ -5157,7 +5428,7 @@ function handleRekeningChange(selectElement) {
     }
 
     // Panggil saat halaman load
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       updateCheckoutButtonState(); // Ini sudah memanggil updateGantiAlamatButton di dalamnya
 
       // ... kode lainnya tetap sama

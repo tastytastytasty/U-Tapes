@@ -22,6 +22,8 @@ class Promo_model extends CI_Model
             ->from('promo')
             ->where('promo.jenis_promo', $jenis)
             ->where('promo.sisa_kouta >', 0)
+            ->where('promo.approval', 'Disetujui') // ✅ MUST BE APPROVED
+            ->where('promo.status', 'Active') // ✅ MUST BE ACTIVE
             ->where('CURDATE() BETWEEN promo.dari AND promo.hingga', NULL, FALSE)
             ->where('promo.kode_promo IS NOT NULL', NULL, FALSE)
             ->where('promo.kode_promo !=', '')
@@ -83,6 +85,8 @@ class Promo_model extends CI_Model
             ->from('promo')
             ->where('promo.jenis_promo', $jenis)
             ->where('promo.sisa_kouta >', 0)
+            ->where('promo.approval', 'Disetujui') // ✅ MUST BE APPROVED
+            ->where('promo.status', 'Active') // ✅ MUST BE ACTIVE
             ->where('CURDATE() BETWEEN promo.dari AND promo.hingga', NULL, FALSE)
             ->group_start()
                 ->where('promo.kode_promo IS NULL', NULL, FALSE)
@@ -144,11 +148,13 @@ class Promo_model extends CI_Model
      * @param array $cart_item_details Array of id_item_detail in cart
      * @return array
      */
-    public function validate_promo($kode_promo, $jenis = 'item', $total_belanja = 0, $cart_item_details = [])
+    public function validate_promo($kode_promo, $jenis = 'item', $total_belanja = 0, $cart_item_details = [], $id_customer = null)
     {
         // Find promo
         $promo = $this->db
             ->where('kode_promo', strtoupper($kode_promo))
+            ->where('approval', 'Disetujui') // ✅ MUST BE APPROVED
+            ->where('status', 'Active') // ✅ MUST BE ACTIVE
             ->get('promo')
             ->row();
 
@@ -158,6 +164,19 @@ class Promo_model extends CI_Model
                 'message' => 'Kode promo tidak ditemukan',
                 'promo' => null
             ];
+        }
+
+        // ✅ CHECK: Has user already used this promo?
+        if ($id_customer && method_exists($this, 'check_user_promo_usage')) {
+            $usage_check = $this->check_user_promo_usage($id_customer, $promo->id_promo);
+            if (!$usage_check['allowed']) {
+                return [
+                    'valid' => false,
+                    'message' => $usage_check['message'],
+                    'promo' => null,
+                    'reason' => 'usage_limit_exceeded'
+                ];
+            }
         }
 
         // Validate jenis
@@ -209,7 +228,7 @@ class Promo_model extends CI_Model
             ];
         }
 
-        // ✅ NEW: Check if item-specific promo is being used on items it's meant for
+        // ✅ FIXED: Item-specific promo validation
         if ($jenis === 'item' && !empty($cart_item_details)) {
             $promo_items = $this->db
                 ->select('id_item_detail')
@@ -220,19 +239,23 @@ class Promo_model extends CI_Model
             $promo_item_ids = array_column($promo_items, 'id_item_detail');
 
             if (!empty($promo_item_ids)) {
-                // This is an item-specific promo
-                // Block if cart has these items (already auto-discounted)
-                $conflict_items = array_intersect($cart_item_details, $promo_item_ids);
+                // This is an item-specific promo (PROMO001 for DTL001)
+                // Check if cart HAS the eligible items
+                $has_eligible = array_intersect($cart_item_details, $promo_item_ids);
 
-                if (!empty($conflict_items)) {
+                if (empty($has_eligible)) {
+                    // Cart DOESN'T have eligible items → BLOCK
                     return [
                         'valid' => false,
-                        'message' => 'Produk di keranjang sudah mendapat diskon otomatis dari promo ini!',
+                        'message' => 'Promo ini hanya untuk produk tertentu yang tidak ada di keranjang Anda',
                         'promo' => null,
-                        'reason' => 'item_already_discounted'
+                        'reason' => 'item_not_eligible'
                     ];
                 }
+                
+                // Cart HAS eligible items → Continue validation (will be VALID if all checks pass)
             }
+            // else: General promo (no promo_detail) → Continue validation
         }
 
         // Promo VALID
@@ -344,5 +367,80 @@ class Promo_model extends CI_Model
     public function get_general_vouchers($jenis = 'item')
     {
         return $this->get_voucher_cards($jenis);
+    }
+
+    /**
+     * ✅ NEW: Check if user has already used this promo
+     * Prevents multiple usage of same promo code per user
+     * 
+     * @param string $id_customer
+     * @param string $id_promo
+     * @return array ['allowed' => bool, 'message' => string, 'usage_count' => int]
+     */
+    public function check_user_promo_usage($id_customer, $id_promo)
+    {
+        // Check if promo_usage table exists
+        $table_exists = $this->db->table_exists('promo_usage');
+        
+        if (!$table_exists) {
+            // Table doesn't exist yet - allow usage (graceful degradation)
+            return [
+                'allowed' => true,
+                'message' => 'Promo usage tracking not configured',
+                'usage_count' => 0
+            ];
+        }
+
+        // Count how many times user has used this promo
+        $usage_count = $this->db
+            ->where('id_customer', $id_customer)
+            ->where('id_promo', $id_promo)
+            ->count_all_results('promo_usage');
+
+        // If already used once, block it (1 time per customer per promo)
+        if ($usage_count >= 1) {
+            return [
+                'allowed' => false,
+                'message' => 'Anda sudah pernah menggunakan promo ini',
+                'usage_count' => $usage_count
+            ];
+        }
+
+        return [
+            'allowed' => true,
+            'message' => 'Promo dapat digunakan',
+            'usage_count' => $usage_count
+        ];
+    }
+
+    /**
+     * ✅ NEW: Record promo usage for audit trail
+     * Called after promo is successfully applied and transaction is completed
+     * 
+     * @param string $id_customer
+     * @param string $id_promo
+     * @param string $id_transaksi
+     * @param double $discount_amount
+     * @return bool
+     */
+    public function record_promo_usage($id_customer, $id_promo, $id_transaksi, $discount_amount = 0)
+    {
+        // Check if table exists
+        $table_exists = $this->db->table_exists('promo_usage');
+        
+        if (!$table_exists) {
+            log_message('debug', 'promo_usage table does not exist - skipping usage record');
+            return true; // Still return true to not break transactions
+        }
+
+        $data = [
+            'id_customer' => $id_customer,
+            'id_promo' => $id_promo,
+            'id_transaksi' => $id_transaksi,
+            'discount_amount' => $discount_amount,
+            'used_at' => date('Y-m-d H:i:s')
+        ];
+
+        return $this->db->insert('promo_usage', $data);
     }
 }
