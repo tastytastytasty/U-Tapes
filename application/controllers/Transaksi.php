@@ -8,7 +8,6 @@ class Transaksi extends CI_Controller
     {
         parent::__construct();
         $this->load->model('Transaksi_model');
-        $this->load->model('M_pembayaran');
         $this->load->model('Checkout_model');
         $this->load->model('Promo_model');
         $this->load->library('session');
@@ -106,7 +105,7 @@ class Transaksi extends CI_Controller
                 'metode_pembayaran' => $metode_pembayaran,
                 'bayar' => intval($bayar),
                 'ongkir' => intval($ongkir),
-                'status_transaksi' => 'Menunggu',
+                'status_transaksi' => 'Baru',
                 'id_rekening' => intval($id_rekening ?? 0),  // ✅ SAVE id_rekening
 
                 // ── Tenggat pembayaran: 1 jam dari sekarang ──────────
@@ -122,18 +121,6 @@ class Transaksi extends CI_Controller
             }
 
             $id_transaksi = $this->db->insert_id();
-
-            $insert_payment = $this->M_pembayaran->insert([
-                'tanggal' => date('Y-m-d H:i:s'),
-                'id_transaksi' => $id_transaksi,
-                'status' => 'Menunggu'
-            ]);
-
-            if (!$insert_payment) {
-                $this->db->trans_rollback();
-                echo json_encode(['success' => false, 'message' => 'Gagal membuat pembayaran']);
-                exit;
-            }
 
             $reduce_stock = $this->Checkout_model->reduce_stock($checkout_items);
 

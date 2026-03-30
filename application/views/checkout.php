@@ -1974,6 +1974,26 @@
         font-size: 1.125rem;
       }
 
+      .product-item {
+        grid-template-columns: 90px 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .product-img-wrapper {
+        width: 90px;
+        height: 90px;
+        flex-shrink: 0;
+      }
+
+      .product-name {
+        font-size: 1rem;
+      }
+
+      .product-variant {
+        font-size: 0.875rem;
+      }
+
       .summary-total-row .value {
         font-size: 1.5rem;
       }
@@ -1997,6 +2017,45 @@
       .box {
         padding: 1.25rem;
         border-radius: 12px;
+      }
+
+      .product-item {
+        grid-template-columns: 80px 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .product-img-wrapper {
+        width: 80px;
+        height: 80px;
+        padding-bottom: 0;
+        flex-shrink: 0;
+      }
+
+      .product-name {
+        font-size: 0.9375rem;
+        line-height: 1.4;
+      }
+
+      .product-variant {
+        font-size: 0.8125rem;
+        gap: 0.75rem;
+      }
+
+      .product-price-row {
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+
+      .product-qty-display {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.9375rem;
+      }
+
+      .product-prices {
+        align-items: flex-end;
       }
 
       .box-header {
@@ -2550,42 +2609,75 @@
       }
 
       .product-item {
-        grid-template-columns: 28px 60px 1fr;
-        /* Checkbox + gambar lebih kecil */
-        gap: 0.625rem;
-        padding: 0.75rem;
-      }
-
-      .product-checkbox {
-        width: 28px;
-        height: 28px;
-      }
-
-      .item-checkbox {
-        width: 16px;
-        height: 16px;
+        grid-template-columns: 70px 1fr;
+        gap: 0.75rem;
+        padding: 0.875rem;
+        margin-bottom: 0.875rem;
       }
 
       .product-img-wrapper {
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
+        padding-bottom: 0;
+        flex-shrink: 0;
       }
 
       .product-name {
-        font-size: 0.8125rem;
-        line-height: 1.2;
+        font-size: 0.9375rem;
+        line-height: 1.3;
+        margin-bottom: 0.375rem;
       }
 
       .product-variant {
+        font-size: 0.8125rem;
+        line-height: 1.2;
+        gap: 0.5rem;
+        flex-direction: column;
+        margin-bottom: 0.5rem;
+      }
+
+      .product-variant span {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+      }
+
+      .product-price-row {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: auto;
+        padding-top: 0.5rem;
+      }
+
+      .product-qty-display {
+        width: 100%;
+        justify-content: space-between;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+      }
+
+      .product-qty-display .qty-label {
         font-size: 0.75rem;
       }
 
-      .price-current {
+      .product-qty-display .qty-value {
         font-size: 0.9375rem;
       }
 
-      .price-original {
-        font-size: 0.6875rem;
+      .product-prices {
+        width: 100%;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      .product-price-original {
+        font-size: 0.8125rem;
+      }
+
+      .product-price,
+      .product-price.no-discount {
+        font-size: 1rem;
+        font-weight: 700;
       }
 
       /* Modal full screen di mobile kecil */
@@ -2679,35 +2771,55 @@
 
       .product-item {
         grid-template-columns: 60px 1fr;
-        gap: 0.75rem;
+        gap: 0.625rem;
         padding: 0.75rem;
+        margin-bottom: 0.75rem;
       }
 
       .product-img-wrapper {
         width: 60px;
-        padding-bottom: 60px;
+        height: 60px;
+        padding-bottom: 0;
+        flex-shrink: 0;
       }
 
-      .btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.8125rem;
+      .product-name {
+        font-size: 0.875rem;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
       }
 
-      .summary-header-title,
-      .summary-header-value {
-        font-size: 0.8125rem;
+      .product-variant {
+        font-size: 0.75rem;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .product-price-row {
+        flex-direction: column;
+        gap: 0.375rem;
+        padding-top: 0.375rem;
+        border-top: 1px solid #f1f5f9;
       }
 
       .product-qty-display {
+        width: 100%;
         padding: 0.375rem 0.625rem;
+        font-size: 0.8125rem;
       }
 
-      .product-qty-display .qty-label {
+      .product-prices {
+        width: 100%;
+        align-items: flex-start;
+      }
+
+      .product-price-original {
         font-size: 0.75rem;
       }
 
-      .product-qty-display .qty-value {
-        font-size: 0.875rem;
+      .product-price,
+      .product-price.no-discount {
+        font-size: 0.9375rem;
       }
     }
 

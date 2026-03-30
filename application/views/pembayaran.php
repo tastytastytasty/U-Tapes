@@ -602,12 +602,12 @@
           <div class="alert alert-info" style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
             <strong>✓ Bukti Transfer Telah Diterima</strong><br>
             <span style="color: #666;">
-              <?php if ($pembayaran->status == 'Diproses'): ?>
+              <?php if ($transaksi->status_transaksi == 'Menunggu'): ?>
                 Pembayaran Anda sedang diproses oleh admin. Silakan tunggu konfirmasi.
-              <?php elseif ($pembayaran->status == 'Berhasil'): ?>
+              <?php elseif ($transaksi->status_transaksi == 'Berhasil'): ?>
                 Pembayaran Anda telah dikonfirmasi!
               <?php else: ?>
-                Status: <?= $pembayaran->status ?>
+                Status: <?= ucfirst($transaksi->status_transaksi) ?>
               <?php endif; ?>
             </span>
           </div>

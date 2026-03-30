@@ -27,6 +27,8 @@ function render_order_card($transaksi) {
         $status_class = 'status-process';
     } elseif (in_array($display_status, ['Dalam Pengiriman', 'Dikirim'])) {
         $status_class = 'status-send';
+    } elseif ($display_status == 'Baru') {
+        $status_class = 'status-baru';
     } elseif (in_array($display_status, ['Menunggu', 'Menunggu Pembayaran'])) {
         $status_class = 'status-pending';
     }
@@ -189,13 +191,17 @@ function render_order_card($transaksi) {
         <div class="ps-footer">
             <div class="ps-total">Total: <span>Rp <?= number_format($transaksi->total, 0, ',', '.') ?></span></div>
             
-            <?php if ($transaksi->has_paid): ?>
-                <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
-                    <i class="bi bi-file-text"></i> Lihat Invoice
-                </a>
-            <?php else: ?>
+            <?php if ($transaksi->can_pay): ?>
                 <a class="ps-btn" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
                     <i class="bi bi-credit-card"></i> Bayar Sekarang
+                </a>
+            <?php elseif ($transaksi->can_view_payment): ?>
+                <a class="ps-btn ps-btn-secondary" href="<?= site_url('pembayaran/' . $transaksi->no_nota) ?>">
+                    <i class="bi bi-eye"></i> Lihat Pembayaran
+                </a>
+            <?php elseif ($transaksi->can_view_invoice): ?>
+                <a class="ps-btn ps-btn-success" href="<?= site_url('pesanan/invoice/' . $transaksi->no_nota) ?>">
+                    <i class="bi bi-file-text"></i> Lihat Invoice
                 </a>
             <?php endif; ?>
         </div>
@@ -490,6 +496,11 @@ function render_order_card($transaksi) {
         .status-pending {
             background: #fff7ed;
             color: #ea580c;
+        }
+
+        .status-baru {
+            background: #eff6ff;
+            color: #2563eb;
         }
 
         .status-success {
@@ -920,6 +931,12 @@ function render_order_card($transaksi) {
                     <div class="ps-tab" onclick="showTab('done')">
                         <i class="bi bi-check-circle"></i> Selesai
                     </div>
+                    <div class="ps-tab" onclick="showTab('waiting_courier')">
+                        <i class="bi bi-hourglass-bottom"></i> Menunggu Kurir
+                    </div>
+                    <div class="ps-tab" onclick="showTab('failed')">
+                        <i class="bi bi-x-circle"></i> Gagal
+                    </div>
                 </div>
 
                 <!-- SEMUA -->
@@ -1010,6 +1027,44 @@ function render_order_card($transaksi) {
                         </div>
                     <?php else: ?>
                         <?php foreach ($done as $transaksi): ?>
+                            <?php render_order_card($transaksi); ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <!-- MENUNGGU KURIR -->
+                <div id="waiting_courier" class="ps-content">
+                    <?php 
+                    $waiting_courier = array_filter($transaksi_list ?? [], function($t) { 
+                        return $t->is_waiting_pengiriman == true; 
+                    });
+                    ?>
+                    <?php if (empty($waiting_courier)): ?>
+                        <div class="ps-empty">
+                            <i class="bi bi-hourglass-bottom"></i>
+                            <p>Tidak ada pesanan yang menunggu kurir</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($waiting_courier as $transaksi): ?>
+                            <?php render_order_card($transaksi); ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <!-- GAGAL -->
+                <div id="failed" class="ps-content">
+                    <?php 
+                    $failed = array_filter($transaksi_list ?? [], function($t) { 
+                        return in_array($t->status_transaksi, ['Ditolak', 'Gagal']) || $t->is_expired; 
+                    });
+                    ?>
+                    <?php if (empty($failed)): ?>
+                        <div class="ps-empty">
+                            <i class="bi bi-x-circle"></i>
+                            <p>Tidak ada pesanan yang gagal</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($failed as $transaksi): ?>
                             <?php render_order_card($transaksi); ?>
                         <?php endforeach; ?>
                     <?php endif; ?>

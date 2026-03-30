@@ -12,7 +12,6 @@ class Pesanan extends MY_Controller {
 		$this->load->library(['email']);
 		$this->load->database();
 		$this->load->model('Transaksi_model');
-		$this->load->model('M_pembayaran');
 	}
 
    public function index()
@@ -22,25 +21,56 @@ class Pesanan extends MY_Controller {
     // ✅ Get all transaksi customer
     $transaksi_list = $this->Transaksi_model->get_by_customer($id_customer, 50, 0);
     
+    // ✅ AUTO-UPDATE EXPIRED TRANSACTIONS TO 'GAGAL'
+    $now = time();
+    foreach ($transaksi_list as $transaksi) {
+        if (in_array($transaksi->status_transaksi, ['Baru', 'Menunggu'])) {
+            $deadline = strtotime($transaksi->tenggat_pembayaran);
+            if ($deadline < $now) {
+                // Auto-update expired transaction to 'Gagal'
+                $this->db->where('id_transaksi', $transaksi->id_transaksi)
+                    ->update('transaksi', ['status_transaksi' => 'Gagal']);
+            }
+        }
+    }
+    
+    // ✅ Reload transaksi list setelah update
+    $transaksi_list = $this->Transaksi_model->get_by_customer($id_customer, 50, 0);
+    
     // ✅ Determine status display untuk setiap transaksi
     foreach ($transaksi_list as &$transaksi) {
-        // Get payment status
-        $pembayaran = $this->M_pembayaran->get_by_transaksi($transaksi->id_transaksi);
-        $transaksi->payment_status = $pembayaran ? $pembayaran->status : 'Menunggu';
-        $transaksi->has_paid = ($pembayaran && $pembayaran->status == 'Berhasil');
+        // ✅ Check if expired - untuk reference (seharusnya sudah di-update ke 'Gagal')
+        $deadline_ts = strtotime($transaksi->tenggat_pembayaran);
+        $transaksi->is_expired = ($deadline_ts < $now && in_array($transaksi->status_transaksi, ['Gagal']));
         
-        // ✅ LOGIC PRIORITY:
-        // 1. Cek transaksi.status_transaksi (Menunggu/Berhasil/Ditolak/Gagal)
-        // 2. Kalau Berhasil → cek pengiriman.status
+        // ✅ Check if waiting for courier (pengiriman.status = 'Menunggu')
+        $pengiriman_check = $this->db
+            ->where('id_transaksi', $transaksi->id_transaksi)
+            ->where('status', 'Menunggu')
+            ->get('pengiriman')
+            ->row();
+        $transaksi->is_waiting_pengiriman = ($pengiriman_check !== null);
         
-        if ($transaksi->status_transaksi == 'Menunggu') {
-            // ❶ BELUM BAYAR - Show status dari transaksi
-            $transaksi->show_status = 'Menunggu Pembayaran';
+        // ✅ NEW LOGIC - Berdasarkan status_transaksi dari database
+        
+        if ($transaksi->status_transaksi == 'Baru') {
+            // ✅ BARU - Belum upload bukti transfer
+            $transaksi->show_status = 'Baru';
             $transaksi->can_pay = true;  // Show "Bayar Sekarang" button
+            $transaksi->can_view_payment = false;
             $transaksi->can_view_invoice = false;
+            $transaksi->has_paid = false;
+            
+        } elseif ($transaksi->status_transaksi == 'Menunggu') {
+            // ✅ MENUNGGU - Sudah upload bukti, menunggu konfirmasi admin
+            $transaksi->show_status = 'Menunggu';
+            $transaksi->can_pay = false;
+            $transaksi->can_view_payment = true;  // Show "Lihat Pembayaran" button
+            $transaksi->can_view_invoice = false;
+            $transaksi->has_paid = false;
             
         } elseif ($transaksi->status_transaksi == 'Berhasil') {
-            // ❷ SUDAH BAYAR & ACC - Show status dari pengiriman
+            // ✅ BERHASIL - Pembayaran dikonfirmasi, cek pengiriman
             $pengiriman = $this->db
                 ->where('id_transaksi', $transaksi->id_transaksi)
                 ->get('pengiriman')
@@ -57,13 +87,24 @@ class Pesanan extends MY_Controller {
             }
             
             $transaksi->can_pay = false;
+            $transaksi->can_view_payment = false;
             $transaksi->can_view_invoice = true;  // Show "Lihat Invoice" button
+            $transaksi->has_paid = true;
             
         } elseif (in_array($transaksi->status_transaksi, ['Ditolak', 'Gagal'])) {
-            // ❸ DITOLAK/GAGAL
+            // ✅ DITOLAK/GAGAL
             $transaksi->show_status = $transaksi->status_transaksi;
             $transaksi->can_pay = false;
+            $transaksi->can_view_payment = false;
             $transaksi->can_view_invoice = false;
+            $transaksi->has_paid = false;
+        } else {
+            // ✅ DEFAULT - Status tidak terdefinisi, set default
+            $transaksi->show_status = $transaksi->status_transaksi ?? 'Menunggu';
+            $transaksi->can_pay = false;
+            $transaksi->can_view_payment = false;
+            $transaksi->can_view_invoice = false;
+            $transaksi->has_paid = false;
         }
     }
     
@@ -98,11 +139,8 @@ public function invoice($no_nota = null)
         return;
     }
     
-    // Get payment info
-    $pembayaran = $this->M_pembayaran->get_by_transaksi($transaksi->id_transaksi);
-    
-    // Only show invoice if payment is successful
-    if (!$pembayaran || $pembayaran->status != 'Berhasil') {
+    // ✅ Only show invoice if status is 'Berhasil' (payment confirmed)
+    if ($transaksi->status_transaksi != 'Berhasil') {
         // Redirect to payment page instead
         redirect('pembayaran/' . $no_nota);
         return;
@@ -134,7 +172,6 @@ public function invoice($no_nota = null)
     
     $data = [
         'transaksi' => $transaksi,
-        'pembayaran' => $pembayaran,
         'items' => $items,
         'alamat' => $alamat
     ];

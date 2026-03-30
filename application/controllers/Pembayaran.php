@@ -6,7 +6,6 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
     public function __construct() {
         parent::__construct();
         $this->load->model('Transaksi_model');
-        $this->load->model('M_pembayaran');
         $this->load->library('session');
     }
     
@@ -105,6 +104,20 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             return;
         }
         
+        // ✅ CHECK IF EXPIRED - auto update status ke 'Gagal'
+        $now = time();
+        $deadline = strtotime($transaksi->tenggat_pembayaran);
+        $is_expired = $deadline < $now;
+        
+        if ($is_expired && $transaksi->status_transaksi == 'Baru') {
+            // Update status to 'Gagal'
+            $this->db->where('id_transaksi', $transaksi->id_transaksi)
+                ->update('transaksi', ['status_transaksi' => 'Gagal']);
+            
+            // Reload transaksi data
+            $transaksi = $this->Transaksi_model->get_by_no_nota($no_nota);
+        }
+        
         // ✅ Ambil items WITH SNAPSHOT DISCOUNT dari transaksi_promo_item
         $items = $this->db
             ->select('
@@ -125,12 +138,6 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
             ->get()
             ->result();
         
-        // ✅ Get payment status
-        $pembayaran = $this->db
-            ->where('id_transaksi', $transaksi->id_transaksi)
-            ->get('pembayaran')
-            ->row();
-        
         // ✅ Get rekening info (if metode = Rekening)
         $rekening = null;
         if ($transaksi->metode_pembayaran == 'Rekening' && !empty($transaksi->id_rekening)) {
@@ -146,9 +153,9 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
         $data = [
             'transaksi' => $transaksi,
             'items' => $items,
-            'pembayaran' => $pembayaran,
             'rekening' => $rekening,  // ✅ Pass rekening info
-            'has_bukti' => $has_bukti
+            'has_bukti' => $has_bukti,
+            'is_expired' => $is_expired
         ];
         
         // ✅ Load standalone view
@@ -182,26 +189,9 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
         
         error_log("✅ Transaksi found: id_transaksi = " . $transaksi->id_transaksi);
         
-        // Check status pembayaran
-        $pembayaran = $this->db
-            ->where('id_transaksi', $transaksi->id_transaksi)
-            ->get('pembayaran')
-            ->row();
-        
-        if (!$pembayaran) {
-            error_log("❌ Pembayaran tidak ditemukan");
-            echo json_encode([
-                'success' => false,
-                'message' => 'Data pembayaran tidak ditemukan'
-            ]);
-            return;
-        }
-        
-        error_log("✅ Pembayaran status: " . $pembayaran->status);
-        
-        // ✅ Cek status - hanya bisa upload kalau Menunggu
-        if ($pembayaran->status != 'Menunggu') {
-            error_log("❌ Status bukan Menunggu");
+        // ✅ Cek status transaksi - hanya bisa upload kalau status 'Baru'
+        if ($transaksi->status_transaksi != 'Baru') {
+            error_log("❌ Status transaksi bukan Baru");
             echo json_encode([
                 'success' => false,
                 'message' => 'Pembayaran sudah diproses, tidak dapat upload bukti lagi'
@@ -239,21 +229,14 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
         
         error_log("✅ Upload success: " . $filename);
         
-        // ✅ Update transaksi.bukti_transfer
+        // ✅ Update transaksi: set bukti_transfer & change status from 'Baru' -> 'Menunggu'
         $update_transaksi = $this->db->where('id_transaksi', $transaksi->id_transaksi)
             ->update('transaksi', [
-                'bukti_transfer' => $filename
+                'bukti_transfer' => $filename,
+                'status_transaksi' => 'Menunggu'
             ]);
         
         error_log("✅ Update transaksi: " . ($update_transaksi ? 'SUCCESS' : 'FAILED'));
-        
-        // ✅ Update pembayaran status ke "Menunggu"
-        $update_pembayaran = $this->db->where('id_transaksi', $transaksi->id_transaksi)
-            ->update('pembayaran', [
-                'status' => 'Menunggu'
-            ]);
-        
-        error_log("✅ Update pembayaran: " . ($update_pembayaran ? 'SUCCESS' : 'FAILED'));
         
         echo json_encode([
             'success' => true,
@@ -263,31 +246,30 @@ class Pembayaran extends CI_Controller {  // ✅ SIMPLIFIED: Pakai CI_Controller
     }
 
     /**
-     * Cek status pembayaran
+     * Cek status transaksi
      */
     public function cek_status($id_transaksi) {
         header('Content-Type: application/json');
         
         $id_customer = $this->session->userdata('id_customer');
         
-        $pembayaran = $this->db
-            ->select('pembayaran.*, transaksi.id_customer')
-            ->from('pembayaran')
-            ->join('transaksi', 'pembayaran.id_transaksi = transaksi.id_transaksi')
-            ->where('pembayaran.id_transaksi', $id_transaksi)
-            ->where('transaksi.id_customer', $id_customer)
+        $transaksi = $this->db
+            ->select('status_transaksi')
+            ->from('transaksi')
+            ->where('id_transaksi', $id_transaksi)
+            ->where('id_customer', $id_customer)
             ->get()
             ->row();
         
-        if ($pembayaran) {
+        if ($transaksi) {
             echo json_encode([
                 'success' => true,
-                'status' => $pembayaran->status
+                'status' => $transaksi->status_transaksi
             ]);
         } else {
             echo json_encode([
                 'success' => false,
-                'message' => 'Pembayaran tidak ditemukan'
+                'message' => 'Transaksi tidak ditemukan'
             ]);
         }
     }
