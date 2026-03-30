@@ -1683,6 +1683,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             });
         });
         document.getElementById('btn-checkout-direct').addEventListener('click', function () {
+            const isLogin = this.dataset.login;    
+            if (isLogin == '0') {
+                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                modal.show();
+                return;
+            }
             const warna = document.querySelector('input[name="warna"]:checked')?.value;
             const ukuran = document.getElementById('ukuran')?.value;
             const qty = parseInt(document.getElementById('qty')?.value) || 0;

@@ -568,7 +568,7 @@
 				</div>
 			</div>
 			<div class="text-end">
-				<a href="<?= site_url('katalog') ?>"
+				<a href="<?= site_url('katalog?sort=terpopuler') ?>"
 					class="btn btn-link fw-bold text-primary text-decoration-none d-inline-flex align-items-center gap-2">
 					Lihat Semua
 					<i class="lni lni-arrow-right" style="font-size: 18px;"></i>
@@ -579,4 +579,3 @@
 		<?php $this->load->view('card', ['items' => $trend_items]); ?>
 	</div>
 </section>
-<!-- End Trending Product Area -->

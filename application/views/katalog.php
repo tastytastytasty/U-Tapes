@@ -41,6 +41,11 @@
     .product-actions button:hover {
         transform: scale(1.1);
     }
+
+    .kategori-check:checked+label {
+        background-color: var(--bs-primary);
+        color: white;
+    }
 </style>
 <!-- Start Breadcrumbs -->
 <div class="breadcrumbs">
@@ -77,10 +82,11 @@
                             <div class="single-widget mb-4">
                                 <label class="mb-2 text-primary">Urut Berdasarkan</label>
                                 <select name="sort" class="form-control auto-submit">
-                                    <option value="terbaru">Terbaru</option>
-                                    <option value="terlama">Terlama</option>
-                                    <option value="harga_tertinggi">Harga Tertinggi</option>
-                                    <option value="harga_terendah">Harga Terendah</option>
+                                    <option value="terbaru" <?= ($this->input->get('sort') == 'terbaru') ? 'selected' : '' ?>>Terbaru</option>
+                                    <option value="terlama" <?= ($this->input->get('sort') == 'terlama') ? 'selected' : '' ?>>Terlama</option>
+                                    <option value="harga_tertinggi" <?= ($this->input->get('sort') == 'harga_tertinggi') ? 'selected' : '' ?>>Harga Tertinggi</option>
+                                    <option value="harga_terendah" <?= ($this->input->get('sort') == 'harga_terendah') ? 'selected' : '' ?>>Harga Terendah</option>
+                                    <option value="terpopuler" <?= ($this->input->get('sort') == 'terpopuler') ? 'selected' : '' ?>>Terpopuler</option>
                                 </select>
                             </div>
 
@@ -110,15 +116,19 @@
 
                             <div class="single-widget">
                                 <label class="mb-2 text-primary">Kategori</label>
-                                <?php foreach ($kategori as $kat): ?>
-                                    <div class="form-check">
-                                        <input class="form-check-input auto-submit" type="checkbox" name="kategori[]"
-                                            id="kategori<?= $kat->id_kategori ?>" value="<?= $kat->id_kategori ?>">
-                                        <label class="form-check-label" for="kategori<?= $kat->id_kategori ?>">
-                                            <?= $kat->nama_kategori ?>
-                                        </label>
-                                    </div>
-                                <?php endforeach; ?>
+                                <div class="row g-2">
+                                    <?php foreach ($kategori as $kat): ?>
+                                        <div class="col-6">
+                                            <input class="auto-submit d-none kategori-check" type="checkbox"
+                                                name="kategori[]" id="kategori<?= $kat->id_kategori ?>"
+                                                value="<?= $kat->id_kategori ?>">
+                                            <label class="btn btn-outline-primary w-100"
+                                                for="kategori<?= $kat->id_kategori ?>">
+                                                <?= $kat->nama_kategori ?>
+                                            </label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -129,7 +139,8 @@
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="lni lni-search-alt text-muted"></i>
                             </span>
-                            <input type="text" name="keyword" class="form-control border-start-0" placeholder="Cari produk...">
+                            <input type="text" name="keyword" class="form-control border-start-0"
+                                placeholder="Cari produk...">
                         </div>
                     </div>
                     <div id="ajax-katalog">

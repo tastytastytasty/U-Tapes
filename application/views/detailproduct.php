@@ -273,7 +273,8 @@
                             <div class="row align-items-end">
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="button mt-2">
-                                        <button type="button" class="btn btn-sm btn-primary w-100" id="btn-checkout-direct">
+                                        <button type="button" class="btn btn-sm btn-primary w-100" id="btn-checkout-direct"
+                                        data-login="<?= $this->session->userdata('id_customer') ? 1 : 0 ?>">
                                             <i class="lni lni-wallet"></i> Checkout
                                         </button>
                                     </div>
