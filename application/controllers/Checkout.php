@@ -71,7 +71,8 @@ class Checkout extends MY_Controller
 
         // ========== REKENING LIST ==========
         $rekening_list = $this->db
-            ->select('id_rekening, bank, nomor_rekening, atas_nama, gambar')
+            ->select('id_rekening, bank, nomor_rekening, atas_nama, gambar, status')
+            ->where('status', 'active')
             ->get('rekening')
             ->result();
 
@@ -85,31 +86,32 @@ class Checkout extends MY_Controller
         $voucher_items = [];
         $voucher_ongkir = [];
 
-        // ✅ PROMO LOGIC: Separate auto-apply (no code) from manual vouchers (with code)
+        // ✅ PROMO LOGIC: 
+        // - kode_promo kosong/NULL → Tampilkan sebagai BADGE (voucher_items) untuk user lihat
+        // - kode_promo ada/tidak kosong → JANGAN tampilkan badge (user input kode manual)
         try {
-            if (method_exists($this->Promo_model, 'get_promo_split')) {
-                // ✅ GET BEST AUTO-APPLY PROMOS (tanpa kode_promo) - akan otomatis diterapkan
-                $promo_item_split = $this->Promo_model->get_promo_split('item', $summary['subtotal']);
-                $auto_promo_item = $promo_item_split['auto_applied']; // Tertinggi discount
+            // ✅ 1. GET NO-CODE PROMOS (kode_promo kosong/NULL) - untuk display sebagai BADGE di offcanvas
+            // NAMA VARIABLE VOUCHER_ITEMS tapi berisi promo TANPA kode
+            if (method_exists($this->Promo_model, 'get_auto_apply_promos')) {
+                $auto_item_promos = $this->Promo_model->get_auto_apply_promos('item');
+                $voucher_items = $auto_item_promos; // ✅ Display all auto-apply promos as cards
                 
-                $promo_ongkir_split = $this->Promo_model->get_promo_split('ongkir', 0);
-                $auto_promo_ongkir = $promo_ongkir_split['auto_applied']; // Tertinggi discount
-
-                // ✅ GET MANUAL VOUCHER CODES ONLY (dengan kode_promo) - untuk display di offcanvas
-                // JANGAN mix dengan auto vouchers!
-                $voucher_items = $this->Promo_model->get_voucher_cards('item', $cart_item_details);
-                $voucher_ongkir = $this->Promo_model->get_voucher_cards('ongkir');
-            } else {
-                // OLD PROMO LOGIC (fallback)
-                log_message('debug', 'Using old promo logic - update Promo_model.php');
-                $voucher_items = $this->Promo_model->get_active_promos('item');
-                $voucher_ongkir = $this->Promo_model->get_active_promos('ongkir');
+                $auto_ongkir_promos = $this->Promo_model->get_auto_apply_promos('ongkir');
+                $voucher_ongkir = $auto_ongkir_promos; // ✅ Display all auto-apply promos as cards
             }
+
+            // ✅ 2. AUTO-APPLY BEST ONE (choose best from no-code promos)
+            // Ambil yang terbaik dari no-code promos untuk auto-apply
+            $auto_promo_item = !empty($voucher_items) ? $voucher_items[0] : null;
+            $auto_promo_ongkir = !empty($voucher_ongkir) ? $voucher_ongkir[0] : null;
+
         } catch (Exception $e) {
             log_message('error', 'Promo loading error: ' . $e->getMessage());
             // Keep empty arrays
             $voucher_items = [];
             $voucher_ongkir = [];
+            $auto_promo_item = null;
+            $auto_promo_ongkir = null;
         }
 
         // ========== NAVBAR CART ==========
