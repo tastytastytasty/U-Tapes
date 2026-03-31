@@ -619,6 +619,43 @@ function render_order_card($transaksi) {
             transform: rotate(180deg);
         }
 
+        /* More Items Button */
+        .ps-more-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #3b82f6;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 10px 16px;
+            margin-top: 10px;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .ps-more-btn:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.1);
+        }
+
+        .ps-more-btn:active {
+            transform: scale(0.98);
+        }
+
+        .ps-more-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .ps-more-btn.active i {
+            transform: rotate(180deg);
+        }
+
         /* Footer */
         .ps-footer {
             display: flex;

@@ -3022,12 +3022,46 @@
           <?php foreach ($checkout_items as $item): ?>
             <?php
             // Hitung harga final (setelah diskon)
+            // ✅ FIX: Jika promo require kode, jangan calculate diskon otomatis
+            
+            // First check if promo requires code
+            $promo_requires_code = false;
+            if (!empty($item->id_item_detail)) {
+                $code_check = $this->db
+                    ->select('promo.kode_promo')
+                    ->from('promo_detail')
+                    ->join('promo', 'promo.id_promo = promo_detail.id_promo')
+                    ->where('promo_detail.id_item_detail', $item->id_item_detail)
+                    ->where('promo.sisa_kouta >', 0)
+                    ->where('CURDATE() BETWEEN promo.dari AND promo.hingga', NULL, FALSE)
+                    ->get()
+                    ->row();
+                
+                if ($code_check && !empty($code_check->kode_promo)) {
+                    $promo_requires_code = true;
+                }
+            }
+            
+            // ✅ IMPORTANT: Always check if item has sale/discount
+            $item_has_discount = ($item->is_sale == 1 && ($item->persen_promo > 0 || $item->harga_promo > 0));
+            
+            // ✅ ALWAYS calculate discount price for data attribute
             $final_price = $checkout_model->get_item_final_price($item);
-            $subtotal = $final_price * $item->qty;
-            $original_subtotal = $item->harga * $item->qty;
-
-            // Cek apakah ada diskon
-            $has_discount = ($item->is_sale == 1 && ($item->persen_promo > 0 || $item->harga_promo > 0));
+            $discounted_subtotal = $final_price * $item->qty; // Harga setelah diskon
+            $original_subtotal = $item->harga * $item->qty;   // Harga asli
+            
+            // Determine display price based on requirement
+            if ($promo_requires_code) {
+                // ✅ Promo requires code - tampilkan harga asli awal
+                $subtotal = $original_subtotal;
+                $display_price = $original_subtotal;
+            } else {
+                // Promo tanpa kode - apply diskon langsung
+                $subtotal = $discounted_subtotal;
+                $display_price = $discounted_subtotal;
+            }
+            
+            $has_discount = $item_has_discount;
             $discount_percentage = $has_discount && $item->persen_promo > 0 ? $item->persen_promo : 0;
 
             // Cek apakah produk baru (created dalam 3 hari terakhir)
@@ -3057,7 +3091,8 @@
                 <?php if ($has_discount): ?>
                   <?php
                   // Check if this item's promo requires a code
-                  $item_promo_code = null;
+                  // ✅ INITIALIZE $item_promo_code first!
+                  $item_promo_code = null; // Default: no code required
                   $show_badge_initially = true; // Default: show if has discount
                   
                   if (!empty($item->id_item_detail)) {
@@ -3073,9 +3108,15 @@
                       
                       if ($promo_check) {
                           $item_promo_code = $promo_check->kode_promo;
-                          // If promo has code, hide badge initially
+                          // ✅ NEW LOGIC: If promo has code, hide badge initially (wait for user to input)
+                          // If no code, show badge immediately (auto-apply)
                           $show_badge_initially = empty($item_promo_code);
                       }
+                  }
+                  
+                  // ✅ DEBUG: Log the values
+                  if (ENVIRONMENT === 'development') {
+                      error_log("Badge check - item: " . $item->id_item_detail . ", code: " . ($item_promo_code ?? 'NULL') . ", show: " . ($show_badge_initially ? '1' : '0'));
                   }
                   
                   $badge_style = $show_badge_initially ? '' : 'display: none;';
@@ -3104,14 +3145,13 @@
                     <span class="qty-value"><?= $item->qty ?></span>
                   </div>
                   <div class="product-prices">
-                    <?php if ($has_discount): ?>
+                    <?php if ($item->is_sale == 1 && ($item->persen_promo > 0 || $item->harga_promo > 0)): ?>
                       <?php
-                      // Same promo code check as above
-                      $promo_check_price = null;
-                      $show_discount_price = true;
+                      // Selalu render dual elements jika ada promo (regardless of code requirement)
+                      $initial_show_discount = false; // Default: hide discounted price
                       
                       if (!empty($item->id_item_detail)) {
-                          $promo_check_price = $this->db
+                          $price_check = $this->db
                               ->select('promo.kode_promo')
                               ->from('promo_detail')
                               ->join('promo', 'promo.id_promo = promo_detail.id_promo')
@@ -3121,9 +3161,9 @@
                               ->get()
                               ->row();
                           
-                          if ($promo_check_price && !empty($promo_check_price->kode_promo)) {
-                              // Has code = hide discount initially
-                              $show_discount_price = false;
+                          if (!$price_check || empty($price_check->kode_promo)) {
+                              // No code required - show discounted price initially
+                              $initial_show_discount = true;
                           }
                       }
                       ?>
@@ -3131,18 +3171,20 @@
                       <!-- Original price (strikethrough if discount shown) -->
                       <span class="product-price-original" 
                             data-item-detail="<?= $item->id_item_detail ?>"
-                            style="<?= $show_discount_price ? 'text-decoration: line-through; color: #ef4444; opacity: 0.7;' : 'font-size: 1.125rem; color: var(--primary); opacity: 1; font-weight: 700; text-decoration: none;' ?>">
+                            style="<?= $initial_show_discount ? 'text-decoration: line-through; color: #ef4444; opacity: 0.7; font-size: 0.875rem; font-weight: 500;' : 'font-size: 1.125rem; color: var(--primary); opacity: 1; font-weight: 700; text-decoration: none;' ?>">
                         Rp <?= number_format($original_subtotal, 0, ',', '.') ?>
                       </span>
                       
                       <!-- Discounted price (show if no code required OR code applied) -->
+                      <!-- ✅ IMPORTANT: Store actual discounted price in data-discounted-price attribute -->
                       <span class="product-price product-price-discounted" 
                             data-item-detail="<?= $item->id_item_detail ?>"
-                            style="<?= $show_discount_price ? '' : 'display: none;' ?>">
-                        Rp <?= number_format($subtotal, 0, ',', '.') ?>
+                            data-discounted-price="<?= $discounted_subtotal ?>"
+                            style="<?= $initial_show_discount ? '' : 'display: none;' ?>">
+                        Rp <?= number_format($initial_show_discount ? $discounted_subtotal : $original_subtotal, 0, ',', '.') ?>
                       </span>
                     <?php else: ?>
-                      <!-- Harga normal (no discount) -->
+                      <!-- No discount - single price -->
                       <span class="product-price no-discount">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                     <?php endif; ?>
                   </div>
@@ -5016,6 +5058,8 @@ document.addEventListener('DOMContentLoaded', function() {
  
 // ✅ OLD applyVoucherItem - Works correctly
 function applyVoucherItem(code, type, value, isAutoApply = false) {
+    console.log('📌 applyVoucherItem called with:', { code, type, value, isAutoApply });
+    
     // Cek jika sudah ada promo item
     if (state.promoCodeItem) {
         if (!isAutoApply) {
@@ -5062,6 +5106,12 @@ function applyVoucherItem(code, type, value, isAutoApply = false) {
     if (productHeader && productBody) {
         productHeader.classList.add('active');
         productBody.classList.add('active');
+    }
+
+    // ✅ UPDATE ITEM BADGES - tampilkan badge & coret harga untuk item yang match
+    if (!isAutoApply && code) {
+        console.log('🔄 Calling updateItemBadges with code:', code);
+        updateItemBadges(code.trim());
     }
 
     updateCheckoutTotals(); // Update all displays
@@ -5612,27 +5662,68 @@ function updatePromoButton(type, code, discount) {
       // ... kode lainnya tetap sama
     });
 
+    // ✅ Debug function - list all badges
+    function debugAllBadges() {
+        console.log('🔍 ===== DEBUG ALL BADGES =====');
+        const allBadges = document.querySelectorAll('.product-discount-badge');
+        console.log('Total badges found:', allBadges.length);
+        
+        allBadges.forEach((badge, idx) => {
+            console.log(`Badge ${idx}:`, {
+                requiresCode: badge.getAttribute('data-requires-code'),
+                promoCode: badge.getAttribute('data-promo-code'),
+                itemDetail: badge.getAttribute('data-item-detail'),
+                display: badge.style.display,
+                visible: badge.offsetHeight > 0
+            });
+        });
+        
+        const codesOnlyBadges = document.querySelectorAll('.product-discount-badge[data-requires-code="1"]');
+        console.log('Badges with requires-code="1":', codesOnlyBadges.length);
+        
+        console.log('🔍 ===== END DEBUG =====');
+    }
+    
     // ✅ Handle item-level promo badge visibility
     function updateItemBadges(appliedCode = null) {
         console.log('🎁 Updating item badges, applied code:', appliedCode);
+        debugAllBadges();
         
         // Get all items with promo that requires code
         const badges = document.querySelectorAll('.product-discount-badge[data-requires-code="1"]');
+        console.log('🔍 Found badges with requires-code:', badges.length);
+        
+        if (badges.length === 0) {
+            console.log('⚠️ No badges found with data-requires-code="1"');
+        }
         
         badges.forEach(badge => {
             const itemDetailId = badge.dataset.itemDetail;
             const requiredCode = badge.dataset.promoCode;
             
+            console.log('📌 Processing badge for item:', itemDetailId, 'requires code:', requiredCode);
+            
             // Find price elements for this item
             const priceOriginal = document.querySelector(`.product-price-original[data-item-detail="${itemDetailId}"]`);
             const priceDiscounted = document.querySelector(`.product-price-discounted[data-item-detail="${itemDetailId}"]`);
             
-            // Check if code matches
-            const codeMatches = appliedCode && appliedCode.toUpperCase() === requiredCode.toUpperCase();
+            console.log('💰 Found elements - original:', !!priceOriginal, 'discounted:', !!priceDiscounted);
+            
+            // Check if code matches (case-insensitive)
+            const appliedUppercase = appliedCode ? appliedCode.toUpperCase() : null;
+            const requiredUppercase = requiredCode ? requiredCode.toUpperCase() : null;
+            const codeMatches = appliedUppercase && requiredUppercase && appliedUppercase === requiredUppercase;
+            
+            console.log('🔐 Code match check:', {
+                applied: appliedUppercase,
+                required: requiredUppercase,
+                matches: codeMatches
+            });
             
             if (codeMatches) {
-                // ✅ Show badge + strikethrough original price
+                // ✅ Show badge + strikethrough original + show discounted
                 badge.style.display = '';
+                console.log('✅ Badge display set to empty');
                 
                 if (priceOriginal) {
                     priceOriginal.style.textDecoration = 'line-through';
@@ -5640,15 +5731,39 @@ function updatePromoButton(type, code, discount) {
                     priceOriginal.style.opacity = '0.7';
                     priceOriginal.style.fontSize = '0.875rem';
                     priceOriginal.style.fontWeight = '500';
+                    console.log('✅ Applied strikethrough to original price');
                 }
                 
                 if (priceDiscounted) {
-                    priceDiscounted.style.display = '';
+                    // ✅ CRITICAL: Update text content from data attribute
+                    const discountedAmount = priceDiscounted.getAttribute('data-discounted-price');
+                    console.log('💰 Discounted amount from data attribute:', discountedAmount);
+                    
+                    if (discountedAmount) {
+                        // Format the price with thousand separator
+                        const formattedPrice = parseInt(discountedAmount).toLocaleString('id-ID');
+                        priceDiscounted.textContent = 'Rp ' + formattedPrice;
+                        console.log('✅ Updated discounted price text to:', priceDiscounted.textContent);
+                    }
+                    
+                    // Remove the display: none using classList approach
+                    if (priceDiscounted.style.display === 'none') {
+                        priceDiscounted.style.removeProperty('display');
+                    } else {
+                        priceDiscounted.style.display = 'inline';
+                    }
+                    console.log('✅ Set discounted price display - removed display:none');
+                    console.log('💰 Discounted price element after change:', {
+                        display: priceDiscounted.style.display,
+                        computedDisplay: window.getComputedStyle(priceDiscounted).display,
+                        offsetHeight: priceDiscounted.offsetHeight,
+                        text: priceDiscounted.textContent
+                    });
                 }
                 
                 console.log('✅ Badge shown for item:', itemDetailId);
             } else {
-                // ❌ Hide badge + normalize original price styling
+                // ❌ Hide badge + normalize original price styling + hide discounted
                 badge.style.display = 'none';
                 
                 if (priceOriginal) {
@@ -5657,10 +5772,12 @@ function updatePromoButton(type, code, discount) {
                     priceOriginal.style.opacity = '1';
                     priceOriginal.style.fontSize = '1.125rem';
                     priceOriginal.style.fontWeight = '700';
+                    console.log('❌ Reset original price styling');
                 }
                 
                 if (priceDiscounted) {
                     priceDiscounted.style.display = 'none';
+                    console.log('❌ Hidden discounted price');
                 }
                 
                 console.log('❌ Badge hidden for item:', itemDetailId);
@@ -5742,31 +5859,104 @@ function updatePromoButton(type, code, discount) {
         showNotification('✓ Promo item dihapus', 'info');
     }
 
-    // ✅ Hook into existing applyVoucherItem function
-    const originalApplyVoucherItem = window.applyVoucherItem;
-    if (typeof originalApplyVoucherItem === 'function') {
-        window.applyVoucherItem = function(code, type, value, isAutoApply = false) {
-            // Call original function
-            originalApplyVoucherItem.call(this, code, type, value, isAutoApply);
+    // ✅ STANDALONE: removePromoItem with badge reset
+    function removePromoItem() {
+        // Reset badges pertama
+        updateItemBadges(null);
+        
+        // Clear state
+        state.itemDiscount = 0;
+        state.promoCodeItem = null;
+        state.promoTypeItem = null;
+        state.promoValueItem = null;
+        state.voucherCode = null;
+        state.voucherDesc = null;
+        state.voucherDiscount = 0;
+        
+        // Update UI
+        const promoItemContainer = document.getElementById('promo-item-container');
+        if (promoItemContainer) {
+            promoItemContainer.innerHTML = `
+                <div class="promo-input-group">
+                    <input type="text" class="promo-input" id="promo-code-item" placeholder="Masukkan kode promo item">
+                    <button class="btn-apply-promo" id="btn-apply-promo-item">Pakai</button>
+                </div>
+            `;
             
-            // Then update badges
-            if (!isAutoApply && code) {
-                updateItemBadges(code);
+            // Reattach event listener
+            const btnApply = document.getElementById('btn-apply-promo-item');
+            if (btnApply) {
+                btnApply.addEventListener('click', function() {
+                    const code = document.getElementById('promo-code-item').value;
+                    if (code.trim()) {
+                        validateAndApplyPromo(code, 'item');
+                    } else {
+                        showNotification('❌ Masukkan kode promo terlebih dahulu', 'error');
+                    }
+                });
             }
-        };
+        }
+        
+        // Reset button
+        const btn = document.getElementById('btn-open-promo-item');
+        if (btn) {
+            btn.innerHTML = '<span>🎁 Pakai Promo Item</span>';
+            btn.classList.remove('active');
+        }
+        
+        // Update totals
+        updateCheckoutTotals();
+        
+        showNotification('✓ Promo item dihapus', 'info');
     }
 
-    // ✅ Hook into existing removePromoItem function
-    const originalRemovePromoItem = window.removePromoItem;
-    if (typeof originalRemovePromoItem === 'function') {
-        window.removePromoItem = function() {
-            // Reset badges first
-            updateItemBadges(null);
+    // ✅ STANDALONE: removePromoShipping with proper handling
+    function removePromoShipping() {
+        // Clear state
+        state.shippingDiscount = 0;
+        state.promoCodeShipping = null;
+        state.promoTypeShipping = null;
+        state.promoValueShipping = null;
+        state.shippingVoucherCode = null;
+        state.shippingDesc = null;
+        
+        // Update UI
+        const promoShippingContainer = document.getElementById('promo-shipping-container');
+        if (promoShippingContainer) {
+            promoShippingContainer.innerHTML = `
+                <div class="promo-input-group">
+                    <input type="text" class="promo-input" id="promo-code-shipping" placeholder="Masukkan kode gratis ongkir">
+                    <button class="btn-apply-promo" id="btn-apply-promo-shipping">Pakai</button>
+                </div>
+            `;
             
-            // Then call original function
-            originalRemovePromoItem.call(this);
-        };
+            // Reattach event listener
+            const btnApply = document.getElementById('btn-apply-promo-shipping');
+            if (btnApply) {
+                btnApply.addEventListener('click', function() {
+                    const code = document.getElementById('promo-code-shipping').value;
+                    if (code.trim()) {
+                        validateAndApplyPromo(code, 'ongkir');
+                    } else {
+                        showNotification('❌ Masukkan kode promo terlebih dahulu', 'error');
+                    }
+                });
+            }
+        }
+        
+        // Reset button
+        const btn = document.getElementById('btn-open-promo-shipping');
+        if (btn) {
+            btn.innerHTML = '<span>🚚 Gratis Ongkir</span>';
+            btn.classList.remove('active');
+        }
+        
+        // Update totals
+        updateCheckoutTotals();
+        
+        showNotification('✓ Promo ongkir dihapus', 'info');
     }
+
   </script>
 
 </body>

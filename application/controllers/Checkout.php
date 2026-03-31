@@ -50,14 +50,24 @@ class Checkout extends MY_Controller
 
         // ========== CART ITEMS ==========
         $direct = $this->session->userdata('direct_checkout');
+        $direct_checkout_data = $this->session->userdata('_direct_checkout_data');
 
-        if ($direct) {
-            $this->session->unset_userdata('direct_checkout');
+        // ✅ FIX: Check BOTH direct_checkout (baru) dan _direct_checkout_data (session tahan)
+        if ($direct || $direct_checkout_data) {
+            // Jika ada direct_checkout (fresh), unset dia
+            if ($direct) {
+                $this->session->unset_userdata('direct_checkout');
+            } else {
+                // Gunakan _direct_checkout_data yang sudah disimpan
+                $direct = $direct_checkout_data;
+            }
+            
             $checkout_items = $this->Checkout_model->get_direct_item(
                 $direct['id_item_detail'],
                 $direct['qty']
             );
 
+            // Keep _direct_checkout_data di session untuk refresh page
             $this->session->set_userdata('_direct_checkout_data', [
                 'id_item_detail' => $direct['id_item_detail'],
                 'qty' => $direct['qty'],
