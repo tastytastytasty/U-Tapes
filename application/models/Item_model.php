@@ -10,7 +10,7 @@ class Item_model extends CI_Model
                             MAX(promo.harga_promo) AS harga_promo,
                             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,MAX(item_detail.stok) AS stok,
                             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-                                AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale,
+                                AND promo.sisa_kouta > 0 THEN 1 ELSE 0 END ) AS is_sale,
                             COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah');
         $this->db->from('item');
         $this->db->join('kategori', 'kategori.id_kategori = item.id_kategori');
@@ -79,7 +79,7 @@ class Item_model extends CI_Model
             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
             MAX(promo_detail.id_promo_detail) AS latest_promo_detail,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-                AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale,
+                AND promo.sisa_kouta > 0 THEN 1 ELSE 0 END ) AS is_sale,
             COALESCE(SUM(transaksi_item.qty), 0) AS total_qty
         ");
         $this->db->from('item');
@@ -183,7 +183,7 @@ class Item_model extends CI_Model
     }
     public function get_kategori()
     {
-        return $this->db->get('kategori')->result();
+        return $this->db->order_by('nama_kategori', 'ASC')->get('kategori')->result();
     }
     public function get_banners()
     {
@@ -208,7 +208,7 @@ class Item_model extends CI_Model
             item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
             SUM(item_detail.stok) AS total_stok, MAX(IF(wishlist.id_item IS NULL, 0, 1)) AS in_wishlist,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-            AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale,MAX(promo.kode_promo) AS kode_promo,
+            AND promo.sisa_kouta > 0 THEN 1 ELSE 0 END ) AS is_sale,MAX(promo.kode_promo) AS kode_promo,
             MAX(promo.persen_promo) AS persen_promo, MAX(promo.harga_promo) AS harga_promo,kategori.nama_kategori,
             COALESCE(MIN(CASE WHEN item_detail.stok > 0 THEN item_detail.harga END), MIN(item_detail.harga)) AS harga_termurah,
             SUM(transaksi_item.qty) AS total_qty

@@ -32,7 +32,7 @@ class Ajax extends MY_Controller
                     ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
                     ->where('promo_detail.id_item_detail', $detail->id_item_detail)
                     ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
-                    ->where('promo.kuota >', 0)
+                    ->where('promo.sisa_kouta >', 0)
                     ->get()
                     ->row();
 
@@ -74,7 +74,7 @@ class Ajax extends MY_Controller
             ->join('promo', 'promo.id_promo = promo_detail.id_promo', 'inner')
             ->where('promo_detail.id_item_detail', $detail->id_item_detail)
             ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
-            ->where('promo.kuota >', 0)
+            ->where('promo.sisa_kouta >', 0)
             ->order_by('promo.persen_promo', 'DESC')
             ->limit(1)
             ->get()

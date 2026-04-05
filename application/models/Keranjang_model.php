@@ -12,7 +12,7 @@ class Keranjang_model extends CI_Model
                 CASE 
                     WHEN promo.id_promo IS NOT NULL 
                     AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-                    AND promo.kuota > 0 
+                    AND promo.sisa_kouta > 0 
                     THEN 1 ELSE 0 
                 END
             ) AS is_sale

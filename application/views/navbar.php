@@ -803,45 +803,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
     <!-- Start Footer Area -->
     <footer class="footer">
-        <!-- Start Footer Top -->
-        <div class="footer-top">
-            <div class="container-fluid px-4">
-                <div class="inner-content">
-                    <div class="row">
-                        <div class="col-lg-3 col-md-4 col-12">
-                            <div class="footer-logo">
-                                <a href="<?= site_url('homepage') ?>">
-                                    <img src="<?= base_url('assets/images/logo/logo3.png') ?>" alt="#">
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-lg-9 col-md-8 col-12">
-                            <div class="footer-newsletter">
-                                <h4 class="title">
-                                    Daftarkan email Anda 
-                                    <span>Untuk mendapatkan informasi terbaru, penjualan, dan penawaran.</span>
-                                </h4>
-                                <div class="newsletter-form-head">
-                                    <form action="#" method="get" target="_blank" class="newsletter-form">
-                                        <input name="EMAIL" placeholder="Masukkan email Anda..." type="email">
-                                        <div class="button">
-                                            <button class="btn">Daftar<span class="dir-part"></span></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Footer Top -->
         <!-- Start Footer Middle -->
         <div class="footer-middle">
             <div class="container-fluid px-4">
                 <div class="bottom-inner">
                     <div class="row">
-                        <div class="col-lg-4 col-md-6 col-12">
+                        <div class="col-lg-3 col-md-6 col-12 d-flex justify-content-center align-items-center">
+                            <div class="footer-logo">
+                                <a href="<?= site_url('homepage') ?>">
+                                    <img src="<?= base_url('assets/images/logo/logo3.png') ?>" alt="#" width="400px">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-12">
                             <!-- Single Widget -->
                             <div class="single-footer f-contact">
                                 <h3>Hubungi Kami :</h3>
@@ -856,7 +830,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <!-- End Single Widget -->
                         </div>
-                        <div class="col-lg-4 col-md-6 col-12">
+                        <div class="col-lg-3 col-md-6 col-12">
                             <!-- Single Widget -->
                             <div class="single-footer f-link">
                                 <h3>Informasi</h3>
@@ -868,7 +842,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <!-- End Single Widget -->
                         </div>
-                        <div class="col-lg-4 col-md-6 col-12">
+                        <div class="col-lg-3 col-md-6 col-12">
                             <!-- Single Widget -->
                             <div class="single-footer f-link">
                                 <h3>Produk Toko</h3>
@@ -901,17 +875,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <div class="copyright">
                                 <p>U-Taps | E-commerce-shoes</p>
                             </div>
-                        </div>
-                        <div class="col-lg-4 col-12">
-                            <ul class="socila">
-                                <li>
-                                    <span>Ikuti Kami:</span>
-                                </li>
-                                <li><a href="javascript:void(0)"><i class="lni lni-facebook-filled"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="lni lni-twitter-original"></i></a></li>
-                                <li><a href="https://www.instagram.com/zal.fzi?igsh=ZGhnbmo5aHA5dnc1"><i class="lni lni-instagram"></i></a></li>
-                                <li><a href="javascript:void(0)"><i class="lni lni-google"></i></a></li>
-                            </ul>
                         </div>
                     </div>
                 </div>

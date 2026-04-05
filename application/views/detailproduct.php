@@ -161,7 +161,7 @@
                     <div class="product-info">
                         <h2 class="mb-2 d-none d-lg-block"><?= $item->nama_item ?></h2>
                         <label><i class="lni lni-tag me-2"></i> <?= $item->nama_kategori ?> | <label
-                                class="text-primary"><?= $item->merk ?></label></label>
+                                class="text-primary"><?= $item->merk ?></label> | <span class="text-secondary mt-2"> Usia : <?= $item->usia_min ?> - <?= $item->usia_max ?></span></label>
                         <hr class="text text-primary">
                         <?php
                         $harga_asli = $item->harga_termurah;
@@ -204,7 +204,7 @@
                                                 ->where('item_detail.id_item', $item->id_item)
                                                 ->where('item_detail.warna', $w->warna)
                                                 ->where('CURDATE() BETWEEN promo.dari AND promo.hingga')
-                                                ->where('promo.kuota >', 0)
+                                                ->where('promo.sisa_kouta >', 0)
                                                 ->get()
                                                 ->row();
                                             $ada_diskon_warna = false;

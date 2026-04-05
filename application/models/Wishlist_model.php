@@ -9,7 +9,7 @@ class Wishlist_model extends CI_Model
             MIN(item_detail.harga)) AS harga_termurah, item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
             SUM(item_detail.stok) AS total_stok,item.created_at,MAX(promo.kode_promo) AS kode_promo,
             MAX( CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-            AND promo.kuota > 0 THEN 1 ELSE 0 END ) AS is_sale')
+            AND promo.sisa_kouta > 0 THEN 1 ELSE 0 END ) AS is_sale')
             ->from('wishlist')
             ->join('item', 'wishlist.id_item = item.id_item')
             ->join('kategori', 'item.id_kategori = kategori.id_kategori')
@@ -82,7 +82,7 @@ class Wishlist_model extends CI_Model
                 item.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY) AS is_new,
                 SUM(item_detail.stok) AS total_stok,
                 MAX(CASE WHEN promo.id_promo IS NOT NULL AND CURDATE() BETWEEN promo.`dari` AND promo.`hingga`
-                AND promo.kuota > 0 THEN 1 ELSE 0 END) AS is_sale', FALSE)
+                AND promo.sisa_kouta > 0 THEN 1 ELSE 0 END) AS is_sale', FALSE)
             ->from('item')
             ->join('kategori', 'item.id_kategori = kategori.id_kategori')
             ->join('item_detail', 'item.id_item = item_detail.id_item')

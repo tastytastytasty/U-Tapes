@@ -400,7 +400,7 @@
 		<div class="row">
 			<?php
 			$has_main = !empty($banners);
-			$has_new = isset($new_items[0]);
+			$has_new = isset($new_items[0]) && !empty($new_items->total_stok);
 			$has_promo = isset($promo_items[0]);
 			$new = $has_new ? $new_items[0] : null;
 			$promo = $has_promo ? $promo_items[0] : null;
