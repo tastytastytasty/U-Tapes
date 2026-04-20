@@ -247,7 +247,7 @@
                             <?php if ($item->total_stok <= 0): ?>
                                 <div class="stok-overlay">Stok Tidak <br> Tersedia</div>
                             <?php endif; ?>
-                            <img src="<?= base_url('assets/images/item/' . $item->gambar_item) ?>" class="img-fluid product-img"
+                            <img src="https://github.com/Arhyse/U-Taps-CMS/tree/main/uploads/gambar_item/<?= $item->gambar_item ?>" class="img-fluid product-img"
                                 alt="<?= $item->nama_item ?>">
                             <div class="product-actions position-absolute top-0 end-0 m-2 d-flex gap-1
                                 <?= $item->in_wishlist ? 'in-wishlist' : 'not-in-wishlist' ?>">
